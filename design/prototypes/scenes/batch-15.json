@@ -1,0 +1,4 @@
+[
+ {"id": "trading.barker", "name": "Barker", "sphere": "white", "n": 1, "text": "Each turn, you may recruit followers one extra time."},
+ {"id": "trading.hoarder", "name": "Magpie", "sphere": "white", "n": 1, "text": "On Use, once per game: turn all your resources into white."}
+]

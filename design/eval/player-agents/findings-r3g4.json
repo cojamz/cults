@@ -1,0 +1,454 @@
+[
+ {
+  "subject": "Crunch Time",
+  "kind": "space",
+  "claim": "Crunch Time taken from first seat and then copied by Reprise, Echo, Stunt Double and Greatest Hits lets one player place almost a whole round before anyone else moves.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "Ava placed her first 4 minions in a row in round II (8 to 33 followers) and her first 5 in round III (39 to 83) before Ben or Cal placed anything.",
+  "strength": 5,
+  "count_specific": false
+ },
+ {
+  "subject": "Most member colors",
+  "kind": "contest",
+  "claim": "One player reached the most colors possible in round I and took the contest every round with nobody contesting it.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Ben"
+  ],
+  "evidence": "Cal had 3 colors (the cap with 3 colors in play) after round I and won 4, 6 and 10 = 20 followers; Ava reached 2 only in round III, Ben never more than 1.",
+  "strength": 5,
+  "count_specific": true
+ },
+ {
+  "subject": "Copyist",
+  "kind": "member",
+  "claim": "Copyist pays +2 followers on every copy, including each step of a copy of a copy, so a copy chain pays it many times in one turn.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Copyist returned 18 followers on a cost of 5, 14 of them from 7 copies in 4 placements in round III.",
+  "strength": 4,
+  "count_specific": false
+ },
+ {
+  "subject": "Hot Streak",
+  "kind": "member",
+  "claim": "Hot Streak cashes a long run of turns in a row for a large one-turn payout.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Fired after four turns in a row in round III for +12 followers, 13 with its printed follower, for 7 resources.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Cover",
+  "kind": "space",
+  "claim": "Cover copying a rival's Overtime gave an extra minion and was the one moment anyone interfered with the copy engine.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "Cal's Cover on Ava's Overtime gave +4 purple (a 5-pack), an extra placement worth about 6, and his third green minion tied green 3 to 3, a 10-point swing in a 5-point game.",
+  "strength": 4,
+  "count_specific": false
+ },
+ {
+  "subject": "New Blood",
+  "kind": "space",
+  "claim": "New Blood's +3 and the Yellow Cloak's +2 both trigger on the same new-color recruit, making a cheap member free.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Cal paid 5 for Early Traders and got 5 yellow straight back, then 4 more yellow from its two round starts.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "With pack sizes of 1, 5 and 10, a recruit after a small space has only a 1-follower buy or a pass.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "6 of 21 follower buys were 1-packs and 4 recruits were passed to save up for the next pack.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Went last",
+  "kind": "contest",
+  "claim": "Went last feels decided by who has minions left or who holds the token behind you, rather than by play.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "The token changed hands 10 times; Cal won round II by counting that Ben had no way back, and Ben's minions were left at the end because his own Sleep In made them wait.",
+  "strength": 2,
+  "count_specific": true
+ },
+ {
+  "subject": "Echo",
+  "kind": "space",
+  "claim": "Echo copying the opener's Sleep In takes the token and almost the same haul, and the copied player gets nothing.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal",
+   "Ben"
+  ],
+  "evidence": "Cal's Echo got +4 purple, +1 green and the token; Ben spent On a Roll to retake it and still won Went last in round I.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Overtime",
+  "kind": "space",
+  "claim": "Overtime's extra minion looks strong but the token is taken at once and the extra minion lands somewhere ordinary.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Overtime paid Ava about 15 (a 10-pack plus the extra minion's 5-pack) against 9 for Crowd; its real cost was leaving Crowd, Build Up and Cover for Cal to tie green.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Protesters",
+  "kind": "member",
+  "claim": "Counting which spaces can take the token and shutting one with Protesters is a tense puzzle, though it shuts only one of several doors.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "In round III it shut On a Roll and with Sleep In left Cal no way to the token: Went last +10 and Night Managers +2; in round II Ben shut the wrong door and lost +6.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Consolation Prize",
+  "kind": "member",
+  "claim": "Consolation Prize pays a player who is losing contests, keeping them in the game.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Paid 6 and 4 = 10 followers plus 1 printed for 7 resources.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Last Callers",
+  "kind": "member",
+  "claim": "Last Callers feels like a real answer to a token steal but went unused.",
+  "verdict": 2,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Never used; 1 follower for 7 resources, 4 fewer than a 5-pack.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Closer",
+  "kind": "member",
+  "claim": "Closer firing on the last placement and feeding a recruit feels like a plan clicking.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Paid 4 purple once in round II; in round III Ben placed last and it paid nothing.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Harvest",
+  "kind": "space",
+  "claim": "Harvest letting you pick colors one at a time fits an exact purchase.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Twice gave Cal exactly the colored cost he needed (Regulars in round I, Cosmopolitans in round II).",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Melting Pot",
+  "kind": "space",
+  "claim": "Melting Pot pays something for a mix of member colors.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "+2 followers and 2 resources for Ben, +3 and 3 for Cal.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Makeover",
+  "kind": "space",
+  "claim": "Makeover's rearrange had nothing riding on it when the next buy was followers, which take any color.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "Both took Makeover only for +4 yellow before a follower buy and both skipped the rearrange.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "No contest in this color set counts held resources, so piles are plain money and payment choices are forced.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Nearly every payment step was a single option; only Offering ever took resources (2 purple from Ben).",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Went last",
+  "kind": "contest",
+  "claim": "The Went last rim names a leader mid-round just because they placed most recently.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "Ava was shown leading in round I with Ben's token minion still to come; Cal's standings showed him winning Went last that Ben then took back.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Dabblers",
+  "kind": "member",
+  "claim": "It is unclear whether Dabblers' wild members count toward Die-Hards' most green members.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal",
+   "Ava"
+  ],
+  "evidence": "The game counted them (Cal 4 green members to Ava 2) and Die-Hards paid +6, the difference between Cal 98 and a 92-93 loss, but both players guessed.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Die-Hards",
+  "kind": "member",
+  "claim": "Die-Hards returned more than a follower buy and decided the winner, though its owner believed it paid nothing.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "1 printed + 6 at game end for 7 resources; without the +6 Cal finishes 92 against Ava's 93.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Offering",
+  "kind": "space",
+  "claim": "Offering makes rivals discard by surprise.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Took 2 purple from Ben and nothing from Cal, who held only yellow.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Recruiting members",
+  "kind": "rule",
+  "claim": "Picking a cloak first or second feels like a blind bet or automatic.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "Three cloaks for three players; the last player took the one left.",
+  "strength": 1,
+  "count_specific": true
+ },
+ {
+  "subject": "Recruiting members",
+  "kind": "rule",
+  "claim": "A focused one-color plan wins at most one contest a round while a spread-out cult wins several.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben placed 0 of 12 minions on green and had 1 member color all game; Ava's mostly one-color line still finished 5 behind the winner.",
+  "strength": 2,
+  "count_specific": true
+ },
+ {
+  "subject": "Con Men",
+  "kind": "member",
+  "claim": "Con Men has nothing to steal when nothing rewards holding resources.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Rivals held 0 to 2 resources each time Cal looked at it.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Line Cutters",
+  "kind": "member",
+  "claim": "Line Cutters gave first seat for a 4-cost recruit and protected the round III opener.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "It mattered only in round III; in round II Ava had the fewest followers (8) and went first anyway.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Copyist",
+  "kind": "member",
+  "claim": "Copyist and Hot Streak are worth far more than their price to a copy player; generic guard members returned little.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Copyist 19 and Hot Streak 13 for 5 and 7 resources; Night Managers 4 for 6 and Last Callers 1 for 7.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Recruiting members",
+  "kind": "rule",
+  "claim": "Members were under-used to contest Most member colors: one cheap member in a second and third color would have contested 20 followers.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Ava",
+   "Ben"
+  ],
+  "evidence": "A yellow member for Ava in round III would have tied the +10 (5 each), about a 7-point swing in a game decided by 5.",
+  "strength": 3,
+  "count_specific": true
+ },
+ {
+  "subject": "Melting Pot",
+  "kind": "space",
+  "claim": "The phrase 'colors among your members' counts grey members on Melting Pot but not on the Most member colors contest or Cosmopolitans.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ben's Melting Pot counted 2 colors (purple plus grey guests) while the contest counted him at 1 the same round.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Most member colors",
+  "kind": "contest",
+  "claim": "With 3 colors in play the contest caps at 3, which a player can reach in round I, after which rivals can only tie.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Cal reached 3 with three members costing 15 (5 refunded); Dabblers alone covers 2 colors.",
+  "strength": 3,
+  "count_specific": true
+ },
+ {
+  "subject": "Turn order",
+  "kind": "rule",
+  "claim": "The Goes Last token produces long runs of turns for the players it skips, not only Crunch Time.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Round III order: Ava 5 in a row, Ben 1, Cal 3, Ben 1, Cal 1, Ava 1, Cal 2, Ben 3.",
+  "strength": 2,
+  "count_specific": true
+ },
+ {
+  "subject": "Round end",
+  "kind": "rule",
+  "claim": "Round III decides the game.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "147 of 255 followers (58%) came in round III; Cal went from 41 to 98.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Dabblers",
+  "kind": "member",
+  "claim": "A wild member that fills a missing color makes later members of that color add nothing to the colors contest.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "After Dabblers filled purple, Closer added nothing to Cal's member colors or Cosmopolitans (3 either way).",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Turn order",
+  "kind": "rule",
+  "claim": "Line Cutters and the fewest-followers-first rule point the same way early, so Line Cutters only overrides the catch-up late.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ava (8) would have gone first in round II anyway; in round III Line Cutters took first seat from Ben (28).",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Survey",
+  "kind": "space",
+  "claim": "Survey grows rich late when many minions sit on one color.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Cal's round III Survey paid 6 yellow off six minions on green.",
+  "strength": 1,
+  "count_specific": false
+ }
+]

@@ -1,0 +1,1347 @@
+{
+ "_note": "Hand-written reasons and verdicts. Key: <status>|<member|space>|<lowercase name>, or <member|space>|<name> for any status. Fields: reason, verdict (keep, watch, cut, untested), replaces. Sources: /mnt/project-files/replacements/*-results.md, /mnt/project-files/quality/lab/results.md, design/decisions.md.",
+ "live|member|charity ball": {
+  "verdict": "keep",
+  "reason": "Live since today in Philanthropist's place. Beat it in blind judging of bot games (+0.30), and 120 bot games passed balance: owners won 29%, it fires about 10 times a game.",
+  "cory": "Don't like; probably shouldn't be in the deck.",
+  "bucket": "cut"
+ },
+ "live|member|socialites": {
+  "verdict": "keep",
+  "reason": "Live since today in High Society's place. Cory liked it by name. 120 bot games passed balance: owners won 32% (High Society 24%), bought more often, fires about 6 times a game."
+ },
+ "considered|member|turncoats": {
+  "verdict": "watch",
+  "replaces": "Volunteer",
+  "reason": "Too strong as priced: bots that can read it bought it almost every game and owners won 55%. Cory liked the idea for Volunteer's slot. Needs a higher price.",
+  "cory": "A good idea there; consideration for sure.",
+  "bucket": "consider"
+ },
+ "considered|member|barterers": {
+  "verdict": "cut",
+  "replaces": "Dyer",
+  "reason": "Swapping 3 for 3 only moves colors around and gains nothing. Bots almost never bought it, even after they learned to read it."
+ },
+ "considered|member|scavengers": {
+  "verdict": "cut",
+  "replaces": "Critic",
+  "reason": "Only works when a rival clears the shop, which rarely happens. Bought in 18% of games and still unbought by the better bots.",
+  "cory": "Kind of cool, but don't like that it interrupts the turn.",
+  "bucket": "cut"
+ },
+ "considered|member|racketeers": {
+  "verdict": "cut",
+  "replaces": "Crew",
+  "reason": "Bought a lot when cheap, but owners won only 17%. Weak at every price tried.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|grudge": {
+  "verdict": "cut",
+  "replaces": "Line Cutters",
+  "reason": "Cory said no. Bots also bought it nearly every game: an auto-buy that never changes how you play.",
+  "cory": "Can't track that all game; something here at round end, steal a couple followers.",
+  "bucket": "consider"
+ },
+ "considered|member|racketeer": {
+  "verdict": "cut",
+  "replaces": "Grifter",
+  "reason": "Works as written, but the card team kept Grifter and parked this one. Magenta steals are on hold.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|almoner": {
+  "verdict": "cut",
+  "replaces": "Landlord",
+  "reason": "Another flat white gain, the kind Cory wants gone. In 60 bot games owners won 21% (Landlord 29%).",
+  "cory": "Don't like.",
+  "bucket": "cut"
+ },
+ "considered|member|widows": {
+  "verdict": "cut",
+  "replaces": "Heiresses",
+  "reason": "Rarely fires in real games (under 1 a game), so it does nothing most of the time. Heiresses is protected anyway.",
+  "cory": "Really interesting; back on consideration for white.",
+  "bucket": "consider"
+ },
+ "considered|member|pauper": {
+  "verdict": "cut",
+  "replaces": "Old Money",
+  "reason": "Cory dropped it in this morning's verdicts."
+ },
+ "considered|member|warm-up act": {
+  "verdict": "cut",
+  "replaces": "Busker",
+  "reason": "Weak and rarely bought: taken in 32% of games (Busker 84%), owners won 14%.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|copyist": {
+  "verdict": "cut",
+  "replaces": "Roadie",
+  "reason": "Balanced, but it fired under once a game, so owners hardly noticed it.",
+  "cory": "Short list for green; bots must be misusing copies.",
+  "bucket": "short"
+ },
+ "considered|member|stagehand": {
+  "verdict": "untested",
+  "replaces": null,
+  "reason": "Built; no games yet. Pays for stacking minions on Green, which the Green contest already rewards.",
+  "cory": "No; don't like rewards based on space usage.",
+  "bucket": "cut"
+ },
+ "considered|member|bootlegger": {
+  "verdict": "cut",
+  "replaces": "Chronicler",
+  "reason": "Lost blind judging of bot games to Chronicler (+0.17, needs +0.30), and owners won 20% against Chronicler's 34%. Encore took the slot.",
+  "cory": "No; maybe for barterers.",
+  "bucket": "cut"
+ },
+ "considered|member|snobs": {
+  "verdict": "cut",
+  "replaces": "Snobs",
+  "reason": "This version (reserve a shop member) lost blind judging; the live Snobs stays.",
+  "cory": "No; no cards that need extra tokens.",
+  "bucket": "cut"
+ },
+ "considered|member|landlord": {
+  "verdict": "untested",
+  "replaces": "Landlord",
+  "reason": "A non-flat Landlord: rivals pay you to use your space. Built; no result yet. Barker is the other try for this slot.",
+  "cory": "No; don't like tokens.",
+  "bucket": "cut"
+ },
+ "considered|member|punch card": {
+  "verdict": "watch",
+  "replaces": "Regular",
+  "reason": "Beat Regular in blind judging three times (+0.43 to +0.70). A 60-game balance test is running.",
+  "cory": "Absolutely not.",
+  "bucket": "cut"
+ },
+ "considered|member|exit counselor": {
+  "verdict": "untested",
+  "replaces": "Deprogrammers",
+  "reason": "Rerun playing. Combos with Red's give-away spaces (Promote, Demote) and Godparents.",
+  "cory": "Really cool; short list; nice design.",
+  "bucket": "short"
+ },
+ "considered|member|foundling": {
+  "verdict": "untested",
+  "replaces": "Deprogrammers",
+  "reason": "A catch-up card for the smallest cult. Built; no result yet.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|early birds": {
+  "verdict": "cut",
+  "replaces": "Early Birds",
+  "reason": "Lost blind judging to the live Early Birds (-0.09).",
+  "cory": "Don't like it.",
+  "bucket": "cut"
+ },
+ "considered|member|big spenders": {
+  "verdict": "untested",
+  "replaces": "Smooth Talkers",
+  "reason": "Built; no result yet. Turns every silver you spend into a gift and a follower.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|charmers": {
+  "verdict": "cut",
+  "replaces": "Smooth Talkers",
+  "reason": "Stopped unproven: no matched games after one smarter-bot run.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|pickpocket": {
+  "verdict": "cut",
+  "replaces": "Cutpurse",
+  "reason": "Closed after three bot runs: no real edge (+0.17).",
+  "cory": "Meh.",
+  "bucket": "consider"
+ },
+ "considered|member|tax collector": {
+  "verdict": "cut",
+  "replaces": "Cutpurse",
+  "reason": "Closed today without an edge in blind judging.",
+  "cory": "No; after-contests timing makes no sense.",
+  "bucket": "cut"
+ },
+ "considered|member|accomplice": {
+  "verdict": "cut",
+  "replaces": "Accomplice",
+  "reason": "No edge over the live Accomplice in blind judging (+0.06).",
+  "cory": "Like the On Recruit steal; could be short list to go back in.",
+  "bucket": "short"
+ },
+ "considered|member|the boss": {
+  "verdict": "cut",
+  "replaces": "Extortionist",
+  "reason": "Bots bought it only 3 times in 24 games, so nothing could be read. Mob Boss took the slot.",
+  "cory": "Absolutely not. Too strong.",
+  "bucket": "cut"
+ },
+ "considered|member|mob boss": {
+  "verdict": "watch",
+  "replaces": "Extortionist",
+  "reason": "Beat Extortionist in blind judging (+0.83 and +1.12). A 60-game balance test is running; watch for one-turn hauls."
+ },
+ "considered|member|barker": {
+  "verdict": "untested",
+  "replaces": "Landlord",
+  "reason": "Cory's own idea for Landlord's slot (an extra follower buy each turn). Built today; first games queued."
+ },
+ "considered|member|misers": {
+  "verdict": "cut",
+  "replaces": "Misers",
+  "reason": "Interest on hoarded white lost blind judging badly (-0.86).",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|brokers": {
+  "verdict": "untested",
+  "replaces": "Brokers",
+  "reason": "Bots misplayed it; one clean pair so far. A rerun was queued when the lane stopped.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|cheerleaders": {
+  "verdict": "untested",
+  "replaces": "an added grey",
+  "reason": "Cory's pick (+2 followers per contest won), tested as an addition; he decides later what to drop."
+ },
+ "considered|member|victors": {
+  "verdict": "untested",
+  "replaces": "an added grey",
+  "reason": "Cory's pick (+2 of a contest's color when you win it), tested beside Cheerleaders."
+ },
+ "considered|member|war chest": {
+  "verdict": "cut",
+  "replaces": "an added grey",
+  "reason": "Cory dropped it today in favor of Cheerleaders and Victors.",
+  "cory": "Stay cut.",
+  "bucket": "cut"
+ },
+ "considered|member|gloaters": {
+  "verdict": "cut",
+  "replaces": "an added grey",
+  "reason": "Cory dropped it today in favor of Cheerleaders and Victors.",
+  "cory": "Absolutely not.",
+  "bucket": "cut"
+ },
+ "considered|member|fundraisers": {
+  "verdict": "watch",
+  "replaces": "Debutantes",
+  "reason": "Too strong once bots could read it: owners won 45%. It hands every rival silver, which feeds their contest. Needs a higher price."
+ },
+ "considered|member|hush money": {
+  "verdict": "cut",
+  "replaces": "Smooth Talkers",
+  "reason": "A defensive card bots rarely bought, even after they learned to read it. Nobody feels it until a steal.",
+  "cory": "Needs silver and magenta both in; probably no.",
+  "bucket": "cut"
+ },
+ "considered|member|night market": {
+  "verdict": "cut",
+  "replaces": "Meddler",
+  "reason": "Rarely bought, even by bots that could read it. Meddler stayed.",
+  "cory": "Like it; a little cheaper; yellow short list.",
+  "bucket": "short"
+ },
+ "considered|member|doorbusters": {
+  "verdict": "cut",
+  "replaces": "Shopaholics",
+  "reason": "Rarely bought and no better than Shopaholics.",
+  "cory": "Don't like; prefer Last-Minute Shopper's end-of-round recruit.",
+  "bucket": "cut"
+ },
+ "considered|member|skimmers": {
+  "verdict": "watch",
+  "replaces": "Desperado",
+  "reason": "Near an auto-buy when cheap: taken 82%, owners won 38%. Stings any rival buying followers. Parked with the other Magenta steals.",
+  "cory": "Seems an auto-buy; interesting idea, needs refinement.",
+  "bucket": "consider"
+ },
+ "considered|member|mirror image": {
+  "verdict": "watch",
+  "replaces": "Wallflower",
+  "reason": "Too strong once bots could read it: owners won 44%. Needs a higher price."
+ },
+ "considered|member|missionaries": {
+  "verdict": "cut",
+  "replaces": "Patriarch",
+  "reason": "Bots avoid giving members away; taken 23%, owners even. Still unbought by the better bots.",
+  "cory": "Too much to read, no.",
+  "bucket": "consider"
+ },
+ "considered|member|interrupters": {
+  "verdict": "cut",
+  "replaces": "Courier",
+  "reason": "Cory said no (\"like interrupter. That's bad\"). Also rarely bought.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|pacers": {
+  "verdict": "cut",
+  "replaces": "Shift Crew",
+  "reason": "Rarely bought at 9, even by bots that could read it.",
+  "cory": "Too good; hold for a color that moves actions.",
+  "bucket": "consider"
+ },
+ "considered|member|completists": {
+  "verdict": "cut",
+  "replaces": "Patroness",
+  "reason": "Nobody has the resources to buy a whole color at once; owners never won with the hard bots.",
+  "cory": "Absolutely not. So bad.",
+  "bucket": "cut"
+ },
+ "considered|member|evictors": {
+  "verdict": "watch",
+  "replaces": "Magpie",
+  "reason": "Strong once bots could read it (owners 37%), but the victim gets the same white, which blunts the sting. Magpie is protected."
+ },
+ "considered|member|tithe takers": {
+  "verdict": "watch",
+  "replaces": "Mentor & Protégés",
+  "reason": "Too strong at two prices: owners won 37% to 38%. Each rival hands you a member, a real sting.",
+  "cory": "Like it quite a bit; too good early, too bad late; consideration for magenta.",
+  "bucket": "consider"
+ },
+ "considered|member|defectors": {
+  "verdict": "watch",
+  "replaces": "Proselytizers",
+  "reason": "Too strong once bots could read it: owners won 50%."
+ },
+ "considered|member|late shoppers": {
+  "verdict": "cut",
+  "replaces": "a Blue member",
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|outbidders": {
+  "verdict": "watch",
+  "replaces": "Window Dressers",
+  "reason": "Too strong once bots could read it: owners won 46%. Lets you snatch a rival's buy, a real sting.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|copycats": {
+  "verdict": "cut",
+  "replaces": "Roadie",
+  "reason": "Fair (owners 26%) but no better than Roadie, which Cory likes."
+ },
+ "considered|member|opening act": {
+  "verdict": "cut",
+  "replaces": "a Green member",
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|tagalongs": {
+  "verdict": "cut",
+  "replaces": "a Purple member",
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "Super interesting, like it; needs balancing.",
+  "bucket": "consider"
+ },
+ "considered|member|full house": {
+  "verdict": "cut",
+  "replaces": "a Purple member",
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "Absolutely not.",
+  "bucket": "cut"
+ },
+ "considered|member|second fiddles": {
+  "verdict": "cut",
+  "replaces": "Dyer",
+  "reason": "Almost never bought (8%), and owners won 0 of 3.",
+  "cory": "Too hard to track.",
+  "bucket": "cut"
+ },
+ "considered|member|vultures": {
+  "verdict": "cut",
+  "replaces": "a Magenta member",
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|jackals": {
+  "verdict": "cut",
+  "replaces": "Shoplifter",
+  "reason": "Fine when cheap (owners 33%), but still rarely bought at full price. Parked with the Magenta steals.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|social climber": {
+  "verdict": "cut",
+  "replaces": "Debutantes",
+  "reason": "Cory cut Social Climber. Bots also rated this version too strong (owners 41%).",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|inquisitors": {
+  "verdict": "watch",
+  "replaces": "Raiders",
+  "reason": "Close to an auto-buy (taken 92%, owners 34%). Every rival loses a member, a big sting."
+ },
+ "considered|member|successors": {
+  "verdict": "cut",
+  "replaces": "Cashier",
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "Interesting, maybe too good; consider for white.",
+  "bucket": "consider"
+ },
+ "considered|member|pallbearers": {
+  "verdict": "cut",
+  "replaces": "Old Money",
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "Maybe; probably triggers too rarely.",
+  "bucket": "consider"
+ },
+ "considered|member|peddlers": {
+  "verdict": "cut",
+  "replaces": "Alchemists",
+  "reason": "Fair (owners 26%) but no better than Alchemists, with a rules bug left in it.",
+  "cory": "No, too complicated.",
+  "bucket": "cut"
+ },
+ "considered|member|seat filler": {
+  "verdict": "untested",
+  "replaces": "Volunteer",
+  "reason": "Cory liked this idea (as Drifter) for Volunteer's slot. Second build passed its rules check; no result yet.",
+  "cory": "Like it quite a bit.",
+  "bucket": "short"
+ },
+ "considered|member|godfather": {
+  "verdict": "cut",
+  "replaces": "Patriarch",
+  "reason": "Cory said no. Its test was also void because of a rules loop.",
+  "cory": "Absolutely not.",
+  "bucket": "cut"
+ },
+ "considered|member|pace-setters": {
+  "verdict": "cut",
+  "replaces": "Night Watch",
+  "reason": "Balanced, but it lost blind judging of bot games (-0.09).",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|night manager": {
+  "verdict": "watch",
+  "replaces": "Timekeeper",
+  "reason": "Passed balance right at the line (owners 37%, Timekeeper 31%); over the line next to Day Laborers. Waiting on a blind judging test.",
+  "cory": "I do like that one; short list for purple.",
+  "bucket": "short"
+ },
+ "considered|member|day laborers": {
+  "verdict": "cut",
+  "replaces": "Shift Crew",
+  "reason": "Picket Line took Shift Crew's slot. It also fired under once a game.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|chaperone": {
+  "verdict": "untested",
+  "replaces": "High Society",
+  "reason": "Built; no games. Socialites took the slot.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|usher": {
+  "verdict": "cut",
+  "replaces": "Polisher",
+  "reason": "Bots bought it almost every time (91%), an auto-buy. Guest of Honor took the slot.",
+  "cory": "Interesting; silver short list.",
+  "bucket": "short"
+ },
+ "considered|member|well-wishers": {
+  "verdict": "cut",
+  "replaces": "Debt Collectors",
+  "reason": "Won a small blind judging test (+0.83), but bots skip it: taken in 19% of games, owners won 10% to 17%.",
+  "cory": "Combine with Widows somehow; kind of strong.",
+  "bucket": "consider"
+ },
+ "considered|member|squire": {
+  "verdict": "cut",
+  "replaces": "Landlord",
+  "reason": "Another flat white gain, the kind Cory wants gone.",
+  "cory": "Don't like.",
+  "bucket": "cut"
+ },
+ "considered|member|penny pincher": {
+  "verdict": "cut",
+  "replaces": "a White member",
+  "reason": "A flat white gain with a condition. Cory wants flat one-color gainers gone.",
+  "cory": "Cool; On Recruit and Round End; white short list.",
+  "bucket": "short"
+ },
+ "considered|member|toll keeper": {
+  "verdict": "cut",
+  "replaces": "a Yellow member",
+  "reason": "Lost its blind judging rerun (+0.17, needs +0.30).",
+  "cory": "Too aggressive.",
+  "bucket": "cut"
+ },
+ "considered|member|hawker": {
+  "verdict": "untested",
+  "replaces": "Hawker",
+  "reason": "A reworded Hawker. Built; no result yet.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|power shoppers": {
+  "verdict": "cut",
+  "replaces": "Shopaholics",
+  "reason": "Lost blind judging of bot games to Shopaholics (-0.75).",
+  "cory": "Meh.",
+  "bucket": "consider"
+ },
+ "considered|member|bargain hunter": {
+  "verdict": "untested",
+  "replaces": "Regular",
+  "reason": "Passed balance (owners 31%, Regular 32%). Needs a blind judging test. Punch Card is ahead of it for the slot.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|last-minute shopper": {
+  "verdict": "cut",
+  "replaces": "Critic",
+  "reason": "Cory's text, but owners won 13% in 60 bot games. The alternate with +2 of any colors passed balance (30%).",
+  "cory": "Like the idea.",
+  "bucket": "consider"
+ },
+ "considered|member|late bloomers": {
+  "verdict": "cut",
+  "replaces": "Heiresses",
+  "reason": "Lost blind judging to Heiresses (-0.75). A flat white gain, and Heiresses is protected.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|dabbler": {
+  "verdict": "cut",
+  "replaces": "a grey",
+  "reason": "Tied the live Dabblers in blind judging of bot games (+0), and Dabblers is protected.",
+  "cory": "Maybe; short list for grey, maybe just in grey.",
+  "bucket": "short"
+ },
+ "considered|member|quilter": {
+  "verdict": "cut",
+  "replaces": "Dyer",
+  "reason": "Cory liked it, but once made weaker it was rarely bought: taken 15% (Dyer 60%).",
+  "cory": "Short list for yellow; just make it cheaper.",
+  "bucket": "short"
+ },
+ "considered|member|dowagers": {
+  "verdict": "cut",
+  "replaces": "Heiresses",
+  "reason": "Slightly behind Heiresses in a small blind judging test (-0.17), and Heiresses is protected.",
+  "cory": "Don't like.",
+  "bucket": "cut"
+ },
+ "considered|member|window dressers": {
+  "verdict": "untested",
+  "replaces": "Window Dressers",
+  "reason": "A stronger Window Dressers (recruit again). Three blind judging runs; final rerun on the smarter bots.",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|moneylender": {
+  "verdict": "cut",
+  "replaces": "Landlord",
+  "reason": "Lost both blind judging runs (-0.24 and -0.15).",
+  "cory": "White short list.",
+  "bucket": "short"
+ },
+ "considered|member|roadie": {
+  "verdict": "keep",
+  "replaces": "Roadie",
+  "reason": "Now live as Roadie (v0.99.582)."
+ },
+ "considered|member|night watch": {
+  "verdict": "watch",
+  "replaces": "Night Watch",
+  "reason": "Beat the live Night Watch in blind judging (+0.21, 10 to 2), but bots misplayed it. One more test after the smarter bots land.",
+  "cory": "What does that mean?",
+  "bucket": "cut"
+ },
+ "considered|member|hypnotist": {
+  "verdict": "cut",
+  "replaces": "a grey",
+  "reason": "Too strong: owners won 56%.",
+  "cory": "Way too strong and anti-fun; keep out.",
+  "bucket": "cut"
+ },
+ "considered|member|mannequin": {
+  "verdict": "untested",
+  "replaces": "Hawker",
+  "reason": "Built; no result yet. Replaces Hawker, whose rivals-choose-on-your-turn breaks a standing rule.",
+  "cory": "Pretty cool; short list for blue.",
+  "bucket": "short"
+ },
+ "considered|space|turf": {
+  "verdict": "untested",
+  "replaces": "Stash",
+  "reason": "Cory's own Stash idea. Small edge in blind judging (+0.09). Waiting for Cory, since Magenta steals are on hold.",
+  "cory": "Short list: \"Yeah, maybe.\"",
+  "bucket": "short"
+ },
+ "considered|space|racket": {
+  "verdict": "untested",
+  "replaces": "Stash",
+  "reason": "Cory's Oct 31 pick, reworded. Small edge in blind judging (+0.25). Waiting for Cory.",
+  "cory": "Test: \"It's cool. Yeah. ... I thought we said heist and something else were double, so maybe it could replace squeeze.\"",
+  "bucket": "consider"
+ },
+ "considered|space|call back": {
+  "verdict": "untested",
+  "replaces": "Right Away",
+  "reason": "Built; no result yet.",
+  "cory": "Replace or reword: \"What does that mean? What does that fucking mean?\"",
+  "bucket": "cut"
+ },
+ "considered|space|gift shop": {
+  "verdict": "cut",
+  "replaces": "Polish",
+  "reason": "Balance was fine (takers 26%), but small cults won less with it, and the blind judges rated it low (7 of 12).",
+  "cory": "Short list: \"I think gift shop's interesting. But I think we still haven't quite hit on, like, the right silver theme.\"",
+  "bucket": "short"
+ },
+ "considered|space|sweet nothings": {
+  "verdict": "keep",
+  "replaces": "Sweet Talk",
+  "reason": "Ready, waiting for Cory, who said he doesn't love Sweet Talk. Beat it in blind judging (+0.92) and passed 120 bot games: takers won 27% (Sweet Talk 19%).",
+  "cory": "Keep: \"Why even get the plus three silver? ... Oh, I guess you don't have to, right? Yeah. This is okay.\"",
+  "bucket": "short"
+ },
+ "considered|space|yard sale": {
+  "verdict": "cut",
+  "replaces": "Estate Sale",
+  "reason": "Cory dropped it.",
+  "cory": "No: \"I don't like yard sale either.\"",
+  "bucket": "cut"
+ },
+ "considered|space|cash out": {
+  "verdict": "cut",
+  "replaces": "Estate Sale",
+  "reason": "Lost blind judging; the slot was closed.",
+  "cory": "No: \"Nope.\"",
+  "bucket": "cut"
+ },
+ "considered|space|dumpster dive": {
+  "verdict": "untested",
+  "replaces": "Bury",
+  "reason": "Built; no result yet.",
+  "cory": "Test: \"Ooh, dumpster dive is smart in blue. But costing up to five is a little much. You have to consider that's five free resources. So, I mean, maybe that's good.\"",
+  "bucket": "consider"
+ },
+ "considered|space|pawnshop": {
+  "verdict": "untested",
+  "replaces": "Allowance",
+  "reason": "Built; no result yet. Low Profile is ahead of it for the slot.",
+  "cory": "Short list: \"That's interesting. Like, the reverse of the other one. It's cool.\"",
+  "bucket": "short"
+ },
+ "considered|space|tag along": {
+  "verdict": "cut",
+  "replaces": "Leaders' Tax",
+  "reason": "Lost blind judging (-0.03). Leaders' Tax stays.",
+  "cory": "Short list: \"Oh, tag along's cool. I like tag along. That should be on a short list.\"",
+  "bucket": "short"
+ },
+ "considered|space|clean out": {
+  "verdict": "cut",
+  "replaces": "Shake Down",
+  "reason": "Small cults won much less with it (17% vs 25%); takers won 21%.",
+  "cory": "No: \"I don't like clean out, but maybe we'll see how it tests.\"",
+  "bucket": "cut"
+ },
+ "considered|space|mugging": {
+  "verdict": "cut",
+  "replaces": "Shake Down",
+  "reason": "Small cults won much less with it (15% vs 25%).",
+  "cory": "Test: \"I actually do like this one. I think this should be a default that we consider. It's, like, so elemental and interesting.\"",
+  "bucket": "short"
+ },
+ "considered|space|squeeze": {
+  "verdict": "untested",
+  "replaces": "Shake Down",
+  "reason": "The third try for Shake Down's slot; its bot games are next.",
+  "cory": "Short list: \"Yeah, maybe.\"",
+  "bucket": "short"
+ },
+ "considered|space|grand tour": {
+  "verdict": "untested",
+  "replaces": "Melting Pot",
+  "reason": "Built; no result yet. Cory called Melting Pot worded strangely.",
+  "cory": "No: \"That seems too similar to Melting Pot.\"",
+  "bucket": "cut"
+ },
+ "considered|space|pawn shop": {
+  "verdict": "cut",
+  "replaces": "Exchange",
+  "reason": "Cory refused cash-in-a-card spaces on Oct 20, and nobody else at the table feels it.",
+  "cory": "No: \"No, I don't like it. This is just the white one. It's like a better, it's all like a better version of a round three.\"",
+  "bucket": "cut"
+ },
+ "considered|member|executor": {
+  "verdict": "untested",
+  "replaces": "Old Money",
+  "reason": "Silver lane's pick for Old Money's place: a follower whenever a member leaves a rival's cult. A/B on the smarter bots is running.",
+  "cory": "Like; could be +1 white instead.",
+  "bucket": "short"
+ },
+ "considered|member|night watchman": {
+  "verdict": "cut",
+  "reason": "Bots never bought it (0 of 40 games). Parked.",
+  "replaces": "Bodyguards",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|hoard breaker": {
+  "verdict": "cut",
+  "reason": "Rarely bought (6 of 40 games), so nothing could be read. Magenta steals are on hold.",
+  "replaces": "a Magenta member",
+  "cory": "Consideration for magenta, not a hard cut.",
+  "bucket": "consider"
+ },
+ "considered|member|poacher": {
+  "verdict": "cut",
+  "reason": "Bots almost never bought it (1 of 40 games). Parked.",
+  "replaces": "Kidnapper",
+  "cory": "Too expensive; retry a version, maybe once per game.",
+  "bucket": "short"
+ },
+ "considered|member|big finish": {
+  "verdict": "untested",
+  "reason": "Ahead in blind judging (+0.87) on too few matched games to count. Waiting on a rerun with the smarter bots.",
+  "replaces": "Wallflower",
+  "cory": "Absolutely not.",
+  "bucket": "cut"
+ },
+ "considered|member|cover band": {
+  "verdict": "untested",
+  "reason": "Ahead in blind judging (+0.46 to +0.58), but bots misplayed it in every pair, so it doesn't count yet.",
+  "replaces": "Wallflower",
+  "cory": "Maybe; consideration.",
+  "bucket": "consider"
+ },
+ "considered|member|turncoat": {
+  "verdict": "untested",
+  "reason": "A cheaper take on Turncoats, which was too strong. Built; no games yet.",
+  "replaces": "Deprogrammers",
+  "cory": "Kind of like; backfilling taken members is good; consider somehow.",
+  "bucket": "consider"
+ },
+ "considered|member|pickers": {
+  "verdict": "untested",
+  "reason": "Played but never judged; the lane stopped for the day.",
+  "replaces": "Trendsetters",
+  "cory": "Interesting; like buying from the bottom of the pile.",
+  "bucket": "consider"
+ },
+ "considered|member|last orders": {
+  "verdict": "untested",
+  "reason": "Built; no games yet.",
+  "replaces": "Closer",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|busybody": {
+  "verdict": "untested",
+  "reason": "Built; no games yet. Pays off Purple's skip spaces.",
+  "replaces": "Gossip",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|hostesses": {
+  "verdict": "cut",
+  "reason": "Paying 2 silver to each rival didn't beat the live Hostesses in blind judging (+0.12, needs +0.30).",
+  "replaces": "Hostesses",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|patronesses": {
+  "verdict": "cut",
+  "reason": "Stopped for the day with only 1 matched pair of games. Unproven.",
+  "replaces": "Debt Collectors",
+  "cory": "Interesting, but round end is way too strong.",
+  "bucket": "cut"
+ },
+ "considered|member|ragpicker": {
+  "verdict": "cut",
+  "reason": "Closed: bots never bought Patroness either, so the slot can't be read.",
+  "replaces": "Patroness",
+  "cory": "Don't like.",
+  "bucket": "cut"
+ },
+ "considered|member|shoplifter": {
+  "verdict": "cut",
+  "reason": "Stopped unproven: no matched games after one smarter-bot run.",
+  "replaces": "Shoplifter",
+  "cory": "Don't we already have a version of that?",
+  "bucket": "consider"
+ },
+ "considered|member|silver tongues": {
+  "verdict": "untested",
+  "reason": "Built; no games yet.",
+  "replaces": "Smooth Talkers",
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|socialites": {
+  "verdict": "cut",
+  "reason": "Socialites went live in High Society's place instead.",
+  "replaces": "Toastmaster",
+  "cory": "Short list; others can play around it.",
+  "bucket": "short"
+ },
+ "considered|member|meddler": {
+  "verdict": "watch",
+  "reason": "Meddler made once per round. Judged on the smarter bots; needs a hard-bot rerun before it can ship.",
+  "replaces": "Meddler"
+ },
+ "considered|member|setlist": {
+  "verdict": "untested",
+  "reason": "Trial re-queued on the hard bots; no result yet."
+ },
+ "considered|space|open house": {
+  "verdict": "watch",
+  "reason": "Beat Melting Pot in blind judging of bot games (+0.47, +0.81 with misplays dropped). Its balance trial is still playing.",
+  "replaces": "Melting Pot",
+  "cory": "Short list: \"That's cool. I like it. That's an interesting idea.\"",
+  "bucket": "short"
+ },
+ "live|space|help yourself": {
+  "cory": "Change to test: \"We should make help yourself a single rival, and then heist any rivals. Like, we should swap those. Why is help yourself so bad?\"",
+  "bucket": "consider"
+ },
+ "live|space|heist": {
+  "cory": "Change to test: \"heist and help yourself are so, like, these are the same thing ... make help yourself a single rival, and then heist any rivals.\"",
+  "bucket": "consider"
+ },
+ "live|space|promote": {
+  "cory": "Balance test: \"promote, I think, is relatively good and strong. Maybe we should make a note to balance test it, costing up to 3 more or something like that.\"",
+  "bucket": "consider"
+ },
+ "live|space|spree": {
+  "cory": "Balance test: \"I like spree. Honestly, we could even make this, like, maybe plus 6 blue. Like, it could be buffed a little bit.\"",
+  "bucket": "consider"
+ },
+ "live|space|melting pot": {
+  "cory": "Balance test: \"Let's just make this plus 2 resources per each different color you have, color member. And then we gotta figure out something clever for gray ... maybe ... gray doesn't count.\"",
+  "bucket": "consider"
+ },
+ "live|space|peek": {
+  "cory": "Balance test: \"+2, +4, +6. Should probably be +3, +4, +5 or something. But it seems weak ... I suspect bots aren't using it.\"",
+  "bucket": "consider"
+ },
+ "live|space|overtime": {
+  "cory": "Balance test: \"Maybe you should give a little more purple. Plus 1 minion this round is pretty good.\"",
+  "bucket": "consider"
+ },
+ "live|space|bury": {
+  "cory": "Watch list: \"I think we play around with the number there ... Maybe we just give it, like, resources equal to the non-wild cost or something. So, watch list for that one.\"",
+  "bucket": "consider"
+ },
+ "live|space|cover": {
+  "cory": "Watch list: \"I don't like cover, actually. Copy an action with no minion on it is so weird. Like, why wouldn't you just take that action? ... that one's on our watch list.\"",
+  "bucket": "consider"
+ },
+ "live|space|walk-in": {
+  "cory": "Watch list: \"walk-in's okay for now. This is the only thing in the game that comes down to, like, chance ... We keep that on our watch list.\"",
+  "bucket": "consider"
+ },
+ "live|space|lie low": {
+  "cory": "Watch list: \"I'm not loving it. I don't like this, like, giving you a passive for the round. This is, like, the only part that does it. So lie low might actually need to change.\"",
+  "bucket": "consider"
+ },
+ "live|space|housewarming": {
+  "cory": "Watch list: \"This leans on, like, red territory. I don't super love this, but... but maybe.\"",
+  "bucket": "consider"
+ },
+ "live|space|toast": {
+  "cory": "Watch list: \"Toast is good. I don't love it, honestly. And it seems a little weak in the hard bots.\"",
+  "bucket": "consider"
+ },
+ "live|space|largesse": {
+  "cory": "Watch list: \"Largesse is okay. A little too strong, it looks like.\"",
+  "bucket": "consider"
+ },
+ "live|space|crunch time": {
+  "cory": "Suspect the bots: \"this is a super strategic space, and so my suspicion is that, like, bots just don't know what the fuck they're doing when it comes to this.\"",
+  "bucket": "consider"
+ },
+ "live|space|hold up": {
+  "cory": "Fine as is: \"Hold up's good.\"",
+  "bucket": "short"
+ },
+ "live|space|initiation": {
+  "cory": "Fine as is: \"Initiation, yep.\"",
+  "bucket": "short"
+ },
+ "live|space|recruit twice": {
+  "cory": "Fine as is: \"good.\"",
+  "bucket": "short"
+ },
+ "live|space|cash in": {
+  "cory": "Fine as is: \"Cash in, good.\"",
+  "bucket": "short"
+ },
+ "live|space|makeover": {
+  "cory": "Fine as is: \"Makeover. Plus 4 yellow. Yeah.\"",
+  "bucket": "short"
+ },
+ "live|space|sample": {
+  "cory": "Fine as is: \"I do like sample, actually.\"",
+  "bucket": "short"
+ },
+ "live|space|last call": {
+  "cory": "Fine as is: \"This is pretty good. Surprised that it's 8 points over even.\"",
+  "bucket": "short"
+ },
+ "live|space|sleep in": {
+  "cory": "Fine as is: \"Yep. That's okay.\"",
+  "bucket": "short"
+ },
+ "live|space|demote": {
+  "cory": "Test: \"I like demote. Again, maybe it should be like three less, up to three less.\"",
+  "bucket": "consider"
+ },
+ "live|space|shake down": {
+  "cory": "Keep: \"I kind of like Shakedown, actually. ... I think maybe it should stay. Directly stealing a member is, like, pretty cool.\"",
+  "bucket": "short"
+ },
+ "live|space|gather": {
+  "cory": "Keep: \"I don't love it, but sure. ... Gather is maybe one of the better ones here on the cut list.\"",
+  "bucket": "consider"
+ },
+ "live|space|new blood": {
+  "cory": "Keep: \"That's pretty good. I like that.\"",
+  "bucket": "short"
+ },
+ "live|space|polish": {
+  "cory": "Keep: \"I like polish.\"",
+  "bucket": "short"
+ },
+ "live|space|sweet talk": {
+  "cory": "Keep: \"I like sweet talk.\"",
+  "bucket": "short"
+ },
+ "live|space|potluck": {
+  "cory": "Replace or reword: \"I don't like potluck, to be honest. And it does break a standing rule, so we should probably look for something else there.\"",
+  "bucket": "cut"
+ },
+ "live|space|stash": {
+  "cory": "Replace or reword: \"I don't like stash. There's too many, like, if you buy a member, get some followers. So stash is pretty bad.\"",
+  "bucket": "cut"
+ },
+ "live|space|leaders' tax": {
+  "cory": "Replace or reword: \"This is too complicated. How did this get a 15?\"",
+  "bucket": "cut"
+ },
+ "live|space|tryout": {
+  "cory": "Seems weak: \"This seems a little weak.\"",
+  "bucket": "consider"
+ },
+ "live|space|estate sale": {
+  "cory": "Seems weak: \"Seems weak.\"",
+  "bucket": "consider"
+ },
+ "live|space|harvest": {
+  "cory": "Seems weak: \"Seems weak.\"",
+  "bucket": "consider"
+ },
+ "live|space|right away": {
+  "cory": "Seems weak: \"Right away is a little weak.\"",
+  "bucket": "consider"
+ },
+ "live|space|savings": {
+  "cory": "Seems weak: \"What was this before? That's interesting. This seems pretty weak.\"",
+  "bucket": "consider"
+ },
+ "live|space|allowance": {
+  "cory": "No: \"Allowance. Yeah, I don't like this.\"",
+  "bucket": "cut"
+ },
+ "live|space|build up": {
+  "cory": "No: \"I don't like this either. But I'm okay with it. But yeah, I think defer to cutting. But if our other ones, like, are a little confusing or bad, we should bring it back as the default.\"",
+  "bucket": "consider"
+ },
+ "live|member|martyrs": {
+  "cory": "Okay, not the best.",
+  "bucket": "consider"
+ },
+ "live|member|bouncers": {
+  "cory": "Maybe; purple players would never buy it.",
+  "bucket": "consider"
+ },
+ "live|member|foster parents": {
+  "cory": "Okay, cool.",
+  "bucket": "short"
+ },
+ "live|member|godparent": {
+  "cory": "Cool.",
+  "bucket": "short"
+ },
+ "live|member|guest of honor": {
+  "cory": "Too similar to Godparent, too complicated.",
+  "bucket": "cut"
+ },
+ "live|member|spoilsport": {
+  "cory": "Like.",
+  "bucket": "short"
+ },
+ "live|member|big tent": {
+  "cory": "Interesting; want more conditions like this to mix and match.",
+  "bucket": "consider"
+ },
+ "live|member|body snatchers": {
+  "cory": "Good.",
+  "bucket": "short"
+ },
+ "live|member|courier": {
+  "cory": "Like a lot (purple engine).",
+  "bucket": "short"
+ },
+ "live|member|drifters": {
+  "cory": "Okay.",
+  "bucket": "consider"
+ },
+ "live|member|fan club": {
+  "cory": "Don't love it, too much copying; keep for now, short list for replacement.",
+  "bucket": "consider"
+ },
+ "live|member|party crasher": {
+  "cory": "Like.",
+  "bucket": "short"
+ },
+ "live|member|recluse": {
+  "cory": "Good.",
+  "bucket": "short"
+ },
+ "live|member|song request": {
+  "cory": "Too similar to Fan Club (too many copiers).",
+  "bucket": "cut"
+ },
+ "live|member|accomplice": {
+  "cory": "Like.",
+  "bucket": "short"
+ },
+ "live|member|anarchist": {
+  "cory": "Cool.",
+  "bucket": "short"
+ },
+ "live|member|closer": {
+  "cory": "Like; purple coming together nicely.",
+  "bucket": "short"
+ },
+ "live|member|doppelganger": {
+  "cory": "Great, should be top-ranked, maybe more expensive.",
+  "bucket": "short"
+ },
+ "live|member|encore": {
+  "cory": "Like; bots may misuse it; should cost 3 green + 2 any at least.",
+  "bucket": "short"
+ },
+ "live|member|gossip": {
+  "cory": "Like; too expensive, make it cheaper.",
+  "bucket": "short"
+ },
+ "live|member|loyalists": {
+  "cory": "Yep.",
+  "bucket": "short"
+ },
+ "live|member|magpie": {
+  "cory": "Good.",
+  "bucket": "short"
+ },
+ "live|member|mentor & protégés": {
+  "cory": "Like; count as 1 member not 3, rename to Mentor.",
+  "bucket": "short"
+ },
+ "live|member|panel": {
+  "cory": "Maybe On Use once per round; a little expensive.",
+  "bucket": "consider"
+ },
+ "live|member|patroness": {
+  "cory": "Like.",
+  "bucket": "short"
+ },
+ "live|member|shopaholics": {
+  "cory": "On the cut list for blue.",
+  "bucket": "cut"
+ },
+ "live|member|sore loser": {
+  "cory": "Confusing (most? ties? before contests?); like the spirit.",
+  "bucket": "consider"
+ },
+ "live|member|window dressers": {
+  "cory": "Like, maybe cheaper.",
+  "bucket": "short"
+ },
+ "live|member|alchemists": {
+  "cory": "Great.",
+  "bucket": "short"
+ },
+ "live|member|brokers": {
+  "cory": "Like.",
+  "bucket": "short"
+ },
+ "live|member|dabblers": {
+  "cory": "Fine; code or bots may handle it wrong; strong early with the yellow cloak?",
+  "bucket": "short"
+ },
+ "live|member|debt collectors": {
+  "cory": "Kind of counter; doesn't make much sense.",
+  "bucket": "consider"
+ },
+ "live|member|double agent": {
+  "cory": "Like.",
+  "bucket": "short"
+ },
+ "live|member|fence": {
+  "cory": "Cool; same as the cloak?",
+  "bucket": "short"
+ },
+ "live|member|gardeners": {
+  "cory": "On the cut list for yellow.",
+  "bucket": "cut"
+ },
+ "live|member|hot streak": {
+  "cory": "Love.",
+  "bucket": "short"
+ },
+ "live|member|impressionist": {
+  "cory": "All right.",
+  "bucket": "consider"
+ },
+ "live|member|night owls": {
+  "cory": "Too strong, needs a rework.",
+  "bucket": "consider"
+ },
+ "live|member|old maid": {
+  "cory": "Like; maybe rename to Ghost, worth 0 members.",
+  "bucket": "short"
+ },
+ "live|member|raiders": {
+  "cory": "Don't like, bottom of the list.",
+  "bucket": "cut"
+ },
+ "live|member|tourist": {
+  "cory": "Close to the cut list.",
+  "bucket": "consider"
+ },
+ "live|member|trendsetters": {
+  "cory": "Good (blue engine).",
+  "bucket": "short"
+ },
+ "live|member|agents": {
+  "cory": "Maybe cut, but something is needed there.",
+  "bucket": "consider"
+ },
+ "live|member|barker": {
+  "cory": "Like.",
+  "bucket": "short"
+ },
+ "live|member|cutpurse": {
+  "cory": "Don't like; cutting board.",
+  "bucket": "cut"
+ },
+ "live|member|extortionist": {
+  "cory": "Okay, stays for now; maybe a little cheaper.",
+  "bucket": "consider"
+ },
+ "live|member|high society": {
+  "cory": "Okay, probably a little too expensive.",
+  "bucket": "consider"
+ },
+ "live|member|impersonator": {
+  "cory": "Like; make it On Recruit only; open questions on color and re-recruiting.",
+  "bucket": "short"
+ },
+ "live|member|meddler": {
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "live|member|misers": {
+  "cory": "No; should be 1 follower per white, an alternative to buying followers.",
+  "bucket": "cut"
+ },
+ "live|member|mob": {
+  "cory": "No, win more; needs a rework, cut as is.",
+  "bucket": "cut"
+ },
+ "live|member|money changers": {
+  "cory": "Like it as the cloak; maybe as a member.",
+  "bucket": "consider"
+ },
+ "live|member|picket line": {
+  "cory": "Fine.",
+  "bucket": "short"
+ },
+ "live|member|roadie": {
+  "cory": "Really too strong; how wasn't this way better in testing?",
+  "bucket": "consider"
+ },
+ "live|member|smooth talkers": {
+  "cory": "Like; maybe a little cheaper.",
+  "bucket": "short"
+ },
+ "live|member|stunt double": {
+  "cory": "Like; a perfect green member.",
+  "bucket": "short"
+ },
+ "live|member|caravan": {
+  "cory": "Should be +1 of each color, held or not; maybe cheaper.",
+  "bucket": "consider"
+ },
+ "live|member|con men": {
+  "cory": "Great; a perfect neutral member.",
+  "bucket": "short"
+ },
+ "live|member|deprogrammers": {
+  "cory": "Don't like.",
+  "bucket": "cut"
+ },
+ "live|member|night watch": {
+  "cory": "Makes no sense: it's a token, minions don't go on it.",
+  "bucket": "cut"
+ },
+ "live|member|cheerleaders": {
+  "cory": "Yes; cheaper, and count as 3 to 4 members.",
+  "bucket": "short"
+ },
+ "live|member|grifter": {
+  "cory": "Too much win-now; cut and archive.",
+  "bucket": "cut"
+ },
+ "live|member|heiresses": {
+  "cory": "Really like; rated low is bonkers; leave it in.",
+  "bucket": "short"
+ },
+ "live|member|line cutters": {
+  "cory": "Fine.",
+  "bucket": "short"
+ },
+ "live|member|patriarch": {
+  "cory": "Quite good; people would vie for it.",
+  "bucket": "short"
+ },
+ "live|member|snobs": {
+  "cory": "Fine; maybe each color should have one.",
+  "bucket": "short"
+ },
+ "live|member|second-story man": {
+  "cory": "Like; just steal 2, maybe 3, a little cheaper; consider for the deck.",
+  "bucket": "short"
+ },
+ "live|member|debutantes": {
+  "cory": "Pretty good; maybe give rivals more silver.",
+  "bucket": "short"
+ },
+ "live|member|desperado": {
+  "cory": "Like; surprised the bots can't use it.",
+  "bucket": "short"
+ },
+ "live|member|creditor": {
+  "cory": "Absolutely no.",
+  "bucket": "cut"
+ },
+ "live|member|shoplifter": {
+  "cory": "Like; should stack into a steal engine.",
+  "bucket": "short"
+ },
+ "live|member|tribute band": {
+  "cory": "Should be in; a little expensive, make it 12.",
+  "bucket": "short"
+ },
+ "live|member|bodyguards": {
+  "cory": "On the fence.",
+  "bucket": "consider"
+ },
+ "live|member|doormen": {
+  "cory": "A little confusing; lean away.",
+  "bucket": "cut"
+ },
+ "live|member|early birds": {
+  "cory": "Can stay out; not very good.",
+  "bucket": "cut"
+ },
+ "live|member|proselytizers": {
+  "cory": "Like; anyone can grab it on a recruit spree.",
+  "bucket": "short"
+ },
+ "live|member|wallflower": {
+  "cory": "Interesting, maybe busted; short list for green.",
+  "bucket": "short"
+ },
+ "live|member|window shopper": {
+  "cory": "Like; maybe 3, a little pricier.",
+  "bucket": "short"
+ },
+ "live|member|hostesses": {
+  "cory": "Don't like.",
+  "bucket": "cut"
+ },
+ "live|member|jack-of-all-trades": {
+  "cory": "Unclear: what does \"in your full sets\" mean?",
+  "bucket": "consider"
+ },
+ "live|member|volunteer": {
+  "cory": "I do like it, but a valuable spot in the deck; probably not.",
+  "bucket": "consider"
+ },
+ "live|member|toastmaster": {
+  "cory": "Could be good; consideration pile for silver.",
+  "bucket": "consider"
+ },
+ "live|member|extra hand": {
+  "cory": "Great; should be in grey for sure; maybe make it 8.",
+  "bucket": "short"
+ },
+ "live|member|regular": {
+  "cory": "Do not like.",
+  "bucket": "cut"
+ },
+ "live|member|old money": {
+  "cory": "Maybe, I don't know.",
+  "bucket": "consider"
+ },
+ "live|member|critic": {
+  "cory": "Don't like it.",
+  "bucket": "cut"
+ },
+ "live|member|victors": {
+  "cory": "Maybe; the plural name is easy to change.",
+  "bucket": "consider"
+ },
+ "live|member|seamstress": {
+  "cory": "Kind of like it; short list for yellow.",
+  "bucket": "short"
+ },
+ "live|member|kidnapper": {
+  "cory": "Like it; short list for magenta.",
+  "bucket": "short"
+ },
+ "live|member|hawker": {
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|set list": {
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|moonlighters": {
+  "cory": "WAY too strong.",
+  "bucket": "cut"
+ },
+ "considered|member|evangelists": {
+  "cory": "No; cut pile.",
+  "bucket": "cut"
+ },
+ "considered|member|zealots": {
+  "cory": "No; cut pile.",
+  "bucket": "cut"
+ }
+}

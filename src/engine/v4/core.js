@@ -1,0 +1,3277 @@
+import { ECON, RICH_UP, shiftCosts, richUp, econSet } from './content/price.js';
+import { grantDiscount } from './discount.js';
+import { plainCopy, stateCopy } from './copy.js';
+// Patrons v4 engine. Pure and deterministic: state in, move in, state out.
+// Everything runs through a task queue. When a task needs a decision, the engine stops and publishes
+// state.pending = { player, kind, prompt, options:[{ id, label, kind, ... }] }. A move is { player, option }.
+import { quadrant, defById, handlerById, defaultQuadrants, guestMembers, allGuests, MAX_PLAYERS, spacesOf } from './content/index.js';
+import { testDealt } from './content/testset.js';
+import { shuffleInPlace } from './rng.js';
+import { discardOf, toDiscard, deckReady, takeFromDiscard, offPileKey } from './discard.js';
+import { CUT, CUT10, FULL_DECK } from './content/cull.js';
+import { pileRules } from './piles.js';
+import { startEffects, stopEffects, abandonEffects, underCause, markEffect, inPhase } from './effects.js';
+import { REPLACE4 } from './content/replace4.js';
+import { REPLACE6 } from './content/replace6.js';
+import { REPLACE9 } from './content/replace9.js';
+import { REPLACE7 } from './content/replace7.js';
+import { REPLACE10 } from './content/replace10.js';
+import { isNewColor, setsOf } from './content/yellow.js';
+import { loanDue } from './content/trading.js';
+// PIN="purple.crew,purple.daylaborers" (test-only, for A/B sheet games; Lab, Nov 4, director's change 10): any listed
+// member in the game goes to the top of the deck when its deck round starts, so it shows in that round's shop. Listing
+// the old and the new card gives both sides of a trial the same setting. Off unless set; balance trials never set it.
+const PIN = (globalThis.process?.env?.PIN || '').split(',').map(x => x.trim()).filter(Boolean);
+function pinToTop(state) {
+  if (!PIN.length) return;
+  const hit = state.pile.filter(u => PIN.includes(state.cards[u].def));
+  if (!hit.length) return;
+  state.pile = [...hit, ...state.pile.filter(u => !hit.includes(u))];
+}
+
+// PRIZES=a,b,c: bot games only (economy test, Cory Nov 7: "yes you can adjust follower price etc.")
+export const RING_VALUE = ECON.prizes || [4, 6, 10];
+export const WORKERS = [3, 4, 5];
+export const SHOP_SIZE = 8;
+/** Face-up members by round: 6 in round I (and setup), 7 in round II, 8 in round III (Cory, 2026-10-22). SHOP_SIZE is the most. */
+export const shopSize = state => (state.round <= 1 ? 6 : state.round === 2 ? 7 : SHOP_SIZE);
+// Any colors, no stock limit. The three rounds remain the game clock.
+export const TIERS = [
+  { key: 'small', cost: 1, get: 1, colors: 1, label: '1 of anything' },
+  // FOL_MID / FOL_TOP: bot games only (economy test): followers the 5 and 10 buys give; 1 for 1 always stays (Cory, Nov 7: "always keep 1 for 1 i find that essential")
+  { key: 'mid', cost: 5, get: ECON.folMid ?? 5, colors: 1, label: '5 of anything' },
+  { key: 'top', cost: 10, get: ECON.folTop ?? 10, colors: 1, label: '10 of anything' },
+];
+/** How many buys of a limited tier are left (Infinity for unlimited tiers). */
+export const tierLeft = (state, tier) => (tier.limited ? state.stock?.[tier.key] ?? 0 : Infinity);
+const LOG_MAX = 300;
+// Rule flags a table can toggle (sims flip them). release: once per round, on your turn, release one of your
+// members (it goes to the bottom of the pile) for its colored part in its own color (not one recruited this round). guests: rule-bending guest
+// members join the deck.
+// testSet: the Test version's cards (content/testset.js) are the game since Nov 11 (Cory: "we can drop the Live/Test
+// setting. we are committing to the test version"); an old save keeps the rules it was dealt with
+export const DEFAULT_RULES = { release: false, guests: true, cull: true, artifacts: true, roundDecks: 2, swapCard: false, testSet: true };
+/** Round decks (Cory, 2026-10-25): one deck, but round II and round III members wait out of it and are shuffled in
+ *  when their round starts. A member's round is its `round`, else its printed cost (ROUND_CUTOFFS). rules.roundDecks: 3 batches, 2 folds round III into round II, 0 is off.
+ *  Default 2 (Cory, 2026-10-27: "round 1 deck one, round 2 and 3 all three decks"). */
+/** Round cutoffs by printed cost (Cory, 2026-10-25: "3 or less / 4 / 5 and up"): the most a round I, then round II,
+ *  member costs; anything pricier joins in round III. */
+// Round I is up to 5 as a player sees it since every member +1 (Cory, Nov 5 10:22pm UTC: "with the price increase, we should move it to 5"): printed 3 plus the 2 every member adds, so the cutoffs stay
+export const ROUND_CUTOFFS = ECON.r1 != null ? [ECON.r1, Math.max(ECON.r1, 4)] : [3, 4];
+/** Members that join in another round than their cost says (Cory, 2026-10-25: Impostors and Doppelganger, round III). */
+export const ROUND_OF = { 'echo.impostor': 3, 'echo.doppel': 3 };
+// (by the cost before the +1 wild every member pays, content/index.js EXTRA_WILD, so no member changes round)
+// (and before the Richer setting's 2: round decks go by the printed price, so Richer keeps every member in its round;
+// Nov 9, Richer dealt only the 2 members pinned to round I)
+const baseCost = def => def.s + def.w - (def.extraWild || 0) - (def.extraColor || 0) - (def.richUp || 0);
+export const memberRound = def => def.round ?? ROUND_OF[def.id] ?? (baseCost(def) <= ROUND_CUTOFFS[0] ? 1 : baseCost(def) <= ROUND_CUTOFFS[1] ? 2 : 3);
+/** The round a member joins the deck in this game (1 when it starts in the deck). */
+export const joinsRound = (state, def) => (!state.rules?.roundDecks ? 1 : Math.min(memberRound(def), state.rules.roundDecks));
+/** Artifacts (Cory, 2026-10-24): each color on the table has one, picked at game start with 1 of its color. Ability
+ *  only: not a member, worth no followers, never swapped, stolen or sent to the pile. Each is a live member's ability;
+ *  that member leaves its color's deck. Which card is each color's artifact is Claude's pick until Cory says. */
+export const ARTIFACTS = {
+  gold: 'gold.prospector', red: 'red.recruiter', echo: 'echo.tuningfork', market: 'market.bargainbin', thieves: 'thieves.fence',
+  purple: 'purple.pocketwatch', silver: 'silver.caterer', yellow: 'yellow.guestbook', trading: 'trading.changer',
+};
+
+// ---------- creation ----------
+
+/**
+ * @param {{ seats: { name?: string, kind?: 'human'|'bot' }[], seed?: number, quadrants?: string[], rules?: object }} opts
+ */
+export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
+  if (!Array.isArray(seats) || seats.length < 2 || seats.length > MAX_PLAYERS) throw new Error(`Patrons needs 2 to ${MAX_PLAYERS} seats.`);
+  // as many spheres as players by default (Cory, 2026-10-15); a test or a sim may still pass any table of 2 to 6
+  if (!quadrants) quadrants = defaultQuadrants(seats.length);
+  if (!Array.isArray(quadrants) || quadrants.length < 2 || quadrants.length > MAX_PLAYERS) throw new Error(`A table has 2 to ${MAX_PLAYERS} spheres.`);
+  const resources = quadrants.map(q => quadrant(q).resource);
+  const zero = Object.fromEntries(resources.map(r => [r, 0]));
+  const cards = {};
+  let uid = 0;
+  const table = { ...DEFAULT_RULES, ...(FULL_DECK.tests ? { cull: false, artifacts: false, roundDecks: 0, testSet: false } : {}), ...rules }; // tests: content/cull.js (artifacts too: a test asks for them; the Test version's members too: testset.test.js and plus1-once.test.js ask for it)
+  // The shop (Cory, 2026-11-01: "anything we update needs to go to all the different types of the game"): rules.shop is
+  // 'deck' (the shop as it is: one shuffled deck, the default), 'grey' (the grey core as piles anyone can buy several
+  // of; the rest of the shop as now) or 'all' (every member a pile, ten piles a game; the rest face down as the deck, no face-up row). piles.js builds it.
+  if (table.shop && table.shop !== 'deck' && !table.piles) Object.assign(table, pileRules(table.shop, quadrants, seed, table.deck === 10 ? 10 : 15));
+  const artifactIds = new Set(table.artifacts ? quadrants.map(q => ARTIFACTS[q]).filter(Boolean) : []);
+  const dealt = def => testDealt(table, def) ?? (!(table.cull && (CUT.has(def.id) || (table.deck === 10 && CUT10.has(def.id)))) && !artifactIds.has(def.id) && !def.artifact && !def.retired); // the cull (content/cull.js); artifacts (an artifact-only card is never dealt)
+  // Piles (experiment, branch only; Cory, 2026-11-01): rules.piles = { defs: [member ids], copies: n, only: bool } deals
+  // each listed member as a face-up pile of n copies anyone can recruit from, Dominion-style. only: the piles are the
+  // whole market (no shuffled deck). See src/engine/v4/piles.js.
+  const pileDefs = table.piles ? new Set(table.piles.defs) : null;
+  // only + deck (all piles): the members not dealt as piles stay face down as the deck, with no face-up row
+  const inDeck = def => dealt(def) && !(pileDefs && (pileDefs.has(def.id) || (table.piles.only && !table.piles.deck)));
+  for (const q of quadrants) for (const def of quadrant(q).members.filter(inDeck))
+    for (let k = 0; k < def.copies; k++) { cards[uid] = { uid, def: def.id }; uid++; }
+  if (table.guests) for (const def of (table.testSet ? allGuests() : guestMembers()).filter(inDeck)) // the test version deals its candidate guest too (content/testset.js)
+    for (let k = 0; k < def.copies; k++) { cards[uid] = { uid, def: def.id }; uid++; }
+  const supply = pileDefs ? {} : null;
+  if (pileDefs) for (const id of table.piles.defs) {
+    defById(id);
+    supply[id] = [];
+    for (let k = 0; k < (table.piles.copies || 4); k++) { cards[uid] = { uid, def: id }; supply[id].push(uid); uid++; }
+  }
+  // each color's artifact is a card of its own, held by nobody until the starting pick
+  const artifacts = {};
+  if (table.artifacts) for (const q of quadrants) if (ARTIFACTS[q]) { cards[uid] = { uid, def: ARTIFACTS[q] }; artifacts[q] = uid; uid++; }
+  const state = {
+    v: 4, seed: seed >>> 0, rng: seed >>> 0, quadrants: [...quadrants], resources, rules: table,
+    players: seats.map((s, i) => ({
+      id: i, name: s.name || `P${i + 1}`, kind: s.kind || 'human', ...(s.emoji ? { emoji: String(s.emoji) } : {}), // emoji: the player's pick (display only)
+      res: { ...zero }, bonus: 0, contest: 0, bought: 0, members: [], discount: 0, left: 0, turnRecruits: 0, final: null,
+    })),
+    cards, pile: Object.keys(cards).map(Number).filter(u => !Object.values(artifacts).includes(u) && !(supply && supply[cards[u].def])), shop: [], discard: [], artifacts, waiting: {},
+    ...(supply ? { supply } : {}),
+    round: 0, slots: {}, squats: {}, order: [], turnIndex: 0, current: null,
+    recruits: 0, stock: Object.fromEntries(TIERS.filter(t => t.limited).map(t => [t.key, t.stock(seats.length)])),
+    // contests: each round's scoring as the engine decided it (see contestTable); turns: who has taken a turn this round
+    contests: [], turns: [],
+    queue: [], pending: null, log: [], moves: 0, over: false, ranking: null,
+  };
+  // later rounds' members wait out of the deck (round decks)
+  for (const u of [...state.pile]) {
+    const r = joinsRound(state, cardDef(state, u));
+    if (r > 1) { (state.waiting[r] ||= []).push(u); state.pile.splice(state.pile.indexOf(u), 1); }
+  }
+  shuffleInPlace(state, state.pile);
+  pinToTop(state);
+  refill(state);
+  // Round I's turn order is drawn now, before the starting picks, and the picks run in it (Cory, 2026-10-15: "it had us
+  // pick resources THEN it randomized the order???"). Everyone is tied at round I, so it's random (Cory, 2026-10-14);
+  // nothing between here and round I draws from the rng, so a seed deals the same order it always did.
+  state.firstOrder = shuffleInPlace(state, state.players.map(p => p.id));
+  state.startPool = [...state.quadrants];
+  for (const id of [...state.firstOrder].reverse()) state.queue.push({ t: 'setupPick', p: id });
+  state.queue.push({ t: 'round', r: 1 });
+  log(state, `Round I's turn order: ${state.firstOrder.map(id => state.players[id].name).join(', ')}. Draft 1 resource each in reverse order; each color can be taken once.`);
+  advance(state);
+  return state;
+}
+
+// ---------- public API ----------
+
+export function legalMoves(state) {
+  if (!state.pending) return [];
+  const out = state.pending.options.map(o => ({ player: state.pending.player, option: o.id }));
+  for (const a of state.pending.also || []) for (const o of a.options) out.push({ player: a.player, option: o.id });
+  return out;
+}
+
+/** The ask a player answers now: the pending decision, or their part of a choice everyone answers at once (also). */
+export function askFor(state, player) {
+  const pd = state?.pending;
+  if (!pd) return null;
+  if (pd.player === player) return pd;
+  return (pd.also || []).find(a => a.player === player) || null;
+}
+
+export function isLegal(state, move) {
+  const ask = move && askFor(state, move.player);
+  return !!(ask && ask.options.some(o => o.id === move.option));
+}
+
+// ---------- several answers to one question in one move (Cory, Nov 13) ----------
+// "they have to stop to make a decision for each resource selection ... they should make that decision all at once":
+// a question asked again and again (Harvest's "+1 of which color? (3 to pick)", Exchange's turn-ins, Sweet Talk's
+// silver, Party Gifts' silver to rivals) takes its whole answer as one move, { player, option, then: [ids…] }: the
+// option first, then each id in turn, every one legal when its turn comes, all the same player's same question.
+// Steals stay one at a time (Cory, Nov 13: "for stealing it should still be one at a time"): a run whose pick
+// steals is refused. It plays exactly as the moves one by one (the same states, the same move count), so records
+// and replays keep one entry per pick (record.js step); the table gets one step with the run's effects summed.
+let STEALS = 0; // steals made (ctx.steal), so a run can refuse one
+const sameAsk = (a, b) => !!(a && b && a.t === b.t && a.p === b.p && (a.t === 'release' || (a.t === 'choose' && a.h === b.h)));
+const stealsAsk = st => (st.pending?.options || []).some(o => o.kind === 'take');
+/** Can the question p answers now take several answers at once (a run)? Not a steal, and a choice of the kind that
+ *  asks again (a counted pick, the release's colors). The engine still checks each pick of a run as it comes. */
+export function runnable(state, player = state?.pending?.player) {
+  const t = state?.queue?.[0];
+  return !!(t && state.pending && state.pending.player === player && t.p === player && !state.pending.also
+    && (t.t === 'release' || t.t === 'choose') && !stealsAsk(state));
+}
+/** How many times in a row p would be asked this same question picking the engine's suggested answer each time
+ *  (the best hint that isn't Done), up to `cap`: 1 for a question asked once, 0 when it can't take a run. */
+export function runLength(state, cap = 24) {
+  if (!runnable(state)) return 0;
+  let s = state, n = 0;
+  try {
+    while (n < cap && s.pending && sameAsk(state.queue[0], s.queue[0])) {
+      const opts = s.pending.options.filter(o => o.kind !== 'done' && o.kind !== 'pass' && o.kind !== 'back');
+      if (!opts.length) break;
+      const o = [...opts].sort((a, b) => (b.hint || 0) - (a.hint || 0))[0];
+      const before = STEALS;
+      s = applyOne(s, { player: state.pending.player, option: o.id });
+      if (STEALS !== before) return 0;
+      n += 1;
+    }
+  } catch { return Math.max(1, n); }
+  return Math.max(1, n);
+}
+// one pick's gains (a stack, a follower count, a coin paid from your stack) summed into one flight each, as foldPicks
+// on the table does for picks sent one by one; anything else is kept in order
+function mergeRun(lists) {
+  const all = lists.flat();
+  const simple = e => e.to && ((e.type === 'gain' && e.to.kind === 'stack') || (e.type === 'pay' && e.from && e.from.kind === 'stack') || (e.type === 'followers' && e.to.kind === 'count'));
+  if (!all.length || !all.every(simple)) return all.map((e, n) => ({ ...e, n }));
+  const cause = all[0].cause, gets = new Map();
+  for (const e of all) {
+    const key = `${e.type}:${e.from && e.from.kind}:${e.from && (e.from.key ?? e.from.pid)}:${e.from && e.from.r}>${e.to.kind}:${e.to.key ?? e.to.pid}:${e.to.r}`;
+    const had = gets.get(key);
+    gets.set(key, had ? { ...had, what: { ...had.what, n: had.what.n + e.what.n } } : { ...e, cause });
+  }
+  return [...gets.values()].map((e, n) => ({ ...e, n }));
+}
+function applyRun(prev, move, opts) {
+  const ids = [move.option, ...move.then];
+  let s = prev;
+  const lists = [];
+  for (let k = 0; k < ids.length; k++) {
+    const one = { player: move.player, option: ids[k] };
+    if (k > 0 && !sameAsk(prev.queue[0], s.queue[0])) throw new Error(`Illegal move: answer ${k + 1} of ${JSON.stringify(move)} has no question left to answer`);
+    if (!runnable(s, move.player)) throw new Error(`Illegal move: ${JSON.stringify(move)} answers a question that takes one answer at a time`);
+    const before = STEALS;
+    s = applyOne(s, one, opts);
+    if (STEALS !== before) throw new Error(`Illegal move: ${JSON.stringify(move)}: steals go one at a time`);
+    if (opts.effects) lists.push(s.effects || []);
+  }
+  if (opts.effects) Object.defineProperty(s, 'effects', { value: mergeRun(lists), enumerable: false, configurable: true, writable: true });
+  return s;
+}
+
+/**
+ * A run that may be cut by another question partway (an AI player's all-at-once answer to Out of Style whose first pick
+ * is a grey member: "+1 of which color?" comes up before the next pick). Plays the picks while each answers the run's
+ * question and stops where another question comes up for the same player. Returns { state, played, rest, why }: rest
+ * are the picks still to play once that question is answered (the caller keeps them), why says what stopped it. Steals
+ * still go one at a time (throws), and a pick that isn't on offer throws as applyMove does.
+ */
+export function applyRunUntil(prev, move, opts = {}) {
+  const ids = [move.option, ...(Array.isArray(move.then) ? move.then : [])];
+  const ask = prev.queue[0];
+  let s = prev, played = 0;
+  const lists = [];
+  for (; played < ids.length; played++) {
+    if (played > 0 && !sameAsk(ask, s.queue[0])) {
+      const other = s.pending && s.pending.player === move.player ? s.pending.prompt : null;
+      if (opts.effects) Object.defineProperty(s, 'effects', { value: mergeRun(lists), enumerable: false, configurable: true, writable: true });
+      return { state: s, played, rest: ids.slice(played), why: other ? `another question came up first: ${other}` : 'the question is over' };
+    }
+    if (!runnable(s, move.player)) throw new Error(`Illegal move: ${JSON.stringify(move)} answers a question that takes one answer at a time`);
+    const before = STEALS;
+    s = applyOne(s, { player: move.player, option: ids[played] }, opts);
+    if (STEALS !== before) throw new Error(`Illegal move: ${JSON.stringify(move)}: steals go one at a time`);
+    if (opts.effects) lists.push(s.effects || []);
+  }
+  if (opts.effects) Object.defineProperty(s, 'effects', { value: mergeRun(lists), enumerable: false, configurable: true, writable: true });
+  return { state: s, played, rest: [], why: '' };
+}
+/** The question a run answers, as a key (its task kind and handler), so a caller holding leftover picks can tell when it's back. */
+export const askKey = state => { const t = state?.queue?.[0]; return t ? `${t.t}|${t.h || ''}|${t.p}` : ''; };
+
+/** Returns a new state. Throws on an illegal move. A move with `then` answers the same question several times (applyRun). */
+export function applyMove(prev, move, opts = {}) {
+  if (Array.isArray(move?.then) && move.then.length) return applyRun(prev, move, opts);
+  return applyOne(prev, move, opts);
+}
+function applyOne(prev, move, { effects = false } = {}) {
+  if (!isLegal(prev, move)) throw new Error(`Illegal move: ${JSON.stringify(move)}`);
+  const state = stateCopy(prev); // the scored rounds and Green's snapshots shared (copy.js)
+  // a choice answered at the same time (also): whoever answers first, their own task resolves
+  const at = move.player === prev.pending.player ? 0 : state.queue.findIndex(t => t.t === 'choose' && t.together && t.together === state.queue[0].together && t.p === move.player);
+  const task = state.queue.splice(Math.max(0, at), 1)[0];
+  state.pending = null;
+  state.moves += 1;
+  // effects (effects.js): what moved and why, for the table to play back; recorded only when asked (the play session)
+  if (effects) startEffects(state, moveCause(state, task, move), { followers, worth: valueOf, minions: minionsThisRound });
+  try {
+    accounted(state, causeOf(state, task), () => resolveTask(state, task, move.option), task.p);
+    clearFresh(state);
+    advance(state);
+    wipeUnowned(state);
+  } catch (err) { if (effects) abandonEffects(); throw err; }
+  if (effects) Object.defineProperty(state, 'effects', { value: stopEffects(), enumerable: false, configurable: true, writable: true });
+  return state;
+}
+// A card in the pile or the shop belongs to nobody, so it carries nothing from a member's life: every way back there
+// (release, bury, swaps, Tryout running a shop member's On Recruit in place) ends clean, checked once per move here.
+function wipeUnowned(state) {
+  if (state.supply) refillPiles(state);
+  for (const u of [...state.pile, ...discardOf(state), ...state.shop, ...Object.values(state.supply || {}).flat()]) {
+    const c = state.cards[u];
+    if (Object.keys(c).length > 2) wipeCard(state, u); // a used once-per-game member stays used (wipeCard)
+  }
+}
+function moveCause(state, task, move) {
+  const o = String(move.option);
+  if (task.t === 'setupPick' && o.startsWith('color:')) return { kind: 'setup', pid: task.p, qid: o.slice(6) };
+  if (o.startsWith('use:')) { const uid = Number(o.slice(4)); return { kind: 'member', pid: task.p, uid, def: state.cards[uid] ? state.cards[uid].def : null }; }
+  return { kind: 'move', pid: task.p, option: o };
+}
+
+/**
+ * Runs queued tasks until the next decision (or game over). For tools and tests that edit a state
+ * directly and need the engine to pick up from there. Mutates and returns the state.
+ */
+export function resume(state) {
+  state.pending = null;
+  advance(state);
+  wipeUnowned(state);
+  return state;
+}
+
+// ---------- derived values (also used by the UI) ----------
+
+// A Doppelganger becomes a copy of the member card it copies: its follower value and member count too.
+const valueOf = card => (card.copy ? Math.max(defById(card.def).f, defById(card.copy).f) : defById(card.def).f) + (card.time || 0); // + Lifers' time tokens
+// Bait can debit printed followers through a signed adjustment; a later member transfer cannot make the score negative.
+export const followers = (state, p) => Math.max(0, 1 + p.bonus + p.members.reduce((s, u) => s + valueOf(state.cards[u]), 0));
+// Printed followers also count as members; explicit member counts (Revelers) still apply.
+// Bonus followers never enter this value, and a copied card counts its effective printed value.
+// a member counts as its printed member count only (Cory, 2026-10-29: "every member is a follower. Not every follower is a member")
+const printedMembers = def => def.n ?? 1;
+const countOf = card => Math.max(printedMembers(defById(card.def)), card.copy ? printedMembers(defById(card.copy)) : 0);
+export const memberWeight = (state, uid) => countOf(state.cards[uid]);
+// Ascetics (idea pipeline pool 7, candidates only): "Your other members count as 0 members." While p holds one, only
+// members carrying the flag count (each as itself).
+const asceticOnly = (state, p) => holdsId(state, p, 'trading.ascetics', 'othersZero');
+/** A cheap test for one candidate's flag (hot paths): its id on a card, or a copy or ability of it. */
+function holdsId(state, p, id, flag) {
+  return p.members.some(u => { const c = state.cards[u]; return (c.def === id || c.copy === id || c.ability === id) && effectiveDefs(c).some(d => d[flag] && d.pool); });
+}
+const counted = (state, p) => (asceticOnly(state, p) ? p.members.filter(u => effectiveDefs(state.cards[u]).some(d => d.othersZero && d.pool)) : p.members);
+export const memberCount = (state, p) => counted(state, p).reduce((s, u) => s + countOf(state.cards[u]), 0);
+/** Mannequin (live since Nov 5, Hawker's place): "Blue members in the shop count as your members when contests are scored." */
+const contestMembers = (state, p) => {
+  const n = memberCount(state, p);
+  if (!p.members.some(u => state.cards[u].def === 'market.mannequin' || state.cards[u].copy === 'market.mannequin')) return n;
+  return n + state.shop.filter(u => defById(state.cards[u].def).quadrant === 'market').reduce((s, u) => s + countOf(state.cards[u]), 0);
+};
+// Dabblers (everyColor) counts for every color on the table (Cory, 2026-10-28)
+// { wild: false } leaves Dabblers out, for a card where counting it would hurt its owner (Big Tent's "exactly one")
+// { cards: true } counts member cards, one each, whatever they count as
+// Painted Faces (idea pipeline pool 11, bot games only: flag allAlsoYellow): "Each of your members is also yellow."
+const paintedFaces = (state, p) => p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.allAlsoYellow));
+// Assimilators (Cory, Nov 12: "assimilators is cool"): "Your grey members count as members of your biggest color."
+// Biggest color: the color (not grey) with the most of its members, counted as the table counts it; a tie counts the
+// greys in each tied color (the best reading for the player, Cory Nov 4). With no colored member, greys stay grey.
+const assimilates = (state, p) => p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.greyToBiggest));
+const countOne = (state, p, q, opts) => countOfColor(state, p, q, opts, q === 'yellow' && state.quadrants.includes(q) && paintedFaces(state, p));
+/** The colors among p's members, grey included (Cory, Nov 13: "Grey is a color… it should count for everything as a
+ *  color"): the table's colors with a member of p's, plus 'guest' when p has a grey member. */
+// Dabblers is a grey card but counts as every table color, never as grey too (Cory, Nov 7: "I think just counts as one").
+const greyColor = (state, p) => countMembersOfColor(state, p, 'guest', { cards: true, wild: false })
+  - counted(state, p).filter(u => !state.cards[u].asColor && defById(state.cards[u].def).quadrant === 'guest' && countsAsEveryColor(state, u)).length > 0;
+export const memberColorsWithGrey = (state, p, opts) => [...state.quadrants.filter(q => countMembersOfColor(state, p, q, opts) > 0), ...(greyColor(state, p) ? ['guest'] : [])];
+export const countMembersOfColor = (state, p, q, opts) => {
+  const n = countOne(state, p, q, opts);
+  if (!assimilates(state, p)) return n;
+  const big = Math.max(0, ...state.quadrants.map(c => countOne(state, p, c, opts)));
+  if (!big) return n;
+  if (q === 'guest') return 0;
+  return state.quadrants.includes(q) && n === big ? n + countOne(state, p, 'guest', opts) : n;
+};
+const countOfColor = (state, p, q, { wild = true, cards = false } = {}, painted = false) => counted(state, p).reduce((s, u) => {
+  const c = state.cards[u], every = wild && effectiveDefs(c).some(d => d.everyColor) && q !== 'guest' && state.quadrants.includes(q);
+  // Drifters counts as the one color its owner chose when recruiting it (card.asColor; Cory, 2026-10-31)
+  // cards: one each, but Dabblers keeps its 2 in every color count, Most red members too (Cory, Nov 4 11:07am: "It
+  // always works in the best possible interpretation for the player. Why would it be 1 for Most red members??")
+  return s + ((c.asColor || defById(c.def).quadrant) === q || every || painted ? (cards && !every ? 1 : countOf(c)) : 0);
+}, 0);
+/** Dabblers (or a card copying it): counts as every color on the table. */
+export const countsAsEveryColor = (state, uid) => effectiveDefs(state.cards[uid]).some(d => d.everyColor);
+// Artifacts are worn as cloaks and named for their color (Cory, 2026-11-01: "just call them Red Cloak"): the card
+// keeps its rules and its id; only the name a player reads changes, and only for a card picked as an artifact here.
+const cloaked = new Map();
+/** A color's cloak, by name ("Red Cloak"). */
+export const cloakName = q => `${quadrant(q).name} Cloak`;
+const cloakDef = (d, q) => {
+  const k = `${d.id}|${q}`;
+  if (!cloaked.has(k)) cloaked.set(k, Object.freeze({ ...d, name: cloakName(q), cardName: d.name }));
+  return cloaked.get(k);
+};
+export const cardDef = (state, uid) => {
+  const d = defById(state.cards[uid].def), arts = state.artifacts;
+  if (arts) for (const q in arts) if (arts[q] === uid) return cloakDef(d, q);
+  const e = econSet(state);
+  return e ? richDef(d, e) : d;
+};
+/** The "Richer board, pricier members" setting (rules.econ 'rich'; Cory, Nov 7 economy test, the judges' pick; today's
+ *  prices stay the default): every member costs 1 more of its color and 1 more of any (grey: 2 more of any), and every
+ *  space gives 1 more of its color (gain, below). Every named cost moves up the same 2 (Cory, Nov 9; content/price.js). */
+export const RICH = Object.freeze({ color: 1, any: 1, grey: 2, space: 1 });
+if (RICH.color + RICH.any !== RICH_UP || RICH.grey !== RICH_UP) throw new Error('Richer: every member must cost RICH_UP more, so named costs move with it');
+// e: the table's price setting (price.js ECON_SETS: Richer, or +1 any); one cache per setting
+const richDefs = new Map();
+function richDef(d, e) {
+  if (!richDefs.has(e)) richDefs.set(e, new WeakMap());
+  const cache = richDefs.get(e);
+  let r = cache.get(d);
+  if (!r) {
+    const grey = d.quadrant === 'guest' || d.quadrant === 'benders';
+    // its own words move every named cost too (content/price.js richText; Cory, Nov 9)
+    const text = shiftCosts(d.text, e.up);
+    r = grey ? { ...d, text, w: (d.w || 0) + e.grey, richUp: e.grey } : { ...d, text, s: (d.s || 0) + e.color, w: (d.w || 0) + e.any, richUp: e.color + e.any };
+    cache.set(d, r);
+  }
+  return r;
+}
+export { spacesOf }; // content/index.js
+export function actionAt(state, q, i) { return spacesOf(state, state.quadrants[q])[i]; }
+/** A space is open from its ring's round on, and shuts after its lastRound if it has one (Overtime: rounds I–II only, Cory 2026-10-15). */
+export const spaceOpen = (a, round) => a.ring <= round && !(a.lastRound && round > a.lastRound);
+/** Protesters (idea pipeline pool 7, candidates only): "Nobody can place there this round." state.protest is set
+ *  only by that candidate. */
+const protested = (state, key) => !!(state.protest && state.protest.round === state.round && state.protest.keys.includes(key));
+export function openSlots(state) {
+  const out = [];
+  state.quadrants.forEach((qid, q) => spacesOf(state, qid).forEach((a, i) => {
+    if (spaceOpen(a, state.round) && state.slots[`${q}-${i}`] === undefined) out.push([q, i]);
+  }));
+  return out;
+}
+
+// ---------- the price of a member: one rule for every recruit ----------
+// A member's colored part is paid in its quadrant's resource. Some sphere drafts still relabel
+// def.quadrant to a color name, so a bare color is accepted too.
+const colorOf = def => { try { return quadrant(def.quadrant).resource; } catch { return def.quadrant; } };
+// The colored part may be paid in any colors when the member's color isn't on the table, or when one of your
+// members says so (Freelancer: flag anyColorPart).
+const colorPartFree = (state, p, def) => !state.resources.includes(colorOf(def)) || sumMemberFlag(state, p, 'anyColorPart') > 0;
+/**
+ * What p owes for a member, in units: { q, colored, total, worth }. q is the colored part's resource (null when no
+ * colored part is owed), colored the units of q owed, total the units owed in all, worth(c) what one coin of c pays.
+ * Discounts (Intro Offer and the like, p.discount) and cost reductions (Sponsor) come off the colored part first
+ * (Cory: you choose where a discount comes off; the colored part first is always at least as good). Gold you spend
+ * counts double with Penny Pincher (flag goldPaysDouble), toward either part. how.anyColors: the colored part in any
+ * colors (Snap Up); how.half: half the printed cost, rounded down, in any colors (Half Price).
+ */
+// Punch Card: each of 3, 6 and 9 pays once a game (a token on the card marks it), so dropping a member never re-earns one
+const punchCardOf = (state, p) => p.members.find(u => effectiveDefs(state.cards[u]).some(d => d.punchCard));
+// Clearance (REPLACE11=clearance, flag p.clearance for this turn): the cheapest shop member (any of them, if tied) is free
+function clearanceFree(state, p, uid) {
+  if (!p.clearance || uid == null || !state.shop.includes(uid)) return false;
+  const price = u => { const d = cardDef(state, u); return d.s + d.w; };
+  return price(uid) === Math.min(...state.shop.map(price));
+}
+function punchFree(state, p) {
+  const u = punchCardOf(state, p), n = p.members.length + 1;
+  return u != null && [3, 6, 9].includes(n) && !(state.cards[u].punched || []).includes(n);
+}
+function priceParts(state, p, def, how = {}) {
+  let s = def.s, w = def.w;
+  if (how.half) { w = Math.floor((s + w) / 2); s = 0; }
+  if (how.anyColors || colorPartFree(state, p, def)) { w += s; s = 0; }
+  // Punch Card (REPLACE11=punchcard, flag punchCard): the member that would be your 3rd, 6th or 9th card costs nothing
+  const punch = punchFree(state, p) || clearanceFree(state, p, how.uid);
+  // Duty Free (REPLACE11=dutyfree, flag dutyFree): a member of a color none of your members have costs 3 less per copy
+  const duty = how.uid != null && sumMemberFlag(state, p, 'dutyFree') > 0 && isNewColor(ctxFor(state), p, wrap(state, state.cards[how.uid])) ? 3 * sumMemberFlag(state, p, 'dutyFree') : 0;
+  // how.less: a recruit's own discount (Markdown, Nov 10: "paying 2 less"), off any part of the cost as every discount
+  const off = punch ? Infinity : (p.discount || 0) + sumMemberFlag(state, p, 'costReduction') + duty + (how.less || 0);
+  const colored = Math.max(0, s - off), total = Math.max(0, s + w - off);
+  const goldDouble = sumMemberFlag(state, p, 'goldPaysDouble') > 0;
+  const q = colored > 0 ? colorOf(def) : null;
+  // Smooth Talker (flag silverPaysColor): your silver pays a colored part too
+  // Silver Tongues (REPLACE16=tongues, flag tableSilverPaysColor): everyone's silver pays a colored part
+  // how.silverAny: a recruit whose own rule lets silver pay any color (Gift Exchange, idea pipeline pool 5; bot games only)
+  const alt = q && q !== 'silver' && (how.silverAny || sumMemberFlag(state, p, 'silverPaysColor') > 0 || tableFlag(state, 'tableSilverPaysColor')) ? 'silver' : null;
+  return { q, alt, colored, total, worth: c => (c === 'gold' && goldDouble ? 2 : 1) };
+}
+const unitsOf = (v, worth) => Object.entries(v).reduce((t, [c, n]) => t + (n || 0) * worth(c), 0);
+/** Does paying the coins `v` cover the price? The colored units from q, the rest from anything (q's spare too). */
+function memberPayOk(state, p, def, v, how) {
+  const { q, alt, colored, total, worth } = priceParts(state, p, def, how);
+  return (!q || (v[q] || 0) * worth(q) + (alt ? (v[alt] || 0) * worth(alt) : 0) >= colored) && unitsOf(v, worth) >= total;
+}
+/**
+ * The exact price p pays for member uid right now, after every discount and rule-changer, and what's missing:
+ * { color, colored, total, afford, short }. color: the resource the colored part is owed in (null when none is);
+ * colored: units of it owed; total: units owed in all (a Penny Pincher gold pays 2). short (null when affordable):
+ * { [color]: coins of that color, any: coins of any color, total, text: "4 green" | "2 gold, 1 any" }.
+ * The buy step, the pay choices, Snap Up, Half Price, Talent Scout and the shop's "need" all read this.
+ */
+/** Snobs (REPLACE11=snob2): a shop member reserved this round for another player. Off, state.reserved never exists. */
+const reservedFor = (state, p, uid) => !!(state.reserved && state.reserved.uid === uid && state.reserved.pid !== p.id && state.shop.includes(uid));
+export function memberPrice(state, p, uid, how = {}) {
+  how = { ...how, uid };
+  const def = cardDef(state, uid);
+  const { q, alt, colored, total, worth } = priceParts(state, p, def, how);
+  const res = p.res;
+  const haveQ = q ? (res[q] || 0) * worth(q) + (alt ? (res[alt] || 0) * worth(alt) : 0) : 0;
+  const shortQ = q ? Math.ceil(Math.max(0, colored - haveQ) / worth(q)) : 0;
+  const shortAny = Math.max(0, total - unitsOf(res, worth) - shortQ * (q ? worth(q) : 1));
+  const afford = shortQ === 0 && shortAny === 0;
+  let short = null;
+  if (!afford) {
+    const text = [shortQ ? `${shortQ} ${q}` : '', shortAny ? `${shortAny} any` : ''].filter(Boolean).join(', ');
+    short = { ...(q ? { [q]: shortQ } : {}), any: shortAny, total: shortQ + shortAny, text };
+  }
+  return { color: q, colored, total, afford, short };
+}
+/** A way p can pay for member uid now ({ color: n }), or null if p can't: the colored part from its color, the rest
+ *  from the colors p holds most of, gold last (gold scores the Crown). */
+export function paymentPlan(state, p, uid, how = {}) {
+  how = { ...how, uid };
+  const { q, alt, colored, total, worth } = priceParts(state, p, cardDef(state, uid), how);
+  const res = { ...p.res };
+  const spend = Object.fromEntries(Object.keys(res).map(r => [r, 0]));
+  let paid = 0;
+  if (q && colored > 0) {
+    let k = Math.min(res[q] || 0, Math.ceil(colored / worth(q)));
+    res[q] -= k; spend[q] = (spend[q] || 0) + k; paid += k * worth(q);
+    // Smooth Talker: silver covers what the color can't
+    if (paid < colored && alt) {
+      const j = Math.min(res[alt] || 0, Math.ceil((colored - paid) / worth(alt)));
+      res[alt] -= j; spend[alt] = (spend[alt] || 0) + j; paid += j * worth(alt);
+    }
+    if (paid < colored) return null;
+  }
+  while (paid < total) {
+    const c = Object.keys(res).filter(r => r !== 'gold' && res[r] > 0).sort((a, b) => res[b] - res[a])[0] || (res.gold > 0 ? 'gold' : null);
+    if (!c) return null;
+    res[c] -= 1; spend[c] += 1; paid += worth(c);
+  }
+  return spend;
+}
+
+// ---------- choosing how to pay ----------
+// Every way to pay that is legal and has no wasted coin. The player picks one; the plan above is the default.
+function vectors(res, keys, maxTotal, exactTotal) {
+  const out = [];
+  const walk = (i, left, cur) => {
+    if (i === keys.length) { if (exactTotal === undefined || left === 0) out.push({ ...cur }); return; }
+    for (let k = 0; k <= Math.min(res[keys[i]], left); k++) { cur[keys[i]] = k; walk(i + 1, left - k, cur); }
+    cur[keys[i]] = 0;
+  };
+  walk(0, exactTotal ?? maxTotal, {});
+  return out;
+}
+const vecKey = (state, v) => state.resources.map(r => v[r] || 0).join('-');
+/** Every way p can pay for member uid now (no coin wasted), the default way first. how: as memberPrice. */
+export function paymentChoices(state, p, uid, how = {}) {
+  how = { ...how, uid };
+  const def = cardDef(state, uid);
+  const keys = state.resources;
+  if (!memberPrice(state, p, uid, how).afford) return [];
+  const all = vectors(p.res, keys, priceParts(state, p, def, how).total).filter(v => memberPayOk(state, p, def, v, how));
+  const minimal = all.filter(v => keys.every(c => !v[c] || !memberPayOk(state, p, def, { ...v, [c]: v[c] - 1 }, how)));
+  return orderChoices(state, minimal, paymentPlan(state, p, uid, how), p);
+}
+// Resources that count as any color when buying followers (Gold: "gold is money").
+const wildColors = state => state.quadrants.map(quadrant).filter(q => q.wildInFollowerBuys).map(q => q.resource);
+const colorsCovered = (state, v) => {
+  const wild = wildColors(state);
+  let n = 0;
+  for (const c of state.resources) if (v[c] > 0) n += wild.includes(c) ? v[c] : 1;
+  return n;
+};
+/** Can p buy this follower tier at all (followerChoices would list a way)? */
+function canBuyTier(state, p, tier) {
+  if (tierLeft(state, tier) <= 0) return false;
+  return vectors(p.res, state.resources, tier.cost, tier.cost).some(v => colorsCovered(state, v) >= tier.colors);
+}
+export function followerChoices(state, p, tier) {
+  if (tierLeft(state, tier) <= 0) return [];
+  const keys = state.resources;
+  const all = vectors(p.res, keys, tier.cost, tier.cost).filter(v => colorsCovered(state, v) >= tier.colors);
+  return orderChoices(state, all, followerPlan(state, p, tier), p);
+}
+/**
+ * Colors a player shouldn't spend by default: those where they lead or tie a contest that counts that color
+ * (a quadrant whose score drops when they hold one less of it). Display/default only; any legal spend stays legal.
+ */
+function protectedColors(state, p) {
+  const ctx = ctxFor(state);
+  const out = new Set();
+  for (const qid of state.quadrants) {
+    // the contest this table plays (By color and the other settings change it), never the printed one (Nov 4: under
+    // By color, paying green warned "gives up your contest lead in green" where Green counts minions)
+    const q = quadrant(qid), sc = scoringOf(state, qid);
+    const r = q.resource;
+    if (!r || !sc || !(p.res[r] > 0)) continue;
+    let mine, top, less;
+    try {
+      mine = sc.score(ctx, p);
+      top = Math.max(...state.players.map(o => sc.score(ctx, o)));
+      p.res[r] -= 1;
+      try { less = sc.score(ctx, p); } finally { p.res[r] += 1; }
+    } catch { continue; }
+    if (less < mine && top > 0 && mine >= top) out.add(r);
+  }
+  return out;
+}
+
+/**
+ * How a payment `v` would move p's rims: { lost } the contests p leads or ties now and wouldn't after paying (the
+ * others' scores stay put), and { near } the coins spent from colors whose contest p is chasing (behind by 3 or
+ * less). Display/default only.
+ */
+function rimCost(state, p) {
+  const ctx = ctxFor(state);
+  const rims = [];
+  for (const qid of state.quadrants) {
+    const q = quadrant(qid), sc = scoringOf(state, qid); // the table's contest, as in protectedColors
+    if (!q.resource || !sc || !state.resources.includes(q.resource)) continue;
+    try {
+      const mine = sc.score(ctx, p);
+      const best = Math.max(0, ...state.players.filter(o => o !== p).map(o => sc.score(ctx, o)));
+      rims.push({ q, sc, r: q.resource, best, held: mine > 0 && mine >= best, tie: mine > 0 && mine === best, near: !(mine > 0 && mine >= best) && best > 0 });
+    } catch { /* a scoring rule that can't be read here */ }
+  }
+  // members whose game-end bonus counts what you hold (Kingpin: +1 per 2 magenta; Magnate): spending can cut it, and
+  // Kingpin paid +0 with no warning (tester A, live panel r1)
+  const endBonus = () => {
+    const out = [];
+    for (const uid of p.members) for (const def of effectiveDefs(state.cards[uid])) {
+      if (!def.onGameEnd) continue;
+      try { out.push([def.name, def.onGameEnd(ctx, p, wrap(state, state.cards[uid])) || 0]); } catch { /* unread */ }
+    }
+    return out;
+  };
+  const ends0 = endBonus();
+  return v => {
+    let lost = 0, near = 0;
+    const colors = [], ties = [], cuts = [];
+    const saved = { ...p.res };
+    try {
+      for (const c in v) p.res[c] = (p.res[c] || 0) - (v[c] || 0);
+      if (ends0.length && Object.values(v).some(n => n > 0)) endBonus().forEach(([name, n], k) => {
+        if (ends0[k] && n < ends0[k][1]) { cuts.push({ member: name, from: ends0[k][1], to: n }); lost++; }
+      });
+      // every rim, not only the spent color's: paying silver can break your only full set (Most full sets, keyed to
+      // yellow), and the default way paid it without a word (live panel r1)
+      const any = Object.values(v).some(n => n > 0);
+      for (const x of rims) {
+        if (!any) continue;
+        const now = x.sc.score(ctx, p);
+        if (x.held && !(now > 0 && now >= x.best)) { lost++; colors.push(x.r); if (x.tie) ties.push(x.r); }
+        if (v[x.r] > 0 && x.near && x.best - now <= 3 + (v[x.r] || 0)) near += v[x.r];
+      }
+    } catch { /* leave it unranked */ } finally { for (const c in p.res) if (!(c in saved)) delete p.res[c]; Object.assign(p.res, saved); }
+    return { lost, near, colors, ties, cuts };
+  };
+}
+
+function orderChoices(state, list, preferred, p) {
+  const pk = preferred ? vecKey(state, preferred) : null;
+  const guard = p ? protectedColors(state, p) : new Set();
+  const risk = v => [...guard].reduce((s, c) => s + (v[c] || 0), 0);
+  const seen = new Set();
+  const out = [];
+  for (const v of list) { const k = vecKey(state, v); if (!seen.has(k)) { seen.add(k); out.push(v); } }
+  // The default way to pay comes first (Claude, under Cory's go-with-your-gut, 2026-10-15, wave-2 tester A #5): it
+  // breaks as few rim leads or ties you hold as it can (none, when any legal way keeps them all); then it spends as
+  // few coins of colors whose rim you lead or tie, then of colors whose rim you're chasing; then as little gold (wild,
+  // and it scores its own rim); then the usual plan (surplus colors first). Every legal way stays on the sheet.
+  const cost = p ? rimCost(state, p) : () => ({ lost: 0, near: 0 });
+  const rank = new Map(out.map(v => [v, cost(v)]));
+  out.sort((a, b) => rank.get(a).lost - rank.get(b).lost || risk(a) - risk(b) || rank.get(a).near - rank.get(b).near
+    || (a.gold || 0) - (b.gold || 0) || (vecKey(state, b) === pk) - (vecKey(state, a) === pk));
+  return out;
+}
+/**
+ * A way to pay, as an option. lost (display only): the colors whose contest p leads or ties now and wouldn't after
+ * paying this way, so the screen can say so and never pays it without asking (wave-2 testers A#4, B#2).
+ */
+function payOption(state, v, i, lost = null) {
+  const got = lost ? lost(v) : { colors: [], ties: [] };
+  const breaks = got.colors, ties = got.ties || [], cuts = got.cuts || [];
+  // ties: the broken ones that were a share of the lead, so the sheet says "your tie for most gold", never "your lead"
+  // when you only tied (blind tester B read the warning as wrong: they didn't lead)
+  return { id: `pay:${vecKey(state, v)}`, label: payString(v), kind: 'pay', spend: Object.fromEntries(state.resources.map(r => [r, v[r] || 0])), default: i === 0, ...(breaks.length ? { breaks } : {}), ...(ties.length ? { ties } : {}), ...(cuts.length ? { cuts } : {}) };
+}
+
+/** Paying for a follower buy: needs `colors` different resources; each wild one (gold) covers a color. Gold is spent last. */
+export function followerPlan(state, p, tier) {
+  if (tierLeft(state, tier) <= 0) return null;
+  const res = { ...p.res };
+  const spend = Object.fromEntries(Object.keys(res).map(r => [r, 0]));
+  const order = () => Object.keys(res).filter(c => res[c] > 0).sort((a, b) => (a === 'gold') - (b === 'gold') || res[b] - res[a]);
+  const wild = wildColors(state);
+  let need = tier.colors;
+  for (const c of order().filter(c => !wild.includes(c)).slice(0, need)) { res[c]--; spend[c]++; need--; }
+  for (const c of wild) while (need > 0 && res[c] > 0) { res[c]--; spend[c]++; need--; }
+  if (need > 0) return null;
+  let left = tier.cost - tier.colors;
+  while (left > 0) { const c = order()[0]; if (!c) return null; res[c]--; spend[c]++; left--; }
+  return spend;
+}
+
+// ---------- task queue ----------
+
+function advance(state) {
+  while (state.queue.length) {
+    lastCallLast(state);
+    const task = state.queue[0];
+    const ask = inputFor(state, task);
+    if (ask) {
+      if (ask.options.length) {
+        const { onEmpty, ...shown } = ask; void onEmpty;
+        state.pending = { player: task.p, ...shown };
+        // a choice several players answer at the same time (Potluck): the tasks right behind it with the same
+        // together key are asked now too, each player their own (pending.also)
+        if (task.t === 'choose' && task.together) {
+          const also = [];
+          for (let i = 1; i < state.queue.length; i++) {
+            const t = state.queue[i];
+            if (t.t !== 'choose' || t.together !== task.together) break;
+            const a = inputFor(state, t);
+            if (a && a.options.length) { const { onEmpty: _e, ...sh } = a; void _e; also.push({ player: t.p, ...sh }); }
+          }
+          if (also.length) state.pending.also = also;
+        }
+        return;
+      }
+      // nothing to choose: skip the task quietly
+      state.queue.shift();
+      if (ask.onEmpty) ask.onEmpty();
+      continue;
+    }
+    state.queue.shift();
+    accounted(state, causeOf(state, task), () => runTask(state, task), task.p);
+    clearFresh(state);
+  }
+  state.pending = null;
+}
+
+/** The Goes Last token (Purple; Cory, Nov 1 2:35pm): "Its holder places the minions on it once every hand is empty",
+ *  for the whole round, so a rival turn that lands behind them later (a rival's own skip, Extra Shift's minion) still
+ *  goes first (Cory's playtest, 2026-10-26: P2 took Last Call and kept placing). */
+function lastCallLast(state) {
+  const holder = state.goesLast && state.goesLast.round === state.round ? state.goesLast.pid : null;
+  if (holder === null) return;
+  const q = state.queue, close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
+  const at = [];
+  for (let i = 0; i < stop; i++) if (q[i].t === 'turn') at.push(i);
+  // a turn moved up to now (Right Away, Crunch Time, a copy of either) stays where it was put
+  const late = t => !t.now && t.token && t.p === holder;
+  const turns = at.map(i => q[i]), sorted = [...turns.filter(t => !late(t)), ...turns.filter(late)];
+  at.forEach((i, k) => { q[i] = sorted[k]; });
+}
+
+// Tasks that need a decision describe it here; all others return null and just run.
+function inputFor(state, task) {
+  const p = task.p !== undefined ? state.players[task.p] : null;
+  switch (task.t) {
+    // the preview's stop (preview.js): the round's turns wait behind it, there for content to read (Crunch Time), never run
+    case 'previewHold': return { kind: 'hold', prompt: '', options: [{ id: 'hold', label: '', kind: 'hold' }] };
+    case 'setupPick':
+      if (state.startPool?.length === 1) return null;
+      return {
+        kind: 'setup', prompt: state.artifacts && Object.keys(state.artifacts).length ? `${p.name}: pick a cloak` : `${p.name}: draft 1 resource`,
+        options: (state.startPool || state.quadrants).map(q => ({ id: `color:${q}`, label: quadrant(q).name, kind: 'color', value: q })),
+      };
+    case 'place': {
+      // Hypnotist (REPLACE9 bot test): the next minion after its owner's turn must take the space it named, if still open
+      const hyp = REPLACE9 && state.hypno?.armed && state.hypno.round === state.round ? state.hypno : null;
+      if (hyp && state.slots[hyp.key] === undefined) {
+        const [hq, hi] = hyp.key.split('-').map(Number);
+        return { kind: 'place', prompt: `${p.name}: place a minion (${state.players[hyp.by].name}'s Hypnotist: it must go on ${actionAt(state, hq, hi).name})`,
+          options: [{ id: `slot:${hq}-${hi}`, label: actionAt(state, hq, hi).name, kind: 'slot', q: hq, i: hi }] };
+      }
+      const slots = [
+        // Place Holders (REPLACE11=placeholders): the held space is only its holder's this round
+        // Moonlighters (REPLACE7 bot test): its minion only joins a rival's taken space, while one can be joined
+        ...(task.join && squatSlots(state, p).length ? [] : openSlots(state)).filter(([q, i]) => !(state.held && state.held.round === state.round && state.held.pid !== p.id && state.held.key === `${q}-${i}`))
+          .filter(([q, i]) => !protested(state, `${q}-${i}`))
+          .filter(([q, i]) => !task.ring || actionAt(state, q, i).ring <= task.ring)
+          .map(([q, i]) => ({ id: `slot:${q}-${i}`, label: actionAt(state, q, i).name, kind: 'slot', q, i })),
+        ...squatSlots(state, p).filter(([q, i]) => (!task.ring || actionAt(state, q, i).ring <= task.ring) && !protested(state, `${q}-${i}`))
+          .map(([q, i]) => ({ id: `squat:${q}-${i}`, label: `${actionAt(state, q, i).name} (join ${state.players[state.slots[`${q}-${i}`]].name})`, kind: 'slot', squat: true, q, i })),
+      ];
+      // a member's activation can be used any time on your own turn (Cory, 2026-10-15): here too, beside the spaces
+      // (only while there is a space to take, so a use is never forced on you)
+      return { kind: 'place', prompt: `${p.name}: place a minion`, options: slots.length ? [...slots, ...useOptions(state, p)] : [], onEmpty: () => { p.left -= 1; log(state, `No open space: ${p.name}'s minion sits out.`); } };
+    }
+    case 'swapcard': {
+      const where = uid => state.players.find(o => o.members.includes(uid))?.name || 'Shop';
+      const price = uid => { const d = cardDef(state, uid); return d.s + d.w; };
+      return { kind: 'choose', prompt: `${p.name}: swap card: choose one of your members and the one it swaps with`, options: [
+        ...swapCardPairs(state, p).map(([a, b]) => ({ id: `trade:${a}:${b}`, label: `${where(a)}: ${cardDef(state, a).name} ↔ ${where(b)}: ${cardDef(state, b).name}`, kind: 'trade', value: [a, b],
+          hint: (cardDef(state, b).f + price(b)) - (cardDef(state, a).f + price(a)) })),
+        { id: 'back', label: 'Back', kind: 'pass', value: null },
+      ] };
+    }
+    case 'buy': {
+      // a run of recruits (Spree) says how many are left after this one
+      const more = buysAfter(state, p);
+      // Buying ends the purchase allowance, not the player's ability to use a member this turn.
+      if (task.afterPurchase) {
+        // recruits still to come this turn (Spree's): their step offers the same uses, and its Done would drop them
+        if (more) return { kind: 'buy', afterPurchase: true, prompt: '', options: [] };
+        // a use that only pays off on this turn's recruit (Encore, REPLACE10) is not offered once the recruit is spent
+        const uses = useOptions(state, p).filter(o => !useIdle(state, p, o.uid) && !effectiveDefs(state.cards[o.uid]).some(e => e.beforeRecruit));
+        return { kind: 'buy', afterPurchase: true, prompt: `${p.name}: use a member, or finish your turn`,
+          options: uses.length ? [...uses, { id: 'pass', label: 'Done', kind: 'pass' }] : [] };
+      }
+      // a second buy (Big Spender) is offered only after a real first buy, while an unspent one is held
+      if (task.extra && !(p.turnBuys > 0 && otherSecondBuy(state, p))) return { kind: 'buy', prompt: '', options: [] };
+      const barkerOnly = !!task.barker;
+      // Barker left the cult after its extra recruit was queued (a swap or steal in the same turn): nothing to recruit
+      if (barkerOnly && !(task.by !== undefined ? p.members.includes(task.by) : followersTwiceCard(state, p) !== undefined)) return { kind: 'buy', prompt: '', options: [] };
+      const opts = [];
+      // which members and tiers can be paid for at all: an existence check, not the ranked list of every way to pay
+      // (the list scores each way against the contests: most of a round III step's engine time, run for every shop card,
+      // in every bot step and every "You'd get" branch; freeze probe, 2026-10-28). The pay step still lists them all.
+      for (const uid of state.shop) if (!reservedFor(state, p, uid) && memberPrice(state, p, uid).afford)
+        opts.push({ id: `card:${uid}`, label: cardDef(state, uid).name, kind: 'card', uid });
+      // the top of the pile, for a player who can reach it (Insider: flag pileReach)
+      for (const uid of state.pile.slice(0, pileReach(state, p))) if (memberPrice(state, p, uid).afford)
+        opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (from the pile)`, kind: 'card', uid, fromPile: true });
+      // the top of the discard pile (Ragpicker, REPLACE14 bot test: flag pileBottom; it read the pile's bottom before the discard pile, Nov 6)
+      { const d = discardOf(state), b = d.length && sumMemberFlag(state, p, 'pileBottom') > 0 ? d[d.length - 1] : null;
+        if (b != null && memberPrice(state, p, b).afford) opts.push({ id: `card:${b}`, label: `${cardDef(state, b).name} (top of the discard pile)`, kind: 'card', uid: b, fromPile: true }); }
+      // any member in the discard pile, once per round on its owner's own turn (Pickers, idea pipeline pool 3: flag discardPick)
+      if (state.current === p.id && !task.doorbuster && !task.lateShop && !task.lastMinute && !task.cheap && !barkerOnly && pickerCard(state, p) !== undefined)
+        for (const u of discardOf(state)) if (!opts.some(o => o.uid === u) && memberPrice(state, p, u).afford)
+          opts.push({ id: `card:${u}`, label: `${cardDef(state, u).name} (discard pile)`, kind: 'card', uid: u, fromPile: true });
+      // a rival's Peddlers stall (REPLACE6 bot test)
+      if (REPLACE6 || REPLACE9) for (const [uid, o, by] of stallCards(state, p)) if (memberPrice(state, p, uid).afford)
+        opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (${o === p ? 'your' : `${o.name}'s`} ${by})`, kind: 'card', uid, stall: o.id });
+      TIERS.forEach(t => { if (canBuyTier(state, p, t)) opts.push({ id: `tier:${t.key}`, label: `+${t.get} followers`, kind: 'tier', tier: t.key }); });
+      // the swap card, a table setting (Cory, Nov 1 3:01pm), beside the follower cards
+      if (swapCardPairs(state, p).length) opts.push({ id: 'swapcard', label: 'Swap card', kind: 'swapcard' });
+      for (const uid of p.members) {
+        const c = state.cards[uid], d = defById(c.def);
+        // a Doppelganger offers what it copies too
+        const eff = effectiveDefs(c);
+        opts.push(...useOptions(state, p, [uid]));
+        if (eff.some(e => e.toggle)) opts.push({ id: `toggle:${uid}`, label: `${d.name}: switch ${c.on === false ? 'on' : 'off'}`, kind: 'toggle', uid });
+      }
+      if (canRelease(state, p)) for (const uid of p.members) {
+        if (!canRelease(state, p, uid)) continue;
+        const d = cardDef(state, uid), back = releaseRefund(state, uid);
+        if (back.n > 0) opts.push({ id: `release:${uid}`, label: `Release ${d.name} for ${back.label}`, kind: 'release', uid, refund: back.n, color: back.color });
+      }
+      // Doorbusters' round-start recruit: a member or followers only (it isn't a turn)
+      // (Late Shoppers' round-end recruit, REPLACE4 bot test, likewise)
+      // (Last-Minute Shopper's round-end recruit, before contests are scored, likewise: Cory, Nov 5: "should just be recruiting… it can let you buy followers")
+      if (task.doorbuster || task.lateShop || task.lastMinute) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' || o.kind === 'tier'));
+      // Ushers' recruit (REPLACE7 bot test): a member costing task.cheap or less, nothing else
+      if (task.cheap) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' && cardDef(state, o.uid).s + cardDef(state, o.uid).w <= task.cheap));
+      // Barker's extra recruit: followers only
+      if (barkerOnly) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'tier'));
+      const real = opts.filter(o => o.kind === 'card' || o.kind === 'tier' || o.kind === 'use' || o.kind === 'release' || o.kind === 'swapcard');
+      if (!real.length) return { kind: 'buy', prompt: '', options: [], onEmpty: task.extra ? undefined : () => log(state, `${p.name} couldn't afford anything.`) };
+      opts.push({ id: 'pass', label: 'Pass', kind: 'pass' });
+      if (task.doorbuster) return { kind: 'buy', prompt: `${p.name}: Doorbusters: recruit once before anyone places, or pass`, options: opts };
+      if (task.lastMinute) return { kind: 'buy', prompt: `${p.name}: Last-Minute Shopper: recruit once before contests are scored, or pass`, options: opts };
+      if (task.lateShop) return { kind: 'buy', prompt: `${p.name}: Late Shoppers: recruit once after the contests, or pass`, options: opts };
+      if (task.cheap) return { kind: 'buy', prompt: `${p.name}: Ushers: also recruit a member costing ${task.cheap} or less, or pass`, options: opts };
+      if (barkerOnly) return { kind: 'buy', extra: true, prompt: `${p.name}: recruit followers again (${cardDef(state, task.by ?? followersTwiceCard(state, p)).name}), or pass`, options: opts };
+      return { kind: 'buy', extra: !!task.extra, prompt: task.extra ? `${p.name}: recruit again (Big Spender), or pass` : `${p.name}: recruit a member or followers${more ? ` (${more + 1} recruits left)` : ''}, or pass`, options: opts };
+    }
+    case 'choose': {
+      // a Round Start's choice whose card has left its owner since it was queued does nothing (see startRound)
+      if (task.rsSrc && !state.players[task.rsSrc.pid]?.members.includes(task.rsSrc.uid)) {
+        const name = String(task.prompt).split(':')[0];
+        return { kind: 'choose', prompt: task.prompt, options: [], onEmpty: () => log(state, `${name} has left ${p.name}'s cult, so ${p.name}'s Round Start ${name} does nothing.`) };
+      }
+      // only the options whose cards are still where they were when the choice was queued (see liveOptions)
+      // an answer that spends your coins (option.spend, or a pay option's value) says which leads it gives up (breaks),
+      // worked out when it's shown, so a space's payment warns like the pay sheet does (panel tester C #1)
+      const options = withBreaks(state, p, liveOptions(state, task));
+      // count: a counted pick's progress; blocked: { [player id]: why you can't pick them now } (a steal's limit)
+      // show: what the screen needs to draw the choice that the options alone don't say (Peek: the order set so far)
+      if (options.length || !task.options.length) return { kind: 'choose', prompt: task.prompt, options, ...(task.count ? { count: task.count } : {}), ...(task.blocked ? { blocked: task.blocked } : {}), ...(task.show ? { show: task.show } : {}) };
+      return {
+        kind: 'choose', prompt: task.prompt, options: [],
+        onEmpty: () => log(state, `${task.prompt.split(':')[0]}: nothing left to choose (${p.name}'s options were taken or moved first), so nothing happens.`),
+      };
+    }
+    case 'release': {
+      const opts = [];
+      for (const c of state.resources) {
+        // target: your own stack of that color takes one (the board picker); "all" keeps its button while more are left
+        opts.push({ id: `all:${c}`, label: `All ${task.left} as ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0), ...(task.left === 1 ? { target: { res: c } } : {}) });
+        if (task.left > 1) opts.push({ id: `one:${c}`, label: `1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0) - 0.5, target: { res: c } });
+      }
+      return { kind: 'choose', prompt: `${p.name}: take ${task.left} more from the release, in any colors`, options: opts };
+    }
+    case 'pay': {
+      if (task.swap) {
+        const list = swapCardPayChoices(state, p), lost = list.length ? rimCost(state, p) : null;
+        return { kind: 'pay', prompt: `${p.name}: choose how to pay for the swap card`, swap: task.swap,
+          options: [...list.map((v, i) => payOption(state, v, i, lost)), { id: 'back', label: 'Back', kind: 'back' }] };
+      }
+      const list = task.uid !== undefined ? paymentChoices(state, p, task.uid) : followerChoices(state, p, TIERS.find(t => t.key === task.tier));
+      const what = task.uid !== undefined ? cardDef(state, task.uid).name : `${TIERS.find(t => t.key === task.tier).get} followers`;
+      const lost = list.length ? rimCost(state, p) : null;
+      return {
+        kind: 'pay', prompt: `${p.name}: choose how to pay for ${what}`, ...(task.uid !== undefined ? { uid: task.uid } : { tier: task.tier }),
+        options: [...list.map((v, i) => payOption(state, v, i, lost)), { id: 'back', label: 'Back', kind: 'back' }],
+      };
+    }
+    default:
+      return null;
+  }
+}
+
+/**
+ * `use:` options: p's members (all, or `uids`) with an activation not used yet; a Doppelganger offers what it copies.
+ * idle: true when using it now would change nothing (Safecracker's half of 1 magenta), so the screen can mute it.
+ * Worked out for people's seats only (a dry run per option; bots don't read it).
+ */
+function useOptions(state, p, uids = p.members) {
+  const out = [];
+  for (const uid of uids) {
+    const c = state.cards[uid];
+    if (!c.used && effectiveDefs(c).some(e => e.activate)) {
+      out.push({ id: `use:${uid}`, label: `Use ${defById(c.def).name}`, kind: 'use', uid, ...(p.kind !== 'bot' && useIdle(state, p, uid) ? { idle: true } : {}) });
+    }
+  }
+  return out;
+}
+/** Would using p's member uid right now change nothing? A dry run on a copy: no resource, follower, member, discount,
+ *  minion or shop changes anywhere, and nothing queued to decide or do. */
+export function useIdle(state, p, uid) {
+  try {
+    const s = plainCopy({ ...state, log: [], pending: null, queue: [], notes: undefined });
+    // the whole player: a use that only sets a flag for later (Party Crasher's crashNext, Big Spender's buyTwiceNow) is
+    // not idle (Cory's playtest, Nov 1: Party Crasher looked unusable)
+    const look = x => JSON.stringify([x.players, x.shop, x.pile.length]);
+    const before = look(s);
+    useMember(s, s.players[p.id], uid, { t: 'idle-check' });
+    if (s.queue.some(t => t.t !== 'idle-check')) return false;
+    return look(s) === before;
+  } catch { return false; }
+}
+/**
+ * Use a member's activation now. Its whole effect resolves first, its choices included (a Stunt Double copying Open
+ * House asks "which of the cheapest?" right away), and then `resume` (the step the player was in: this placement or
+ * this buy) comes back with fresh options. Before the gut call of 2026-10-15 the buy step came back first, so the
+ * choice waited until after the player's next buy.
+ */
+function useMember(state, p, uid, resume) {
+  const c = state.cards[uid];
+  c.used = true;
+  const act = effectiveDefs(c).find(e => e.onActivate);
+  const before = traceSnapshot(state);
+  // used beside the spaces: this turn's minion is still to land, so a space must stay free for it (spareSpace, purple.js)
+  if (resume.t === 'place') state.unplaced = 1;
+  try { tallied(state, p, uid, () => act.onActivate(ctxFor(state), p, wrap(state, c))); } finally { delete state.unplaced; }
+  traceChanges(state, before, p, act);
+  // Retirees (idea pipeline pool 12, candidates only): "Whenever you use one of your members' ... On Use": asked after
+  // the use's own choices, before the turn goes on
+  eachMemberOf(state, p, (held, d) => { if (d.pool && d.afterOwnUse && p.members.includes(uid)) d.afterOwnUse(ctxFor(state), p, held, wrap(state, c)); }, ['afterOwnUse']);
+  const at = state.queue.findIndex(t => !t._fresh);
+  state.queue.splice(at < 0 ? state.queue.length : at, 0, resume);
+}
+
+/**
+ * Coach's free use (Cory, Oct 29): run a member's Once per game or Once per round ability now, leaving the member used
+ * or unused as it was (an ability that refunds itself on a miss would otherwise un-use a spent member). Each member at
+ * most once per turn this way, so a Coach copied back through Tribute Band and Tryout can't loop.
+ */
+function freeUse(state, p, uid) {
+  const c = state.cards[uid];
+  const act = effectiveDefs(c).find(e => e.onActivate);
+  if (!act) return false;
+  const was = c.used;
+  c.freeTurn = turnKey(state);
+  const before = traceSnapshot(state);
+  try { act.onActivate(ctxFor(state), p, wrap(state, c)); } finally { if (was === undefined) delete c.used; else c.used = was; }
+  traceChanges(state, before, p, act);
+  return true;
+}
+/** This turn, as a key: the round and how many turns it has started. */
+export const turnKey = state => `${state.round}:${(state.turns || []).length}`;
+function resolveTask(state, task, optionId) {
+  const p = state.players[task.p];
+  switch (task.t) {
+    case 'setupPick': {
+      const q = optionId.slice('color:'.length);
+      p.res[quadrant(q).resource] += ECON.cloakStart;
+      p.startColor = q; // the color this player brings to the contest order (contestOrder)
+      if (state.startPool) state.startPool = state.startPool.filter(id => id !== q);
+      const art = state.artifacts?.[q];
+      if (art !== undefined) {
+        p.artifact = art;
+        log(state, `${p.name} takes the ${cardDef(state, art).name} ("${cardDef(state, art).text}"), and +1 ${quadrant(q).resource}.`);
+      } else log(state, `${p.name} drafts +1 ${quadrant(q).resource}.`);
+      return;
+    }
+    case 'place': {
+      // using a member first: its whole effect resolves, then this placement comes back with fresh options
+      if (optionId.startsWith('use:')) { useMember(state, p, Number(optionId.slice(4)), { ...task }); return; }
+      if (REPLACE9 && state.hypno?.armed) delete state.hypno; // Hypnotist's one placement is this one, or it lapsed
+      const squat = optionId.startsWith('squat:');
+      const [q, i] = optionId.slice(optionId.indexOf(':') + 1).split('-').map(Number);
+      const key = `${q}-${i}`;
+      if (squat) {
+        // Party Crasher's one use is spent by the minion it lets in (Cory, 2026-10-28: "your next minion")
+        if (p.squatAll === state.round) { /* Overtime's open board */ } else if (greenFan(state, p) && fanKeys(state, p).includes(key)) log(state, `${p.name}'s Superfans: joins a Green space a rival took.`); else if (p.crashNext && state.slots[key] !== p.id) delete p.crashNext;
+        else spendAllowance(state, p, 'squat');
+        (state.squats[key] = state.squats[key] || []).push(p.id);
+      } else state.slots[key] = p.id;
+      p.lastSlot = { key, joined: squat }; // the minion Straggler moves (Cory, 2026-10-15: it's always the last one)
+      p.left -= 1;
+      state.lastPlaced = { round: state.round, pid: p.id }; // Purple's By color contest: whoever placed the round's last minion
+      const a = actionAt(state, q, i);
+      log(state, squat ? `${p.name} joined ${state.players[state.slots[key]].name} on ${a.name} (${quadrant(state.quadrants[q]).name}).`
+        : `${p.name} took ${a.name} (${quadrant(state.quadrants[q]).name}).`);
+      state.queue.unshift({ t: 'act', p: p.id, q, i });
+      return;
+    }
+    case 'buy': {
+      if (optionId === 'pass') { log(state, `${p.name} passed.`); if (!task.barker) dropBuys(state, p); return; } // passing Barker's followers keeps Spree's recruits
+      if (optionId === 'swapcard') { state.queue.unshift({ t: 'swapcard', p: p.id, ...extraOf(task) }); return; }
+      const [kind, rest] = optionId.split(':');
+      if (kind === 'card') {
+        // One way to buy: always the payment step (the suggestion preselected), unless there's nothing to pay.
+        const uid = Number(rest), list = paymentChoices(state, p, uid);
+        const nothing = list.length === 1 && Object.values(list[0]).every(v => !v);
+        if (nothing && askOutbid(state, p, uid, list[0], extraOf(task))) return;
+        if (nothing) { boughtOnce(state, p, { ...task, uid }); recruit(state, p, uid, { free: false, spend: list[0] }); }
+        else state.queue.unshift({ t: 'pay', p: p.id, uid, ...extraOf(task) });
+        return;
+      }
+      if (kind === 'tier') {
+        const tier = TIERS.find(t => t.key === rest);
+        state.queue.unshift({ t: 'pay', p: p.id, tier: tier.key, ...extraOf(task) });
+        return;
+      }
+      if (kind === 'use') { useMember(state, p, Number(rest), { t: 'buy', p: p.id, ...extraOf(task) }); return; }
+      if (kind === 'toggle') {
+        const c = state.cards[Number(rest)];
+        c.on = c.on === false;
+        log(state, `${p.name} switched ${defById(c.def).name} ${c.on ? 'on' : 'off'}.`);
+        state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) });
+        return;
+      }
+      if (kind === 'release') {
+        const uid = Number(rest), def = state.cards[uid].def;
+        const back = release(state, p, uid);
+        // the colors come first (a refund in any colors), then what reacts to the release (Social Climber), then this buy step again
+        state.queue.unshift(...(back.color ? [] : [{ t: 'release', p: p.id, left: back.n }]), { t: 'released', p: p.id, def }, { t: 'buy', p: p.id, ...extraOf(task) });
+        return;
+      }
+      throw new Error(`Bad buy option ${optionId}`);
+    }
+    case 'swapcard': {
+      if (optionId === 'back') { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
+      const [, a, b] = optionId.split(':').map(Number);
+      if (!swapCardPairs(state, p).some(([x, y]) => x === a && y === b)) { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
+      if (swapCardCost(state) > 0) { state.queue.unshift({ t: 'pay', p: p.id, swap: [a, b], ...extraOf(task) }); return; }
+      useSwapCard(state, p, task, a, b);
+      return;
+    }
+    case 'pay': {
+      if (task.swap) {
+        if (optionId === 'back') { state.queue.unshift({ t: 'swapcard', p: p.id, ...extraOf(task) }); return; }
+        const v = Object.fromEntries(optionId.slice(4).split('-').map((n, i) => [state.resources[i], Number(n)]));
+        const [a, b] = task.swap;
+        if (!swapCardPairs(state, p).some(([x, y]) => x === a && y === b) || !swapCardPayChoices(state, p).some(w => vecKey(state, w) === vecKey(state, v))) { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
+        for (const r of state.resources) p.res[r] -= v[r] || 0;
+        useSwapCard(state, p, task, a, b, v);
+        return;
+      }
+      if (optionId === 'back') { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
+      const v = Object.fromEntries(optionId.slice(4).split('-').map((n, i) => [state.resources[i], Number(n)]));
+      if (task.uid !== undefined && askOutbid(state, p, task.uid, v, extraOf(task))) return;
+      boughtOnce(state, p, task);
+      if (task.uid !== undefined) recruit(state, p, task.uid, { free: false, spend: v });
+      else buyFollowers(state, p, TIERS.find(t => t.key === task.tier), v);
+      return;
+    }
+    case 'choose': {
+      const o = task.options.find(x => x.id === optionId);
+      const mark = fMark(state);
+      handlerById(task.h)(ctxFor(state), p, o.value, task.data);
+      // follower changes the choice made itself, under the name of what asked ("Cheap Seats: …")
+      fCredit(state, mark, String(task.prompt).split(':')[0]);
+      return;
+    }
+    case 'release': {
+      const [how, c] = optionId.split(':');
+      const n = how === 'all' ? task.left : 1;
+      p.res[c] = (p.res[c] || 0) + n;
+      log(state, `${p.name} takes ${n} ${c} from the release.`);
+      if (task.left - n > 0) state.queue.unshift({ t: 'release', p: p.id, left: task.left - n });
+      return;
+    }
+    default:
+      throw new Error(`Task ${task.t} takes no input`);
+  }
+}
+
+function runTask(state, task) {
+  const p = task.p !== undefined ? state.players[task.p] : null;
+  switch (task.t) {
+    case 'setupPick': return resolveTask(state, task, `color:${state.startPool[0]}`);
+    case 'round': return underCause({ kind: 'round', round: task.r }, () => startRound(state, task.r));
+    case 'turn': {
+      // a rival's member that may skip the second of two turns in a row (Interrupters, REPLACE3 bot test): the turn goes
+      // back on the queue behind that rival's choice (task.asked), and nothing of it has happened yet
+      if (!task.asked && state.turns?.length && state.turns[state.turns.length - 1] === p.id) {
+        const ctx = ctxFor(state), back = { ...task, asked: true };
+        state.queue.unshift(back);
+        let held = false;
+        eachMember(state, (owner, card, def) => { if (!held && owner !== p && def.onRivalTurnInRow && def.onRivalTurnInRow(ctx, owner, card, p)) held = true; }, ['onRivalTurnInRow']);
+        if (held) return;
+        state.queue.splice(state.queue.indexOf(back), 1);
+      }
+      state.current = p.id;
+      (state.turns = state.turns || []).push(p.id);
+      // two turns in a row (a snake turnaround, Right Away, Crunch Time, Clockmakers, +1 minion placed now): Courier
+      if (state.turns.length > 1 && state.turns[state.turns.length - 2] === p.id) {
+        const ctx = ctxFor(state);
+        eachMemberOf(state, p, (card, def) => { if (def.onTurnInRow) def.onTurnInRow(ctx, p, card); }, ['onTurnInRow']);
+      }
+      p.turnRecruits = 0;
+      p.turnBuys = 0;
+      delete p.peekReach;
+      delete p.perSpend;
+      delete p.spendFollowers;
+      delete p.clearance;
+      delete p.recruitFollowers;
+      delete p.cleanSweep;
+      // task.ring: a turn limited to spaces of that ring or lower (a weaker extra worker)
+      const source = workerSourceOf(task);
+      state.queue.unshift({ t: 'place', p: p.id, ...source, ...(task.ring ? { ring: task.ring } : {}), ...(task.join ? { join: true } : {}) }, { t: 'buy', p: p.id, ...source }, { t: 'buy', p: p.id, ...source, extra: true }, { t: 'endTurn', p: p.id, ...source });
+      // REPLACE7 bot test: Runner's recruit once more (set by its onTurnInRow above), then Ushers' recruit of a member
+      // costing 3 or less, each a recruit step right after the turn's own
+      if (REPLACE7) {
+        const more = [];
+        for (let k = 0; k < (p.turnExtraBuys || 0); k++) more.push({ t: 'buy', p: p.id, ...source });
+        const cheap = Math.max(0, ...p.members.flatMap(uid => effectiveDefs(state.cards[uid]).map(d => d.cheapBuy || 0)));
+        if (cheap) more.push({ t: 'buy', p: p.id, ...source, cheap: cheap + richUp(state) }); // Richer moves the named cost too
+        delete p.turnExtraBuys;
+        if (more.length) state.queue.splice(2, 0, ...more);
+      }
+      return;
+    }
+    case 'act': {
+      const qid = state.quadrants[task.q];
+      const a = actionAt(state, task.q, task.i);
+      const ctx = ctxFor(state);
+      ctx.placement = { key: `${task.q}-${task.i}`, joined: !!p.lastSlot?.joined };
+      // follower changes the space makes itself (Your Call), after its members' own (credited to them)
+      const mark = fMark(state);
+      const out = underCause({ kind: 'space', key: `${task.q}-${task.i}`, qid, pid: p.id }, () => {
+        // hooks that react to taking a space (Hustler) fire first so follow-up choices keep their order;
+        // afterRivalAction: a member reacting to a rival taking a space (Silversmith)
+        eachMember(state, (owner, card, def) => {
+          if (owner === p && def.afterAction) def.afterAction(ctx, owner, card, qid);
+          if (owner !== p && def.afterRivalAction) def.afterRivalAction(ctx, owner, card, qid, p);
+        }, ['afterAction', 'afterRivalAction']);
+        // Open Bar (REPLACE11=openbar): each open tab on Silver pays its owner when a rival takes a Silver space
+        if (state.openBar && qid === 'silver') for (const t of state.openBar) if (t.round === state.round && t.pid !== p.id) {
+          const o = state.players.find(x => x.id === t.pid); o.bonus += 1; log(state, `${o.name}'s Open Bar: ${p.name} took a Silver space, +1 follower.`);
+        }
+        const d1 = plus1Delta(state, task, a, qid), color = quadrant(qid).resource, had = p.res[color] || 0;
+        econRun('space', { state, pid: p.id, color, delta: spaceDelta(state) + (d1 === PLUS1_CLAIM ? -1 : d1), claim: d1 === PLUS1_CLAIM }, () => a.resolve(ctx, p));
+        // once per game, the first taker's +1 is its own gain, after the space's (the screen flies it on its own from the
+        // space: Cory, "that resource needs an animation to fly to the player, separate from the gains of the action")
+        if (d1 === PLUS1_CLAIM) underCause({ kind: 'plus1', key: `${task.q}-${task.i}`, qid, pid: p.id }, () => {
+          const owed = state.econOwed; delete state.econOwed; // a cut still waiting for the space's own gain isn't this +1's
+          gain(state, p, color, 1, { fromAction: true, again: (p.res[color] || 0) > had });
+          if (owed) state.econOwed = owed;
+          log(state, `${p.name} +1 ${color} (first to take ${a.name}).`);
+        });
+      });
+      fCredit(state, mark, a.name);
+      return out;
+    }
+    // Content continuations are plain queue data: saves and multiplayer can resume a copy chain
+    // after its choices/recruits without closures or an extra player-facing confirmation.
+    case 'content': {
+      const mark = fMark(state);
+      const run = () => handlerById(task.h)(ctxFor(state), p, null, task.data);
+      const out = task.cause ? underCause(task.cause, run) : run();
+      fCredit(state, mark, task.data?.by || task.data?.who || 'Copy');
+      return out;
+    }
+    case 'endTurn': {
+      const ctx = ctxFor(state);
+      delete state.econOwed; // a space's +1 cut never outlives its turn
+      if (REPLACE9 && state.hypno && state.hypno.by === p.id && !state.hypno.armed) state.hypno.armed = true;
+      eachMember(state, (owner, card, def) => { if (def.onTurnEnd) def.onTurnEnd(ctx, owner, card, p); }, ['onTurnEnd']);
+      // "This turn, if you recruit a member, +N followers" (Gather, Stash, Allowance, New Blood) ends with the turn, so a
+      // recruit off your turn (a Round End or Round Start recruit) never collects it
+      delete p.recruitFollowers;
+      delete p.spendFollowers;
+      delete p.cleanSweep;
+      state.current = null;
+      return;
+    }
+    case 'allPlaced': {
+      // after the round's last placement, before its contests: members that act then (Straggler), in turn order. Each
+      // player's step is its own task, so one player's Round End members finish, choices included, before the next
+      // player's start (Cory, Nov 4: "Round Start / Round End effects resolve in turn order."): a later player's Paupers
+      // reads its silver after an earlier player's Cat Burglars took it
+      state.queue.unshift(...turnOrder(state).map(id => ({ t: 'allPlacedOf', pid: id })), { t: 'loansDue' });
+      return;
+    }
+    case 'allPlacedOf': {
+      const ctx = ctxFor(state), o = state.players[task.pid];
+      if (o) inPhase('roundEnd', () => eachMemberOf(state, o, (card, def) => { if (def.onAllPlaced) def.onAllPlaced(ctx, o, card); }, ['onAllPlaced']));
+      return;
+    }
+    case 'loansDue': {
+      if (state.loans?.length) loanDue(ctxFor(state)); // Loan (REPLACE11=loan): the debts fall due
+      return;
+    }
+    case 'released': {
+      // members that react to their owner releasing another member (Social Climber); task.def is the released member's def id
+      const ctx = ctxFor(state);
+      eachMemberOf(state, p, (card, def) => { if (def.onRelease) def.onRelease(ctx, p, card, defById(task.def)); }, ['onRelease']);
+      return;
+    }
+    case 'endRound': return accounted(state, null, () => endRound(state));
+    case 'afterRound':
+      if (state.round < 3) state.queue.push({ t: 'round', r: state.round + 1 });
+      else state.queue.push({ t: 'finish' });
+      return;
+    case 'finish': return underCause({ kind: 'final' }, () => finish(state));
+    default:
+      throw new Error(`Unknown task ${task.t}`);
+  }
+}
+
+// ---------- rounds ----------
+
+function startRound(state, r) {
+  state.round = r;
+  if (REPLACE9) delete state.hypno; // Hypnotist's pick never carries into the next round
+  // Fresh face-up market between rounds; the old row goes on the discard pile (Cory, Nov 6).
+  if (r > 1) {
+    const old = state.shop.splice(0);
+    toDiscard(state, ...old);
+    const join = state.waiting?.[r] || [];
+    if (join.length) {
+      state.pile.push(...join);
+      delete state.waiting[r];
+      // for the table's shuffle-in animation: which members joined the deck at this round's start
+      state.joined = { round: r, uids: [...join] };
+      shuffleInPlace(state, state.pile);
+      log(state, `Round ${roman(r)} members (${join.length}) are shuffled into the deck.`);
+      if (PIN.length) { const hit = state.pile.filter(u => join.includes(u) && PIN.includes(state.cards[u].def)); state.pile = [...hit, ...state.pile.filter(u => !hit.includes(u))]; } // PIN: this round's own members only
+    }
+    refill(state);
+    log(state, `The member market refreshes for round ${roman(r)}.`);
+    // Bargain Bin counts the refresh: the old shop went to the bottom (Cory, Nov 1: "Yes, you count the refreshes")
+    if (old.length) bottomBlue(state);
+  }
+  state.slots = {};
+  state.squats = {};
+  delete state.reserved; // Snobs' token comes off when the round ends
+  delete state.held; // Place Holders' token too
+  delete state.openBar; // and Open Bar's tab
+  delete state.royalties; // and Royalties'
+  state.recruits = 0;
+  state.turns = [];
+  const n = WORKERS[r - 1];
+  // extra workers this round (Extra Hand: flag extraWorkers = [I, II, III]); p.workers keeps the round's count
+  const more = id => sumMemberFlag(state, state.players[id], 'extraWorkers', v => v[r - 1] || 0);
+  for (const p of state.players) { p.left = n + more(p.id); p.workers = p.left; }
+  const ctx = ctxFor(state);
+  // A choice a Round Start queues remembers whose card asked (rsSrc): if the card has changed cults before the choice
+  // comes up (a Kidnapper took it), it does nothing, so a card's Round Start fires once a round, for whoever holds it
+  // (Cory, Nov 4: "Round Start / Round End effects resolve in turn order"; Lab bug, Tax Collector A/B game 1).
+  const fromCard = hook => (owner, card, def) => {
+    if (!def[hook]) return;
+    state._rsSrc = { pid: owner.id, uid: card.uid };
+    try { def[hook](ctx, owner, card); } finally { delete state._rsSrc; }
+  };
+  eachMember(state, fromCard('onRoundStart'), ['onRoundStart']);
+  // late hooks see everything the round-start income gave (Investor sets aside after Banker pays)
+  eachMember(state, fromCard('onRoundStartLate'), ['onRoundStartLate']);
+  // Fewest followers picks first. Ties: whoever was later in last round's turn order.
+  // The first pass of last round's snake is its turn order (the last pass is reversed in even rounds).
+  const prev = state.order.length ? state.order.slice(0, state.players.length) : [...state.players.map(p => p.id)];
+  const lastPos = id => prev.indexOf(id);
+  // Round I: everyone is tied, so the order is random (Cory, 2026-10-14).
+  const base = r === 1 && state.order.length === 0
+    ? (Array.isArray(state.firstOrder) && state.firstOrder.length === state.players.length ? [...state.firstOrder] : shuffleInPlace(state, state.players.map(p => p.id)))
+    : [...state.players].sort((a, b) => followers(state, a) - followers(state, b) || lastPos(b.id) - lastPos(a.id)).map(p => p.id);
+  // Whoever always picks first (Front-runner: flag pickFirst) moves to the front. Two of them keep their usual order.
+  const first = id => sumMemberFlag(state, state.players[id], 'pickFirst') > 0;
+  const lead = base.filter(first);
+  if (lead.length) base.splice(0, base.length, ...lead, ...base.filter(id => !first(id)));
+  state.order = [];
+  for (let k = 0; k < n; k++) state.order.push(...(k % 2 ? [...base].reverse() : base));
+  // extra workers go after the snake, in this round's order
+  // (a member with extraWorkerRing limits its worker to spaces of that ring or lower)
+  const extras = Object.fromEntries(base.map(id => {
+    const grants = [];
+    for (const uid of state.players[id].members) {
+      let grant = 0;
+      for (const d of effectiveDefs(state.cards[uid]))
+        for (let k = 0; k < ((d.extraWorkers || [])[r - 1] || 0); k++) grants.push({ uid, grant: grant++, ring: d.extraWorkerRing || 0 });
+      state.cards[uid].workerGrantRound = r;
+      state.cards[uid].workerGrants = grant;
+    }
+    return [id, grants];
+  }));
+  const rowNotes = [];
+  const snake = state.order.map(id => ({ t: 'turn', p: id }));
+  // Clockmakers (flag firstTwoInRow, Cory 2026-10-29): your first two turns of the round come in a row. Your last snake
+  // turn moves up to right after your first, as Right Away moves one (your turns between stay where they are)
+  // Early Risers (REPLACE7, flag firstTwoIfFewest): the same, while you have the fewest followers (ties count)
+  const fewest = Math.min(...state.players.map(o => followers(state, o)));
+  const rowFlag = id => sumMemberFlag(state, state.players[id], 'firstTwoInRow') > 0 ? 'firstTwoInRow'
+    : sumMemberFlag(state, state.players[id], 'firstTwoIfFewest') > 0 && followers(state, state.players[id]) === fewest ? 'firstTwoIfFewest' : null;
+  for (const id of base) if (rowFlag(id)) {
+    const f = snake.findIndex(t => t.p === id), l = snake.findLastIndex(t => t.p === id);
+    if (f < 0 || l <= f + 1 || snake[f + 1].p === id) continue; // already two in a row (a snake end)
+    const [t] = snake.splice(l, 1);
+    snake.splice(f + 1, 0, t);
+    const why = flagName(state, state.players[id], rowFlag(id));
+    if (!state.early || state.early.round !== r) state.early = { round: r, moves: [] };
+    state.early.moves.push({ p: id, from: l, to: f + 1, why });
+    rowNotes.push(`${state.players[id].name}'s ${why}: ${state.players[id].name}'s first two turns come in a row.`);
+  }
+  const most = Math.max(0, ...base.map(id => extras[id].length));
+  for (let k = 0; k < most; k++) for (const id of base) if (extras[id].length > k) {
+    const x = extras[id][k], workerOrder = state.order.length;
+    state.order.push(id);
+    snake.push({ t: 'turn', p: id, workerSource: x.uid, workerGrant: x.grant, workerOrder, ...(x.ring ? { ring: x.ring } : {}) });
+  }
+  // the cards that bend this round's order and workers are named, so the order and the extra worker trace to them
+  const hands = base.filter(id => extras[id].length).map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'extraWorkers')}: +${extras[id].length} minion${extras[id].length > 1 ? 's' : ''}.`);
+  log(state, `Round ${roman(r)} begins. ${state.players[base[0]].name} picks first.${lead.length ? ` (${lead.map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'pickFirst')}`).join(', ')}: always pick${lead.length === 1 ? 's' : ''} first.)` : ''}${hands.length ? ` ${hands.join(' ')}` : ''}${rowNotes.length ? ` ${rowNotes.join(' ')}` : ''}`);
+  // Doorbusters (REPLACE2 bot test: flag roundStartBuy): one recruit each, in this round's order, before anyone places
+  const doors = [];
+  for (const id of base) for (let k = sumMemberFlag(state, state.players[id], 'roundStartBuy'); k > 0; k--) doors.push({ t: 'buy', p: id, doorbuster: true });
+  for (const t of doors) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.spendFollowers; delete p.clearance; delete p.recruitFollowers; }
+  if (doors.length) log(state, [...new Set(doors.map(t => t.p))].map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'roundStartBuy')}: recruits once before anyone places.`).join(' '));
+  state.queue.push(...doors, ...snake, { t: 'allPlaced' }, { t: 'endRound' }, { t: 'afterRound' });
+  // Round Start effects that act on the round's turns (Wake-Up Caller, REPLACE7) run once the turns are queued
+  eachMember(state, (owner, card, def) => { if (def.onRoundQueued) def.onRoundQueued(ctx, owner, card); }, ['onRoundQueued']);
+}
+
+function endRound(state) {
+  const ctx = ctxFor(state);
+  // Borrow (Cory, Nov 12: "it goes back to the shop"; "when you give somebody a loaned card, it should stay loaned and
+  // go back at end of the round"): this round's borrowed members, in whichever cult holds them now (a swap or a give
+  // moves the loan with the card, loanFollows), go back to the shop first, before the Round End cards and the contests
+  const lent = (state.borrowed || []).filter(b => b.round === state.round);
+  state.borrowed = (state.borrowed || []).filter(b => b.round !== state.round);
+  for (const b of lent) {
+    const p = state.players.find(o => o.members.includes(b.uid));
+    if (!p) continue;
+    log(state, `${p.name}'s ${cardDef(state, b.uid).name} was on loan from Borrow: back to the shop at round end.`);
+    ctx.buryMember(p, b.uid, p, { shop: true });
+  }
+  if (!state.borrowed.length) delete state.borrowed;
+  // Round End cards act in this round's turn order, as the ones before them (Cory, Nov 5: "round ends, contests, members.")
+  inPhase('roundEnd', () => { for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.onRoundEnd) def.onRoundEnd(ctx, state.players[id], card); }, ['onRoundEnd']); });
+  const v = RING_VALUE[state.round - 1];
+  const msg = [];
+  // one contest at a time, in cloak order: each prize (and Cheerleader's +1) lands before the next contest counts
+  const table = contestTable(state, ctx, c => {
+    if (c.spoiled !== undefined) msg.push(`${c.label}: spoiled by ${state.players[c.spoiled].name}'s Spoilsport, nobody wins`);
+    if (!c.winners.length) return;
+    if (c.copycats) msg.push(`${c.label}: ${c.copycats.map(id => `${state.players[id].name}'s Copycats`).join(' & ')} ${c.copycats.length > 1 ? 'tie' : 'ties'} for it, 1 short`);
+    const winners = c.winners.map(id => state.players[id]);
+    underCause({ kind: 'contest', qid: c.qid, round: state.round }, () => { for (const w of winners) { w.bonus += c.prize; w.contest += c.prize; fBump(state, w, c.prize); } });
+    // members that answer a contest won (Cheerleader); the screen shows them with the members after the contests
+    inPhase('afterContests', () => { for (const w of winners) eachMemberOf(state, w, (card, def) => { if (def.onContestWin) def.onContestWin(ctx, w, card, c); }, ['onContestWin']); });
+    msg.push(`${c.label}: ${winners.map(w => w.name).join(' & ')} +${c.prize}`);
+  });
+  // the round's scoring, kept as decided: the round-end card and the results read it back (never re-derived)
+  state.contests = [...(state.contests || []), { round: state.round, prize: v, results: table }];
+  // why each contest went that way, on its own line just before the result (the result stays the round's last line) (Cory, Nov 12: "How did I not win most members?"
+  // P2's Mannequin counted the shop's blue members): every player's count, and what a Mannequin added
+  const counts = table.filter(c => c.rows && c.rows.length).map(c => {
+    const extra = /\bmembers\b/i.test(c.label) && !/\b(?:of one color|cards?|blue|red|green|purple|white|silver|yellow|magenta|gold)\b/i.test(c.label)
+      ? state.players.map(p => ({ p, n: contestMembers(state, p) - memberCount(state, p) })).filter(x => x.n > 0) : [];
+    return `${c.label}: ${c.rows.map(r => `${state.players[r.player].name} ${r.count}`).join(', ')}${extra.map(x => ` (${x.p.name}'s Mannequin counts ${x.n} blue shop member${x.n === 1 ? '' : 's'})`).join('')}`;
+  });
+  if (counts.length) log(state, `Round ${roman(state.round)} counts. ${counts.join(' · ')}.`);
+  log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
+  // a test's "table at scoring" stops here, before members that act on the scored contests (Sore Loser's follower steal
+  // paid Fence's magenta after Most magenta was scored, and the oracle read the later pile)
+  if (state.stopAtScoring) return;
+  // members that answer a rival winning a contest (Racketeers, REPLACE1 bot test), each winner of each contest
+  // (one step for the screen: the Reckoning shows these after the contests, never the closing move's chain before them)
+  inPhase('afterContests', () => {
+    for (const c of table) for (const id of c.winners) eachMember(state, (owner, card, def) => { if (def.onRivalContestWin && owner.id !== id) def.onRivalContestWin(ctx, owner, card, state.players[id], c); }, ['onRivalContestWin']);
+    // members that read the scored contests (Sore Loser, live Nov 4; Second Fiddles, REPLACE5 bot test), in this round's turn order
+    for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.afterContests) def.afterContests(ctx, state.players[id], card, table); }, ['afterContests']);
+  });
+  // Late Shoppers (REPLACE4 bot test: flag roundEndBuy): one recruit each, in this round's order, after the contests
+  // and before the row goes to the bottom (in round III, before the Game End cards count)
+  if (REPLACE4) {
+    const late = [];
+    for (const id of turnOrder(state)) for (let k = sumMemberFlag(state, state.players[id], 'roundEndBuy'); k > 0; k--) late.push({ t: 'buy', p: id, lateShop: true });
+    for (const t of late) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.spendFollowers; delete p.clearance; delete p.recruitFollowers; }
+    if (late.length) {
+      log(state, [...new Set(late.map(t => t.p))].map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'roundEndBuy')}: recruits once after the contests.`).join(' '));
+      const at = state.queue.findIndex(t => !t._fresh);
+      state.queue.splice(at < 0 ? state.queue.length : at, 0, ...late);
+    }
+  }
+}
+
+// ---------- contests: one function decides them, and every screen shows it ----------
+const ruleOf = label => label.replace(/\s*\(.*\)\s*$/, '');
+/**
+ * Each quadrant's contest, scored by the rule endRound uses, as if the round ended now:
+ * [{ qid, label, rule, counts, tiebreak, prize, rows:[{ player, score, count, tiebreak? }], winners:[ids] }].
+ * rows are best first (seat order among equals). count is the number the rule measures and tiebreak the number
+ * that breaks a tie (a quadrant's scoring.show says how its score splits; without it the score is the count).
+ * winners take the prize; nobody does when the best score is 0. tiebreak (top level) is { unit, text } or null.
+ */
+/** Other contest goals, a table setting (Cory, 2026-11-02: "you can build alt ring goals as a setting"; ideas in
+ *  /mnt/project-files/ring-goals/ideas.md). rules.contests: 'members' (held color, each member of the color counts 2),
+ *  'minions' (your minions on the color's spaces at round end), 'present' (most held among players with a minion on the color's spaces), 'whiteFewest' (White: fewest members, at least 1).
+ *  Anything else (the default) is each color's own printed contest. Every screen and bot reads the contest through this. */
+export function scoringOf(state, qid) {
+  const q = quadrant(qid), mode = state.rules?.contests;
+  if (!mode || !q.scoring) return q.scoring;
+  const name = q.name.toLowerCase(), res = q.resource, qi = state.quadrants.indexOf(qid);
+  if (mode === 'members') return { label: `Most ${res}, 2 per ${res} member`, counts: `the ${res} you hold, plus 2 for each ${res} member`,
+    score: (ctx, p) => (p.res[res] || 0) + 2 * countMembersOfColor(state, p, qid) };
+  if (mode === 'minions') return { label: `Most minions on ${name}`, counts: `your minions on ${q.name} spaces when the round ends`,
+    score: (ctx, p) => spacesOf(state, qid).reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) };
+  const onIt = p => spacesOf(state, qid).some((a, i) => state.slots[`${qi}-${i}`] === p.id || (state.squats?.[`${qi}-${i}`] || []).includes(p.id));
+  if (mode === 'present') return { label: `Most ${res}, if on ${res}`, counts: `the ${res} you hold, if you have a minion on a ${q.name} space when the round ends`,
+    score: (ctx, p) => (onIt(p) ? (p.res[res] || 0) : 0), show: (ctx, p) => ({ count: p.res[res] || 0 }) };
+  // bot test only (Nov 3, depth ideas): most held, among players with at least one member of the color
+  if (mode === 'memberGate') return { label: `Most ${res}, if you have a ${res} member`, counts: `the ${res} you hold, if you have a ${res} member when the round ends`,
+    score: (ctx, p) => (countMembersOfColor(state, p, qid) > 0 ? (p.res[res] || 0) : 0), show: (ctx, p) => ({ count: p.res[res] || 0 }) };
+  if (mode === 'byColor') {
+    // A different contest per color (Cory, 2026-11-02: "they should all have different goals"; set in
+    // /mnt/project-files/ring-goals/by-color.md). Each is won by taking that color's own spaces.
+    // Fewest members counts only your own: Mannequin's shop members never count against its owner (Cory, Nov 4: "It always
+    // works in the best possible interpretation for the player"; Nov 6: "Mannequin must not be counting right")
+    const fewest = { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
+      score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: memberCount(state, p) }) };
+    const by = {
+      // Red keeps its printed contest, most red (Claude, under Cory's "use your judgement", Nov 3): "Priciest member" went
+      // to whoever bought Mob (82% of round IIIs, Normal bots) and red cults won 52% where 21% was even.
+      market: { label: 'Most members', counts: 'your members when the round ends', score: (ctx, p) => contestMembers(state, p) },
+      trading: fewest,
+      thieves: { label: 'Most resources', counts: 'all the resources you hold when the round ends, every color together', score: (ctx, p) => state.resources.reduce((n, r) => n + (p.res[r] || 0), 0) },
+      yellow: { label: 'Most full sets', counts: 'your full sets of one of every color in play, when the round ends', score: (ctx, p) => setsOf(ctx, p) }, // setsOf: the plain min, or Jack-of-All-Trades' yellow filling gaps
+      echo: { label: 'Most minions on green', counts: 'your minions on Green spaces when the round ends', score: (ctx, p) => spacesOf(state, qid).reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) },
+      purple: { label: 'Went last', counts: "whoever placed the round's last minion", tiebreak: null,
+        score: (ctx, p) => (state.lastPlaced && state.lastPlaced.round === state.round && state.lastPlaced.pid === p.id ? 1 : 0) },
+    };
+    // Green ties go to the most green held, White is fewest followers (Cory, Nov 3: "use your judgement", after the
+    // balance run found Green shared 80% of rounds and White staying with one player). rules.contestFix tries others in sims.
+    // Red Most members of one color, grey included; Blue keeps Most members (Cory, 2026-11-07 11:36pm: "blue should be most
+    // members since it gets more recruits. and red is really just moving memebers around… most of one color is good,
+    // because red can more easily adjust its members… and of course for red grey can count")
+    // White Fewest members with 0 counting, Silver Fewest silver (Cory, 2026-11-07 11:31pm: "White fewest members can be 0",
+    // "yes fewest silver"; contests are core: "Nailing these competitions down is a massive unlock for the game")
+    const fix = { white: 'members0', silver: 'fewest0', red: 'oneColor', yellow: 'colors', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
+    // Red: most red member cards, one each (Cory, Nov 3: "we should avoid a simply color held. maybe most red members?";
+    // cards, not member weight, so one card that counts as 4 can't lock it). contestFix.red 'held' tries most red held.
+    if (fix.red === 'cards') by.red = { label: 'Most red members', counts: 'your red member cards when the round ends (each card counts 1, Dabblers 2)',
+      score: (ctx, p) => countMembersOfColor(state, p, 'red', { cards: true }) };
+    // Members, not cards (Cory, Nov 13 8:12pm: "Red contest is supposed to be #members not #cards"): a member that counts
+    // as 2 members counts 2. Grey is a color (Cory, same night: "Grey is a color… it should count for everything as a color").
+    if (fix.red === 'oneColor') by.red = { label: 'Most members of one color', counts: 'your members of your biggest color when the round ends (grey is a color)',
+      score: (ctx, p) => Math.max(0, ...[...state.quadrants, 'guest'].map(q => countMembersOfColor(state, p, q))) };
+    // Blue (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-blue.md): contestFix.market
+    // 'cards' counts member cards (each counts 1, as Red's), 'blue' blue member cards, 'held' the blue you hold
+    if (fix.market === 'cards') by.market = { label: 'Most member cards', counts: 'your member cards when the round ends (each card counts 1)',
+      score: (ctx, p) => p.members.length };
+    if (fix.market === 'blue') by.market = { label: 'Most blue members', counts: 'your blue member cards when the round ends (each card counts 1, Dabblers 2)',
+      score: (ctx, p) => countMembersOfColor(state, p, 'market', { cards: true }) };
+    if (fix.market === 'recruits') by.market = { label: 'Most recruits this round', counts: 'your sideways member cards, each card counts 1 (every member you recruit, swap for or take comes in sideways and turns upright when the round ends; buying followers is not a member; a sideways card counts for whoever holds it)',
+      score: (ctx, p) => p.members.filter(uid => { const w = state.cards[uid].sideways; return w && w.round === state.round; }).length };
+    if (fix.market === 'held') by.market = { label: 'Most blue', counts: 'the blue you hold when the round ends', score: (ctx, p) => p.res.blue || 0 };
+    // Green (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-green.md): contestFix.green
+    // 'onrecruit' counts your members whose card says On Recruit (what Greatest Hits and Sample copy), 'held' the green
+    // you hold, 'greencards' your green member cards
+    if (fix.green === 'onrecruit') by.echo = { label: 'Most On Recruit members', counts: 'your member cards that say "On Recruit", when the round ends (each card counts 1)',
+      score: (ctx, p) => p.members.filter(u => { const c = state.cards[u], d = defById(c.copy || c.def); return /On Recruit/.test(d.text || ''); }).length };
+    if (fix.green === 'held') by.echo = { label: 'Most green', counts: 'the green you hold when the round ends', score: (ctx, p) => p.res.green || 0 };
+    if (fix.green === 'greencards') by.echo = { label: 'Most green members', counts: 'your green member cards when the round ends (each card counts 1, Dabblers 2)',
+      score: (ctx, p) => countMembersOfColor(state, p, 'echo', { cards: true }) };
+    const greenScore = by.echo.score, onGreen = p => greenScore(null, p);
+    if (fix.green === 'tb') by.echo = { ...by.echo, tiebreak: { unit: 'green', text: 'ties go to the most green held' },
+      score: (ctx, p) => { const n = onGreen(p); return n > 0 ? n * 1000 + (p.res.green || 0) : 0; }, show: (ctx, p) => ({ count: onGreen(p), tiebreak: p.res.green || 0 }) };
+    if (fix.green === 'members') by.echo = { ...by.echo, label: 'Most minions on green, plus green members', counts: 'your minions on Green spaces plus your green members, when the round ends',
+      score: (ctx, p) => onGreen(p) + countMembersOfColor(state, p, 'echo') };
+    // Actions lane, Nov 4 (green-r1 judges: "does Fan Club count 1 or 3?"): each green card counts 1, as in Red's contest.
+    if (fix.green === 'memberscards') by.echo = { ...by.echo, label: 'Most minions on green, plus green members', counts: 'your minions on Green spaces plus your green member cards (each counts 1), when the round ends',
+      score: (ctx, p) => onGreen(p) + countMembersOfColor(state, p, 'echo', { cards: true }) };
+    // Yellow: Most member colors (Cory, 2026-11-07 11:40pm: "let's actually swtich yellow to that goal. For now we can make
+    // it 'most member colors'"; the goal later: "at least one member of every color"). Colors in play; Dabblers counts as each.
+    // Dabblers adds one color you lack, not every color (Cory, 11:41pm: "dabblers is kind of an auto win there? … I think just counts as one")
+    // Grey counts as one more color (Cory, Nov 13 8:12pm: "Grey is a color, it counts for yellows contest"); Dabblers fills
+    // the table's colors, not grey.
+    if (fix.yellow === 'colors') by.yellow = { label: 'Most member colors', counts: 'the colors among your members when the round ends (grey is a color)',
+      score: (ctx, p) => { const have = state.quadrants.filter(q => countMembersOfColor(state, p, q, { cards: true, wild: false }) > 0).length;
+        const grey = greyColor(state, p) ? 1 : 0;
+        return Math.min(state.quadrants.length, have + p.members.filter(u => countsAsEveryColor(state, u)).length) + grey; } };
+    // Silver: plain Fewest silver, 0 counts (Cory, 2026-11-07 11:47pm: "why at least one???")
+    if (fix.silver === 'fewest0') by.silver = { label: 'Fewest silver', counts: 'the silver you hold when the round ends',
+      score: (ctx, p) => 1000 - (p.res.silver || 0), show: (ctx, p) => ({ count: p.res.silver || 0 }) };
+    if (fix.white === 'members0') by.trading = { label: 'Fewest members', counts: 'your members when the round ends',
+      score: (ctx, p) => 1000 - memberCount(state, p), show: (ctx, p) => ({ count: memberCount(state, p) }) };
+    if (fix.white === 'net') by.trading = { label: 'Most white, minus 1 per member', counts: 'the white you hold minus your members, when the round ends',
+      score: (ctx, p) => Math.max(0, (p.res.white || 0) - memberCount(state, p)), show: (ctx, p) => ({ count: (p.res.white || 0) - memberCount(state, p) }) };
+    if (fix.white === 'followers') by.trading = { label: 'Fewest followers', counts: 'your followers when the round ends',
+      score: (ctx, p) => 100000 - followers(state, p), show: (ctx, p) => ({ count: followers(state, p) }) };
+    // Contest candidates for White and Silver (lane B, Nov 4, after Cory: contests "might be a little too confining"); bot trials only
+    if (fix.white === 'held') by.trading = { label: 'Most white', counts: 'the white you hold when the round ends', score: (ctx, p) => p.res.white || 0 };
+    if (fix.white === 'leanWhite') by.trading = { ...fewest, label: 'Fewest members, ties to most white', tiebreak: { unit: 'white', text: 'ties go to the most white held' },
+      score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? (1000 - n) * 1000 + (p.res.white || 0) : 0; }, show: (ctx, p) => ({ count: memberCount(state, p), tiebreak: p.res.white || 0 }) };
+    if (fix.silver === 'fewest') by.silver = { label: 'Fewest silver, at least 1', counts: 'the silver you hold when the round ends (at least 1)',
+      score: (ctx, p) => { const n = p.res.silver || 0; return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: p.res.silver || 0 }) };
+    if (fix.silver === 'present') by.silver = { label: 'Most silver, if on silver', counts: 'the silver you hold, if you have a minion on a Silver space when the round ends',
+      score: (ctx, p) => (onIt(p) ? (p.res.silver || 0) : 0), show: (ctx, p) => ({ count: p.res.silver || 0 }) };
+    // Red (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-red.md): contestFix.red
+    // 'allcards' the biggest cult (member cards, each counts 1), 'reign' red member cards with last round's Red winner
+    // counting 2 fewer, 'cheap' member cards costing 3 or less.
+    if (fix.red === 'allcards') by.red = { label: 'Most member cards', counts: 'your member cards when the round ends (each card counts 1)',
+      score: (ctx, p) => p.members.length };
+    if (fix.red === 'reign') {
+      const last = (state.contests || []).at(-1)?.results.find(c => c.qid === 'red')?.winners || [];
+      const reds = p => countMembersOfColor(state, p, 'red', { cards: true });
+      by.red = { label: 'Most red members, last winner −2', counts: "your red member cards when the round ends (each counts 1); last round's winner counts 2 fewer",
+        score: (ctx, p) => Math.max(0, reds(p) - (last.includes(p.id) ? 2 : 0)) };
+    }
+    if (fix.red === 'cheap') by.red = { label: 'Most cheap members', counts: 'your member cards costing 3 or less when the round ends (each counts 1)',
+      score: (ctx, p) => p.members.filter(uid => { const d = cardDef(state, uid); return d.s + d.w <= 3; }).length };
+    if (fix.white === 'notTwice') {
+      const last = (state.contests || []).at(-1)?.results.find(c => c.qid === 'trading')?.winners || [];
+      by.trading = { ...fewest, label: 'Fewest members, not last round\'s winner', score: (ctx, p) => (last.includes(p.id) ? 0 : fewest.score(ctx, p)) };
+    }
+    return by[qid] || q.scoring;
+  }
+  if (mode === 'whiteFewest' && qid === 'trading') return { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
+    score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: memberCount(state, p) }) };
+  return q.scoring;
+}
+/**
+ * The order the contests are scored in: cloak order (Cory, 2026-11-04: "it kind of has to have an inherent order. and
+ * I think cloak order makes most sense (so basically player turn order)"). Each player in this round's turn order
+ * brings the contest of the color whose cloak they picked (or whose resource they drafted, with cloaks off); a color
+ * nobody picked (an old save, a test table) follows in wheel order.
+ */
+export function contestOrder(state) {
+  const colorOf = p => {
+    if (p.startColor && state.quadrants.includes(p.startColor)) return p.startColor;
+    if (p.artifact !== undefined && state.artifacts) for (const q in state.artifacts) if (state.artifacts[q] === p.artifact && state.quadrants.includes(q)) return q;
+    return null;
+  };
+  const out = [];
+  for (const id of turnOrder(state)) { const q = colorOf(state.players[id]); if (q && !out.includes(q)) out.push(q); }
+  for (const q of state.quadrants) if (!out.includes(q)) out.push(q);
+  return out;
+}
+/**
+ * Every contest, scored one at a time in cloak order (contestOrder), each on the table as the earlier prizes left it.
+ * pay(c), given by endRound, pays each contest for real before the next is counted; without it (every preview, as if
+ * the round ended now) each prize is added to its winners' followers for the later contests and taken back after.
+ */
+export function contestTable(state, ctx = ctxFor(state), pay = null) {
+  const prize = RING_VALUE[Math.min(3, Math.max(1, state.round)) - 1];
+  const lent = state.players.map(() => 0);
+  try {
+    return contestOrder(state).map(qid => {
+      const c = scoreContest(state, ctx, qid, prize);
+      if (pay) pay(c); else for (const id of c.winners) { state.players[id].bonus += c.prize; lent[id] += c.prize; }
+      return c;
+    });
+  } finally {
+    state.players.forEach((p, i) => { if (lent[i]) p.bonus -= lent[i]; });
+  }
+}
+function scoreContest(state, ctx, qid, prize) {
+  {
+    const q = quadrant(qid);
+    const sc = scoringOf(state, qid);
+    // Fat Cats (idea pipeline pool 10, flag doubleMagenta; no live card has it): its owner's Magenta count counts twice
+    const twice = p => qid === 'thieves' && p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.doubleMagenta));
+    const scores = state.players.map(p => sc.score(ctx, p) * (twice(p) ? 2 : 1));
+    const top = Math.max(...scores);
+    let winners = top > 0 ? state.players.filter((p, i) => scores[i] === top).map(p => p.id) : [];
+    // Spoilsport (REPLACE2 bot test): a contest spoiled this round pays nobody
+    const spoiled = state.spoiled && state.spoiled.round === state.round && state.spoiled.list.find(x => x.qid === qid);
+    if (spoiled) winners = [];
+    // Copycats (REPLACE4 bot test: flag copycat): a holder of exactly 1 less than the winner (at least 1) ties for it
+    let copycats = null;
+    if (REPLACE4 && winners.length && top - 1 > 0) {
+      copycats = state.players.filter((p, i) => scores[i] === top - 1 && p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.copycat))).map(p => p.id);
+      if (copycats.length) winners = [...winners, ...copycats].sort((a, b) => a - b); else copycats = null;
+    }
+    // Tiebreaker (concept): a tie its owner is in goes to them alone
+    if (winners.length > 1) { const tb = winners.filter(id => state.players[id].members.some(u => effectiveDefs(state.cards[u]).some(d => d.tiebreak))); if (tb.length === 1) winners = tb; }
+    const rows = state.players.map((p, i) => {
+      const shown = sc.show ? sc.show(ctx, p) : { count: scores[i] };
+      const row = { player: p.id, score: scores[i], count: shown.count };
+      if (shown.tiebreak !== undefined) row.tiebreak = shown.tiebreak;
+      return row;
+    }).sort((a, b) => b.score - a.score || a.player - b.player);
+    return {
+      qid, label: sc.label, rule: ruleOf(sc.label), counts: sc.counts || null, tiebreak: sc.tiebreak || null,
+      prize: winners.length > 1 ? Math.ceil(prize / 2) : prize, fullPrize: prize, rows, winners, ...(spoiled ? { spoiled: spoiled.by } : {}),
+      ...(copycats && copycats.some(id => winners.includes(id)) ? { copycats: copycats.filter(id => winners.includes(id)) } : {}),
+    };
+  }
+}
+
+function finish(state) {
+  const ctx = ctxFor(state);
+  // final.cards: each bonus with the member that scored it (the results' scoring pops it over that member's head)
+  // final.zero: members that score at game end and scored nothing this time, so the summary never says "no end-game
+  // bonuses" over a Kingpin that came to +0 (blind tester, aminus r1 #5)
+  for (const p of state.players) p.final = { total: 0, parts: [], cards: [], zero: [] };
+  // endLast: a game-end bonus that reads everyone's final count (Grudge, REPLACE1 bot test) scores after all the others;
+  // onGameEndTake: what it takes from a rival as it scores (onGameEnd itself stays a pure read: bots and screens call it)
+  const score = last => (owner, card, def) => {
+    if (!def.onGameEnd || !!def.endLast !== last) return;
+    const got = def.onGameEnd(ctx, owner, card) || 0;
+    if (got) {
+      if (def.onGameEndTake) def.onGameEndTake(ctx, owner, card, got);
+      owner.bonus += got; fBump(state, owner, got); owner.final.total += got;
+      owner.final.parts.push(`${def.name} ${got > 0 ? '+' : '−'}${Math.abs(got)}`);
+      owner.final.cards.push({ uid: card.uid, name: def.name, n: got });
+    } else owner.final.zero.push({ uid: card.uid, name: def.name });
+  };
+  eachMember(state, score(false), ['onGameEnd']);
+  // a game-end loss a member deals rivals (Creditors, live Nov 3), before the bonuses that read final counts. It lands
+  // in the rival's final (end-game) total, so it's credited here and the play ledger doesn't count it a second time
+  eachMember(state, (owner, card, def) => {
+    if (!def.onGameEndHit) return;
+    const was = state.players.map(o => o.bonus);
+    def.onGameEndHit(ctx, owner, card);
+    state.players.forEach((o, i) => fBump(state, o, o.bonus - was[i]));
+  }, ['onGameEndHit']);
+  eachMember(state, score(true), ['endLast']);
+  const ranked = [...state.players].sort((a, b) => followers(state, b) - followers(state, a) || memberCount(state, b) - memberCount(state, a));
+  state.ranking = ranked.map(p => p.id);
+  state.over = true;
+  state.current = null;
+  log(state, `Game over. ${ranked[0].name} wins with ${followers(state, ranked[0])} followers.`);
+}
+
+/**
+ * This round's turns in order: done (taken, oldest first), current (the seat whose turn is running, or null) and
+ * next (the turns still queued, extra turns included). Read straight from the engine's record and queue.
+ */
+export function turnRail(state) {
+  const taken = state.turns || [];
+  const current = state.current ?? null;
+  return { done: current != null ? taken.slice(0, -1) : [...taken], current, next: state.queue.filter(t => t.t === 'turn').map(t => t.p) };
+}
+/**
+ * This round's planned order (state.order: the snake, then extra minions) with the turns players took early moved up
+ * (Crunch Time: "taking two immediate turns with existing minions", Cory 2026-10-15). state.order itself keeps the
+ * round's first pass, which seats and next round's tiebreak read. Returns { order: [pid], early: [why|null], src:
+ * [index each turn had in state.order] }.
+ */
+export function roundOrder(state) {
+  const order = [...(state.order || [])], early = order.map(() => null), src = order.map((_, i) => i), late = order.map(() => null);
+  const e = state.early;
+  // a move marked late is a skipped turn (Purple's skip space): the seat is passed over once, so its turn goes last
+  // a move that names its turn (src: the turn's place in state.order) finds it there: an earlier move taken back (the
+  // Goes Last token taken, its minions back to their turns) shifts the places after it, and a place alone then named a
+  // rival's turn (four-player review, Nov 12: Vera's turn read "Crunch Time: next turn, now" after Cass's Crunch Time)
+  if (e && e.round === state.round) for (const m0 of e.moves) {
+    const at = m0.src !== undefined ? src.indexOf(m0.src) : -1;
+    const m = at >= 0 ? { ...m0, from: at } : m0;
+    const [pid] = order.splice(m.from, 1); early.splice(m.from, 1); const [i] = src.splice(m.from, 1); late.splice(m.from, 1);
+    order.splice(m.to, 0, pid); early.splice(m.to, 0, m.late ? null : m.why); src.splice(m.to, 0, i); late.splice(m.to, 0, m.late ? m.why : null);
+  }
+  return { order, early, src, late };
+}
+/** Workers p had this round (Extra Hand adds to the round's count); older saves fall back to the round's count. */
+export const roundWorkers = (state, p) => p.workers ?? WORKERS[Math.max(1, state.round) - 1];
+
+// ---------- recruiting, buying, gaining ----------
+
+function refill(state) {
+  if (state.supply) return refillPiles(state);
+  while (state.shop.length < shopSize(state) && deckReady(state, t => log(state, t))) state.shop.push(state.pile.shift());
+}
+// ---------- piles (experiment: rules.piles) ----------
+const isPileCard = (state, uid) => !!state.supply && state.supply[state.cards[uid]?.def] !== undefined;
+/** A pile opens in the round its member would join the deck (round decks), so round I sees only round I piles. */
+// every pile is open from round I (Cory, 2026-11-01: "with the piles, there should be no limit on when you can buy")
+export const pileOpen = () => true;
+/** Piles: a pile member sent "to the bottom of the pile" (or into the deck between rounds) goes back to its own pile;
+ *  the shop row fills from the deck as usual, then every open pile shows its top copy after the row. */
+function refillPiles(state) {
+  const back = u => { wipeCard(state, u); state.supply[state.cards[u].def].push(u); };
+  for (const list of [state.pile, discardOf(state), ...Object.values(state.waiting || {})])
+    for (let i = list.length - 1; i >= 0; i--) if (isPileCard(state, list[i])) back(list.splice(i, 1)[0]);
+  // one face-up copy per pile: an extra copy that landed in the shop (a swap) goes back under its pile
+  const seen = new Set();
+  for (let i = 0; i < state.shop.length; i++) {
+    const u = state.shop[i];
+    if (!isPileCard(state, u)) continue;
+    const d = state.cards[u].def;
+    if (seen.has(d) || !pileOpen(state, d)) { state.shop.splice(i--, 1); back(u); } else seen.add(d);
+  }
+  const row = state.shop.filter(u => !isPileCard(state, u));
+  // all piles: the piles are the whole shop, so the deck (if kept) deals no face-up row
+  const rowSize = state.rules?.piles?.only ? 0 : shopSize(state);
+  while (row.length < rowSize && deckReady(state, t => log(state, t))) row.push(state.pile.shift());
+  // a row card left over (a member swapped for a pile's top lands in the shop): to the bottom of the deck, so the row
+  // stays its size (Grey piles grew it to 9; Claude, under Cory's "make judgement calls", Nov 3, setup audit)
+  while (row.length > rowSize) state.pile.push(row.pop());
+  const tops = [];
+  for (const d of Object.keys(state.supply)) {
+    if (!pileOpen(state, d)) continue;
+    const up = state.shop.find(u => state.cards[u].def === d);
+    if (up !== undefined) tops.push(up);
+    else if (state.supply[d].length) tops.push(state.supply[d].shift());
+  }
+  state.shop.splice(0, state.shop.length, ...row, ...tops);
+}
+/** Two copies of one member trading places changes nothing on the table, so it is never a swap (piles). */
+export const sameMember = (state, a, b) => a !== b && state.cards[a] && state.cards[b] && state.cards[a].def === state.cards[b].def;
+
+// how: a recruit priced by a space's own rule (Snap Up: { anyColors }, Half Price: { anyColors, half }), as memberPrice
+function recruit(state, p, uid, opts) {
+  return underCause(() => ({ kind: 'recruit', pid: p.id, uid, index: state.shop.indexOf(uid) }), () => recruitNow(state, p, uid, opts));
+}
+function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false }) {
+  // a rival's Peddlers stall (REPLACE6 bot test): taken from beside the card, paid to its owner
+  // (or the owner's own Stallholder stall, REPLACE9: the owner recruits from it paying the bank, as from the shop)
+  const stallAt = (REPLACE6 || REPLACE9) && state.shop.indexOf(uid) < 0 ? stallCards(state, p).find(([u]) => u === uid) : null;
+  const stallOf = stallAt?.[1] || null;
+  if (stallOf) for (const list of Object.values(state.stalls)) if (list.includes(uid)) { list.splice(list.indexOf(uid), 1); state.shop.push(uid); }
+  const stall = stallOf && stallOf !== p ? stallOf : null;
+  if (reservedFor(state, p, uid)) throw new Error(`Card ${uid} is reserved by Snobs`);
+  const idx = state.shop.indexOf(uid);
+  const fromPile = idx < 0 ? state.pile.indexOf(uid) : -1;
+  // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
+  // the discard pile's top card (Ragpicker's flag pileBottom)
+  const bottom = idx < 0 && fromPile < 0 && discardOf(state).at(-1) === uid && sumMemberFlag(state, p, 'pileBottom') > 0;
+  // any discard pile member, once per round on the owner's turn (Pickers' flag discardPick)
+  const picker = idx < 0 && fromPile < 0 && !bottom && state.current === p.id && discardOf(state).includes(uid) ? pickerCard(state, p) : undefined;
+  if (picker !== undefined) state.cards[picker].pickRound = state.round;
+  if (idx < 0 && !bottom && picker === undefined && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0)))) throw new Error(`Card ${uid} is not in the shop`);
+  let paid = 'free', spent = null, silverForColor = false;
+  if (!free) {
+    const spend = chosen || paymentPlan(state, p, uid, how);
+    spent = spend;
+    if (!spend || !memberPayOk(state, p, cardDef(state, uid), spend, { ...how, uid }) || Object.keys(spend).some(r => spend[r] > (p.res[r] || 0))) throw new Error('Cannot afford');
+    for (const r in spend) p.res[r] -= spend[r];
+    spendBonus(state, p, spend);
+    paid = payString(spend);
+    // name what made it cheaper: a discount, cost reductions, gold paying double
+    const notes = [];
+    const def0 = cardDef(state, uid);
+    // each note says what it actually took off this price (a discount of 4 on a member costing 2 saves 2; Sponsor
+    // saves nothing on a member that costs nothing): the discount first, then the cost reductions, in member order
+    const cleared = clearanceFree(state, p, uid);
+    if (cleared) { delete p.clearance; notes.push('Clearance: the cheapest shop member is free'); }
+    const punched = !cleared && punchFree(state, p);
+    if (punched) { const c = state.cards[punchCardOf(state, p)]; c.punched = [...(c.punched || []), p.members.length + 1]; }
+    if (punched) notes.push(`${flagName(state, p, 'punchCard')}: card ${p.members.length + 1} is free`);
+    let room = punched || cleared ? 0 : how.half ? Math.floor((def0.s + def0.w) / 2) : def0.s + def0.w;
+    const off = n => { const x = Math.min(n, room); room -= x; return x; };
+    if (p.discount && def0.s + def0.w > 0) { const x = off(p.discount); if (x) notes.push(`discount −${x}`); }
+    for (const flag of ['costReduction', 'goldPaysDouble']) {
+      for (const u of p.members) for (const d of effectiveDefs(state.cards[u])) {
+        if (!d[flag]) continue;
+        if (flag === 'goldPaysDouble' && !spend.gold) continue;
+        if (flag === 'costReduction') { const x = off(d[flag] === true ? 1 : d[flag]); if (x) notes.push(`${d.name} saves ${x}`); }
+        else notes.push(`${d.name}: gold counts double`);
+      }
+    }
+    // Freelancer (anyColorPart): say so when the colored part was paid in other colors
+    const q0 = colorOf(def0);
+    if (!how.anyColors && !how.half && state.resources.includes(q0) && sumMemberFlag(state, p, 'anyColorPart') > 0) {
+      const needS = Math.max(0, def0.s - p.discount - sumMemberFlag(state, p, 'costReduction'));
+      const worth = q0 === 'gold' && sumMemberFlag(state, p, 'goldPaysDouble') > 0 ? 2 : 1;
+      if ((spend[q0] || 0) * worth < needS) notes.push(`${flagName(state, p, 'anyColorPart')}: colored part in any colors`);
+    } else if (!how.anyColors && !how.half && q0 !== 'silver' && state.resources.includes(q0) && (sumMemberFlag(state, p, 'silverPaysColor') > 0 || tableFlag(state, 'tableSilverPaysColor'))) {
+      // Smooth Talker (or anyone's Silver Tongues): say so when silver paid some of the colored part
+      const needS = Math.max(0, def0.s - p.discount - sumMemberFlag(state, p, 'costReduction'));
+      if ((spend[q0] || 0) < needS && spend.silver > 0) {
+        silverForColor = true;
+        notes.push(`${sumMemberFlag(state, p, 'silverPaysColor') > 0 ? flagName(state, p, 'silverPaysColor') : 'Silver Tongues'}: silver paid for ${q0}`);
+      }
+    }
+    if (notes.length) paid += `; ${notes.join(', ')}`;
+    if (stall) { for (const r in spend) stall.res[r] = (stall.res[r] || 0) + spend[r]; paid += `, paid to ${stall.name}'s ${stallAt[2]}`; }
+    // a discount waits for a member that actually costs something
+    if (!punched && !cleared && cardDef(state, uid).s + cardDef(state, uid).w > 0) { p.discount = 0; p.discountSources = []; }
+  }
+  // Peek's reach is one recruit from the cards it showed; Insider's stays
+  const peeked = idx < 0 && fromPile >= 0 && fromPile < (p.peekReach || 0);
+  if (peeked) delete p.peekReach;
+  const offPile = bottom || picker !== undefined || state.cards[uid].offPile === offPileKey(state);
+  delete state.cards[uid].offPile;
+  if (idx >= 0) state.shop.splice(idx, 1);
+  else if (bottom || picker !== undefined) takeFromDiscard(state, uid);
+  else state.pile.splice(fromPile, 1);
+  refill(state);
+  p.members.push(uid);
+  const def = cardDef(state, uid);
+  log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the discard pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : picker !== undefined ? ` from the discard pile with ${p.name}'s ${cardDef(state, picker).name}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
+  if (state.cards[uid].offPile !== undefined) delete state.cards[uid].offPile; // takeFromDiscard just above marked it
+  memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall, silverForColor, fromDiscard: offPile });
+  // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code
+  memberJoined(state, p, uid);
+}
+/** A member recruit: p took it (shop, free, a steal) or swapped it in with their own red action (see recruited). */
+function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop = false, silverForColor = false, fromDiscard = false } = {}) {
+  state.recruits += memberWeight(state, uid);
+  p.turnRecruits += memberWeight(state, uid);
+  const card = state.cards[uid], def = defById(card.def);
+  // who recruited it and when: a member can't be released in the round its owner recruited it. A stolen member
+  // can be (decisions.md, dead-window audit: "You can still release a member you stole that round").
+  if (!stolen) { card.recruitedRound = state.round; card.recruitedBy = p.id; }
+  // Blue contest candidate (contestFix.market 'recruits', Actions lane): every recruit, swap or take of your own doing
+  // comes in sideways until the round ends (the rulebook's recruits). Off, nothing is kept.
+  if (state.rules?.contestFix?.market === 'recruits') card.sideways = { round: state.round, pid: p.id };
+  const ctx = ctxFor(state);
+  const w = wrap(state, card);
+  // spent: what the recruit paid (Collector reads silver in it); null when free
+  // fromShop: a member taken from the face-up shop (Red Cloak, Cory Nov 1)
+  recruited(state, p, { member: w, spent, fromShop, silverForColor, ...(fromDiscard ? { fromDiscard: true } : {}) });
+  // a when-recruited effect leaves a trace like any other member hook (Seed Money, Pilgrim, Retinue…)
+  // A member's On Recruit happens once a turn for the same player: Double Agent swapped away and swapped straight back
+  // (Stunt Double copying Reprise copying Promote) looped forever (Nov 12, found by a seeded game). Claude's engine guard.
+  const firedKey = `${turnKey(state)}:${p.id}`;
+  const again = (def.onRecruited || def.now) && card.recruitFired === firedKey;
+  if (again) log(state, `${p.name}'s ${def.name} came back this turn: its On Recruit already happened.`);
+  else {
+    if (def.onRecruited || def.now) card.recruitFired = firedKey;
+    if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
+    joinNow(state, p, w, [def]);
+  }
+  // Encore (REPLACE10 bot test): used this turn, the recruited member's On Recruit happens a second time
+  if (!again && p.encoreTurn === 'next' && (def.onRecruited || def.now)) { // Encore (Cory, Nov 4)
+    delete p.encoreTurn;
+    log(state, `${p.name}'s Encore: ${def.name}'s On Recruit again.`);
+    if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
+    joinNow(state, p, w, [def]);
+  }
+  // Day Trippers, Tourists (idea pipeline pool 7, candidates only): "Whenever you recruit a member, you may discard it
+  // after its On Recruit": asked after the On Recruit's own choices (choices queue in call order)
+  eachMemberOf(state, p, (held, d) => { if (d.pool && d.afterOwnRecruit && held.uid !== uid) d.afterOwnRecruit(ctx, p, held, w); }, ['afterOwnRecruit']);
+  workersNow(state, p, def, uid);
+}
+/**
+ * "You recruited" (Cory, 2026-10-21): you brought a member or followers into your cult by your own doing. The one
+ * event every recruit trigger reads. It happens for a member you take (the shop, a free recruit, a steal you make),
+ * for each member your own red action swaps into your cult, and for each follower purchase (one recruit per buy).
+ * It never happens for a member a rival's action moves into your cult (that's an arrival: memberJoined).
+ * Hooks: onRecruit(ctx, owner, card, by, what) for "whenever you recruit" (what: { member: card } or
+ * { followers: n, tier }); onAnyRecruit(ctx, owner, card, by, member) for cards that name a member ("a blue member",
+ * "2 or more members"), so a follower purchase never reaches them.
+ */
+function recruited(state, p, what) {
+  const ctx = ctxFor(state);
+  if (what.member) recruitFollowersBonus(state, p, what.member);
+  // Clean Sweep (idea pipeline pool 11, bot games only): this turn, after p recruits a member, every cheaper shop member goes
+  if (what.member && p.cleanSweep) handlerById('market.cleanSweep')(ctx, p, what.member.uid);
+  eachMember(state, (owner, c, d) => {
+    if (what.member && d.onAnyRecruit) d.onAnyRecruit(ctx, owner, c, p, what.member);
+    if (d.onRecruit) d.onRecruit(ctx, owner, c, p, what);
+  }, ['onAnyRecruit', 'onRecruit']);
+}
+/**
+ * A member's "now" part, as it joins p: "Now and at round start" members (flag now) fire their round-start effect once
+ * (Cory, 2026-10-18). It fires only for an active acquisition into the acting leader's own cult.
+ * A gift or a replacement sent into a rival's cult is an arrival, not a Recruit.
+ * defs: the member's own def (a Doppelganger fires its selected copy itself).
+ */
+function joinNow(state, p, w, defs) {
+  const ctx = ctxFor(state);
+  for (const def of defs) if (def.now) for (const hook of ['onRoundStart', 'onRoundStartLate']) if (def[hook]) {
+    recruitAbility(state, p, w, def, () => def[hook](ctx, p, w));
+  }
+}
+/** Red's round I space (Cory, 2026-10-27): p uses a shop member's On Recruit (or its round-start effect, for an
+ *  "On Recruit: X Round Start: X" card); the member stays in the shop and isn't p's, so p's own On Recruit
+ *  watchers don't fire. */
+/** IMPRESSIONIST=self<n>m, bot test only (Cory, Nov 6: Green Cloak "Maybe needs to be Action or Member ... keep in mind
+ *  the new grey rule"): copying a member pays its holder +n of the member's color; a grey member's is any color (the bot
+ *  takes the table color it has least of). */
+/** A cloak paying "of its color" for a grey member: grey is wild, so its holder picks one of the table's colors. */
+/** The question names the grey member that made it (picky bot, Nov 8: "+1 of which color (grey is wild)?" read like
+ *  silver on a Silver table, and nothing said it was your Ghost making you choose). */
+function greyPick(ctx, p, cloak, n, uid) {
+  const colors = ctx.state.resources;
+  let who = '';
+  try { who = uid != null ? cardDef(ctx.state, uid).name : ''; } catch { who = ''; }
+  const ask = who ? `${who} is grey, so +${n} of any color: which?` : `+${n} of any color (grey member): which?`;
+  ctx.asMember(p, cloak.def.name, () => ctx.choose(p, `${ctx.cloakOr ? ctx.cloakOr(cloak, cloak.def.name) : cloak.def.name}: ${ask}`,
+    colors.map(r => ({ id: r, label: r[0].toUpperCase() + r.slice(1), kind: 'choice', value: r })), 'benders.pickColor',
+    { who: ctx.cloakOr ? ctx.cloakOr(cloak, cloak.def.name) : cloak.def.name, n }), cloak.uid);
+}
+function impressMember(state, p, uid) {
+  const m = String(globalThis.process?.env?.IMPRESSIONIST || 'self2m').match(/^self(\d+)m$/);
+  if (!m) return;
+  const ctx = ctxFor(state), cloak = ctx.abilitiesOf(p).find(c => c.def.id === 'echo.tuningfork');
+  if (!cloak) return;
+  const c = colorOf(cardDef(state, uid));
+  // grey is wild (Cory, Nov 6): its holder picks the color
+  if (!state.resources.includes(c)) { greyPick(ctx, p, cloak, Number(m[1]), uid); return; }
+  const color = c;
+  ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, Number(m[1])); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
+}
+/** Test Drive (Blue, Nov 10: "Discard a shop member. Use its effect now."): the member's own effect (hook: onActivate,
+ *  onRecruited, onRoundStart(Late) or onRoundEnd, by its printed timing) plays for p, from wherever the card now is. */
+function useEffectOf(state, p, uid, hook) {
+  const card = state.cards[uid], def = defById(card.def), ctx = ctxFor(state), w = wrap(state, card);
+  if (!def[hook]) return;
+  const before = traceSnapshot(state);
+  underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => def[hook](ctx, p, w));
+  traceChanges(state, before, p, def);
+}
+function borrowOnRecruit(state, p, uid) {
+  impressMember(state, p, uid);
+  const card = state.cards[uid], def = defById(card.def), ctx = ctxFor(state), w = wrap(state, card);
+  const run = fn => { const before = traceSnapshot(state); underCause({ kind: 'member', pid: p.id, uid, def: card.def }, fn); traceChanges(state, before, p, def); };
+  if (def.onRecruited) run(() => def.onRecruited(ctx, p, w));
+  if (def.now) for (const hook of ['onRoundStart', 'onRoundStartLate']) if (def[hook]) run(() => def[hook](ctx, p, w));
+}
+/** Emit only when a Recruit ability actually runs; passive gains and ordinary round starts never enter here. */
+function recruitAbility(state, p, card, def, fn) {
+  const ctx = ctxFor(state);
+  eachMemberOf(state, p, (held, d) => { if (d.onRecruitAbility) d.onRecruitAbility(ctx, p, held, card, def); }, ['onRecruitAbility']);
+  const before = traceSnapshot(state);
+  const out = underCause({ kind: 'member', pid: p.id, uid: card.uid, def: card.def.id }, () => tallied(state, p, card.uid, fn));
+  traceChanges(state, before, p, def);
+  return out;
+}
+/** Costumers (idea pipeline pool 7, candidates only): "You also have each rival's cloak." Their cloaks' uids, for p's
+ *  ability hooks; none unless p holds a candidate with the flag. */
+function costumed(state, p) {
+  if (!holdsId(state, p, 'echo.costumers', 'allCloaks')) return [];
+  return state.players.filter(o => o !== p && o.artifact !== undefined).map(o => o.artifact);
+}
+/** Movement belongs to the leader doing it, rather than the departed card's owner. */
+const movementListeners = (state, actor) => actor.members.flatMap(uid => effectiveDefs(state.cards[uid]).filter(def => def.onMoveMember).map(def => ({ uid, def })));
+function memberMoved(state, actor, uid, from, to, listeners) {
+  const ctx = ctxFor(state);
+  for (const { uid: held, def } of listeners) {
+    const before = traceSnapshot(state);
+    underCause({ kind: 'member', pid: actor.id, uid: held, def: state.cards[held].def }, () => tallied(state, actor, held, () => def.onMoveMember(ctx, actor, wrap(state, state.cards[held]), { actor, uid, from, to })));
+    traceChanges(state, before, actor, def);
+  }
+}
+/** Distinct arrival hooks retain their printed semantics even when a recipient did not Recruit. */
+function memberJoined(state, p, uid) {
+  const card = state.cards[uid], w = wrap(state, card), defs = effectiveDefs(card), ctx = ctxFor(state);
+  for (const def of defs) if (def.onJoined) { const before = traceSnapshot(state); tallied(state, p, uid, () => def.onJoined(ctx, p, w)); traceChanges(state, before, p, def); }
+  // Kinfolk (idea pipeline pool 8, candidates only): "Whenever a member joins your cult" on another card (or itself)
+  eachMemberOf(state, p, (held, d) => { if (d.pool && d.onMemberJoins && p.members.includes(uid)) d.onMemberJoins(ctx, p, held, w); }, ['onMemberJoins']);
+}
+/**
+ * A member that adds minions in this round (Extra Hand: "+1 minion in round III"), recruited during it, adds them at
+ * once: extra turns after everyone else's, before the round closes, as at round start (Claude, under Cory's
+ * go-with-your-gut, 2026-10-15: bought in round III it was a dead buy). Recruited earlier, round start counts it.
+ */
+function workersNow(state, p, def, uid) {
+  const r = state.round;
+  const card = state.cards[uid];
+  const prior = card?.workerGrantRound === r ? card.workerGrants || 0 : 0;
+  const want = Math.max(0, (r >= 1 ? (def.extraWorkers || [])[r - 1] || 0 : 0) - prior);
+  const at = state.queue.findIndex(t => t.t === 'allPlaced');
+  if (!want || at < 0) return;
+  // only as many as the spare minions (Cory, 2026-10-29: "there are only so many extra minions to be gained")
+  const k = Math.min(want, minionPool(state));
+  if (!k) { log(state, `${p.name}'s ${def.name}: no spare minions left this round, so no extra minion.`); return; }
+  const turns = Array.from({ length: k }, (_, i) => ({ t: 'turn', p: p.id, workerSource: uid, workerGrant: prior + i, workerOrder: state.order.length + i, ...(def.extraWorkerRing ? { ring: def.extraWorkerRing } : {}) }));
+  card.workerGrantRound = r; card.workerGrants = prior + k;
+  state.queue.splice(at, 0, ...turns);
+  state.order.push(...turns.map(() => p.id));
+  p.workers = (p.workers ?? WORKERS[r - 1]) + k;
+  p.left += k;
+  log(state, `${p.name}'s ${def.name}: +${k} minion${k > 1 ? 's' : ''} this round, after everyone else's turns.`);
+}
+
+// An unplaced extra minion belongs to its granting card. A placed minion never follows a later transfer.
+function transferWorkers(state, uid, from, to) {
+  const unplaced = state.queue.filter(t => t.p === from.id && t.workerSource === uid && (t.t === 'turn' || t.t === 'place'));
+  const grants = new Set(unplaced.map(t => t.workerGrant));
+  if (!grants.size) return;
+  for (const t of state.queue) if (t.p === from.id && t.workerSource === uid && grants.has(t.workerGrant)) t.p = to.id;
+  for (const t of unplaced) if (Number.isInteger(t.workerOrder)) state.order[t.workerOrder] = to.id;
+  if (unplaced.some(t => t.t === 'place') && state.current === from.id) {
+    state.current = to.id;
+    if (state.turns?.length && state.turns[state.turns.length - 1] === from.id) state.turns[state.turns.length - 1] = to.id;
+  }
+  from.left -= grants.size; to.left += grants.size;
+  from.workers = (from.workers ?? WORKERS[state.round - 1]) - grants.size;
+  to.workers = (to.workers ?? WORKERS[state.round - 1]) + grants.size;
+  log(state, `${defById(state.cards[uid].def).name}: ${grants.size} unplaced minion${grants.size === 1 ? '' : 's'} moves from ${from.name} to ${to.name}.`);
+}
+
+/** Returning a member to the shop removes its unused grant, never a minion already placed. */
+function returnWorkers(state, uid, from) {
+  const unplaced = state.queue.filter(t => t.p === from.id && t.workerSource === uid && (t.t === 'turn' || t.t === 'place'));
+  const grants = new Set(unplaced.map(t => t.workerGrant));
+  if (!grants.size) return;
+  state.queue = state.queue.filter(t => !(t.p === from.id && t.workerSource === uid && grants.has(t.workerGrant)));
+  const orders = [...new Set(unplaced.map(t => t.workerOrder).filter(Number.isInteger))].sort((a, b) => b - a);
+  for (const at of orders) {
+    state.order.splice(at, 1);
+    for (const task of state.queue) if (Number.isInteger(task.workerOrder) && task.workerOrder > at) task.workerOrder -= 1;
+  }
+  from.left -= grants.size;
+  from.workers = (from.workers ?? WORKERS[state.round - 1]) - grants.size;
+  const card = state.cards[uid];
+  if (card.workerGrantRound === state.round) card.workerGrants = Math.max(0, (card.workerGrants || 0) - grants.size);
+}
+
+/** The swap card (a table setting, rules.swapCard; Cory, Nov 1 3:01pm): "As your recruit: swap one of your members with
+ *  a shop or rival member costing up to 2 more or less." Nothing pays the price difference. A trade, not a steal, so
+ *  Bodyguards and Lie Low let it through (Nov 1 2:02pm). [yours, theirs] uid pairs. */
+/** The swap card's price (Cory, Nov 1 8:25pm: "cost 2 wild"): 2 resources in any colors. rules.swapCardCost overrides
+ *  it (sims); a game saved before the price reads 2 as well. */
+export const swapCardCost = state => state.rules?.swapCardCost ?? 2;
+/** Every way p can pay the swap card's price, the default way first (as a follower buy's: leads kept, surplus spent). */
+export function swapCardPayChoices(state, p) {
+  const n = swapCardCost(state);
+  if (!n) return [{}];
+  const plan = {}, res = { ...p.res };
+  for (let k = n; k > 0; k--) { const r = state.resources.reduce((a, b) => ((res[b] || 0) > (res[a] || 0) ? b : a)); if (!(res[r] > 0)) return []; res[r] -= 1; plan[r] = (plan[r] || 0) + 1; }
+  const have = Object.fromEntries(state.resources.map(r => [r, p.res[r] || 0]));
+  return orderChoices(state, vectors(have, state.resources, n, n), plan, p);
+}
+/** The default payment taken from p at once (bot lookahead on a copy). */
+export function paySwapCard(state, p) {
+  const v = swapCardPayChoices(state, p)[0];
+  if (!v) return false;
+  for (const r of state.resources) p.res[r] -= v[r] || 0;
+  return true;
+}
+function useSwapCard(state, p, task, a, b, paid = null) {
+  boughtOnce(state, p, task);
+  const names = [a, b].map(uid => `${state.players.find(o => o.members.includes(uid))?.name || 'Shop'}'s ${cardDef(state, uid).name}`);
+  const cost = paid && state.resources.filter(r => paid[r] > 0).map(r => `${paid[r]} ${r}`).join(', ');
+  if (swapMembers(state, p, a, b)) log(state, `${p.name} used the swap card${cost ? ` (paid ${cost})` : ''}: swapped ${names[0]} and ${names[1]}.`);
+}
+export function swapCardPairs(state, p) {
+  if (!state.rules?.swapCard) return [];
+  if (Object.values(p.res).reduce((a, b) => a + (b || 0), 0) < swapCardCost(state)) return [];
+  const ctx = ctxFor(state);
+  const price = uid => { const d = cardDef(state, uid); return d.s + d.w; };
+  const mine = p.members.filter(u => ctx.canSwapMember(u));
+  const theirs = [...state.shop.filter(u => !reservedFor(state, p, u)), ...state.players.filter(o => o !== p && ctx.canSteal(p, o, 'swap')).flatMap(o => o.members.filter(u => ctx.canSwapMember(u)))];
+  const out = [];
+  for (const a of mine) for (const b of theirs) if (Math.abs(price(a) - price(b)) <= 2) out.push([a, b]);
+  return out;
+}
+
+/** Atomic exchange: both departures settle before either incoming member can trigger an effect. */
+function swapMembers(state, actor, aUid, bUid) {
+  if (aUid === bUid || sameMember(state, aUid, bUid)) return false;
+  const locate = uid => {
+    const owner = state.players.find(p => p.members.includes(uid));
+    const list = owner ? owner.members : state.shop;
+    const index = list.indexOf(uid);
+    return index < 0 ? null : { owner, list, index };
+  };
+  const a = locate(aUid), b = locate(bUid);
+  if (!a || !b) return false;
+  const ctx = ctxFor(state);
+  if ((a.owner && !ctx.canSwapMember(aUid)) || (b.owner && !ctx.canSwapMember(bUid))) return false;
+  for (const loc of [a, b]) if (loc.owner && loc.owner !== actor && !ctx.canSteal(actor, loc.owner, 'swap')) return false;
+  // Any two includes two in the same shop/cult: change their positions, with no acquisition.
+  if (a.list === b.list) {
+    [a.list[a.index], a.list[b.index]] = [bUid, aUid];
+    return true;
+  }
+  const movedHooks = movementListeners(state, actor);
+  for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner) {
+    if (to.owner) transferWorkers(state, uid, from.owner, to.owner);
+    else returnWorkers(state, uid, from.owner);
+    cardLeaves(state, from.owner, uid);
+  }
+  a.list.splice(a.index, 1); b.list.splice(b.index, 1);
+  // a member arriving in a cult joins the end of its row, oldest to newest (Cory, 2026-10-22); the shop keeps its slot
+  for (const [uid, dest] of [[bUid, a], [aUid, b]]) if (dest.owner) dest.list.push(uid); else dest.list.splice(dest.index, 0, uid);
+  for (const [uid, dest] of [[bUid, a], [aUid, b]]) if (dest.owner) loanFollows(state, uid, dest.owner);
+  for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner) memberMoved(state, actor, uid, from.owner, to.owner || null, movedHooks);
+  // out of a cult into another cult or the shop (Recruiter pays for a rival's member going to the shop too; Cory, Nov 1)
+  for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && from.owner !== to.owner) cultMove(state, uid, from.owner, to.owner || null, actor, uid === aUid ? bUid : aUid);
+  // A member swapped into the shop goes back wiped clean, as a released one does (no old owner's copy or flags).
+  for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && !to.owner) wipeCard(state, uid);
+  for (const [uid, dest] of [[bUid, a], [aUid, b]]) if (dest.owner) {
+    if (dest.owner === actor) memberAcquired(state, actor, uid);
+    memberJoined(state, dest.owner, uid);
+    // Extra minions are entitlements rather than Recruit effects; a gifted Extra Hand still owns its grant.
+    for (const def of effectiveDefs(state.cards[uid])) workersNow(state, dest.owner, def, uid);
+  }
+  // piles: a member swapped into the shop settles at once (a pile's copy goes back under its pile, the next copy turns
+  // up), so a choice queued after this swap (a copy's second Demote) never offers a copy that is about to go under
+  if (state.supply && (!a.owner || !b.owner)) refillPiles(state);
+  return true;
+}
+
+// White's round I space: "This turn, if you recruit a member, +1 follower for every 2 resources you pay for it" (2026-10-27).
+// p.perSpend is set by the space and cleared at turn start; it pays once, on the turn's first paid recruit.
+// A White action giving followers, so Brokers adds its +1.
+function spendBonus(state, p, spend) {
+  // Gather (Cory, Nov 9, "lets say yeah for now": its followers scale with the member bought, as Splurge's do): +1 follower
+  // per 3 resources paid (the 3 is Claude's fill-in), on the turn's first paid recruit
+  if (p.spendFollowers && p.spendFollowers.length) {
+    const paid = Object.values(spend).reduce((a, b) => a + b, 0);
+    for (const x of p.spendFollowers) {
+      const k = Math.floor(paid / x.per);
+      if (!k) continue;
+      const mark = fMark(state);
+      asSource(bonusCause(state, p, x.name), () => { p.bonus += k; });
+      fCredit(state, mark, x.name);
+      log(state, `${p.name}'s ${x.name}: +${k} follower${k > 1 ? 's' : ''} for spending.`);
+    }
+    delete p.spendFollowers;
+  }
+  if (!p.perSpend) return;
+  delete p.perSpend;
+  // per 1 resource in round II, per 2 in rounds I and III (Cory, Nov 1 1:39pm)
+  const n = Math.floor(Object.values(spend).reduce((a, b) => a + b, 0) / (state.round === 2 ? 1 : 2));
+  if (!n) return;
+  const extra = sumMemberFlag(state, p, 'brokerBonus'), mark = fMark(state);
+  asSource(bonusCause(state, p, 'Splurge'), () => { p.bonus += n; });
+  if (extra) asSource(memberFlagCause(state, p, 'brokerBonus'), () => { p.bonus += extra; });
+  fCredit(state, mark, 'Splurge');
+  log(state, `${p.name}'s Splurge: +${n} follower${n > 1 ? 's' : ''} for spending.${extra ? ` Brokers: +${extra}.` : ''}`);
+}
+// Gather-style fuel spaces (Cory, 2026-10-31: Gather, then Allowance and Stash "gather style"): "This turn, if you recruit
+// a member, +1 follower (+2 in round II, +3 in round III)". Each space taken this turn adds { n, name, broker } to
+// p.recruitFollowers (cleared at turn end and turn start); all of them pay once, on the turn's first member recruit. A White space's
+// followers also get Brokers' +1. New Blood's ({ newColor: true }) waits for a member of a color none of p's other
+// members have, so a recruit of a color p already has leaves it standing for the turn's next recruit.
+// A follower bonus that pays later in the turn (Gather, Allowance, Splurge, Patron on a recruit; Brokers on a White
+// space's followers) is its own source: it runs under the space taken this round that named it, or the member, so the
+// table flies it from there, on its own, after the recruit (Cory, Nov 12: "followers gained are getting grouped from
+// different sources and flying to the player in large batches. i dont like it").
+function bonusCause(state, p, name) {
+  for (const k of Object.keys(state.slots || {}).reverse()) {
+    const mine = state.slots[k] === p.id || (state.squats && (state.squats[k] || []).includes(p.id));
+    if (!mine) continue;
+    const [q, i] = k.split('-').map(Number);
+    let a = null;
+    try { a = actionAt(state, q, i); } catch { /* gone */ }
+    if (a && a.name === name) return { kind: 'space', key: k, qid: state.quadrants[q], pid: p.id };
+  }
+  return null;
+}
+function memberFlagCause(state, p, flag) {
+  for (const uid of p.members) for (const def of effectiveDefs(state.cards[uid])) if (def[flag]) return { kind: 'member', pid: p.id, uid, def: state.cards[uid].def };
+  return null;
+}
+const asSource = (cause, fn) => (cause ? underCause(cause, fn) : fn());
+function recruitFollowersBonus(state, p, member) {
+  const list = p.recruitFollowers;
+  if (!list?.length) return;
+  const fresh = list.some(x => x.newColor) && member ? isNewColor(ctxFor(state), p, member) : false;
+  // Gather (Cory, Nov 10): "a color you already have" waits, the other way round, for a member matching one p has
+  const same = list.some(x => x.sameColor) && member ? !isNewColor(ctxFor(state), p, member) : false;
+  const ok = x => (!x.newColor || fresh) && (!x.sameColor || same);
+  const pay = list.filter(ok), wait = list.filter(x => !ok(x));
+  if (wait.length) p.recruitFollowers = wait; else delete p.recruitFollowers;
+  for (const { n, name, broker, color, patron } of pay) {
+    // Patron (REPLACE11=patron): each rival with more followers than you gives you 1
+    if (patron) {
+      for (const o of state.players) if (o !== p && followers(state, o) > followers(state, p)) { o.bonus -= 1; p.bonus += 1; log(state, `${p.name}'s Patron: ${o.name} gives 1 follower.`); }
+      continue;
+    }
+    // New Blood pays its color instead of followers (Cory, Nov 4)
+    if (color) {
+      log(state, `${p.name}'s ${name}: +${n} ${color} for recruiting a member of a new color.`);
+      gain(state, p, color, n, { fromAction: true, again: true });
+      continue;
+    }
+    const extra = broker ? sumMemberFlag(state, p, 'brokerBonus') : 0, mark = fMark(state);
+    asSource(bonusCause(state, p, name), () => { p.bonus += n; });
+    if (extra) asSource(memberFlagCause(state, p, 'brokerBonus'), () => { p.bonus += extra; });
+    fCredit(state, mark, name);
+    log(state, `${p.name}'s ${name}: +${n} follower${n > 1 ? 's' : ''} for recruiting a member.${extra ? ` Brokers: +${extra}.` : ''}`);
+  }
+}
+function buyFollowers(state, p, tier, chosen) {
+  return underCause({ kind: 'buy', pid: p.id, tier: tier.key, get: tier.get }, () => buyFollowersNow(state, p, tier, chosen));
+}
+function buyFollowersNow(state, p, tier, chosen) {
+  const spend = chosen || followerPlan(state, p, tier);
+  if (!spend) throw new Error('Cannot afford');
+  for (const r in spend) p.res[r] -= spend[r];
+  // Splurge pays on member recruits only (2026-10-27)
+  p.bonus += tier.get;
+  fBump(state, p, tier.get);
+  p.bought = (p.bought || 0) + tier.get;
+  log(state, `${p.name} bought ${tier.get} follower${tier.get > 1 ? 's' : ''} (${payString(spend)}).`);
+  if (tier.limited) state.stock[tier.key] -= 1;
+  const ctx = ctxFor(state);
+  eachMember(state, (owner, card, def) => { if (def.onBuyFollowers) def.onBuyFollowers(ctx, owner, card, p, tier, spend); }, ['onBuyFollowers']);
+  // buying followers is a recruit (Cory, 2026-10-21): "whenever you recruit" members fire once per purchase
+  recruited(state, p, { followers: tier.get, tier, spent: spend });
+}
+
+// Economy dials (content/price.js ECON, bot games only): the first gain of a space's own color to its taker, and the
+// first resource gain a cloak's ability pays, move by the dial. Today's numbers leave both untouched.
+const econ = { space: null, cloak: null };
+// frame.delta: how much the first such gain moves (0 runs fn untouched)
+function econRun(kind, frame, fn) {
+  if (!frame.delta) return fn();
+  const was = econ[kind], mine = econ[kind] = { ...frame, paid: false };
+  let out;
+  try { out = fn(); } finally { econ[kind] = was; }
+  // a space that prints none of its color still gives the extra (Richer: "every space gives 1 more of its color")
+  if (kind === 'space' && !mine.paid && mine.delta > 0 && mine.state) gain(mine.state, mine.state.players[mine.pid], mine.color, mine.delta, { fromAction: true });
+  // a cut whose gain comes in a later choice (the space asks first) waits for that gain, until the turn's buy step
+  if (kind === 'space' && !mine.paid && mine.delta < 0 && mine.state) mine.state.econOwed = { pid: mine.pid, color: mine.color, n: -mine.delta };
+  return out;
+}
+// Space +1 once per game (Cory, Nov 11: "i like one per game. then we can just make members cheaper if we need to.",
+// "let's make it a setting for now"): rules.plus1 === 'game' gives a space's printed "+1 <its color>." only to the
+// first player ever to take it; the space shows a dot until then (state.plus1Seen holds the claimed spaces). A copy
+// (Green's copy spaces and members) is never a first taker, so it never gets the +1 (copyPlus1Cut). Spaces that print
+// no "+1 <color>." are untouched. PLUS1=game|round (env) is the economy tests' old dial; 'round' is first taker each round.
+const PLUS1 = globalThis.process?.env?.PLUS1 || '';
+const PLUS1_GROW = globalThis.process?.env?.PLUS1_GROW === '1';
+const PLUS1_SIZE = Number(globalThis.process?.env?.PLUS1_SIZE) || 0;
+const PLUS1_CLAIM = -1.5; // plus1Delta's answer for a claimed +1 under the setting: cut it from the space like a later taker, pay it apart
+export const plus1Mode = state => state?.rules?.plus1 || PLUS1 || '';
+/** Whether a space prints the "+1 <its color>." a first taker gets. */
+export const printsPlus1 = (a, qid) => !!a && new RegExp(`\\+1 ${quadrant(qid).resource}\\.\\s*$`, 'i').test(a.text || '');
+/** Whether space q-i still holds its unclaimed +1 (the dot on the wheel). */
+export function plus1Open(state, q, i) {
+  if (plus1Mode(state) !== 'game') return false;
+  const qid = state.quadrants[q];
+  return printsPlus1(spacesOf(state, qid)[i], qid) && !state.plus1Seen?.[`${q}-${i}`];
+}
+function plus1Delta(state, task, a, qid) {
+  const mode = plus1Mode(state);
+  if (!mode || !printsPlus1(a, qid)) return 0;
+  const seen = state.plus1Seen || (state.plus1Seen = {});
+  const k = mode === 'game' ? `${task.q}-${task.i}` : `${state.round}:${task.q}-${task.i}`;
+  state.plus1Stats = state.plus1Stats || { paid: 0, cut: 0 };
+  if (seen[k]) { state.plus1Stats.cut++; return -1; }
+  seen[k] = true; state.plus1Stats.paid++;
+  // the setting: the space runs without its +1 and the claim pays it on its own (case 'act'); the env dial pays it in place
+  if (state.rules?.plus1 === 'game') return PLUS1_CLAIM;
+  // economy-test levers, bot games only (Nov 12): PLUS1_GROW=1, an unclaimed +1 is +2 in round II and +3 in round III;
+  // PLUS1_SIZE=n, the first taker gets +n instead of +1
+  return (PLUS1_GROW ? state.round - 1 : 0) + (PLUS1_SIZE ? PLUS1_SIZE - 1 : 0);
+}
+/** A copy of space a (color qid) doing or handing over its gain: the +1 that space prints never goes to a copier
+ *  (Cory: "plus one to the first taker matters for green"). times: the copier's doubling (Wallflower), so a doubled copy loses 2. */
+export function copyPlus1Cut(state, p, a, qid, times, fn, color = null) {
+  if (plus1Mode(state) !== 'game' || !printsPlus1(a, qid)) return fn();
+  return econRun('space', { state, pid: p.id, color: color || quadrant(qid).resource, delta: -times }, fn);
+}
+/** Run fn (a space's own gain that comes before its printed trailing "+1 <color>.") without the space's +1 cut, so the
+ *  cut waits for that trailing +1. Polish: "+2 silver. Turn all your silver into one other color. +1 silver." A later
+ *  taker or a copy lost 1 of the +2 before the turn, so it turned 1 silver less and kept 1 (picky bot, Nov 11: "Turn all
+ *  1 of your silver"). The first taker's claim keeps the old order: its +1 is paid apart right after the space. */
+export function beforeTrailingPlus1(fn) {
+  const s = econ.space;
+  if (!s || s.claim || !(s.delta < 0)) return fn();
+  econ.space = null;
+  try { return fn(); } finally { econ.space = s; }
+}
+const spaceDelta = state => ECON.space + (ECON.spaceR?.[state.round - 1] || 0) + (econSet(state)?.space || 0);
+function econAdjust(p, color, n, fromAction, state) {
+  const s = econ.space, c = econ.cloak, owe = state?.econOwed;
+  if (owe && fromAction && owe.pid === p.id && owe.color === color && !(s && s.pid === p.id && s.color === color && !s.paid)) { delete state.econOwed; n = Math.max(0, n - owe.n); }
+  if (s && fromAction && !s.paid && s.pid === p.id && s.color === color) { s.paid = true; n = Math.max(0, n + s.delta); }
+  if (c && !c.paid && c.pid === p.id) { c.paid = true; n = Math.max(0, n + c.delta); }
+  return n;
+}
+const isCloak = (state, uid) => uid != null && !!state.artifacts && Object.values(state.artifacts).includes(uid);
+
+// again: a later part of a gain the same action already paid (Collect Debts' second victim), so "whenever an action
+// gains you gold" members (Prospector) pay once per action
+function gain(state, p, color, n, { fromAction = false, again = false } = {}) {
+  if (!(n > 0)) return;
+  n = econAdjust(p, color, n, fromAction, state);
+  if (!(n > 0)) return;
+  const g = { color, n, fromAction, again, doubled: false };
+  const ctx = ctxFor(state);
+  // conversions (Midas) first, then amount changes (Underdog), so member order never matters.
+  // Each one that changes the gain says so in the log ("Ana's Underdog: gold gain 4 → 8").
+  // In a preview (state.notes), a member that could have changed the gain and didn't says why (def.whyNot).
+  const said = (card, def, c0, n0) => {
+    if (g.color === c0 && g.n === n0) {
+      const why = state.notes && def.whyNot ? def.whyNot(ctx, p, card, g) : null;
+      if (why) note(state, p, def.name, why);
+      return;
+    }
+    const what = g.color === c0 ? `${c0} gain ${n0} → ${g.n}` : `${n0} ${c0} comes as ${g.n} ${g.color}`;
+    log(state, `${p.name}'s ${def.name}: ${what}.`);
+    note(state, p, def.name, what);
+  };
+  eachMemberOf(state, p, (card, def) => { if (def.convertGain) { const c0 = g.color, n0 = g.n; def.convertGain(ctx, p, card, g); said(card, def, c0, n0); } }, ['convertGain']);
+  eachMemberOf(state, p, (card, def) => { if (def.modifyGain) { const c0 = g.color, n0 = g.n; def.modifyGain(ctx, p, card, g); said(card, def, c0, n0); } }, ['modifyGain']);
+  p.res[g.color] = (p.res[g.color] || 0) + g.n;
+  eachMemberOf(state, p, (card, def) => { if (def.afterGain) def.afterGain(ctx, p, card, g); }, ['afterGain']);
+  return { color: g.color, n: g.n };
+}
+
+// ---------- member iteration (a Doppelganger also runs the hooks of the member it copies) ----------
+
+function effectiveDefs(card, state = null) {
+  const own = state ? cardDef(state, card.uid) : defById(card.def);
+  if (!card.copy && !card.ability) return [own];
+  const out = [own];
+  for (const id of [card.copy, card.ability]) {
+    if (!id) continue;
+    // card.ability: a rival member's ability only, no worth or member count (Impersonator, REPLACE3 bot test)
+    const { onRecruited, ...hooks } = defById(id); void onRecruited;
+    out.push(hooks);
+  }
+  return out;
+}
+// keys: the hooks fn reads. A member with none of them is skipped before its accounting frame opens, which was
+// most of a move's cost late in the game (smoothness panel, Oct 28); without keys every member runs as before.
+function eachMemberOf(state, p, fn, keys) {
+  // an artifact's ability works like a member's (it isn't one: no count, no worth, never moves)
+  const worn = costumed(state, p);
+  for (const uid of [...p.members, ...(p.artifact !== undefined ? [p.artifact] : []), ...worn]) {
+    const card = state.cards[uid];
+    for (const def of effectiveDefs(card, state)) {
+      if (keys && !keys.some(k => def[k] !== undefined)) continue;
+      const before = traceSnapshot(state), lines = state.log.length;
+      accounted(state, null, () => { const run = () => underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => tallied(state, p, uid, () => fn(wrap(state, card), def))); if (isCloak(state, uid)) econRun('cloak', { pid: p.id, delta: ECON.cloak }, run); else run(); traceChanges(state, before, p, def); }, p.id, def.name);
+      // Costumers (pool 7): say whose cloak it was
+      if (worn.includes(uid) && state.log.length > lines) log(state, `${p.name}'s Costumers: wears ${state.players.find(o => o.artifact === uid)?.name}'s ${cardDef(state, uid).name}.`);
+    }
+  }
+}
+
+// What each member and artifact has gained its owner this game (Cory, Oct 29: the hover shows "how much they've gained
+// this game"): card.made = { [color]: n, followers: n }. Each hook's own change to its owner, net per color, with what
+// a member hook inside it did credited to that inner member instead. Rides on the state, so a reload or a rival's
+// screen reads the same numbers.
+const tallies = [];
+function tallied(state, owner, uid, fn) {
+  const card = uid == null ? null : state.cards[uid];
+  if (!card || !owner || !(owner.members.includes(uid) || owner.artifact === uid)) return fn();
+  const f = { pid: owner.id, res: { ...owner.res }, bonus: owner.bonus || 0, inner: {} };
+  tallies.push(f);
+  let ok = false;
+  try { const out = fn(); ok = true; return out; } finally {
+    tallies.pop();
+    if (ok) {
+      const parent = tallies[tallies.length - 1];
+      const d = { followers: (owner.bonus || 0) - f.bonus };
+      for (const r of Object.keys({ ...f.res, ...owner.res })) d[r] = (owner.res[r] || 0) - (f.res[r] || 0);
+      for (const k of Object.keys(d)) {
+        const own = d[k] - (f.inner[k] || 0);
+        if (own > 0) { card.made = card.made || {}; card.made[k] = (card.made[k] || 0) + own; }
+        if (parent && parent.pid === f.pid) parent.inner[k] = (parent.inner[k] || 0) + d[k];
+      }
+    }
+  }
+}
+
+// Every member trigger leaves a trace: if a hook changed anyone's resources or followers and didn't say so itself,
+// the log says it for the hook ("Kay's Tax Collector: +1 gold"), so every number on the table traces to a line.
+function traceSnapshot(state) {
+  return { n: logCount(state), players: state.players.map(o => ({ res: { ...o.res }, bonus: o.bonus, discount: o.discount })), f: fMark(state) };
+}
+function traceChanges(state, before, owner, def) {
+  const name = def && def.name;
+  if (!name) return;
+  if (before.f) fCredit(state, before.f, name, owner);
+  const out = [];
+  state.players.forEach((o, i) => {
+    const b = before.players[i];
+    if (!b) return;
+    const parts = Object.keys({ ...b.res, ...o.res }).map(r => [r, (o.res[r] || 0) - (b.res[r] || 0)]).filter(([, d]) => d)
+      .map(([r, d]) => `${d > 0 ? '+' : '−'}${Math.abs(d)} ${r}`);
+    const f = o.bonus - b.bonus;
+    if (f) parts.push(`${f > 0 ? '+' : '−'}${Math.abs(f)} follower${Math.abs(f) === 1 ? '' : 's'}`);
+    // a discount for the next member (Planner, Sommelier…) is a number on the table too
+    const d = (o.discount || 0) - (b.discount || 0);
+    if (d > 0) parts.push(`next member costs ${d} less`);
+    if (!parts.length) return;
+    if (o === owner && state.notes) note(state, owner, name, parts.join(', '), Object.fromEntries(Object.keys({ ...b.res, ...o.res }).map(r => [r, (o.res[r] || 0) - (b.res[r] || 0)]).filter(([, d]) => d)));
+    out.push(o === owner ? `${owner.name}'s ${name}: ${parts.join(', ')}.` : `${o.name} ${parts.join(', ')} (${owner.name}'s ${name}).`);
+  });
+  if (!out.length) return;
+  // the hook said so itself: a new line names it. A nested line that doesn't (Underdog doubling Banker's gold) doesn't count.
+  const fresh = logSince(state, before.n);
+  if (fresh.some(l => l.includes(name))) return;
+  for (const line of out) log(state, line);
+}
+function eachMember(state, fn, keys) {
+  for (const owner of state.players) eachMemberOf(state, owner, (card, def) => fn(owner, card, def), keys);
+}
+/** p's member with the discardPick flag (Pickers, pool 3) not yet used this round, or undefined. Candidates only (d.pool), so no live card can reach it. */
+function pickerCard(state, p) {
+  return p.members.find(u => state.cards[u].pickRound !== state.round && effectiveDefs(state.cards[u]).some(d => d.discardPick && d.pool));
+}
+/** Name of p's member that carries a flag (a Doppelganger copying it reads as the copied card). */
+function flagName(state, p, flag) {
+  for (const uid of p.members) for (const def of effectiveDefs(state.cards[uid])) if (def[flag]) return def.name;
+  return 'member';
+}
+/** Does any player's cult hold a member with this flag? (rules that bend the table for everyone, e.g. Silver Tongues) */
+function tableFlag(state, flag) {
+  return state.players.some(o => sumMemberFlag(state, o, flag) > 0);
+}
+function sumMemberFlag(state, p, flag, map) {
+  let s = 0;
+  for (const uid of p.members) for (const def of effectiveDefs(state.cards[uid])) {
+    const v = def[flag];
+    if (v === undefined) continue;
+    s += map ? map(v) : v === true ? 1 : typeof v === 'number' ? v : 0;
+  }
+  return s;
+}
+
+// ---------- rule-bending allowances ----------
+// A member with a once-per-round flag (squat, extraBuy) gives one use per round. Each card tracks its own use
+// (card.spent[flag] = round), so a Doppelganger copy is a second use, and a stolen card that was used stays used.
+function allowanceCards(state, p, flag) {
+  const out = [];
+  for (const uid of p.members) {
+    const card = state.cards[uid];
+    if (card.spent?.[flag] === state.round) continue;
+    if (effectiveDefs(card).some(d => d[flag])) out.push(card);
+  }
+  return out;
+}
+const allowance = (state, p, flag) => allowanceCards(state, p, flag).length;
+// Shopaholics (concept): the second buy every turn, never spent
+const alwaysBuysTwice = (state, p) => p.members.some(uid => effectiveDefs(state.cards[uid]).some(d => d.buyTwice));
+// Barker (Cory Nov 4: "you can always recruit followers, even if you recruited a member using your one buy/recruit"):
+// "Each time you recruit a member, you may also recruit followers." (Nov 4 2:28pm: "it should stack with blue actions").
+const givesFollowersBuy = (state, uid, recruit) => effectiveDefs(state.cards[uid]).some(d => d.followersTwice
+  || (recruit !== undefined && d.followersOnColor && uid !== recruit && recruitIsColor(state, recruit, d.followersOnColor)));
+const followersTwiceCard = (state, p, recruit) => p.members.find(uid => givesFollowersBuy(state, uid, recruit));
+// Each card that gives one brings its own extra followers buy: Barker and Splurgers on a silver recruit bring two
+// (Claude, under Cory's go-with-your-gut, Nov 12: each card prints "you may also buy followers", so both pay).
+const followersTwiceCards = (state, p, recruit) => p.members.filter(uid => givesFollowersBuy(state, uid, recruit));
+// Splurgers (Cory, Nov 11: "Whenever you recruit a silver member, you may also buy followers."): Barker's extra
+// followers recruit, only after a member of its color (a member counting as every color counts)
+const recruitIsColor = (state, uid, q) => { const d = cardDef(state, uid); return d.quadrant === q || !!d.everyColor; };
+const otherSecondBuy = (state, p) => allowance(state, p, 'extraBuy') || alwaysBuysTwice(state, p) || p.buyTwiceNow;
+function spendAllowance(state, p, flag) {
+  const card = allowanceCards(state, p, flag)[0];
+  if (!card) throw new Error(`${p.name} has no ${flag} left this round`);
+  card.spent = { ...(card.spent || {}), [flag]: state.round };
+  log(state, `${p.name} uses ${defById(card.def).name}.`);
+}
+// Preserve purchase allowance and the activation-only window across member uses.
+const workerSourceOf = task => task.workerSource !== undefined ? { workerSource: task.workerSource, workerGrant: task.workerGrant, workerOrder: task.workerOrder } : {};
+/** This turn's queued recruits after the current one (Spree's), up to the player's end of turn. */
+function turnBuys(state, p, from) {
+  const out = [];
+  for (let k = from; k < state.queue.length; k++) {
+    const t = state.queue[k];
+    if (t.p === p.id && t.t === 'endTurn') break;
+    if (t.p === p.id && t.t === 'buy' && !t.extra && !t.afterPurchase && !t.barker) out.push(t);
+  }
+  return out;
+}
+const buysAfter = (state, p) => turnBuys(state, p, 1).length;
+/** Done, no recruit ends every recruit left this turn, not just one of Spree's three (panel Oct 26, skeptic). */
+function dropBuys(state, p) {
+  const gone = new Set(turnBuys(state, p, 0));
+  if (gone.size) state.queue = state.queue.filter(t => !gone.has(t));
+}
+const extraOf = task => ({ ...workerSourceOf(task), ...(task.extra ? { extra: true } : {}), ...(task.barker ? { barker: true, ...(task.by !== undefined ? { by: task.by } : {}) } : {}), ...(task.afterPurchase ? { afterPurchase: true } : {}), ...(task.doorbuster ? { doorbuster: true } : {}), ...(task.lateShop ? { lateShop: true } : {}), ...(task.lastMinute ? { lastMinute: true } : {}) });
+// A real buy (member or followers) in a buy step. The second one spends a Big Spender.
+function boughtOnce(state, p, task) {
+  if (task.extra) {
+    // Shopaholics' second buy is named like any other member's use (the fire audit wants every effect in the log)
+    const always = p.members.find(uid => effectiveDefs(state.cards[uid]).some(d => d.buyTwice));
+    if (always !== undefined) log(state, `${p.name} uses ${defById(state.cards[always].def).name}.`);
+    else if (p.buyTwiceNow) delete p.buyTwiceNow; // Big Spender, used this turn (One Time Use since Oct 28)
+    else spendAllowance(state, p, 'extraBuy');
+  }
+
+  p.turnBuys = (p.turnBuys || 0) + 1;
+  // a follower recruit too: after the round's last one, a member's On Use is still yours to use before the round ends
+  // (Cory's playtest, Nov 9: "why cant i use hot streak after i do my last recruit of the round? it goes right to spoils")
+  if ((task.uid !== undefined || task.tier !== undefined) && !task.doorbuster && !task.lateShop && !task.lastMinute) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
+  // Barker: each member recruited in a buy step brings a followers-only recruit right after it (Spree's three bring three)
+  if (task.barker) { const b = task.by ?? followersTwiceCard(state, p); if (b !== undefined && p.members.includes(b)) log(state, `${p.name} uses ${defById(state.cards[b].def).name}.`); }
+  const twice = task.uid !== undefined && !task.doorbuster && !task.lateShop && !task.lastMinute ? followersTwiceCards(state, p, task.uid) : [];
+  state.queue.unshift(...twice.map(by => ({ t: 'buy', p: p.id, barker: true, by, ...workerSourceOf(task) })));
+}
+// ---------- Outbidders (REPLACE4 bot test: flag outbids) ----------
+// "Whenever a rival recruits a shop member, you may pay its cost plus 2 to recruit it instead. They get back what they
+// paid and recruit again." Read on the recruit step (a turn's recruit, Spree's, Doorbusters', Late Shoppers'): a
+// shop member chosen and paid for there is offered first to each holder, in seat order from the buyer's left, who can
+// pay; nothing of the buyer's is spent until all of them pass. Outbid, the buyer has the same recruit step again.
+/** What o pays to outbid for uid: o's own price, the usual way, and 2 more from the piles o holds most of; null if o can't. */
+function outbidPlan(state, o, uid) {
+  const plan = paymentPlan(state, o, uid);
+  if (!plan) return null;
+  const left = { ...o.res };
+  for (const r in plan) left[r] -= plan[r];
+  for (let k = 0; k < 2; k++) {
+    const c = Object.keys(left).filter(r => left[r] > 0).sort((a, b) => left[b] - left[a])[0];
+    if (!c) return null;
+    left[c] -= 1; plan[c] = (plan[c] || 0) + 1;
+  }
+  return plan;
+}
+/** Ask the next holder who hasn't been asked (seat order from the buyer's left). True when a choice was queued. */
+function askOutbid(state, buyer, uid, spend, extra, asked = []) {
+  if (!REPLACE4 || !state.shop.includes(uid)) return false;
+  const n = state.players.length;
+  for (let k = 1; k < n; k++) {
+    const o = state.players[(buyer.id + k) % n];
+    if (asked.includes(o.id) || !sumMemberFlag(state, o, 'outbids')) continue;
+    const plan = outbidPlan(state, o, uid);
+    if (!plan) continue;
+    const name = cardDef(state, uid).name;
+    ctxFor(state).choose(o, `Outbidders: ${buyer.name} recruits ${name}. Pay ${payString(plan)} to recruit it instead?`, [
+      { id: 'outbid', label: `Outbid: pay ${payString(plan)} for ${name}`, kind: 'choice', value: 'outbid', hint: 1 },
+      { id: 'let', label: `Let ${buyer.name} have it`, kind: 'pass', value: 'let', hint: 0 },
+    ], 'market.outbid', { pid: buyer.id, uid, spend, extra, asked: [...asked, o.id] });
+    return true;
+  }
+  return false;
+}
+/** The buyer's recruit, as the recruit step would have made it (every holder passed). */
+function outbidLet(state, data) {
+  const buyer = state.players[data.pid];
+  if (askOutbid(state, buyer, data.uid, data.spend, data.extra, data.asked)) return;
+  const ok = state.shop.includes(data.uid) && Object.keys(data.spend).every(r => (data.spend[r] || 0) <= (buyer.res[r] || 0)) && memberPayOk(state, buyer, cardDef(state, data.uid), data.spend, { uid: data.uid });
+  if (!ok) { againBuy(state, buyer, data.extra); return; }
+  boughtOnce(state, buyer, { t: 'buy', p: buyer.id, ...data.extra, uid: data.uid });
+  recruit(state, buyer, data.uid, { free: false, spend: data.spend });
+}
+/** o outbids: o pays and recruits it; the buyer has the same recruit step again, nothing spent. */
+function outbidTake(state, o, data) {
+  const buyer = state.players[data.pid], plan = state.shop.includes(data.uid) ? outbidPlan(state, o, data.uid) : null;
+  if (!plan) { outbidLet(state, data); return; }
+  log(state, `${o.name}'s Outbidders: outbids ${buyer.name} for ${cardDef(state, data.uid).name}; ${buyer.name} pays nothing and recruits again.`);
+  recruit(state, o, data.uid, { free: false, spend: plan });
+  againBuy(state, buyer, data.extra);
+}
+function againBuy(state, p, extra) {
+  const at = state.queue.findIndex(t => !t._fresh);
+  state.queue.splice(at < 0 ? state.queue.length : at, 0, { t: 'buy', p: p.id, ...extra });
+}
+
+/** Peddlers (REPLACE6 bot test: flag stall): the members beside rivals' Peddlers that p may recruit, as [uid, owner]. */
+function stallCards(state, p) {
+  const out = [];
+  if (!state.stalls) return out;
+  for (const o of state.players) for (const u of o.members) {
+    if (!state.stalls[u]?.length) continue;
+    const d = effectiveDefs(state.cards[u]).find(e => e.stall);
+    // Peddlers sells to rivals only; Stallholder (REPLACE9: stall 'anyone') to its owner too
+    if (!d || (o === p && d.stall !== 'anyone')) continue;
+    for (const uid of state.stalls[u]) out.push([uid, o, d.name]);
+  }
+  return out;
+}
+/** How many cards off the top of the pile p may recruit from (Insider: flag pileReach; copies don't stack). */
+export function pileReach(state, p) {
+  // Peek (Blue) lets its taker reach the cards it looked at, this turn only
+  let n = p.peekReach || 0;
+  for (const uid of p.members) for (const def of effectiveDefs(state.cards[uid])) if (def.pileReach) n = Math.max(n, def.pileReach);
+  return n;
+}
+/** Rivals' taken spaces p may join this round (Squatter: flag squat). One extra worker per space. */
+export function squatSlots(state, p) {
+  // Purple's round II space (Cory, 2026-10-22): "you can play on occupied spaces this round", any taken space, no limit
+  const open = p.squatAll === state.round;
+  const out = [];
+  // Superfans (idea pipeline pool 7, candidates only): "You can place on Green spaces rivals have taken." No use spent.
+  const fan = !open && greenFan(state, p);
+  if (fan) for (const key of fanKeys(state, p)) out.push(key.split('-').map(Number));
+  if (!open && !p.crashNext && !allowance(state, p, 'squat')) return out;
+  for (const [key, owner] of Object.entries(state.slots)) {
+    if (!open && (owner === p.id || state.squats?.[key]?.length)) continue;
+    if (!spaceOpen(actionAt(state, ...key.split('-').map(Number)), state.round)) continue;
+    if (fan && fanKeys(state, p).includes(key)) continue;
+    out.push(key.split('-').map(Number));
+  }
+  return out;
+}
+const greenFan = (state, p) => holdsId(state, p, 'echo.superfans', 'squatGreen');
+/** Green spaces a rival has taken that p hasn't joined yet (Superfans). */
+const fanKeys = (state, p) => Object.entries(state.slots).filter(([key, owner]) => owner !== p.id && state.quadrants[+key.split('-')[0]] === 'echo'
+  && !(state.squats?.[key] || []).includes(p.id) && spaceOpen(actionAt(state, ...key.split('-').map(Number)), state.round)).map(([key]) => key);
+/** p's minions this round, placed or not; .usual is a round's count before any extra (effects.js reads both). */
+const minionsThisRound = (state, p) => (p.left || 0) + workersOnBoard(state, p);
+minionsThisRound.usual = (state, p) => (state.round >= 1 ? WORKERS[state.round - 1] : minionsThisRound(state, p));
+/**
+ * The spare minions this round (Cory, 2026-10-29: "there are only so many extra minions to be gained (as many spaces
+ * as there are)"): open spaces beyond every minion still to place. An extra minion or extra turn takes one; with none
+ * left it gives nothing. None in round I.
+ */
+export function minionPool(state) {
+  if (!(state.round >= 2)) return 0;
+  let open = 0;
+  state.quadrants.forEach((qid, q) => spacesOf(state, qid).forEach((a, i) => { if (spaceOpen(a, state.round) && state.slots[`${q}-${i}`] === undefined) open++; }));
+  const toCome = state.queue.filter(t => t.t === 'turn' || t.t === 'place').length + (state.unplaced || 0);
+  return Math.max(0, open - toCome);
+}
+/** Workers p has on the board: placed spaces plus spaces joined. */
+export const workersOnBoard = (state, p) => Object.values(state.slots).filter(o => o === p.id).length
+  + Object.values(state.squats || {}).reduce((s, list) => s + list.filter(o => o === p.id).length, 0);
+/**
+ * Release (a base rule): once per round, in your buy step. With uid: may p release that member now? Not in the
+ * round p recruited it (stops buy-collect-release loops such as Lender's +5; Claude under Cory's go-with-your-gut,
+ * from the dead-window audit, 2026-10-14).
+ */
+export const canRelease = (state, p, uid) => !!state.rules?.release && p.releasedRound !== state.round
+  && (uid === undefined || (!(state.cards[uid]?.recruitedRound === state.round && state.cards[uid]?.recruitedBy === p.id)
+    // a member whose once-per-game use is spent can't be released for its refund (Cory, 2026-10-15)
+    && !state.cards[uid]?.used));
+/**
+ * What releasing a member gives back (Cory, 2026-10-14): only its colored part, in its own color: { n, color, label }.
+ * A member with no colored part (every guest: they're colorless) gives back nothing. The any-colors path (color null)
+ * is only reachable by a member whose sphere is off the table, which normal decks never deal.
+ */
+export function releaseRefund(state, uid) {
+  const def = cardDef(state, uid), c = colorOf(def), n = def.s;
+  const color = state.resources.includes(c) ? c : null;
+  return { n, color, label: !n ? 'nothing' : color ? `${n} ${color}` : `${n} in any colors` };
+}
+// The card goes to the bottom of the pile, wiped clean (a released Doppelganger forgets what it copied).
+// A refund in its own color is paid here; one in any colors is picked in the release task. Returns the refund.
+/** Bargain Bin (Blue's artifact): "Whenever members go to the bottom of the pile, +1 blue." Once per batch; from a
+ *  cult too since Cory, Nov 1 ("changes to B when any member goes to the bottom of the pile"). */
+/** A member just went from a cult to the discard pile (cast out, released, Doormen's send): members with
+ *  onCultDiscard hear it (Mourners, idea pipeline pool 6; no live card has the hook). */
+function cultDiscard(state) {
+  const ctx = ctxFor(state);
+  eachMember(state, (owner, card, def) => { if (def.onCultDiscard) def.onCultDiscard(ctx, owner, card); }, ['onCultDiscard']);
+}
+function bottomBlue(state) {
+  const ctx = ctxFor(state);
+  // BARGAIN=self<n>: bot test only (Nov 6): pays only the player whose turn it is, +n
+  const own = String(globalThis.process?.env?.BARGAIN || 'cost1').match(/^self(\d+)$/);
+  if (/^(cost|turn)\d*$/.test(globalThis.process?.env?.BARGAIN || 'cost1')) { bargainCost(state, 1); return; }
+  for (const p of state.players) for (const c of ctx.abilitiesOf(p)) if (c.def.bottomBlue && (!own || state.current === p.id)) ctx.asMember(p, c.def.name, () => { const got = ctx.gain(p, 'blue', own ? Number(own[1]) : 1); if (got) ctx.log(`${p.name}'s ${c.def.name}: +${got.n} ${got.color}.`); }, c.uid);
+}
+/** BARGAIN=cost, bot test only (Cory, Nov 6: "when you bury a member get 1 of its cost. and grey should be wild"):
+ *  the player whose turn it is, holding the Blue Cloak, gains 1 of each just-buried member's color; a grey member's is
+ *  wild (the bot takes the table color it has least of). The last k cards of the pile are the ones just buried. */
+function bargainCost(state, k, actor = null) {
+  // a batch (Churn, Window Dressers) reports once; pay for every member in it (Cory, Nov 6: "it should be per
+  // discarded member, not per batch")
+  k = Math.max(k || 0, state.bbBatch || 0); state.bbBatch = 0;
+  const p = actor || (state.current === null || state.current === undefined ? null : state.players[state.current]);
+  if (!p || !(k > 0)) return;
+  const ctx = ctxFor(state);
+  const cloak = ctx.abilitiesOf(p).find(c => c.def.bottomBlue);
+  if (!cloak) return;
+  // BARGAIN=turn<n>, bot test (Nov 7, Cory: "2 resources for EVERY member sent to the bottom??"): once per turn, +n of
+  // one discarded member's color
+  const mode = String(globalThis.process?.env?.BARGAIN || 'cost1');
+  if (mode.startsWith('turn')) {
+    const key = `${state.round}:${(state.turns || []).length}`;
+    if (p.bbTurn === key) return;
+    p.bbTurn = key; k = 1;
+  }
+  // the members just discarded, from the discard record rather than the pile: a discard that empties the deck shuffles
+  // the pile into a new deck before the cloak pays (player-agents review r3g6, Nov 13: Out of Style's 3 paid 1, Test
+  // Drive's 1 paid 0)
+  for (const uid of (state.recentDiscards || discardOf(state)).slice(-k)) {
+    const n = Number(mode.slice(4)) || 1;
+    // +1 blue for each, whatever its color (Cory, Nov 13 8:33pm Eastern: "we should probably make the blue cloak +blue.
+    // everything else is"); before that +1 of its color, grey wild (Nov 6)
+    const color = 'blue';
+    ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, n); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
+  }
+}
+function release(state, p, uid) {
+  return underCause({ kind: 'release', pid: p.id, uid }, () => releaseNow(state, p, uid));
+}
+function releaseNow(state, p, uid) {
+  const def = cardDef(state, uid), back = releaseRefund(state, uid);
+  cardLeaves(state, p, uid);
+  p.members.splice(p.members.indexOf(uid), 1);
+  discardPays(state, p, uid);
+  wipeCard(state, uid);
+  toDiscard(state, uid);
+  bottomBlue(state);
+  cultDiscard(state);
+  p.releasedRound = state.round;
+  if (back.color) p.res[back.color] = (p.res[back.color] || 0) + back.n;
+  log(state, `${p.name} released ${def.name} to the discard pile, for ${back.label}.`);
+  // a shop short of its size (the pile ran out) takes it back up, as Farewell's send to the bottom does
+  refill(state);
+  return back;
+}
+// A member leaves its owner (stolen, swapped, released, traded in): its onLeave hooks settle what it held for them
+// (Investor's set-aside gold goes back to the owner, not doubled).
+/** A member moved out of a cult to another cult or the shop (a steal, a swap, Poach): every member's onCultMove hears it (Turncoats). to is null for the shop; actor: the leader whose card or space moved it; swappedWith: the member it traded places with, in a swap. */
+function cultMove(state, uid, from, to, actor = null, swappedWith = null) {
+  const ctx = ctxFor(state);
+  eachMember(state, (owner, card, def) => { if (def.onCultMove) def.onCultMove(ctx, owner, wrap(state, card), { uid, from, to, actor, swappedWith }); }, ['onCultMove']);
+}
+/** A member back in the shop or the pile goes wiped clean (no old owner's copy or flags), except a once-per-game use:
+ *  "once per game is once for the card - the idea is you can try to poach it before its used, or use it and swap it out
+ *  for better stuff" (Cory, Nov 4 11:07am). A used one stays used whoever recruits it next. */
+function wipeCard(state, uid) {
+  const old = state.cards[uid];
+  // a borrowed member that went to the shop or a pile is no longer on loan: whoever takes it next keeps it
+  if (state.borrowed?.some(b => b.uid === uid)) { state.borrowed = state.borrowed.filter(b => b.uid !== uid); if (!state.borrowed.length) delete state.borrowed; }
+  // its own once-per-game use only: a Doppelganger's copy comes off with the wipe, and its use with it
+  const spent = old.used === true && defById(old.def).activate === 'game';
+  state.cards[uid] = { uid, def: old.def, ...(spent ? { used: true } : {}) };
+}
+// A member discarded from p's cult (Martyrs: "Whenever this member is discarded"): its own onDiscard pays p, the cult it
+// left. Called once the member is out of the cult and before its card is wiped.
+function discardPays(state, p, uid) {
+  const card = state.cards[uid], ctx = ctxFor(state);
+  for (const def of effectiveDefs(card)) if (def.onDiscard) def.onDiscard(ctx, p, wrap(state, card));
+}
+function cardLeaves(state, p, uid) {
+  const card = state.cards[uid], ctx = ctxFor(state);
+  for (const def of effectiveDefs(card)) if (def.onLeave) def.onLeave(ctx, p, wrap(state, card));
+  // Ambulance Chasers (idea pipeline pool 8, candidates only): "Whenever a member leaves a rival's cult"
+  for (const o of state.players) if (o !== p) eachMemberOf(state, o, (held, d) => { if (d.pool && d.onRivalLeave) d.onRivalLeave(ctx, o, held, p, wrap(state, card)); }, ['onRivalLeave']);
+  // "Whenever one of your members leaves your cult" (Leavetakers, Cory Nov 11): the leaving member counts too
+  for (const u of [...p.members]) for (const def of effectiveDefs(state.cards[u])) if (def.onAnyLeave) def.onAnyLeave(ctx, p, wrap(state, state.cards[u]), wrap(state, card));
+  // "Whenever another of your members leaves your cult" (Widows, REPLACE10 bot test)
+  if (REPLACE10) for (const u of p.members) if (u !== uid) for (const def of effectiveDefs(state.cards[u])) if (def.onOtherLeave) def.onOtherLeave(ctx, p, wrap(state, state.cards[u]), wrap(state, card));
+}
+/** A borrowed member that changes cults stays on loan, now with the cult it went to (Cory, Nov 12: "when you give
+ *  somebody a loaned card, it should stay loaned and go back at end of the round"). */
+function loanFollows(state, uid, to) {
+  for (const b of state.borrowed || []) if (b.uid === uid) b.pid = to.id;
+}
+/** This round's turn order (its first pass). */
+const turnOrder = state => (state.order.length ? state.order.slice(0, state.players.length) : state.players.map(p => p.id));
+
+// Cards in state are plain JSON. Content code sees a live view with `.def` attached.
+function wrap(state, card) {
+  return new Proxy(card, {
+    get(target, key) { return key === 'def' ? cardDef(state, target.uid) : target[key]; }, // a cloak by its cloak name
+    set(target, key, value) { if (key === 'def') throw new Error('def is read-only'); target[key] = value; return true; },
+  });
+}
+
+// ---------- the context handed to content ----------
+
+/** The helper context content code runs with. Bots use it read-only for estimates. */
+export function contextFor(state) { return ctxFor(state); }
+
+/** A steal the table's rules or the victim's members would refuse (Lie Low, Bodyguards…). */
+function stealBlocked(state, ctx, thief, victim, kind) {
+  for (const qid of state.quadrants) { const q = quadrant(qid); if (q.guardSteal && q.guardSteal(ctx, thief, victim, kind)) return true; }
+  let blocked = false;
+  eachMemberOf(state, victim, (card, def) => { if (def.guardSteal && def.guardSteal(ctx, victim, card, thief, kind)) blocked = true; }, ['guardSteal']);
+  return blocked;
+}
+const unstoppable = (state, p) => p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.unstoppable));
+function ctxFor(state) {
+  const ctx = {
+    state,
+    player: id => state.players[id],
+    rivals: p => state.players.filter(o => o !== p),
+    quadrant,
+    beforeTrailingPlus1,
+    followers: p => followers(state, p),
+    memberCount: p => memberCount(state, p),
+    memberWeight: card => memberWeight(state, typeof card === 'number' ? card : card.uid),
+    countMembersOfColor: (p, q, opts) => countMembersOfColor(state, p, q, opts),
+    memberColorsWithGrey: (p, opts) => memberColorsWithGrey(state, p, opts),
+    card: uid => wrap(state, state.cards[uid]),
+    defOf: c => (typeof c === 'number' ? cardDef(state, c) : c.def),
+    /** every def a card plays as: its own, a Doppelganger's copy, an Impersonator's borrowed ability (passives too; Cory's
+     *  playtest Nov 5: a Doppelganger copy of Patroness never paid) */
+    defsOf: c => effectiveDefs(state.cards[typeof c === 'number' ? c : c.uid], state),
+    /** the name a hook's own log line gives card: a worn cloak's ("Red Cloak"), else the name it prints, so the log
+     *  says one name and the member's ledger line isn't said again under the other (picky bot, Nov 4) */
+    cloakOr: (card, name) => (card && state.artifacts && Object.values(state.artifacts).includes(card.uid) ? cardDef(state, card.uid).name : name),
+    membersOf: p => p.members.map(u => wrap(state, state.cards[u])),
+    /** p's members and p's artifact: for ability hooks only (an artifact is not a member) */
+    abilitiesOf: p => [...p.members, ...(p.artifact !== undefined ? [p.artifact] : []), ...costumed(state, p)].map(u => wrap(state, state.cards[u])),
+    ownerOf: uid => state.players.find(o => o.members.includes(uid)),
+    // a card Snobs reserved for someone else is not offered to the player whose turn it is
+    openSpaces: () => openSlots(state).map(([q, i]) => { const a = actionAt(state, q, i); return { key: `${q}-${i}`, name: a.name, ring: a.ring, qid: state.quadrants[q] }; }),
+    shopCards: () => state.shop.filter(u => state.current == null || !reservedFor(state, state.players[state.current], u)).map(u => wrap(state, state.cards[u])),
+    gain: (p, color, n, opts) => gain(state, p, color, n, opts),
+    /** run a copy of space a (color qid): with the +1 once per game, the copier never gets the +1 it prints (core copyPlus1Cut) */
+    copyPlus1: (p, a, qid, times, fn, color) => copyPlus1Cut(state, p, a, qid, times, fn, color),
+    discount: grantDiscount,
+    recruit: (p, uid, opts) => recruit(state, p, uid, opts),
+    recruitAbility: (p, card, def, fn) => recruitAbility(state, p, card, def, fn),
+    borrowOnRecruit: (p, uid) => borrowOnRecruit(state, p, uid),
+    useEffectOf: (p, uid, hook) => useEffectOf(state, p, uid, hook),
+    grantWorkers: (p, def, uid) => workersNow(state, p, def, uid),
+    /** The one price rule (memberPrice) and the ways to pay it (paymentChoices), for recruits outside the buy step. */
+    price: (p, uid, how) => memberPrice(state, p, uid, how),
+    payChoices: (p, uid, how) => paymentChoices(state, p, uid, how),
+    /** The colors whose contest lead or tie p holds now and would give up by spending `v` ({ color: n }; a negative n
+     *  is a gain, for a swap). Display and asking only: a one-way payment that gives up a lead asks first. */
+    leadsLost: (p, v) => { const g = rimCost(state, p)(v); return [...g.colors, ...g.cuts.map(c => c.member)]; },
+    /** The contests p leads or ties for now, as if the round ended (contestTable's winners): quadrant ids. */
+    /** Each contest's leaders now, as if the round ended: [{ qid, winners: [ids] }]. */
+    contestLeaders: () => contestTable(state).map(c => ({ qid: c.qid, label: c.label, winners: c.winners })),
+    contestsLed: p => contestTable(state).filter(c => c.winners.includes(p.id)).map(c => c.qid),
+    log: text => log(state, text),
+    /** A preview's reason for a member's effect content applies itself (Grand Host's double): the "Why" row. */
+    note: (p, member, text, res = null) => note(state, p, member, text, res),
+    /** This round's order with turns taken early moved up (roundOrder). */
+    roundOrder: () => roundOrder(state),
+    cardLeaves: (p, uid) => cardLeaves(state, p, uid),
+    /** Run fn on behalf of owner's member `name` (a hook content code calls itself, e.g. Choir reacting to a copy):
+     *  whatever it changes and doesn't log is logged under that name, like the engine's own member hooks. */
+    /** p's turn is passed over now (Purple's skips): the table shows it on p's seat, and what pays for it (Pocket Watch,
+     *  Gossip) runs inside fn, so it lands as the skip shows (Cory, 2026-11-01: "the pocket watch … gain should occur
+     *  when that animation happens"). */
+    skipBeat(p, why, fn, by = null) {
+      // by: whose card or space skipped it, so the seat can say "Turn skipped: P3's Hold Up" (frame review, Nov 7)
+      return underCause({ kind: 'skip', pid: p.id, why: why || null, by: by ?? null }, () => {
+        markEffect({ type: 'skip', from: { kind: 'minions', pid: p.id }, to: { kind: 'minions', pid: p.id }, what: { why: why || null } });
+        return fn();
+      });
+    },
+    asMember(owner, name, fn, uid0 = null) {
+      const before = traceSnapshot(state);
+      // uid0: the card itself, so a Doppelganger copying it is its own source beside the original (Cory, Oct 28)
+      // an artifact's own hook runs as itself too (Pocket Watch, Impressionist): its uid is the artifact's, not a member's,
+      // or the turn story called it "A member" (bug bash, Nov 1)
+      const uid = uid0 ?? [...owner.members, ...(owner.artifact !== undefined ? [owner.artifact] : [])].find(u => { try { return cardDef(state, u).name === name; } catch { return false; } });
+      const run = () => underCause({ kind: 'member', pid: owner.id, uid: uid ?? null, def: uid != null ? state.cards[uid].def : null }, () => tallied(state, owner, uid, fn));
+      const out = isCloak(state, uid) ? econRun('cloak', { pid: owner.id, delta: ECON.cloak }, run) : run();
+      traceChanges(state, before, owner, { name });
+      return out;
+    },
+    refillShop: () => refill(state),
+    /** Send one of p's members to the bottom of the pile, wiped clean (White: "get rid of"). Returns its printed cost. */
+    // actor: whose card did it (Evictors, REPLACE3 bot test, casts out a rival's member); p's own by default
+    buryMember(p, uid, actor = p, { shop = false } = {}) {
+      if (!p.members.includes(uid)) return 0;
+      const def = cardDef(state, uid), c = def.s + def.w;
+      cardLeaves(state, p, uid);
+      p.members.splice(p.members.indexOf(uid), 1);
+      if (!shop) discardPays(state, p, uid); // before the wipe: a copied ability (card.ability) still counts
+      wipeCard(state, uid);
+      // shop: cast out face up into the shop row instead (Yard Sale, REPLACE11 bot test), at the end of the row
+      if (shop) {
+        state.shop.push(uid);
+        log(state, `${p.name} put ${def.name} face up into the shop.`);
+        cultMove(state, uid, p, null, actor);
+        if (REPLACE6) eachMember(state, (owner, card, d) => { if (d.onCastOut) d.onCastOut(ctx, owner, wrap(state, card), { uid, from: p, actor, cost: c, name: def.name }); }, ['onCastOut']);
+        return c;
+      }
+      // (piles: refill puts a pile member back under its own pile, as the card says, and it can be bought again; Cory, Nov 1)
+      toDiscard(state, uid);
+      log(state, `${p.name} sent ${def.name} to the discard pile.`);
+      // a member leaving its owner's cult: Recruiter hears a rival's cast-out (Cory, Nov 1: "Yes")
+      cultMove(state, uid, p, null, actor);
+      // members that answer a cast-out (Successors, Pallbearers: REPLACE6 bot test); actor is who cast it out
+      if (REPLACE6) eachMember(state, (owner, card, d) => { if (d.onCastOut) d.onCastOut(ctx, owner, wrap(state, card), { uid, from: p, actor, cost: c, name: def.name }); }, ['onCastOut']);
+      bottomBlue(state);
+      cultDiscard(state);
+      // a shop short of its size (the pile ran out) takes it back up, as every other way to the bottom does
+      refill(state);
+      return c;
+    },
+    /** A shop member goes into p's cult without a recruit (Gift Shop, REPLACE11 bot test: "Give a shop member to a
+     *  rival"): it arrives as a member a rival's move brings in (memberJoined, no On Recruit), and the row refills. */
+    giveFromShop(p, uid, actor = null) {
+      const i = state.shop.indexOf(uid);
+      if (i < 0) return false;
+      state.shop.splice(i, 1);
+      wipeCard(state, uid);
+      p.members.push(uid);
+      refill(state);
+      cultMove(state, uid, null, p, actor);
+      memberJoined(state, p, uid);
+      workersNow(state, p, cardDef(state, uid), uid);
+      return true;
+    },
+    /** A pile member goes into p's cult without a recruit (Blind Date and No Thanks, REPLACE11 bot tests: "give it to a
+     *  rival"): as giveFromShop, with no refill. */
+    giveFromPile(p, uid, actor = null) {
+      const i = state.pile.indexOf(uid);
+      if (i < 0) return false;
+      state.pile.splice(i, 1);
+      wipeCard(state, uid);
+      p.members.push(uid);
+      cultMove(state, uid, null, p, actor);
+      memberJoined(state, p, uid);
+      workersNow(state, p, cardDef(state, uid), uid);
+      return true;
+    },
+    buryFromShop(uid) {
+      const i = state.shop.indexOf(uid);
+      if (i < 0) return;
+      state.shop.splice(i, 1);
+      toDiscard(state, uid);
+      refill(state);
+    },
+    /** a cult's member went to the bottom of the pile outside buryMember (Doormen): Bargain Bin pays */
+    memberBottomed: () => { bottomBlue(state); cultDiscard(state); },
+    /** a member discarded from p's cult outside buryMember (Doormen): its "Whenever this member is discarded" pays p */
+    memberDiscarded: (p, uid) => discardPays(state, p, uid),
+    bargainCost: (k, actor) => bargainCost(state, k, actor),
+    impressMember: (p, uid) => impressMember(state, p, uid),
+    swapMembers: (actor, a, b) => swapMembers(state, actor, a, b),
+    canSwapMembers: owner => !sumMemberFlag(state, owner, 'blockMemberSwaps'),
+    // Loyalists shields its owner's other members, never a Loyalists (a copy of it included): Cory, 2026-10-27.
+    canSwapMember: uid => {
+      const owner = state.players.find(pl => pl.members.includes(uid));
+      if (!owner || !sumMemberFlag(state, owner, 'blockMemberSwaps')) return true;
+      return effectiveDefs(state.cards[uid]).some(d => d.blockMemberSwaps);
+    },
+    moveMember(uid, from, to, { recruit: activelyAcquired = false, actor = activelyAcquired ? to : from } = {}) {
+      if (!from.members.includes(uid) || from === to) return false;
+      const movedHooks = movementListeners(state, actor);
+      transferWorkers(state, uid, from, to);
+      cardLeaves(state, from, uid);
+      from.members.splice(from.members.indexOf(uid), 1);
+      to.members.push(uid);
+      loanFollows(state, uid, to);
+      memberMoved(state, actor, uid, from, to, movedHooks);
+      cultMove(state, uid, from, to, actor);
+      if (activelyAcquired) memberAcquired(state, to, uid, { stolen: true });
+      memberJoined(state, to, uid);
+      return true;
+    },
+    turnKey: () => turnKey(state),
+    /** Vultures (REPLACE5 bot test): p steals a member just sent to the shop or the pile; it is p's recruit (its On
+     *  Recruit fires), as a stolen member is. False when it isn't there any more. */
+    claimMember(p, uid) {
+      const lists = [state.shop, state.pile, discardOf(state), ...Object.values(state.supply || {})], list = lists.find(l => l.includes(uid));
+      if (!list) return false;
+      list.splice(list.indexOf(uid), 1);
+      wipeCard(state, uid);
+      p.members.push(uid);
+      if (list === state.shop) refill(state);
+      memberAcquired(state, p, uid, { stolen: true });
+      memberJoined(state, p, uid);
+      return true;
+    },
+    /** Outbidders (REPLACE4 bot test): the holder asked lets the buyer's recruit go ahead, or outbids it (askOutbid). */
+    outbidLet: data => outbidLet(state, data),
+    outbidTake: (o, data) => outbidTake(state, o, data),
+    /** Coach: use one of p's members' abilities as a free extra use (freeUse). */
+    freeUse: (p, uid) => freeUse(state, p, uid),
+    // ---- stealing: one shared verb, so protections and reactions apply to every sphere's steals ----
+    /** May `thief` steal from `victim`? kind is 'res' (resources, piles), 'member', 'swap' (a trade of members) or 'change' (Yellow turning a rival's colors). Quadrants and the
+     *  victim's members can refuse (guardSteal returns true). */
+    canSteal(thief, victim, kind = 'res') {
+      if (!victim || victim === thief) return false;
+      // Safecrackers (idea pipeline pool 13, flag unstoppable; no live card has it): "Your steals can't be stopped"
+      if (kind !== 'swap' && kind !== 'change' && unstoppable(state, thief)) return true;
+      return !stealBlocked(state, ctx, thief, victim, kind);
+    },
+    /** How many a steal of `base` takes for this thief (members: stealMore adds, stealMoreIf(ctx, owner) adds when it returns more than 0, stealDouble(ctx, owner) doubles). */
+    stealCount(thief, base, { say = false } = {}) {
+      let extra = 0, double = false;
+      const who = [], why = [];
+      eachMemberOf(state, thief, (card, def) => {
+        if (typeof def.stealMore === 'number') { extra += def.stealMore; if (def.stealMore) { who.push(`${thief.name}'s ${def.name}: +${def.stealMore}`); why.push([def.name, `+${def.stealMore} to steal`]); } }
+        if (def.stealMoreIf) { const k = def.stealMoreIf(ctx, thief); if (k) { extra += k; who.push(`${thief.name}'s ${def.name}: +${k}`); why.push([def.name, `+${k} to steal`]); } }
+        if (def.stealDouble && def.stealDouble(ctx, thief)) { double = true; who.push(`${thief.name}'s ${def.name}: doubled`); why.push([def.name, 'steal doubled']); }
+      }, ['stealMore', 'stealMoreIf', 'stealDouble']);
+      const out = (double ? base * 2 : base) + extra;
+      // say: a real steal (not an estimate) names the members that changed its size, in the log and in a hover's Why
+      // (live panel r1: Help Yourself's face said +4 and its hover +8, and neither named Desperado)
+      if (say && base > 0 && out !== base) {
+        log(state, `${thief.name}'s steal takes ${out}, not ${base} (${who.join('; ')}).`);
+        for (const [name, text] of why) note(state, thief, name, `${text} (${base} → ${out})`);
+      }
+      return out;
+    },
+    /** One steal event from one victim. what: { take: {color: n} } moves resources (clamped to what they hold),
+     *  { uid } moves a member, { other: n } reports units the caller already moved (e.g. a loot pile).
+     *  what.give(n, took) hands the thief the proceeds before anyone reacts (so a reaction can take from the thief).
+     *  what.led: whether the victim led when a multi-victim steal began (reactions read it as info.led).
+     *  what.instance: one steal (a space, a member) taking from several victims shares one id (ctx.stealInstance()),
+     *  so a reaction can pay once per steal (Fence); left out, each call is its own steal.
+     *  Then fires onSteal on every quadrant and member. Returns units taken. */
+    /** A new id for one steal instance (see steal's what.instance). */
+    stealInstance: () => (state.stealSeq = (state.stealSeq || 0) + 1),
+    steal(thief, victim, what = {}) {
+      if (!ctx.canSteal(thief, victim, what.uid !== undefined ? 'member' : 'res')) return 0;
+      if (unstoppable(state, thief) && victim !== thief && stealBlocked(state, ctx, thief, victim, what.uid !== undefined ? 'member' : 'res')) log(state, `${thief.name}'s Safecrackers: ${victim.name}'s protection doesn't stop the steal.`);
+      // a victim's member that answers the steal before it lands (Hush Money, REPLACE2 bot test): it queues the victim's
+      // choice, which makes the steal again (what.hushed) or pays it off; nothing is taken now
+      if (!what.hushed) {
+        let held = false;
+        eachMemberOf(state, victim, (card, def) => { if (!held && def.beforeStolen && def.beforeStolen(ctx, victim, card, thief, what)) held = true; }, ['beforeStolen']);
+        if (held) return 0;
+      }
+      const took = {};
+      let n = what.other || 0;
+      for (const [c, k] of Object.entries(what.take || {})) {
+        const x = Math.max(0, Math.min(k, victim.res[c] || 0));
+        if (x) { victim.res[c] -= x; took[c] = x; n += x; }
+      }
+      if (what.uid !== undefined && ctx.moveMember(what.uid, victim, thief, { recruit: true })) n += 1;
+      // what.followers: loose followers (bought, won, gained), never the ones members are worth (Skimmers, REPLACE2)
+      const fx = what.followers ? Math.min(what.followers, Math.max(0, victim.bonus)) : 0;
+      if (fx) { victim.bonus -= fx; thief.bonus += fx; n += fx; }
+      if (!n) return 0;
+      STEALS += 1;
+      if (what.give) what.give(n, took);
+      const info = { thief, victim, took, uid: what.uid, n, reaction: !!what.reaction, instance: what.instance ?? ctx.stealInstance(), ...(what.led !== undefined ? { led: !!what.led } : {}), ...(fx ? { followers: fx } : {}), ...(what.jackals ? { jackals: true } : {}) };
+      for (const qid of state.quadrants) { const q = quadrant(qid); if (q.onSteal) q.onSteal(ctx, info); }
+      eachMember(state, (owner, card, def) => { if (def.onSteal) def.onSteal(ctx, owner, card, info); }, ['onSteal']);
+      return n;
+    },
+    // Queue a decision for player p. It runs before anything else still queued. extra.blocked: why each player who
+    // can't be picked now can't (shown on their dimmed seat). extra.count: a counted pick's
+    // progress, { of, left } (Collect Debts: 1 of 3 taken), kept on the task so it survives a save and load.
+    choose(p, prompt, options, handler, data = null, extra = {}) {
+      if (!options.length) return;
+      // follow-up choices queued during one resolution keep their call order
+      const at = state.queue.findIndex(t => !t._fresh);
+      const task = { t: 'choose', p: p.id, prompt, options: (() => { const where = options.length > 1 ? whereAll(state) : null; return withTargets(state, options).map(o => pinCards(state, o, where)); })(), h: handler, data, ...(state._rsSrc ? { rsSrc: { ...state._rsSrc } } : {}), ...(extra.count ? { count: extra.count } : {}), ...(extra.blocked && Object.keys(extra.blocked).length ? { blocked: extra.blocked } : {}), ...(extra.show ? { show: extra.show } : {}), ...(extra.together ? { together: extra.together } : {}), _fresh: true };
+      state.queue.splice(at < 0 ? state.queue.length : at, 0, task);
+    },
+    defer(p, handler, data = null, cause = null) {
+      const at = state.queue.findIndex(t => !t._fresh);
+      state.queue.splice(at < 0 ? state.queue.length : at, 0, { t: 'content', p: p.id, h: handler, data, ...(cause ? { cause } : {}), _fresh: true });
+    },
+  };
+  return ctx;
+}
+
+// A queued choice can wait while other things happen first (a member used in the buy step queues its choice behind
+// the buy re-offer; a copy's free member waits for earlier copies). An option that names cards (a face-up member, a
+// member someone holds, a trade pair) remembers where each card was when the choice was queued (`at`), and the choice
+// is shown with only the options whose cards are still there: a card bought, stolen or released in the meantime is
+// dropped, never picked (that threw "Card N is not in the shop"). No option left: the choice resolves to nothing,
+// with a log line.
+const CARD_KINDS = new Set(['card', 'member', 'trade']);
+function whereIs(state, uid) {
+  if (state.shop.includes(uid)) return 'shop';
+  if (state.pile.includes(uid)) return 'pile';
+  if (discardOf(state).includes(uid)) return 'discard';
+  if (Object.values(state.supply || {}).some(w => w.includes(uid))) return 'supply';
+  if (Object.values(state.waiting || {}).some(w => w.includes(uid))) return 'waiting';
+  const o = state.players.find(q => q.members.includes(uid));
+  if (!o) { const a = state.players.find(q => q.artifact === uid); if (a) return `a${a.id}`; }
+  return o ? `p${o.id}` : 'gone';
+}
+// Every card's whereIs at once (the same answers, in its order of checks): a choice pins every option's cards, and a
+// swap's dozens of pairs each looked through every pile and cult again.
+function whereAll(state) {
+  const m = new Map();
+  const put = (list, w) => { for (const u of list) if (!m.has(u)) m.set(u, w); };
+  put(state.shop, 'shop');
+  put(state.pile, 'pile');
+  put(discardOf(state), 'discard');
+  for (const w of Object.values(state.supply || {})) put(w, 'supply');
+  for (const w of Object.values(state.waiting || {})) put(w, 'waiting');
+  for (const q of state.players) put(q.members, `p${q.id}`);
+  for (const q of state.players) if (q.artifact !== undefined && !m.has(q.artifact)) m.set(q.artifact, `a${q.id}`);
+  return m;
+}
+function pinCards(state, o, where = null) {
+  const uids = CARD_KINDS.has(o.kind) ? [].concat(o.value).filter(u => Number.isInteger(u) && state.cards[u]) : [];
+  return uids.length ? { ...o, at: Object.fromEntries(uids.map(u => [u, where ? where.get(u) ?? 'gone' : whereIs(state, u)])) } : o;
+}
+// An option that points at something on the board says so in one structured field, so a screen lights that thing
+// and never reads the label (the board picker, src/v4/game/boardPick.js). Ids never change.
+//   { space: 'q-i' }      a space on the wheel (Echo's and Sample's copies, Straggler's moves)
+//   { uid }               a member: face up in the shop, or on someone's seat (Hand-pick, Shake Down, Poach)
+//   { pid }               a player (Kickback, Benefactor)
+//   { pid, res }          one of a player's resource stacks (a steal's take:pid:color; give: true for Good Deed's gift)
+//   { res }               a color, shown as your own stack of it (a gift's color, a release's colors)
+// An option that sets its own target keeps it.
+function withTargets(state, options) {
+  const colors = options.filter(o => o.kind === 'color' && !o.target).map(o => o.value);
+  // a color pick names resources, or quadrants (Hustler): a quadrant is shown as its resource
+  const asQuadrant = colors.length > 0 && colors.every(v => state.quadrants.includes(v)) && !colors.every(v => state.resources.includes(v));
+  return options.map(o => {
+    if (o.target) return o;
+    const v = o.value;
+    let target = null;
+    if ((o.kind === 'take' || o.kind === 'give') && Array.isArray(v) && Number.isInteger(v[0]) && typeof v[1] === 'string') target = { pid: v[0], res: v[1], ...(o.kind === 'give' ? { give: true } : {}) };
+    else if (o.kind === 'player' && Number.isInteger(v)) target = { pid: v };
+    else if ((o.kind === 'card' || o.kind === 'member') && Number.isInteger(v) && state.cards[v]) target = { uid: v };
+    else if ((o.kind === 'space' || o.kind === 'slot') && (typeof v === 'string' || (v && typeof v.key === 'string'))) {
+      const key = String(typeof v === 'string' ? v : v.key).split('+')[0];
+      if (/^\d+-\d+$/.test(key)) target = { space: key };
+    } else if (o.kind === 'color' && typeof v === 'string') {
+      if (asQuadrant) target = { res: quadrant(v).resource };
+      else if (state.resources.includes(v)) target = { res: v };
+    }
+    return target ? { ...o, target } : o;
+  });
+}
+/** A queued choice's options that are still good: every card an option names is where it was when it was queued. */
+/** Options that spend p's coins (o.spend, or a pay option's vector value) get breaks: the leads that spend gives up. */
+function withBreaks(state, p, options) {
+  const spendOf = o => (o.spend && typeof o.spend === 'object' ? o.spend : o.kind === 'pay' && o.value && typeof o.value === 'object' ? o.value : null);
+  if (!p || !options.some(spendOf)) return options;
+  const cost = rimCost(state, p);
+  return options.map(o => {
+    const v = spendOf(o);
+    if (!v) return o;
+    const got = cost(v);
+    // cuts: a member's game-end bonus this spend lowers ({ member, from, to }: "Kingpin +2 → +0")
+    return got.colors.length || got.cuts.length ? { ...o, ...(got.colors.length ? { breaks: got.colors } : {}), ...(got.ties.length ? { ties: got.ties } : {}), ...(got.cuts.length ? { cuts: got.cuts } : {}) } : o;
+  });
+}
+
+export function liveOptions(state, task) {
+  const where = task.options.length > 1 ? whereAll(state) : null;
+  return task.options.filter(o => !o.at || Object.entries(o.at).every(([u, w]) => (where ? where.get(Number(u)) ?? 'gone' : whereIs(state, Number(u))) === w));
+}
+
+// Follow-up choices queued while one task resolves are marked fresh so they keep their call order.
+function clearFresh(state) { for (const t of state.queue) if (t._fresh) delete t._fresh; }
+
+// ---------- misc ----------
+
+// ---------- the follower ledger: where every follower came from (the results breakdown) ----------
+// state.ledger[pid] = { label: n }: every change to a player's loose followers (p.bonus) during play that isn't a
+// follower buy (p.bought), a prize (p.contest) or an end-game bonus (p.final), credited once to its innermost cause:
+// a member ("Robin Hood"; a rival's member reads "P2's Raider"), a space ("Your Call") or a choice ("Cheap Seats").
+// Losses are negative. state.fcredit[pid] is a running total of what's been credited (buys, prizes and end-game
+// bonuses too), so an outer cause only counts what its inner causes didn't.
+const fMark = state => state.players.map(o => [o.bonus, (state.fcredit && state.fcredit[o.id]) || 0]);
+function fBump(state, o, d) {
+  if (!d) return;
+  state.fcredit = state.fcredit || {};
+  state.fcredit[o.id] = (state.fcredit[o.id] || 0) + d;
+}
+function fCredit(state, mark, label, owner = null) {
+  state.players.forEach((o, i) => {
+    if (!mark[i]) return;
+    const d = (o.bonus - mark[i][0]) - (((state.fcredit && state.fcredit[o.id]) || 0) - mark[i][1]);
+    if (!d) return;
+    const key = owner && owner !== o ? `${owner.name}'s ${label}` : label || 'other';
+    state.ledger = state.ledger || {};
+    const row = state.ledger[o.id] = state.ledger[o.id] || {};
+    row[key] = (row[key] || 0) + d;
+    fBump(state, o, d);
+  });
+}
+
+/**
+ * Preview-only reasons. previewSpace runs a space on a copy that carries state.notes (an array); there, every member
+ * effect that changes the player's numbers adds { p, member, text, res } and a member that could have and didn't
+ * says why (def.whyNot). A real game's state never has notes, so this does nothing there.
+ */
+function note(state, p, member, text, res = null) {
+  if (Array.isArray(state.notes)) state.notes.push({ p: p.id, member, text, ...(res ? { res } : {}) });
+}
+
+// ---------- the log's accounting: every change to a player is said ----------
+// Cory, 2026-10-22: "every game-state change and why… resource gain or spend, follower gain, member movement, shop
+// update… who did it, who gained who lost". Each task runs in a frame; when it ends, any change to a player's resources,
+// followers or members that no line of its own said (and no member hook inside it said) is logged under what caused it
+// ("Tide: P2 +2 blue."), and cards new in the shop are named. New cards log themselves this way.
+const frames = [];
+function accounted(state, cause, fn, actor = null, label = null) {
+  const f = { cause, actor, label, n: logCount(state), shop: [...state.shop], players: state.players.map(o => ({ res: { ...o.res }, bonus: o.bonus, members: [...o.members] })), inner: state.players.map(() => ({ res: {}, bonus: 0 })), innerLines: [] };
+  frames.push(f);
+  let ok = false;
+  try { const out = fn(); ok = true; return out; } finally {
+    frames.pop();
+    if (ok) settle(state, f);
+  }
+}
+const freshSince = (state, f) => logSince(state, f.n);
+function settle(state, f) {
+  const parent = frames[frames.length - 1];
+  // the resource ledger: what changed in this frame and no frame inside it, credited to this frame's cause (a member's
+  // own frame logs under no cause but credits the member; a recruit or a buy reads its name off its own log line)
+  let rlabel = f.label || f.cause;
+  if (!rlabel) {
+    for (const l of freshSince(state, f)) {
+      const m = /recruited (.+?) \(/.exec(l);
+      if (m) { rlabel = `Recruited ${m[1]}`; break; }
+      if (/ bought \d+ followers?/.test(l)) { rlabel = 'Bought followers'; break; }
+      if (/ drafts /.test(l)) { rlabel = 'Starting pick'; break; }
+      const used = / used (.+?):/.exec(l); // an On Use whose card logs "P3 used Lottery Winner: …"
+      if (used) { rlabel = used[1]; break; }
+      const cloak = / takes the (.+? Cloak)/.exec(l);
+      if (cloak) { rlabel = cloak[1]; break; }
+    }
+  }
+  state.players.forEach((o, i) => {
+    const b = f.players[i], inn = f.inner[i];
+    if (!b) return;
+    for (const r of Object.keys({ ...b.res, ...o.res })) {
+      const d = (o.res[r] || 0) - (b.res[r] || 0) - (inn.res[r] || 0);
+      if (d) rCredit(state, o, r, rlabel && f.actor != null && f.actor !== o.id && state.players[f.actor] ? `${state.players[f.actor].name}'s ${rlabel}` : rlabel, d);
+    }
+  });
+  if (f.cause !== null) {
+    let own = freshSince(state, f);
+    for (const l of f.innerLines) { const i = own.indexOf(l); if (i >= 0) own = [...own.slice(0, i), ...own.slice(i + 1)]; }
+    // a line naming the player (or everyone) and a number of that color says it (a recruit's "5 yellow" covers the
+    // −4 left after its own +1 member line)
+    const says = (o, re) => own.some(l => (l.includes(o.name) || /everyone|each player|all players/i.test(l)) && re.test(l));
+    const out = [];
+    state.players.forEach((o, i) => {
+      const b = f.players[i], inn = f.inner[i];
+      if (!b) return;
+      const parts = [];
+      for (const r of Object.keys({ ...b.res, ...o.res })) {
+        const d = (o.res[r] || 0) - (b.res[r] || 0) - (inn.res[r] || 0);
+        if (!d) continue;
+        // a line naming the player and an amount of this color says that much of it; a remainder is still said (a copied
+        // Walk-In's +1 red beside the copier's Impressionist +1 red: "P4 +1 red", not nothing; Lab, Nov 4)
+        const told = own.filter(l => l.includes(o.name) || /everyone|each player|all players/i.test(l))
+          .reduce((a, l) => a + [...l.matchAll(new RegExp(`(\\d+) ${r}\\b`, 'g'))].reduce((x, m) => x + Number(m[1]), 0), 0);
+        if (!told) parts.push(`${d > 0 ? '+' : '−'}${Math.abs(d)} ${r}`);
+        else if (told < Math.abs(d) && own.filter(l => l.includes(o.name) && new RegExp(`\\d ${r}\\b`).test(l)).every(l => /\+\d/.test(l) === d > 0)) parts.push(`${d > 0 ? '+' : '−'}${Math.abs(d) - told} ${r}`);
+      }
+      const fd = o.bonus - b.bonus - inn.bonus;
+      if (fd && !says(o, /\d followers?\b|[+−-]\d/)) parts.push(`${fd > 0 ? '+' : '−'}${Math.abs(fd)} follower${Math.abs(fd) === 1 ? '' : 's'}`);
+      const name = u => cardDef(state, u).name;
+      for (const u of o.members.filter(u => !b.members.includes(u))) if (!own.some(l => l.includes(name(u)))) parts.push(`gets ${name(u)}`);
+      for (const u of b.members.filter(u => !o.members.includes(u))) if (!own.some(l => l.includes(name(u)))) parts.push(`loses ${name(u)}`);
+      if (parts.length) out.push({ o, text: parts.join(', ') });
+    });
+    // said right where its cause starts: under "P2 took Tide", before what the space's members did
+    if (out.length) {
+      // "P2's Tide: +3 blue." when only the one who did it changed, else who gained and who lost: "Hold Up: P3 −1 purple."
+      const mine = f.actor != null && out.length === 1 && out[0].o.id === f.actor;
+      const said = mine ? (f.cause ? `${out[0].o.name}'s ${f.cause}: ${out[0].text}` : `${out[0].o.name}: ${out[0].text}`)
+        : `${f.cause ? `${f.cause}: ` : ''}${out.map(e => `${e.o.name} ${e.text}`).join('; ')}`;
+      log(state, `${said}.`);
+      const at = state.log.length - 1 - freshSince(state, f).length + 1;
+      if (at >= 0 && at < state.log.length - 1) state.log.splice(at, 0, state.log.pop());
+    }
+  }
+  if (!parent) {
+    const added = state.shop.filter(u => !f.shop.includes(u));
+    if (added.length && state.round > 0) log(state, `New in the shop: ${added.map(u => cardDef(state, u).name).join(', ')}.`);
+    return;
+  }
+  // everything in this frame is now said: the frame around it doesn't say it again
+  state.players.forEach((o, i) => {
+    const b = f.players[i], inn = parent.inner[i];
+    if (!b) return;
+    for (const r of Object.keys({ ...b.res, ...o.res })) inn.res[r] = (inn.res[r] || 0) + (o.res[r] || 0) - (b.res[r] || 0);
+    inn.bonus += o.bonus - b.bonus;
+  });
+  parent.innerLines.push(...freshSince(state, f));
+}
+// ---------- the resource ledger: where each resource held this round came from (Cory, Nov 4: "If you mouse over a
+// resource it should show the sources of where that resource came from. Kind of like an accounting") ----------
+// state.rledger = { round, rows: { pid: { r: { label: n } } } }: every change to a player's resources this round,
+// credited once to its innermost cause (a space, a member, a buy); spends are negative. A new round starts a fresh
+// page: what was held before it reads as carried over (held minus this round's rows).
+function rCredit(state, o, r, label, d) {
+  if (!d) return;
+  if (!state.rledger || state.rledger.round !== state.round) state.rledger = { round: state.round, rows: {} };
+  const row = (state.rledger.rows[o.id] = state.rledger.rows[o.id] || {});
+  const col = (row[r] = row[r] || {});
+  const key = label || 'other';
+  col[key] = (col[key] || 0) + d;
+  if (!col[key]) delete col[key];
+}
+/** What a task's changes are logged under: the space it resolves, or the card that asked the question. */
+function causeOf(state, task) {
+  if (task.t === 'act') { try { return actionAt(state, task.q, task.i).name; } catch { return ''; } }
+  if (task.t === 'choose' || task.t === 'content') {
+    const by = task.data?.by || task.data?.who;
+    if (typeof by === 'string') return by;
+    const pr = String(task.prompt || '');
+    if (pr.includes(':') && !/^P\d|^[^:]*'s turn/.test(pr)) return pr.split(':')[0];
+    if (task.cause?.def) { try { return defById(task.cause.def).name; } catch { /* unknown */ } }
+  }
+  return '';
+}
+
+// The log keeps its last LOG_MAX lines, so its length stops growing late in a game: "what's new since" counts
+// every line ever said (state.logN), never the length or the last line's text, which repeats ("P2's Cover: +1 green.").
+/** How many lines have ever been logged in this game (old saves without logN count from their log's length). */
+export const logCount = state => state.logN ?? state.log.length;
+/** The lines logged since logCount(state) was n. */
+export const logSince = (state, n) => state.log.slice(Math.max(0, state.log.length - (logCount(state) - n)));
+function log(state, text) {
+  state.logN = logCount(state) + 1;
+  state.log.push(text);
+  if (state.log.length > LOG_MAX) state.log.splice(0, state.log.length - LOG_MAX);
+}
+const payString = s => Object.entries(s).filter(([, v]) => v).map(([c, v]) => `${v} ${c}`).join(', ') || 'free';
+export const roman = r => ['I', 'II', 'III'][r - 1] || String(r);

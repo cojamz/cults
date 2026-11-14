@@ -1,0 +1,677 @@
+{"t":1793546854136,"type":"log","text":"Round I's turn order: Ben, Ava, Dee, Cal. Draft 1 resource each in reverse order; each color can be taken once."}
+{"t":1793546906755,"type":"move","seat":2,"round":0,"n":1,"kind":"setup","option":"color:market","label":"Blue's artifact: Bargain Bin — Whenever shop members go to the bottom of the pile, +1 blue.","think":"Bargain Bin looks like the steadiest engine: Savings, Out of Style, Bury, Window Shopper and possibly the between-round shop reset all feed it blue, which also chases the blue contest. Money Changers was the other pull, but it depends on rivals buying followers.","prompt":"Cal: pick an artifact"}
+{"t":1793546906755,"type":"say","seat":2,"text":"Question for the table: does the between-rounds shop sweep count for Bargain Bin? If so that artifact is a lot stronger than it reads."}
+{"t":1793546906755,"type":"log","text":"Cal takes Blue's artifact, Bargain Bin (\"Whenever shop members go to the bottom of the pile, +1 blue.\"), and +1 blue.","by":2}
+{"t":1793546912055,"type":"move","seat":3,"round":0,"n":2,"kind":"setup","option":"color:trading","label":"White's artifact: Money Changers — Whenever any player buys followers, +1 white.","think":"Money Changers pays white every time anyone buys followers, and everyone buys followers late; that's a free feed into the White contest, which is exactly the kind of lead I like to sit on. Fence only pays if I steal.","prompt":"Dee: pick an artifact"}
+{"t":1793546912055,"type":"say","seat":3,"text":"I'd guess yes on Cal's question, the sweep moves the whole row, so Bargain Bin gets six or seven blue per round change. That looks like a lot for free."}
+{"t":1793546912055,"type":"log","text":"Dee takes White's artifact, Money Changers (\"Whenever any player buys followers, +1 white.\"), and +1 white.","by":3}
+{"t":1793546916003,"type":"move","seat":0,"round":0,"n":3,"kind":"setup","option":"color:thieves","label":"Magenta's artifact: Fence — Whenever you steal, +1 magenta.","think":"Fence turns every steal into +1 magenta, and Help Yourself/Lie Low are steals from round I; that's a steady magenta contest edge. Impressionist needs copy spaces I'd rather not depend on.","prompt":"Ava: pick an artifact"}
+{"t":1793546916003,"type":"say","seat":0,"text":"If the sweep counts, Bargain Bin is roughly 7 blue per round change for doing nothing, which basically hands Cal the blue contest. Worth watching."}
+{"t":1793546916003,"type":"log","text":"Ava takes Magenta's artifact, Fence (\"Whenever you steal, +1 magenta.\"), and +1 magenta.","by":0}
+{"t":1793546916003,"type":"log","text":"Ben takes Green's artifact, Impressionist (\"Whenever you copy an action, +1 of its color.\"), and +1 green.","by":0}
+{"t":1793546916003,"type":"log","text":"Round I begins. Ben picks first.","by":0}
+{"t":1793546923553,"type":"move","seat":1,"round":1,"n":4,"kind":"place","option":"slot:3-0","label":"Green · Build Up → you'd get: +3 green","think":"Impressionist wants copies, and copies want a big green action to repeat. Build Up first gives 4 green, then Reprise on my double turn copies it for +5 more. Line Cutters at 2 any looks like the best value in the shop.","prompt":"Ben: place a minion"}
+{"t":1793546923553,"type":"say","seat":1,"text":"Bargain Bin reading for the sweep looks right to me too. Cal, if that holds, blue is yours to lose this round."}
+{"t":1793546923553,"type":"log","text":"Ben took Build Up (Green).","by":1}
+{"t":1793546923553,"type":"log","text":"Ben's Build Up: +3 green.","by":1}
+{"t":1793546926725,"type":"move","seat":1,"round":1,"n":5,"kind":"buy","option":"card:43","label":"Recruit Line Cutters [2 any; you pay 2 (2 any); worth 3] — You go first every round.","think":"Line Cutters: 3 followers for 2 resources plus first pick every round. Leaves me 2 green, still leading green, and Reprise can rebuild it.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793546928824,"type":"move","seat":1,"round":1,"n":6,"kind":"pay","option":"pay:0-0-0-2","label":"Pay 2 green (suggested)","think":"pay green","prompt":"Ben: choose how to pay for Line Cutters"}
+{"t":1793546928824,"type":"log","text":"Ben recruited Line Cutters (2 green).","by":1}
+{"t":1793546928824,"type":"log","text":"New in the shop: Critic.","by":1}
+{"t":1793546940795,"type":"move","seat":0,"round":1,"n":7,"kind":"place","option":"slot:1-0","label":"Magenta · Help Yourself → you'd get: +0..1 blue, +1 magenta, +0..1 white, +1..2 green; rivals together -1..0 blue, -1..0 white, -2..-1 green; then you choose: Help Yourself: choose a resource to steal.","think":"Help Yourself takes 3 of the 4 resources on the table plus Fence's +1 magenta: +4 for me and -3 for rivals, a 7-point swing in raw stuff. Echo's +4 green is clean but Ben will fight green with Impressionist.","prompt":"Ava: place a minion"}
+{"t":1793546940795,"type":"log","text":"Ava took Help Yourself (Magenta).","by":0}
+{"t":1793546945376,"type":"move","seat":0,"round":1,"n":8,"kind":"choose","option":"take:1:green","label":"Ben's green (2) — value hint 2.2","think":"Both of Ben's green zeroes his green lead.","prompt":"Help Yourself: choose a resource to steal. (3 left)"}
+{"t":1793546947071,"type":"move","seat":0,"round":1,"n":9,"kind":"choose","option":"take:1:green","label":"Ben's green (1) — value hint 1.2","think":"Second green.","prompt":"Help Yourself: choose a resource to steal. (2 left)"}
+{"t":1793546949186,"type":"move","seat":0,"round":1,"n":10,"kind":"choose","option":"take:3:white","label":"Dee's white (1) — value hint 1.05","think":"White from Dee; blue is Cal's anyway with Bargain Bin.","prompt":"Help Yourself: choose a resource to steal. (1 left)"}
+{"t":1793546949186,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793546949186,"type":"log","text":"Ava stole 3 (2 green from Ben, 1 white from Dee).","by":0}
+{"t":1793546953468,"type":"move","seat":0,"round":1,"n":11,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Holding: I lead magenta, green and white right now; nothing in the shop is worth breaking three contest leads.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793546953468,"type":"say","seat":0,"text":"Line Cutters at 2 any for 3 followers plus first pick every round looks underpriced to me. That's the best follower-per-resource card in the shop by a mile."}
+{"t":1793546953468,"type":"log","text":"Ava passed.","by":0}
+{"t":1793546960203,"type":"move","seat":3,"round":1,"n":12,"kind":"place","option":"slot:3-1","label":"Green · Echo → you'd get: +0..1 blue, +0..2 magenta, +0..1 white, +1..3 green; rivals together -1..0 blue, -2..0 magenta, -1..0 white, -2..0 green; then you choose: Echo: copy the previous action?; Help Yourself: choose a resource to steal.","think":"Echo on Ava's Help Yourself is a 3-steal plus a green for one minion, the best thing on the board. I'll strip Ava's green and white so I lead both of those contests at once.","prompt":"Dee: place a minion"}
+{"t":1793546960203,"type":"log","text":"Dee took Echo (Green).","by":3}
+{"t":1793546960203,"type":"log","text":"Dee's Echo: +1 green.","by":3}
+{"t":1793546962425,"type":"move","seat":3,"round":1,"n":13,"kind":"choose","option":"space:now:1-0","label":"Help Yourself (Ava): do Help Yourself yourself — value hint 3.99","think":"yes, copy it","prompt":"Echo: copy the previous action?"}
+{"t":1793546962425,"type":"log","text":"Dee copies Help Yourself (Ava's): doing it again.","by":3}
+{"t":1793546965092,"type":"move","seat":3,"round":1,"n":14,"kind":"choose","option":"take:0:green","label":"Ava's green (2) — value hint 2.05","think":"green first","prompt":"Help Yourself: choose a resource to steal. (3 left)"}
+{"t":1793546965279,"type":"move","seat":3,"round":1,"n":15,"kind":"choose","option":"take:0:green","label":"Ava's green (1) — value hint 1.05","think":"second green","prompt":"Help Yourself: choose a resource to steal. (2 left)"}
+{"t":1793546967252,"type":"move","seat":3,"round":1,"n":16,"kind":"choose","option":"take:0:white","label":"Ava's white (1) — value hint 1.05","think":"white back, now I lead white too","prompt":"Help Yourself: choose a resource to steal. (1 left)"}
+{"t":1793546967252,"type":"log","text":"Dee stole 3 (2 green and 1 white from Ava).","by":3}
+{"t":1793546973122,"type":"move","seat":3,"round":1,"n":17,"kind":"buy","option":"card:30","label":"Recruit Busker [1 green + 3 any; you pay 4 (1 green + 3 any); worth 1] — On Recruit: +2 green. Round Start: +2 green.","think":"Busker refunds 2 green now and 2 every round start, so it's a green-contest engine that nearly pays for itself. Costs me the white lead for now, but Allowance is still open.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793546973122,"type":"say","seat":3,"text":"Help Yourself into Echo is a nasty pair in round one, three-steal twice before anyone has anything to protect."}
+{"t":1793546974839,"type":"move","seat":3,"round":1,"n":18,"kind":"pay","option":"pay:0-0-1-3","label":"Pay 1 white, 3 green (suggested) — spending this gives up your contest lead in white, green","think":"pay","prompt":"Dee: choose how to pay for Busker"}
+{"t":1793546974839,"type":"log","text":"Dee recruited Busker (1 white, 3 green).","by":3}
+{"t":1793546974839,"type":"log","text":"Dee's Busker: +2 green.","by":3}
+{"t":1793546974839,"type":"log","text":"New in the shop: Martyrs.","by":3}
+{"t":1793546987255,"type":"move","seat":2,"round":1,"n":19,"kind":"place","option":"slot:0-1","label":"Blue · Out of Style → you'd get: +3..6 blue; then you choose: Out of Style: send which color to the bottom?","think":"Two turns in a row. Out of Style on a non-blue color keeps the cheap blue engine cards in the shop and still feeds Bargain Bin; then I can afford Trendsetters, which with Bargain Bin pays blue on every recruit.","prompt":"Cal: place a minion"}
+{"t":1793546987255,"type":"log","text":"Cal took Out of Style (Blue).","by":2}
+{"t":1793546987255,"type":"log","text":"Cal's Out of Style: +1 blue.","by":2}
+{"t":1793546991092,"type":"move","seat":2,"round":1,"n":20,"kind":"choose","option":"color:white","label":"white (1) — value hint 1","think":"Sending white buries Martyrs, which Dee as the White-artifact player would love at 3 followers for 4, and keeps Trendsetters, Connoisseurs and Regular for me.","prompt":"Out of Style: send which color to the bottom?"}
+{"t":1793546991092,"type":"log","text":"Out of Style: Cal sends 1 white member to the bottom.","by":2}
+{"t":1793546991092,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793546991092,"type":"log","text":"Cal's Out of Style: +1 blue.","by":2}
+{"t":1793546991092,"type":"log","text":"New in the shop: Sticky Fingers.","by":2}
+{"t":1793546993826,"type":"move","seat":2,"round":1,"n":21,"kind":"buy","option":"card:8","label":"Recruit Trendsetters [2 blue + 2 any; you pay 4 (2 blue + 2 any); worth 3] — Whenever you recruit a member, send 1 shop member to the bottom of the pile, then refill.","think":"Trendsetters: 3 followers for 4, and every future member recruit buries a shop card, which Bargain Bin turns into +1 blue. That's the engine.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793546995744,"type":"move","seat":2,"round":1,"n":22,"kind":"pay","option":"pay:4-0-0-0","label":"Pay 4 blue (suggested) — spending this gives up your contest lead in blue","think":"pay","prompt":"Cal: choose how to pay for Trendsetters"}
+{"t":1793546995744,"type":"log","text":"Cal recruited Trendsetters (4 blue).","by":2}
+{"t":1793546995744,"type":"log","text":"New in the shop: Recluse.","by":2}
+{"t":1793547002989,"type":"move","seat":2,"round":1,"n":23,"kind":"place","option":"slot:3-2","label":"Green · Reprise → you'd get: +3..5 blue, +1 green; then you choose: Reprise: copy which of your spaces?; Out of Style: send which color to the bottom?","think":"Reprise on my own Out of Style beats Savings: about 4 blue plus 1 green against 3 blue, and it takes Reprise away from Ben's Impressionist.","prompt":"Cal: place a minion"}
+{"t":1793547002989,"type":"log","text":"Cal took Reprise (Green).","by":2}
+{"t":1793547002989,"type":"log","text":"Cal's Reprise: +1 green.","by":2}
+{"t":1793547004705,"type":"move","seat":2,"round":1,"n":24,"kind":"choose","option":"space:now:0-1","label":"Out of Style (Cal): do Out of Style yourself — value hint 4","think":"copy Out of Style","prompt":"Reprise: copy which of your spaces?"}
+{"t":1793547004705,"type":"log","text":"Cal's Reprise: +1 blue.","by":2}
+{"t":1793547004705,"type":"log","text":"Cal copies Out of Style: doing it again.","by":2}
+{"t":1793547007224,"type":"move","seat":2,"round":1,"n":25,"kind":"choose","option":"color:magenta","label":"magenta (2) — value hint 2","think":"Magenta: Kingpin and Sticky Fingers go, which also keeps Sticky Fingers away from Ava's Fence steal plan.","prompt":"Out of Style: send which color to the bottom?"}
+{"t":1793547007224,"type":"log","text":"Out of Style: Cal sends 2 magenta members to the bottom.","by":2}
+{"t":1793547007224,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547007224,"type":"log","text":"Cal's Out of Style: +2 blue.","by":2}
+{"t":1793547007224,"type":"log","text":"New in the shop: Cutpurse, Window Dressers.","by":2}
+{"t":1793547011082,"type":"move","seat":2,"round":1,"n":26,"kind":"buy","option":"card:5","label":"Recruit Window Dressers [2 blue + 2 any; you pay 4 (2 blue + 2 any); worth 3] — On Recruit: send 3 shop members to the bottom of the pile, then refill.","think":"Window Dressers is 3 followers for 4, and its bury plus Trendsetters' bury should give two Bargain Bin triggers back. Better than Connoisseurs at the same price.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793547011082,"type":"say","seat":2,"text":"Bargain Bin pays once per sweep, not once per card, for what it's worth. So it's steady, not crazy."}
+{"t":1793547013011,"type":"move","seat":2,"round":1,"n":27,"kind":"pay","option":"pay:3-0-0-1","label":"Pay 3 blue, 1 green (suggested)","think":"keep a blue","prompt":"Cal: choose how to pay for Window Dressers"}
+{"t":1793547013011,"type":"log","text":"Cal recruited Window Dressers (3 blue, 1 green).","by":2}
+{"t":1793547013011,"type":"log","text":"Cal's Window Dressers: send 3 shop members to the bottom of the pile.","by":2}
+{"t":1793547013011,"type":"log","text":"New in the shop: Accomplice.","by":2}
+{"t":1793547015775,"type":"move","seat":2,"round":1,"n":28,"kind":"choose","option":"card:11","label":"Accomplice [1 magenta + 2 any; worth 1] — On Recruit: steal 3 resources.","think":"Bury Accomplice: a cheap steal-3 is the card most likely to hit me.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793547015775,"type":"log","text":"Cal's Trendsetters: Cal sends Accomplice to the bottom of the pile.","by":2}
+{"t":1793547015775,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547015775,"type":"log","text":"New in the shop: Agents.","by":2}
+{"t":1793547019984,"type":"move","seat":2,"round":1,"n":29,"kind":"choose","option":"card:10","label":"Cutpurse [1 magenta + 2 any; worth 1] — On Recruit: steal 1 resource from the rival with the most resources. Round Start: steal 1 resource from the rival with the most resources.","think":"Cutpurse out, another steal card.","prompt":"Churn: send which member to the bottom? (3 to go)"}
+{"t":1793547019984,"type":"log","text":"Churn: Cal sends Cutpurse to the bottom of the pile.","by":2}
+{"t":1793547020251,"type":"move","seat":2,"round":1,"n":30,"kind":"choose","option":"card:9","label":"Critic [1 blue + 2 any; worth 1] — Whenever a rival recruits a blue member, +1 follower.","think":"Recluse out","prompt":"Churn: send which member to the bottom? (2 to go)"}
+{"t":1793547020251,"type":"log","text":"Churn: Cal sends Critic to the bottom of the pile.","by":2}
+{"t":1793547022857,"type":"move","seat":2,"round":1,"n":31,"kind":"choose","option":"card:20","label":"Recluse [2 white + 2 any; worth 1] — Game End: +2 followers per rival with more members than you.","think":"Recluse out (I misclicked Critic out a moment ago, the list shifted; no big loss).","prompt":"Churn: send which member to the bottom? (1 to go)"}
+{"t":1793547022857,"type":"log","text":"Churn: Cal sends Recluse to the bottom of the pile.","by":2}
+{"t":1793547022857,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547022857,"type":"log","text":"New in the shop: Dabblers, Cashier, Roadie.","by":2}
+{"t":1793547030729,"type":"move","seat":3,"round":1,"n":32,"kind":"place","option":"slot:2-0","label":"White · Allowance → you'd get: +2 white","think":"Nobody holds white, so Allowance's 2 white puts me in the lead of white while I sit on green 2. I'll hold rather than spend; with Cal at 7 already I need contest prizes, not a 1-follower body.","prompt":"Dee: place a minion"}
+{"t":1793547030729,"type":"say","seat":3,"text":"Cal, that round-one chain was huge: two members and a blue lead off Out of Style twice. Reprise copying a space that scales with the shop feels like the strongest line on the board right now."}
+{"t":1793547030729,"type":"log","text":"Dee took Allowance (White).","by":3}
+{"t":1793547030729,"type":"log","text":"Dee's Allowance: +2 white.","by":3}
+{"t":1793547036787,"type":"move","seat":3,"round":1,"n":33,"kind":"buy","option":"card:34","label":"Recruit Roadie [1 green + 2 any; you pay 3 (1 green + 2 any); worth 1] — On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.","think":"Roadie with Busker means 4 green every round start, and On Recruit refunds 2 green now; plus Allowance's follower. I want to pay with green so I keep a white.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793547039533,"type":"move","seat":3,"round":1,"n":34,"kind":"pay","option":"pay:0-0-1-2","label":"Pay 1 white, 2 green — spending this gives up your contest lead in green","think":"Roadie's On Recruit gives the 2 green right back, so this keeps me at 2 green and 1 white, leading both.","prompt":"Dee: choose how to pay for Roadie"}
+{"t":1793547039533,"type":"log","text":"Dee recruited Roadie (1 white, 2 green).","by":3}
+{"t":1793547039533,"type":"log","text":"Dee's Allowance: +1 follower for recruiting a member.","by":3}
+{"t":1793547039533,"type":"log","text":"Dee's Roadie: +2 green.","by":3}
+{"t":1793547039533,"type":"log","text":"New in the shop: Party Crasher.","by":3}
+{"t":1793547052462,"type":"move","seat":0,"round":1,"n":35,"kind":"place","option":"slot:1-2","label":"Magenta · Lie Low → you'd get: +0..1 blue, +2 magenta, +0..1 white, +0..1 green; rivals together -1..0 blue, -1..0 white, -1..0 green; then you choose: Lie Low: choose a resource to steal.","think":"Got Echoed hard by Dee. Lie Low puts me at 4 magenta with Fence and locks out steals for the round, so the magenta +4 is near-safe; Stash alone only gets a rival to 3.","prompt":"Ava: place a minion"}
+{"t":1793547052462,"type":"say","seat":0,"text":"Echo copying a fresh steal round one is brutal; I gave Dee a free 3-steal. Lesson learned, that's why Lie Low exists."}
+{"t":1793547052462,"type":"log","text":"Ava took Lie Low (Magenta).","by":0}
+{"t":1793547052462,"type":"log","text":"Ava's Lie Low: +1 magenta.","by":0}
+{"t":1793547052462,"type":"log","text":"Ava lies low: safe from thieves until round end.","by":0}
+{"t":1793547055195,"type":"move","seat":0,"round":1,"n":36,"kind":"choose","option":"take:3:green","label":"Dee's green (2) — value hint 2.2","think":"Dee's green: makes green 1-1 and every green space is taken, so a tie is likely to hold for +2.","prompt":"Lie Low: choose a resource to steal. (1 left)"}
+{"t":1793547055195,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793547055195,"type":"log","text":"Ava stole 1 (1 green from Dee).","by":0}
+{"t":1793547062022,"type":"move","seat":0,"round":1,"n":37,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"4 magenta beats a Stash (3) from Ben; spending now would hand him the +4. I'll recruit on my last turn once I see his two placements.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793547062022,"type":"log","text":"Ava passed.","by":0}
+{"t":1793547078423,"type":"move","seat":1,"round":1,"n":38,"kind":"place","option":"slot:2-1","label":"White · Splurge → you'd get: +1 white","think":"Got cleaned out by Ava's Help Yourself and Cal took Reprise before my double turn, so the green plan is dead this round. White is the only contest I can take: Splurge plus Exchange gives me 2 white vs Dee's 1, and the spaces left after me don't give white. Money Changers is the risk: any follower purchase ticks Dee up.","prompt":"Ben: place a minion"}
+{"t":1793547078423,"type":"say","seat":1,"text":"Help Yourself plus Echo stripping the first player bare in round one is rough. I opened Build Up and Line Cutters and had nothing by my second turn."}
+{"t":1793547078423,"type":"log","text":"Ben took Splurge (White).","by":1}
+{"t":1793547078423,"type":"log","text":"Ben's Splurge: +1 white.","by":1}
+{"t":1793547080448,"type":"move","seat":1,"round":1,"n":39,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold the white for the contest.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793547080448,"type":"log","text":"Ben passed.","by":1}
+{"t":1793547088606,"type":"move","seat":1,"round":1,"n":40,"kind":"place","option":"slot:2-2","label":"White · Exchange → you'd get: +0..1 white; +0..2 followers; then you choose: Exchange: turn which resource into 2 followers?","think":"Weighed Stash into Dabblers (+3 followers now) but that leaves Exchange open for Dee to take white back. Exchange denies it and gives me 2 white; only Money Changers can tie me.","prompt":"Ben: place a minion"}
+{"t":1793547088606,"type":"log","text":"Ben took Exchange (White).","by":1}
+{"t":1793547088606,"type":"log","text":"Ben's Exchange: +1 white.","by":1}
+{"t":1793547090490,"type":"move","seat":1,"round":1,"n":41,"kind":"choose","option":"done","label":"Turn nothing — value hint 0.1","think":"Keep 2 white for the contest; converting drops me to a tie with Dee.","prompt":"Exchange: turn which resource into 2 followers? (1 left)"}
+{"t":1793547093260,"type":"move","seat":1,"round":1,"n":42,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"hold","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793547093260,"type":"log","text":"Ben passed.","by":1}
+{"t":1793547099335,"type":"move","seat":0,"round":1,"n":43,"kind":"place","option":"slot:1-1","label":"Magenta · Stash → you'd get: +3 magenta","think":"Stash to 7 magenta and it denies the last magenta space; then recruit for the +1 follower.","prompt":"Ava: place a minion"}
+{"t":1793547099335,"type":"log","text":"Ava took Stash (Magenta).","by":0}
+{"t":1793547099335,"type":"log","text":"Ava's Stash: +3 magenta.","by":0}
+{"t":1793547101786,"type":"move","seat":0,"round":1,"n":44,"kind":"buy","option":"card:45","label":"Recruit Dabblers [3 any; you pay 3 (3 any); worth 2] — Counts as 2 wild members.","think":"Dabblers paid in magenta: 2 followers + Stash's 1 for 3 magenta, keeps my green tie and still 4 magenta for the contest.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793547104708,"type":"move","seat":0,"round":1,"n":45,"kind":"pay","option":"pay:0-3-0-0","label":"Pay 3 magenta (suggested)","think":"All magenta.","prompt":"Ava: choose how to pay for Dabblers"}
+{"t":1793547104708,"type":"log","text":"Ava recruited Dabblers (3 magenta).","by":0}
+{"t":1793547104708,"type":"log","text":"Ava's Stash: +1 follower for recruiting a member.","by":0}
+{"t":1793547104708,"type":"log","text":"New in the shop: Scouts.","by":0}
+{"t":1793547112773,"type":"move","seat":3,"round":1,"n":46,"kind":"place","option":"slot:0-0","label":"Blue · Savings → you'd get: +2 blue; rivals together 0..1 blue; then you choose: Savings: send a shop member to the bottom of the pile?","think":"Only blue left. Taking Savings (and not burying) leaves Cal Peek instead of a Savings bury that would also trigger Bargain Bin. Then I buy a follower with blue so Money Changers ties me with Ben on white.","prompt":"Dee: place a minion"}
+{"t":1793547112773,"type":"log","text":"Dee took Savings (Blue).","by":3}
+{"t":1793547112773,"type":"log","text":"Dee's Savings: +2 blue.","by":3}
+{"t":1793547114586,"type":"move","seat":3,"round":1,"n":47,"kind":"choose","option":"none","label":"Pass (recruit nothing)","think":"no bury, no free blue for Cal","prompt":"Savings: send a shop member to the bottom of the pile?"}
+{"t":1793547118617,"type":"move","seat":3,"round":1,"n":48,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"One blue for a follower, and Money Changers turns it into a white that ties Ben for the white prize. Keeps my green tie with Ava intact.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793547120563,"type":"move","seat":3,"round":1,"n":49,"kind":"pay","option":"pay:1-0-0-0","label":"Pay 1 blue (suggested)","think":"blue","prompt":"Dee: choose how to pay for 1 followers"}
+{"t":1793547120563,"type":"log","text":"Dee bought 1 follower (1 blue).","by":3}
+{"t":1793547120563,"type":"log","text":"Dee's Money Changers: +1 white.","by":3}
+{"t":1793547125646,"type":"move","seat":2,"round":1,"n":50,"kind":"place","option":"slot:0-2","label":"Blue · Peek → you'd get: +2 blue; then you choose: Peek: which goes on top?; Peek: which goes next?","think":"Only Peek left anyway. Plan is Scouts after: 2 followers for 3 and a once-per-round sweep that Bargain Bin turns into blue every round.","prompt":"Cal: place a minion"}
+{"t":1793547125646,"type":"log","text":"Cal took Peek (Blue).","by":2}
+{"t":1793547125646,"type":"log","text":"Cal's Peek: +2 blue.","by":2}
+{"t":1793547125646,"type":"log","text":"Cal peeks at the top 4 of the pile.","by":2}
+{"t":1793547129213,"type":"move","seat":2,"round":1,"n":51,"kind":"choose","option":"card:18","label":"Kingpin [1 magenta + 3 any; worth 1] — Game End: +1 follower per magenta member you have.","think":"Kingpin on top: least useful to anyone right now.","prompt":"Peek: which goes on top?"}
+{"t":1793547130982,"type":"move","seat":2,"round":1,"n":52,"kind":"choose","option":"card:31","label":"Muse [1 green + 3 any; worth 1] — Whenever a rival copies an action, +1 green.","think":"Muse next.","prompt":"Peek: which goes next?"}
+{"t":1793547132764,"type":"move","seat":2,"round":1,"n":53,"kind":"choose","option":"card:21","label":"Shopkeeper [2 white + 2 any; worth 1] — On Recruit: +2 white. Round Start: +2 white.","think":"Shopkeeper then Martyrs.","prompt":"Peek: which goes next?"}
+{"t":1793547132764,"type":"log","text":"Cal puts the top 4 of the pile back in a new order.","by":2}
+{"t":1793547136848,"type":"move","seat":2,"round":1,"n":54,"kind":"buy","option":"card:47","label":"Recruit Scouts [3 any; you pay 3 (3 any); worth 2] — On Use, once per round: send any shop members to the bottom of the pile, then refill.","think":"Scouts: 2 followers for 3 and a sweep every round that Bargain Bin pays for. Still keeps me ahead of Dee in blue.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793547137040,"type":"move","seat":2,"round":1,"n":55,"kind":"pay","option":"pay:3-0-0-0","label":"Pay 3 blue (suggested)","think":"pay","prompt":"Cal: choose how to pay for Scouts"}
+{"t":1793547137040,"type":"log","text":"Cal recruited Scouts (3 blue).","by":2}
+{"t":1793547137040,"type":"log","text":"New in the shop: Kingpin.","by":2}
+{"t":1793547140270,"type":"move","seat":2,"round":1,"n":56,"kind":"choose","option":"card:18","label":"Kingpin [1 magenta + 3 any; worth 1] — Game End: +1 follower per magenta member you have.","think":"Kingpin out; rows reset at round end anyway.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793547140270,"type":"log","text":"Cal's Trendsetters: Cal sends Kingpin to the bottom of the pile.","by":2}
+{"t":1793547140270,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547140270,"type":"log","text":"New in the shop: Muse.","by":2}
+{"t":1793547142278,"type":"move","seat":2,"round":1,"n":57,"kind":"buy","option":"use:47","label":"Use Scouts — On Use, once per round: send any shop members to the bottom of the pile, then refill.","think":"Use Scouts for a free Bargain Bin blue; row resets anyway.","prompt":"Cal: use a member, or finish your turn"}
+{"t":1793547144078,"type":"move","seat":2,"round":1,"n":58,"kind":"choose","option":"card:31","label":"Muse [1 green + 3 any; worth 1] — Whenever a rival copies an action, +1 green.","think":"Muse out.","prompt":"Scout: send which shop members to the bottom of the pile?"}
+{"t":1793547145960,"type":"move","seat":2,"round":1,"n":59,"kind":"choose","option":"done","label":"Pass (recruit nothing)","think":"done","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547145960,"type":"log","text":"Cal's Scout: sent Muse to the bottom of the pile.","by":2}
+{"t":1793547145960,"type":"log","text":"New in the shop: Shopkeeper.","by":2}
+{"t":1793547145960,"type":"log","text":"Round I ends. Most blue: Cal +4 · Most magenta: Ava +4 · Most white: Ben & Dee +2 · Most green: Ava & Dee +2","by":2}
+{"t":1793547145960,"type":"log","text":"Round II members (29) are shuffled into the deck.","by":2}
+{"t":1793547145960,"type":"log","text":"The member market refreshes for round II.","by":2}
+{"t":1793547145960,"type":"log","text":"Dee's Busker: +2 green.","by":2}
+{"t":1793547145960,"type":"log","text":"Dee's Roadie: +2 green.","by":2}
+{"t":1793547145960,"type":"log","text":"Round II begins. Ben picks first. (Ben's Line Cutters: always picks first.)","by":2}
+{"t":1793547145960,"type":"log","text":"New in the shop: Recluse, Martyrs, Extortionist, Kingpin, Raiders, Double Agent.","by":2}
+{"t":1793547166436,"type":"move","seat":1,"round":2,"n":60,"kind":"place","option":"slot:2-0","label":"White · Allowance → you'd get: +3 white","think":"Behind at 6, so I want follower-dense turns. Allowance takes me to 5 white and pays +2 if I recruit; Martyrs is 3 followers for 4 and pays its cost again when it leaves, which sets up Estate Sale or Farewell on my double turn. Raiders was the other look.","prompt":"Ben: place a minion"}
+{"t":1793547166436,"type":"say","seat":1,"text":"Martyrs reads like it was built for Farewell and Estate Sale. Casting it out pays twice."}
+{"t":1793547166436,"type":"log","text":"Ben took Allowance (White).","by":1}
+{"t":1793547166436,"type":"log","text":"Ben's Allowance: +3 white.","by":1}
+{"t":1793547168528,"type":"move","seat":1,"round":2,"n":61,"kind":"buy","option":"card:27","label":"Recruit Martyrs [2 white + 2 any; you pay 4 (2 white + 2 any); worth 3] — Whenever this member leaves your cult, gain followers equal to its cost.","think":"Martyrs: +3 now, +2 from Allowance, and a payout later.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793547171235,"type":"move","seat":1,"round":2,"n":62,"kind":"pay","option":"pay:0-0-4-0","label":"Pay 4 white (suggested) — spending this gives up your contest lead in white","think":"I'll rebuild white with Estate Sale on Martyrs.","prompt":"Ben: choose how to pay for Martyrs"}
+{"t":1793547171235,"type":"log","text":"Ben recruited Martyrs (4 white).","by":1}
+{"t":1793547171235,"type":"log","text":"Ben's Allowance: +2 followers for recruiting a member.","by":1}
+{"t":1793547171235,"type":"log","text":"New in the shop: Shoplifter.","by":1}
+{"t":1793547176083,"type":"move","seat":3,"round":2,"n":63,"kind":"place","option":"slot:3-1","label":"Green · Echo → you'd get: +3 white, +1 green; then you choose: Echo: copy the previous action?","think":"Echo on Ben's Allowance is +3 white and +1 green, pushing both my leads (white to 5, green to 6) and denying Echo to whoever goes after me.","prompt":"Dee: place a minion"}
+{"t":1793547176083,"type":"log","text":"Dee took Echo (Green).","by":3}
+{"t":1793547176083,"type":"log","text":"Dee's Echo: +1 green.","by":3}
+{"t":1793547178055,"type":"move","seat":3,"round":2,"n":64,"kind":"choose","option":"space:now:2-0","label":"Allowance (Ben): do Allowance yourself — value hint 4.4","think":"copy","prompt":"Echo: copy the previous action?"}
+{"t":1793547178055,"type":"log","text":"Dee's Echo: +3 white.","by":3}
+{"t":1793547178055,"type":"log","text":"Dee copies Allowance (Ben's): doing it again.","by":3}
+{"t":1793547186295,"type":"move","seat":3,"round":2,"n":65,"kind":"buy","option":"card:20","label":"Recruit Recluse [2 white + 2 any; you pay 4 (2 white + 2 any); worth 1] — Game End: +2 followers per rival with more members than you.","think":"Recluse fits my plan: I'm the lean cult (2 members vs Cal's 8 and Ben's 6), so it's likely +4 to +6 at game end for 4 resources. I'll pay with blue and green so white stays well ahead.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793547188084,"type":"move","seat":3,"round":2,"n":66,"kind":"pay","option":"pay:1-0-2-1","label":"Pay 1 blue, 2 white, 1 green (suggested)","think":"spread it; blue is worthless to me","prompt":"Dee: choose how to pay for Recluse"}
+{"t":1793547188084,"type":"log","text":"Dee recruited Recluse (1 blue, 2 white, 1 green).","by":3}
+{"t":1793547188084,"type":"log","text":"Dee's Allowance: +2 followers for recruiting a member.","by":3}
+{"t":1793547188084,"type":"log","text":"New in the shop: Tribute Band.","by":3}
+{"t":1793547203400,"type":"move","seat":0,"round":2,"n":67,"kind":"place","option":"slot:1-4","label":"Magenta · Shake Down → you'd get: +2 magenta; +3 followers; +3 members; rivals together 0..1 blue; rivals followers -3..1; then you choose: Shake Down: choose a rival.; Churn: send which member to the bottom? (3 to go); Churn: send which member to the bottom? (2 to go); Churn: send which member to the bottom? (1 to go)","think":"Shake Down on Ben: he holds 1 white so he can't pay for anything, I get Line Cutters or Martyrs outright. Either is ~3 followers for one placement, better than Help Yourself's raw 4 resources.","prompt":"Ava: place a minion"}
+{"t":1793547203400,"type":"log","text":"Ava took Shake Down (Magenta).","by":0}
+{"t":1793547203400,"type":"log","text":"Ava's Shake Down: +1 magenta.","by":0}
+{"t":1793547205310,"type":"move","seat":0,"round":2,"n":68,"kind":"choose","option":"player:1","label":"Ben (Line Cutters, Martyrs) — value hint 9.5","think":"Ben, broke.","prompt":"Shake Down: choose a rival."}
+{"t":1793547211277,"type":"move","seat":1,"round":2,"n":69,"kind":"choose","option":"card:27","label":"Martyrs (4) — value hint -9.5","think":"I can't pay either cost with 1 white. If Martyrs leaves I get its 4 followers back, so losing it nets me +1; losing Line Cutters costs 3 and first pick. Easy call, though it kills my Estate Sale plan.","prompt":"Shake Down: Ava is shaking you down. Which member is at stake?"}
+{"t":1793547211280,"type":"say","seat":1,"text":"Ava, heads up: Martyrs pays me its cost when it leaves, so Shake Down on it is a gift both ways."}
+{"t":1793547211280,"type":"log","text":"Ben's Martyrs left: +4 followers.","by":1}
+{"t":1793547211280,"type":"log","text":"Ava's Fence: +1 magenta.","by":1}
+{"t":1793547211280,"type":"log","text":"Ben couldn't pay 4 (held 1), so lost Martyrs to Ava.","by":1}
+{"t":1793547216299,"type":"move","seat":0,"round":2,"n":70,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Extortionist at 7 for 1 follower plus 2 steals a round is too slow with 1.5 rounds left; holding 6 magenta for the +6.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793547216299,"type":"say","seat":0,"text":"Ben, fair, Martyrs netted you +1 on that. Still, Shake Down on a player with an empty pile is just a free member; that space punishes being broke more than anything else on the wheel."}
+{"t":1793547216299,"type":"log","text":"Ava passed.","by":0}
+{"t":1793547228696,"type":"move","seat":2,"round":2,"n":71,"kind":"place","option":"slot:0-4","label":"Blue · Bury → you'd get: +4..8 blue; then you choose: Bury: send which member to the bottom?","think":"Bury on Tribute Band (cost 12) should be +6 plus Bargain Bin plus 1, about 8 blue. Then Lie Low on my second turn so Ava's Crime Wave and Shake Down can't touch the pile I'm building for the +6 blue contest.","prompt":"Cal: place a minion"}
+{"t":1793547228696,"type":"log","text":"Cal took Bury (Blue).","by":2}
+{"t":1793547228696,"type":"log","text":"Cal's Bury: +1 blue.","by":2}
+{"t":1793547230975,"type":"move","seat":2,"round":2,"n":72,"kind":"choose","option":"card:36","label":"Tribute Band [8 green + 4 any; worth 3] — On Use, once per game: choose a rival. Do every action they have a minion on this round.","think":"Tribute Band, priciest card, and Dee's 5 green was creeping toward it.","prompt":"Bury: send which member to the bottom?"}
+{"t":1793547230975,"type":"log","text":"Bury: Cal sends Tribute Band to the bottom of the pile.","by":2}
+{"t":1793547230975,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547230975,"type":"log","text":"Cal's Bury: +6 blue.","by":2}
+{"t":1793547230975,"type":"log","text":"New in the shop: Bodyguards.","by":2}
+{"t":1793547235881,"type":"move","seat":2,"round":2,"n":73,"kind":"buy","option":"use:47","label":"Use Scouts — On Use, once per round: send any shop members to the bottom of the pile, then refill.","think":"Scouts before buying: clear the magenta steal cards and dig for something better than Connoisseurs.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793547236069,"type":"move","seat":2,"round":2,"n":74,"kind":"choose","option":"card:15","label":"Extortionist [4 magenta + 3 any; worth 1] — On Recruit: steal 2 resources from the rival with the most resources. Round Start: steal 2 resources from the rival with the most resources.","think":"Extortionist out","prompt":"Scout: send which shop members to the bottom of the pile?"}
+{"t":1793547239844,"type":"move","seat":2,"round":2,"n":75,"kind":"choose","option":"card:17","label":"Double Agent [3 magenta + 5 any; worth 1] — On Recruit: swap this member for a rival’s member you choose.","think":"Double Agent out","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547241844,"type":"move","seat":2,"round":2,"n":76,"kind":"choose","option":"card:19","label":"Shoplifter [3 magenta + 4 any; worth 1] — Whenever you recruit, steal 1 resource.","think":"Shoplifter out","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547241931,"type":"move","seat":2,"round":2,"n":77,"kind":"choose","option":"card:25","label":"Raiders [2 white + 3 any; worth 2] — On Use, once per game: steal 4 followers from the leader. Pay them 2 white.","think":"Raiders out, it aims at the leader","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547244314,"type":"move","seat":2,"round":2,"n":78,"kind":"choose","option":"card:18","label":"Kingpin [1 magenta + 3 any; worth 1] — Game End: +1 follower per magenta member you have.","think":"Kingpin out","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547244401,"type":"move","seat":2,"round":2,"n":79,"kind":"choose","option":"done","label":"Pass (recruit nothing)","think":"done","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547244401,"type":"log","text":"Cal's Scout: sent Extortionist, Double Agent, Shoplifter, Raiders, Kingpin to the bottom of the pile.","by":2}
+{"t":1793547244401,"type":"log","text":"New in the shop: Grifter, Party Crasher, Heiresses, Doormen, Patroness.","by":2}
+{"t":1793547252759,"type":"move","seat":2,"round":2,"n":80,"kind":"buy","option":"card:1","label":"Recruit Patroness [5 blue + 3 any; you pay 8 (5 blue + 3 any); worth 1] — Whenever a shop member goes to the bottom of the pile, +1 follower.","think":"Patroness is the payoff for my whole engine: Trendsetters every recruit, Scouts every round, Bury/Out of Style, and the round-end row sweep if it counts per card. 8 is pricey for 1 follower, but I think it pays 10+ from here.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793547252979,"type":"move","seat":2,"round":2,"n":81,"kind":"pay","option":"pay:8-0-0-0","label":"Pay 8 blue (suggested)","think":"pay","prompt":"Cal: choose how to pay for Patroness"}
+{"t":1793547252979,"type":"log","text":"Cal recruited Patroness (8 blue).","by":2}
+{"t":1793547252979,"type":"log","text":"New in the shop: Shopaholics.","by":2}
+{"t":1793547255987,"type":"move","seat":2,"round":2,"n":82,"kind":"choose","option":"card:12","label":"Grifter [2 magenta + 6 any; worth 1] — On Recruit: steal 1 resource per 2 members you have.","think":"Grifter out: Ava with 5 members would steal a pile off me. Keeping Shopaholics in view for later.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793547255987,"type":"log","text":"Cal's Trendsetters: Cal sends Grifter to the bottom of the pile.","by":2}
+{"t":1793547255987,"type":"log","text":"Cal's Patroness: +1 follower.","by":2}
+{"t":1793547255987,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547255987,"type":"log","text":"New in the shop: Muse.","by":2}
+{"t":1793547264089,"type":"move","seat":2,"round":2,"n":83,"kind":"place","option":"slot:1-2","label":"Magenta · Lie Low → you'd get: +1..2 magenta, +0..1 white, +0..1 green; rivals together -1..0 magenta, -1..0 white, -1..0 green; then you choose: Lie Low: choose a resource to steal.","think":"Lie Low now, before Ava's turn: she has 6 magenta and Crime Wave/Help Yourself open, and halving my blue late could tie me for the +6. Immunity for the whole round lets me stack blue safely with my last two minions.","prompt":"Cal: place a minion"}
+{"t":1793547264089,"type":"log","text":"Cal took Lie Low (Magenta).","by":2}
+{"t":1793547264089,"type":"log","text":"Cal's Lie Low: +1 magenta.","by":2}
+{"t":1793547264089,"type":"log","text":"Cal lies low: safe from thieves until round end.","by":2}
+{"t":1793547266579,"type":"move","seat":2,"round":2,"n":84,"kind":"choose","option":"take:0:magenta","label":"Ava's magenta (6) — value hint 6.65","think":"Ava's magenta, puts me at 2 vs her 5.","prompt":"Lie Low: choose a resource to steal. (1 left)"}
+{"t":1793547266579,"type":"log","text":"Cal stole 1 (1 magenta from Ava).","by":2}
+{"t":1793547269926,"type":"move","seat":2,"round":2,"n":85,"kind":"buy","option":"card:0","label":"Recruit Connoisseurs [1 blue + 3 any; you pay 4 (1 blue + 3 any); worth 2] — Whenever you recruit a blue member, +1 blue.","think":"Connoisseurs: 2 followers, plus Trendsetters bury = +1 Patroness follower and +1 blue. Pay with the magenta I can't win with.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793547271880,"type":"move","seat":2,"round":2,"n":86,"kind":"pay","option":"pay:2-2-0-0","label":"Pay 2 blue, 2 magenta (suggested)","think":"pay","prompt":"Cal: choose how to pay for Connoisseurs"}
+{"t":1793547271880,"type":"log","text":"Cal recruited Connoisseurs (2 blue, 2 magenta).","by":2}
+{"t":1793547271880,"type":"log","text":"New in the shop: HR.","by":2}
+{"t":1793547276047,"type":"move","seat":2,"round":2,"n":87,"kind":"choose","option":"card:22","label":"Heiresses [4 white + 5 any; worth 2] — On Use, once per game: +1 white per member you have.","think":"Heiresses out; it would hand Dee or Ben the white contest.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793547276047,"type":"log","text":"Cal's Trendsetters: Cal sends Heiresses to the bottom of the pile.","by":2}
+{"t":1793547276047,"type":"log","text":"Cal's Patroness: +1 follower.","by":2}
+{"t":1793547276047,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547276047,"type":"log","text":"New in the shop: Con Men.","by":2}
+{"t":1793547284314,"type":"move","seat":0,"round":2,"n":88,"kind":"place","option":"slot:3-2","label":"Green · Reprise → you'd get: +2 magenta, +0..1 white, +1..4 green; +0..3 followers; +0..3 members; rivals together -1..0 white, -3..0 green; rivals followers -3..0; then you choose: Reprise: copy which of your spaces?; Shake Down: choose a rival.","think":"Reprise my Shake Down: Ben still holds just 1 white, so Line Cutters comes to me (+3 followers, first pick). Cal's behind Lie Low so I can't touch the leader anyway.","prompt":"Ava: place a minion"}
+{"t":1793547284314,"type":"log","text":"Ava took Reprise (Green).","by":0}
+{"t":1793547284314,"type":"log","text":"Ava's Reprise: +1 green.","by":0}
+{"t":1793547286082,"type":"move","seat":0,"round":2,"n":89,"kind":"choose","option":"space:now:1-4","label":"Shake Down (Ava): do Shake Down yourself — value hint 5.49","think":"Shake Down again.","prompt":"Reprise: copy which of your spaces?"}
+{"t":1793547286082,"type":"log","text":"Ava's Reprise: +1 magenta.","by":0}
+{"t":1793547286082,"type":"log","text":"Ava copies Shake Down: doing it again.","by":0}
+{"t":1793547287794,"type":"move","seat":0,"round":2,"n":90,"kind":"choose","option":"player:1","label":"Ben (Line Cutters) — value hint 9.5","think":"Ben again; only Line Cutters left and he can't pay 2.","prompt":"Shake Down: choose a rival."}
+{"t":1793547287794,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793547287794,"type":"log","text":"Ben couldn't pay 2 (held 1), so lost Line Cutters to Ava.","by":0}
+{"t":1793547301358,"type":"move","seat":0,"round":2,"n":91,"kind":"buy","option":"card:48","label":"Recruit Con Men [7 any; you pay 7 (7 any); worth 2] — Counts as 2 members. On Recruit: steal 5 resources.","think":"Con Men: 7 out, 5 stolen + 1 Fence back, so 2 followers for a net 1 resource and it guts Dee's green lead. Cal's Lie Low means the steal must come from Dee or Ben anyway.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793547303122,"type":"move","seat":0,"round":2,"n":92,"kind":"pay","option":"pay:0-5-0-2","label":"Pay 5 magenta, 2 green (suggested)","think":"Keep 2 magenta (+1 Fence).","prompt":"Ava: choose how to pay for Con Men"}
+{"t":1793547303122,"type":"log","text":"Ava recruited Con Men (5 magenta, 2 green).","by":0}
+{"t":1793547303122,"type":"log","text":"New in the shop: Chronicler.","by":0}
+{"t":1793547305751,"type":"move","seat":0,"round":2,"n":93,"kind":"choose","option":"take:3:green","label":"Dee's green (5) — value hint 5.6","think":"Dee's green.","prompt":"Con Men: choose a resource to steal. (5 left)"}
+{"t":1793547305830,"type":"move","seat":0,"round":2,"n":94,"kind":"choose","option":"take:3:green","label":"Dee's green (4) — value hint 4.6","think":"Dee's green.","prompt":"Con Men: choose a resource to steal. (4 left)"}
+{"t":1793547305905,"type":"move","seat":0,"round":2,"n":95,"kind":"choose","option":"take:3:green","label":"Dee's green (3) — value hint 3.6","think":"Dee's green.","prompt":"Con Men: choose a resource to steal. (3 left)"}
+{"t":1793547305999,"type":"move","seat":0,"round":2,"n":96,"kind":"choose","option":"take:3:green","label":"Dee's green (2) — value hint 2.6","think":"Dee's green.","prompt":"Con Men: choose a resource to steal. (2 left)"}
+{"t":1793547306103,"type":"move","seat":0,"round":2,"n":97,"kind":"choose","option":"take:3:green","label":"Dee's green (1) — value hint 1.6","think":"Dee's green.","prompt":"Con Men: choose a resource to steal. (1 left)"}
+{"t":1793547306103,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793547306103,"type":"log","text":"Ava's Con Men stole 5 (5 green from Dee).","by":0}
+{"t":1793547318589,"type":"move","seat":3,"round":2,"n":98,"kind":"place","option":"slot:3-3","label":"Green · Encore → you'd get: +2..3 magenta, +0..1 white, +2..4 green; rivals together -3..-2 magenta, -1..0 white, -3..-1 green; then you choose: Encore: copy which rival member’s On Recruit?; Con Men: choose a resource to steal.","think":"Encore on Ava's own Con Men is the payback: a 5-steal plus a green. I'll take all 5 green straight back so I lead green 6 to 0, and I still have three minions to defend it versus her two.","prompt":"Dee: place a minion"}
+{"t":1793547318589,"type":"say","seat":3,"text":"Con Men stealing 5 off a member buy is a big swing for 7 any. And Encore lets anyone repeat it, which feels like the card is worth even more to the table than to its owner."}
+{"t":1793547318589,"type":"log","text":"Dee took Encore (Green).","by":3}
+{"t":1793547318589,"type":"log","text":"Dee's Encore: +1 green.","by":3}
+{"t":1793547320504,"type":"move","seat":3,"round":2,"n":99,"kind":"choose","option":"card:48","label":"Con Men [7 any; worth 2] — Counts as 2 members. On Recruit: steal 5 resources.","think":"Con Men","prompt":"Encore: copy which rival member’s On Recruit?"}
+{"t":1793547320504,"type":"log","text":"Dee copies Ava's Con Men: its On Recruit.","by":3}
+{"t":1793547327573,"type":"move","seat":3,"round":2,"n":100,"kind":"choose","option":"take:0:green","label":"Ava's green (5) — value hint 5.9","think":"green","prompt":"Con Men: choose a resource to steal. (5 left)"}
+{"t":1793547327709,"type":"move","seat":3,"round":2,"n":101,"kind":"choose","option":"take:0:green","label":"Ava's green (4) — value hint 4.9","think":"green","prompt":"Con Men: choose a resource to steal. (4 left)"}
+{"t":1793547327811,"type":"move","seat":3,"round":2,"n":102,"kind":"choose","option":"take:0:green","label":"Ava's green (3) — value hint 3.9","think":"green","prompt":"Con Men: choose a resource to steal. (3 left)"}
+{"t":1793547328036,"type":"move","seat":3,"round":2,"n":103,"kind":"choose","option":"take:0:green","label":"Ava's green (2) — value hint 2.9","think":"green","prompt":"Con Men: choose a resource to steal. (2 left)"}
+{"t":1793547328134,"type":"move","seat":3,"round":2,"n":104,"kind":"choose","option":"take:0:green","label":"Ava's green (1) — value hint 1.9","think":"green","prompt":"Con Men: choose a resource to steal. (1 left)"}
+{"t":1793547328134,"type":"log","text":"Dee's Con Men stole 5 (5 green from Ava).","by":3}
+{"t":1793547333072,"type":"move","seat":3,"round":2,"n":105,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Pay 1 green for a follower; Money Changers turns it into a white, so white goes 3 to 4 and green stays 5 against Ava's 0 (Build Up only gets her to 4).","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793547333245,"type":"move","seat":3,"round":2,"n":106,"kind":"pay","option":"pay:0-0-1-0","label":"Pay 1 white","think":"green","prompt":"Dee: choose how to pay for 1 followers"}
+{"t":1793547333245,"type":"log","text":"Dee bought 1 follower (1 white).","by":3}
+{"t":1793547333245,"type":"log","text":"Dee's Money Changers: +1 white.","by":3}
+{"t":1793547357308,"type":"move","seat":1,"round":2,"n":107,"kind":"place","option":"slot:1-0","label":"Magenta · Help Yourself → you'd get: +1..3 magenta, +0..3 white, +0..3 green; rivals together -3..-1 magenta, -3..0 white, -3..0 green; then you choose: Help Yourself: choose a resource to steal.","think":"Two Shake Downs stripped me to zero members; I'm last at 9. I need contests. Help Yourself takes Dee's 3 white (white lead swings to me) and 1 magenta off Ava, then Stash on my double turn puts me ahead in magenta too. Crime Wave and Estate Sale are the counters I'm watching.","prompt":"Ben: place a minion"}
+{"t":1793547357308,"type":"say","seat":1,"text":"Reprise copying Shake Down on a broke player is two free members in one round. Being poor here doesn't just cost tempo, it bleeds your whole cult."}
+{"t":1793547357308,"type":"log","text":"Ben took Help Yourself (Magenta).","by":1}
+{"t":1793547399615,"type":"move","seat":1,"round":2,"n":108,"kind":"choose","option":"take:3:green","label":"Dee's green (6) — value hint 6.65","think":"Every contest can be answered by Crime Wave, so I'm going to take Crime Wave myself. Green line: take 4 of Dee's 6 green, then Crime Wave his last 2. Dee then needs two turns (Cover on Build Up and Build Up) to beat me, and I place last in the round.","prompt":"Help Yourself: choose a resource to steal. (4 left)"}
+{"t":1793547401493,"type":"move","seat":1,"round":2,"n":109,"kind":"choose","option":"take:3:green","label":"Dee's green (5) — value hint 5.65","think":"more green from Dee","prompt":"Help Yourself: choose a resource to steal. (3 left)"}
+{"t":1793547401603,"type":"move","seat":1,"round":2,"n":110,"kind":"choose","option":"take:3:green","label":"Dee's green (4) — value hint 4.65","think":"more green from Dee","prompt":"Help Yourself: choose a resource to steal. (2 left)"}
+{"t":1793547401712,"type":"move","seat":1,"round":2,"n":111,"kind":"choose","option":"take:3:green","label":"Dee's green (3) — value hint 3.65","think":"more green from Dee","prompt":"Help Yourself: choose a resource to steal. (1 left)"}
+{"t":1793547401712,"type":"log","text":"Ben stole 4 (4 green from Dee).","by":1}
+{"t":1793547405458,"type":"move","seat":1,"round":2,"n":112,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold the green for the contest; nothing in the shop is worth breaking it.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793547405458,"type":"log","text":"Ben passed.","by":1}
+{"t":1793547408907,"type":"move","seat":1,"round":2,"n":113,"kind":"place","option":"slot:1-3","label":"Magenta · Crime Wave → you'd get: +1..2 magenta, +0..1 white, +0..1 green; rivals together -1..0 magenta, -1..0 white, -1..0 green; then you choose: Crime Wave: choose a pile to halve.","think":"Take Crime Wave so nobody halves my green back; hit Dee's last green.","prompt":"Ben: place a minion"}
+{"t":1793547408907,"type":"log","text":"Ben took Crime Wave (Magenta).","by":1}
+{"t":1793547408907,"type":"log","text":"Ben's Crime Wave: +1 magenta.","by":1}
+{"t":1793547413381,"type":"move","seat":1,"round":2,"n":114,"kind":"choose","option":"take:3:green","label":"Dee: steal 1 green — value hint 1.33","think":"Dee to 1 green, me 5.","prompt":"Crime Wave: choose a pile to halve."}
+{"t":1793547413381,"type":"log","text":"Ben stole 1 green from Dee.","by":1}
+{"t":1793547416821,"type":"move","seat":1,"round":2,"n":115,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793547416821,"type":"say","seat":1,"text":"Dee, Build Up and Cover are both still open, so green isn't settled. Curious whether you think it's worth two minions."}
+{"t":1793547416821,"type":"log","text":"Ben passed.","by":1}
+{"t":1793547430073,"type":"move","seat":3,"round":2,"n":116,"kind":"place","option":"slot:3-0","label":"Green · Build Up → you'd get: +4 green","think":"Ben stripped my green with Help Yourself plus Crime Wave and sits on 5 with one minion left. Build Up gets me back to 5 and takes the space he'd use; I'll try to grab Cover with my last minion to break the tie.","prompt":"Dee: place a minion"}
+{"t":1793547430073,"type":"say","seat":3,"text":"Ben, yes, green is worth two minions to me at +6. That round was a lot of stealing in a row though: Con Men, Encore, Help Yourself, Crime Wave all landed on one pile."}
+{"t":1793547430073,"type":"log","text":"Dee took Build Up (Green).","by":3}
+{"t":1793547430073,"type":"log","text":"Dee's Build Up: +4 green.","by":3}
+{"t":1793547432303,"type":"move","seat":3,"round":2,"n":117,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Buying 1 follower with a white is free for me: Money Changers hands the white straight back. A free follower every spare recruit.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793547434011,"type":"move","seat":3,"round":2,"n":118,"kind":"pay","option":"pay:0-0-1-0","label":"Pay 1 white (suggested)","think":"white","prompt":"Dee: choose how to pay for 1 followers"}
+{"t":1793547434011,"type":"log","text":"Dee bought 1 follower (1 white).","by":3}
+{"t":1793547434011,"type":"log","text":"Dee's Money Changers: +1 white.","by":3}
+{"t":1793547452430,"type":"move","seat":0,"round":2,"n":119,"kind":"place","option":"slot:1-1","label":"Magenta · Stash → you'd get: +4 magenta","think":"Stash first: if Cal takes it he jumps to 4 magenta over my 3 and the +6 swings to my co-leader. With it I'm at 7 and every steal space is used.","prompt":"Ava: place a minion"}
+{"t":1793547452430,"type":"log","text":"Ava took Stash (Magenta).","by":0}
+{"t":1793547452430,"type":"log","text":"Ava's Stash: +4 magenta.","by":0}
+{"t":1793547460277,"type":"move","seat":0,"round":2,"n":120,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"5 followers for 5 beats Party Crasher's 1 + Stash 2. Leaves 2 magenta vs Ben's 1 and no magenta space left open, so the +6 still holds. Big piles just get stolen in III anyway.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793547462731,"type":"move","seat":0,"round":2,"n":121,"kind":"pay","option":"pay:0-5-0-0","label":"Pay 5 magenta (suggested)","think":"Pay.","prompt":"Ava: choose how to pay for 5 followers"}
+{"t":1793547462731,"type":"log","text":"Ava bought 5 followers (5 magenta).","by":0}
+{"t":1793547462731,"type":"log","text":"Dee's Money Changers: +1 white.","by":0}
+{"t":1793547481553,"type":"move","seat":2,"round":2,"n":122,"kind":"place","option":"slot:0-0","label":"Blue · Savings → you'd get: +3..4 blue; +0..1 followers; then you choose: Savings: send a shop member to the bottom of the pile?","think":"Two turns in a row. Savings first for about 5 blue and a Patroness follower, then Recruit Twice to land Shopaholics, which makes round III a double-recruit every turn with Trendsetters and Patroness firing each time. Lie Low means nobody can touch my pile, so I can spend down to 1 blue and still win blue.","prompt":"Cal: place a minion"}
+{"t":1793547481553,"type":"log","text":"Cal took Savings (Blue).","by":2}
+{"t":1793547481553,"type":"log","text":"Cal's Savings: +3 blue.","by":2}
+{"t":1793547483402,"type":"move","seat":2,"round":2,"n":123,"kind":"choose","option":"card:31","label":"Muse [1 green + 3 any; worth 1] — Whenever a rival copies an action, +1 green.","think":"Muse out.","prompt":"Savings: send a shop member to the bottom of the pile?"}
+{"t":1793547483402,"type":"log","text":"Savings: Cal sends Muse to the bottom of the pile.","by":2}
+{"t":1793547483402,"type":"log","text":"Cal's Patroness: +1 follower.","by":2}
+{"t":1793547483402,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547483402,"type":"log","text":"New in the shop: Snobs.","by":2}
+{"t":1793547492996,"type":"move","seat":2,"round":2,"n":124,"kind":"buy","option":"card:2","label":"Recruit Snobs [3 blue + 3 any; you pay 6 (3 blue + 3 any); worth 2] — Game End: +1 follower per blue member you have.","think":"Snobs showed up off the Savings bury: 2 followers plus +1 per blue member at game end, already 6 blue members with it, so ~8 followers for 6, and Trendsetters plus Connoisseurs refund 2 blue. Better than holding out for Shopaholics.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793547493160,"type":"move","seat":2,"round":2,"n":125,"kind":"pay","option":"pay:6-0-0-0","label":"Pay 6 blue (suggested)","think":"pay","prompt":"Cal: choose how to pay for Snobs"}
+{"t":1793547493160,"type":"log","text":"Cal recruited Snobs (6 blue).","by":2}
+{"t":1793547493160,"type":"log","text":"Cal's Connoisseurs: +1 blue.","by":2}
+{"t":1793547493160,"type":"log","text":"New in the shop: Regular.","by":2}
+{"t":1793547495295,"type":"move","seat":2,"round":2,"n":126,"kind":"choose","option":"card:39","label":"Chronicler [1 green + 4 any; worth 1] — Game End: +1 follower per green member you have.","think":"Chronicler out, keeps green players thin.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793547495295,"type":"log","text":"Cal's Trendsetters: Cal sends Chronicler to the bottom of the pile.","by":2}
+{"t":1793547495295,"type":"log","text":"Cal's Patroness: +1 follower.","by":2}
+{"t":1793547495295,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547495295,"type":"log","text":"New in the shop: Stunt Double.","by":2}
+{"t":1793547502291,"type":"move","seat":2,"round":2,"n":127,"kind":"place","option":"slot:0-3","label":"Blue · Recruit Twice → you'd get: +3 blue","think":"Recruit Twice: 6 blue buys Doormen then Regular, and each blue recruit refunds 2 blue (Trendsetters/Bargain Bin and Connoisseurs) plus a Patroness follower. That's two more blue bodies for Snobs too.","prompt":"Cal: place a minion"}
+{"t":1793547502291,"type":"log","text":"Cal took Recruit Twice (Blue).","by":2}
+{"t":1793547502291,"type":"log","text":"Cal's Recruit Twice: +3 blue.","by":2}
+{"t":1793547502291,"type":"log","text":"Cal recruits twice this turn.","by":2}
+{"t":1793547504334,"type":"move","seat":2,"round":2,"n":128,"kind":"buy","option":"card:6","label":"Recruit Doormen [1 blue + 4 any; you pay 5 (1 blue + 4 any); worth 2] — Whenever a rival recruits more than once in a turn (swaps count), +1 blue.","think":"Doormen first.","prompt":"Cal: recruit a member or followers (2 recruits left), or pass"}
+{"t":1793547504440,"type":"move","seat":2,"round":2,"n":129,"kind":"pay","option":"pay:5-0-0-0","label":"Pay 5 blue (suggested)","think":"pay","prompt":"Cal: choose how to pay for Doormen"}
+{"t":1793547504440,"type":"log","text":"Cal recruited Doormen (5 blue).","by":2}
+{"t":1793547504440,"type":"log","text":"Cal's Connoisseurs: +1 blue.","by":2}
+{"t":1793547504440,"type":"log","text":"New in the shop: Sticky Fingers.","by":2}
+{"t":1793547506633,"type":"move","seat":2,"round":2,"n":130,"kind":"choose","option":"card:13","label":"Sticky Fingers [2 magenta + 2 any; worth 1] — Your steals take 1 more resource.","think":"Sticky Fingers out, it's the steal amplifier.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793547506633,"type":"log","text":"Cal's Trendsetters: Cal sends Sticky Fingers to the bottom of the pile.","by":2}
+{"t":1793547506633,"type":"log","text":"Cal's Patroness: +1 follower.","by":2}
+{"t":1793547506633,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547506633,"type":"log","text":"New in the shop: Doppelganger.","by":2}
+{"t":1793547509922,"type":"move","seat":2,"round":2,"n":131,"kind":"buy","option":"card:7","label":"Recruit Regular [1 blue + 2 any; you pay 3 (1 blue + 2 any); worth 1] — Whenever you buy followers, +1 blue.","think":"Regular: another blue body for Snobs, nets -1 blue after refunds.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793547510022,"type":"move","seat":2,"round":2,"n":132,"kind":"pay","option":"pay:3-0-0-0","label":"Pay 3 blue (suggested) — spending this gives up your contest lead in blue","think":"pay","prompt":"Cal: choose how to pay for Regular"}
+{"t":1793547510022,"type":"log","text":"Cal recruited Regular (3 blue).","by":2}
+{"t":1793547510022,"type":"log","text":"Cal's Connoisseurs: +1 blue.","by":2}
+{"t":1793547510022,"type":"log","text":"New in the shop: Cashier.","by":2}
+{"t":1793547512634,"type":"move","seat":2,"round":2,"n":133,"kind":"choose","option":"card:26","label":"Cashier [2 white + 1 any; worth 1] — On Recruit: turn all your white into followers.","think":"Cashier out before Dee cashes her white.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793547512634,"type":"log","text":"Cal's Trendsetters: Cal sends Cashier to the bottom of the pile.","by":2}
+{"t":1793547512634,"type":"log","text":"Cal's Patroness: +1 follower.","by":2}
+{"t":1793547512634,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547512634,"type":"log","text":"New in the shop: Old Money.","by":2}
+{"t":1793547519427,"type":"move","seat":0,"round":2,"n":134,"kind":"place","option":"slot:0-2","label":"Blue · Peek → you'd get: +4 blue; then you choose: Peek: which goes on top?; Peek: which goes next?","think":"Cal spent his blue down to 2 and has no minions left. Peek's +4 takes the blue +6 off him: a 12-point swing against the leader. Out of Style can't get Dee or Ben to 4.","prompt":"Ava: place a minion"}
+{"t":1793547519427,"type":"say","seat":0,"text":"Cal, you spent the blue lead on your last turn. Bargain Bin keeps refilling it, but the timing matters."}
+{"t":1793547519427,"type":"log","text":"Ava took Peek (Blue).","by":0}
+{"t":1793547519427,"type":"log","text":"Ava's Peek: +4 blue.","by":0}
+{"t":1793547519427,"type":"log","text":"Ava peeks at the top 4 of the pile.","by":0}
+{"t":1793547523810,"type":"move","seat":0,"round":2,"n":135,"kind":"choose","option":"card:10","label":"Cutpurse [1 magenta + 2 any; worth 1] — On Recruit: steal 1 resource from the rival with the most resources. Round Start: steal 1 resource from the rival with the most resources.","think":"All four likely land in round III's row anyway; Cutpurse on top in case a refill happens now.","prompt":"Peek: which goes on top?"}
+{"t":1793547525703,"type":"move","seat":0,"round":2,"n":136,"kind":"choose","option":"card:29","label":"Hoarder [4 white + 4 any; worth 1] — On Use, once per game: turn all your resources into white.","think":"Hoarder next, Brokers deeper.","prompt":"Peek: which goes next?"}
+{"t":1793547527409,"type":"move","seat":0,"round":2,"n":137,"kind":"choose","option":"card:21","label":"Shopkeeper [2 white + 2 any; worth 1] — On Recruit: +2 white. Round Start: +2 white.","think":"Shopkeeper then Brokers.","prompt":"Peek: which goes next?"}
+{"t":1793547527409,"type":"log","text":"Ava puts the top 4 of the pile back in a new order.","by":0}
+{"t":1793547531983,"type":"move","seat":0,"round":2,"n":138,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Any spend risks magenta (2 vs Ben's 1) or blue (4 vs 2). Hold both.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793547531983,"type":"log","text":"Ava passed.","by":0}
+{"t":1793547543636,"type":"move","seat":3,"round":2,"n":139,"kind":"place","option":"slot:3-4","label":"Green · Cover → you'd get: +0..3 blue, -1..5 white, -1..1 green; +-1..4 followers; +-1..0 members; rivals together 0..1 blue; rivals followers 0..1; then you choose: Cover: copy which empty action?; Out of Style: send which color to the bottom?; Exchange: turn which resource into 2 followers?; Farewell: cast out which member?; Estate Sale: cast out which member?","think":"Cover is the last green space: +1 green puts me 6 to Ben's 5 and he has nowhere green left to go. I'll copy Exchange and convert just 1 white, so white stays 3 against Ben's best case of 2.","prompt":"Dee: place a minion"}
+{"t":1793547543636,"type":"log","text":"Dee took Cover (Green).","by":3}
+{"t":1793547543636,"type":"log","text":"Dee's Cover: +1 green.","by":3}
+{"t":1793547546904,"type":"move","seat":3,"round":2,"n":140,"kind":"choose","option":"space:empty:2-2","label":"Exchange: Turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each. +1 white. — value hint 4.2","think":"Exchange","prompt":"Cover: copy which empty action?"}
+{"t":1793547546904,"type":"log","text":"Dee's Cover: +1 white.","by":3}
+{"t":1793547546904,"type":"log","text":"Dee copies Exchange: doing it.","by":3}
+{"t":1793547550256,"type":"move","seat":3,"round":2,"n":141,"kind":"choose","option":"color:white","label":"1 white → 2 followers — value hint 1.62","think":"white","prompt":"Exchange: turn which resource into 2 followers? (2 left)"}
+{"t":1793547550256,"type":"log","text":"Dee's Exchange: 1 white became 2 followers.","by":3}
+{"t":1793547550338,"type":"move","seat":3,"round":2,"n":142,"kind":"choose","option":"color:white","label":"1 white → 2 followers — value hint 1.61","think":"second white; white stays 3 vs Ben's best 2","prompt":"Exchange: turn which resource into 2 followers? (1 left)"}
+{"t":1793547550338,"type":"log","text":"Dee's Exchange: 1 white became 2 followers.","by":3}
+{"t":1793547553368,"type":"move","seat":3,"round":2,"n":143,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"free follower via Money Changers again","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793547553466,"type":"move","seat":3,"round":2,"n":144,"kind":"pay","option":"pay:0-0-0-1","label":"Pay 1 green (suggested)","think":"white","prompt":"Dee: choose how to pay for 1 followers"}
+{"t":1793547553466,"type":"log","text":"Dee bought 1 follower (1 green).","by":3}
+{"t":1793547553466,"type":"log","text":"Dee's Money Changers: +1 white.","by":3}
+{"t":1793547564010,"type":"move","seat":1,"round":2,"n":145,"kind":"place","option":"slot:2-2","label":"White · Exchange → you'd get: -1..0 magenta, -1..1 white, -2..0 green; +0..4 followers; then you choose: Exchange: turn which resource into 2 followers?","think":"Last placement of the round. Exchange turns my stray magenta and white into 4 followers and keeps the 5-5 green tie for +3. Stunt Double copying Exchange was tempting with Impressionist, but it costs green and loses the tie.","prompt":"Ben: place a minion"}
+{"t":1793547564010,"type":"log","text":"Ben took Exchange (White).","by":1}
+{"t":1793547564010,"type":"log","text":"Ben's Exchange: +1 white.","by":1}
+{"t":1793547566702,"type":"move","seat":1,"round":2,"n":146,"kind":"choose","option":"color:magenta","label":"1 magenta → 2 followers — value hint 1.61","think":"magenta","prompt":"Exchange: turn which resource into 2 followers? (2 left)"}
+{"t":1793547566702,"type":"log","text":"Ben's Exchange: 1 magenta became 2 followers.","by":1}
+{"t":1793547566793,"type":"move","seat":1,"round":2,"n":147,"kind":"choose","option":"color:green","label":"1 green → 2 followers — value hint 1.6500000000000001","think":"white","prompt":"Exchange: turn which resource into 2 followers? (1 left)"}
+{"t":1793547566793,"type":"log","text":"Ben's Exchange: 1 green became 2 followers.","by":1}
+{"t":1793547572528,"type":"move","seat":1,"round":2,"n":148,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Spare white is just steal bait; bank it as a follower. Keep green for the tie.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793547576068,"type":"move","seat":1,"round":2,"n":149,"kind":"pay","option":"pay:0-0-1-0","label":"Pay 1 white","think":"pay white, keep green tie","prompt":"Ben: choose how to pay for 1 followers"}
+{"t":1793547576068,"type":"log","text":"Ben bought 1 follower (1 white).","by":1}
+{"t":1793547576068,"type":"log","text":"Dee's Money Changers: +1 white.","by":1}
+{"t":1793547576069,"type":"log","text":"Round II ends. Most blue: Ava +6 · Most magenta: Ava +6 · Most white: Dee +6 · Most green: Dee +6","by":1}
+{"t":1793547576069,"type":"log","text":"The member market refreshes for round III.","by":1}
+{"t":1793547576069,"type":"log","text":"Dee's Busker: +2 green.","by":1}
+{"t":1793547576069,"type":"log","text":"Dee's Roadie: +2 green.","by":1}
+{"t":1793547576069,"type":"log","text":"Round III begins. Ava picks first. (Ava's Line Cutters: always picks first.)","by":1}
+{"t":1793547576069,"type":"log","text":"New in the shop: Cutpurse, Hoarder, Shopkeeper, Brokers, Anarchist, Critic, Window Shopper, Accomplice.","by":1}
+{"t":1793547588766,"type":"move","seat":0,"round":3,"n":150,"kind":"place","option":"slot:1-2","label":"Magenta · Lie Low → you'd get: +0..1 blue, +2 magenta, +0..1 white, +0..1 green; rivals together -1..0 blue, -1..0 white, -1..0 green; then you choose: Lie Low: choose a resource to steal.","think":"I'm the leader with Poach, Shake Down, Help Yourself and Crime Wave all open; Lie Low first shuts every one of them off me for the whole round. That protection is worth more than any single gain here.","prompt":"Ava: place a minion"}
+{"t":1793547588766,"type":"log","text":"Ava took Lie Low (Magenta).","by":0}
+{"t":1793547588766,"type":"log","text":"Ava's Lie Low: +1 magenta.","by":0}
+{"t":1793547588766,"type":"log","text":"Ava lies low: safe from thieves until round end.","by":0}
+{"t":1793547590759,"type":"move","seat":0,"round":3,"n":151,"kind":"choose","option":"take:2:blue","label":"Cal's blue (2) — value hint 3.35","think":"Cal's blue: widens my blue lead 5-1.","prompt":"Lie Low: choose a resource to steal. (1 left)"}
+{"t":1793547590759,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793547590759,"type":"log","text":"Ava stole 1 (1 blue from Cal).","by":0}
+{"t":1793547601133,"type":"move","seat":0,"round":3,"n":152,"kind":"buy","option":"card:11","label":"Recruit Accomplice [1 magenta + 2 any; you pay 3 (1 magenta + 2 any); worth 1] — On Recruit: steal 3 resources.","think":"Accomplice: pay 3, steal 3 + Fence 1, so +1 follower and +1 resource net while bleeding rivals. Best rate on the board right now.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793547603284,"type":"move","seat":0,"round":3,"n":153,"kind":"pay","option":"pay:2-1-0-0","label":"Pay 2 blue, 1 magenta (suggested)","think":"Blue's likely Cal's at the end; keep magenta.","prompt":"Ava: choose how to pay for Accomplice"}
+{"t":1793547603284,"type":"log","text":"Ava recruited Accomplice (2 blue, 1 magenta).","by":0}
+{"t":1793547603284,"type":"log","text":"New in the shop: Alchemists.","by":0}
+{"t":1793547605823,"type":"move","seat":0,"round":3,"n":154,"kind":"choose","option":"take:2:blue","label":"Cal's blue (1) — value hint 2.35","think":"Cal's last blue.","prompt":"Accomplice: choose a resource to steal. (3 left)"}
+{"t":1793547605913,"type":"move","seat":0,"round":3,"n":155,"kind":"choose","option":"take:3:green","label":"Dee's green (9) — value hint 10.55","think":"Dee's white.","prompt":"Accomplice: choose a resource to steal. (2 left)"}
+{"t":1793547609880,"type":"move","seat":0,"round":3,"n":156,"kind":"choose","option":"take:3:white","label":"Dee's white (5) — value hint 6.55","think":"One of Dee's white (misclicked green last, fine, both hurt her).","prompt":"Accomplice: choose a resource to steal. (1 left)"}
+{"t":1793547609880,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793547609880,"type":"log","text":"Ava's Accomplice stole 3 (1 blue from Cal, 1 green and 1 white from Dee).","by":0}
+{"t":1793547627423,"type":"move","seat":1,"round":3,"n":157,"kind":"place","option":"slot:3-3","label":"Green · Encore → you'd get: +1..4 white, +2..5 green; rivals together -4..-1 white, -4..-1 green; then you choose: Encore: copy which rival member’s On Recruit?; Con Men: choose a resource to steal.","think":"Way behind at 14, so I need +10 contests. Ava's Lie Low shields her, so Dee's 8 green is the pile to hit: Encore on Ava's Con Men takes 5 of it plus +1 green, putting me at 10 vs Dee's 3. Help Yourself and Crime Wave are still out there to bite back.","prompt":"Ben: place a minion"}
+{"t":1793547627423,"type":"log","text":"Ben took Encore (Green).","by":1}
+{"t":1793547627423,"type":"log","text":"Ben's Encore: +1 green.","by":1}
+{"t":1793547629321,"type":"move","seat":1,"round":3,"n":158,"kind":"choose","option":"card:48","label":"Con Men [7 any; worth 2] — Counts as 2 members. On Recruit: steal 5 resources.","think":"Con Men, steal 5","prompt":"Encore: copy which rival member’s On Recruit?"}
+{"t":1793547629321,"type":"log","text":"Ben copies Ava's Con Men: its On Recruit.","by":1}
+{"t":1793547631430,"type":"move","seat":1,"round":3,"n":159,"kind":"choose","option":"take:3:green","label":"Dee's green (8) — value hint 9.55","think":"Dee's green","prompt":"Con Men: choose a resource to steal. (5 left)"}
+{"t":1793547631514,"type":"move","seat":1,"round":3,"n":160,"kind":"choose","option":"take:3:green","label":"Dee's green (7) — value hint 8.55","think":"Dee's green","prompt":"Con Men: choose a resource to steal. (4 left)"}
+{"t":1793547631598,"type":"move","seat":1,"round":3,"n":161,"kind":"choose","option":"take:3:green","label":"Dee's green (6) — value hint 7.55","think":"Dee's green","prompt":"Con Men: choose a resource to steal. (3 left)"}
+{"t":1793547631686,"type":"move","seat":1,"round":3,"n":162,"kind":"choose","option":"take:3:green","label":"Dee's green (5) — value hint 6.55","think":"Dee's green","prompt":"Con Men: choose a resource to steal. (2 left)"}
+{"t":1793547631790,"type":"move","seat":1,"round":3,"n":163,"kind":"choose","option":"take:3:green","label":"Dee's green (4) — value hint 5.55","think":"Dee's green","prompt":"Con Men: choose a resource to steal. (1 left)"}
+{"t":1793547631790,"type":"log","text":"Ben's Con Men stole 5 (5 green from Dee).","by":1}
+{"t":1793547642734,"type":"move","seat":1,"round":3,"n":164,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"11 resources is a huge steal target with Help Yourself, Crime Wave and Shake Down all open and Dee on a double turn next. Ten followers in hand beats a green lead I can't defend for 18 turns. Gave up the green contest to bank it; I'll try to swing a contest late instead.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793547642734,"type":"say","seat":1,"text":"Encore on Con Men is a 5-steal for one minion with no buy needed. Between that, Help Yourself and Crime Wave, I don't see how anyone holds a pile past one turn in round three."}
+{"t":1793547645996,"type":"move","seat":1,"round":3,"n":165,"kind":"pay","option":"pay:0-0-1-9","label":"Pay 1 white, 9 green (suggested) — spending this gives up your contest lead in green","think":"keep 1 green","prompt":"Ben: choose how to pay for 10 followers"}
+{"t":1793547645996,"type":"log","text":"Ben bought 10 followers (1 white, 9 green).","by":1}
+{"t":1793547645996,"type":"log","text":"Dee's Money Changers: +1 white.","by":1}
+{"t":1793547665684,"type":"move","seat":2,"round":3,"n":166,"kind":"place","option":"use:47","label":"Use Scouts — On Use, once per round: send any shop members to the bottom of the pile, then refill.","think":"Misjudged round II: I spent to 3 blue and Ava's Peek took blue, and the between-rounds sweep paid nothing. Now Scouts first: if Patroness counts each card, a full sweep is a pile of followers and a fresh row.","prompt":"Cal: place a minion"}
+{"t":1793547668894,"type":"move","seat":2,"round":3,"n":167,"kind":"choose","option":"card:46","label":"Anarchist [7 any; worth 1] — On Use, once per round: swap any 2 members, in any cult or the shop, that cost within 2 of each other.","think":"Anarchist out, it could swap my Patroness away","prompt":"Scout: send which shop members to the bottom of the pile?"}
+{"t":1793547671732,"type":"move","seat":2,"round":3,"n":168,"kind":"choose","option":"card:23","label":"Brokers [2 white + 3 any; worth 3] — Whenever a White action gives you followers, +1 follower.","think":"Brokers out","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547671821,"type":"move","seat":2,"round":3,"n":169,"kind":"choose","option":"card:21","label":"Shopkeeper [2 white + 2 any; worth 1] — On Recruit: +2 white. Round Start: +2 white.","think":"Shopkeeper out","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547671932,"type":"move","seat":2,"round":3,"n":170,"kind":"choose","option":"card:29","label":"Hoarder [4 white + 4 any; worth 1] — On Use, once per game: turn all your resources into white.","think":"Hoarder out","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547672025,"type":"move","seat":2,"round":3,"n":171,"kind":"choose","option":"card:10","label":"Cutpurse [1 magenta + 2 any; worth 1] — On Recruit: steal 1 resource from the rival with the most resources. Round Start: steal 1 resource from the rival with the most resources.","think":"Cutpurse out","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547674441,"type":"move","seat":2,"round":3,"n":172,"kind":"choose","option":"done","label":"Pass (recruit nothing)","think":"done, keep Critic, Window Shopper, Alchemists","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793547674441,"type":"log","text":"Cal's Scout: sent Anarchist, Brokers, Shopkeeper, Hoarder, Cutpurse to the bottom of the pile.","by":2}
+{"t":1793547674441,"type":"log","text":"New in the shop: Exporters, Old Maid, Fan Club, Agents, Wallflower.","by":2}
+{"t":1793547686795,"type":"move","seat":2,"round":3,"n":173,"kind":"place","option":"slot:3-1","label":"Green · Echo → you'd get: +1..4 white, +3..6 green; rivals together -4..-1 white, -4..-1 green; then you choose: Echo: copy the previous action?; Encore: copy which rival member’s On Recruit?; Con Men: choose a resource to steal.","think":"Scouts' sweep paid nothing again, no Patroness, no Bargain Bin; surprised, I built around that. Echo on Ben's Encore-Con Men is a 5-steal, and Dee's 5 white is the juiciest pile; Ava is under Lie Low anyway.","prompt":"Cal: place a minion"}
+{"t":1793547686795,"type":"say","seat":2,"text":"Rules check: Scouts sends shop members to the bottom, but neither my Bargain Bin nor Patroness fired on it, either round. Savings, Bury and Trendsetters do trigger them. Is that intended?"}
+{"t":1793547686795,"type":"log","text":"Cal took Echo (Green).","by":2}
+{"t":1793547686795,"type":"log","text":"Cal's Echo: +1 green.","by":2}
+{"t":1793547689147,"type":"move","seat":2,"round":3,"n":174,"kind":"choose","option":"space:now:3-3","label":"Encore (Ben): do Encore yourself — value hint 4","think":"Encore","prompt":"Echo: copy the previous action?"}
+{"t":1793547689147,"type":"log","text":"Cal's Echo: +1 green.","by":2}
+{"t":1793547689147,"type":"log","text":"Cal copies Encore (Ben's): doing it again.","by":2}
+{"t":1793547690975,"type":"move","seat":2,"round":3,"n":175,"kind":"choose","option":"card:48","label":"Con Men [7 any; worth 2] — Counts as 2 members. On Recruit: steal 5 resources.","think":"Con Men, steal 5","prompt":"Encore: copy which rival member’s On Recruit?"}
+{"t":1793547690975,"type":"log","text":"Cal copies Ava's Con Men: its On Recruit.","by":2}
+{"t":1793547696910,"type":"move","seat":2,"round":3,"n":176,"kind":"choose","option":"take:3:white","label":"Dee's white (5) — value hint 6.55","think":"Dee's white","prompt":"Con Men: choose a resource to steal. (5 left)"}
+{"t":1793547697046,"type":"move","seat":2,"round":3,"n":177,"kind":"choose","option":"take:3:white","label":"Dee's white (4) — value hint 5.55","think":"Dee's white","prompt":"Con Men: choose a resource to steal. (4 left)"}
+{"t":1793547697182,"type":"move","seat":2,"round":3,"n":178,"kind":"choose","option":"take:3:white","label":"Dee's white (3) — value hint 4.55","think":"Dee's white","prompt":"Con Men: choose a resource to steal. (3 left)"}
+{"t":1793547697410,"type":"move","seat":2,"round":3,"n":179,"kind":"choose","option":"take:3:white","label":"Dee's white (2) — value hint 3.55","think":"Dee's white","prompt":"Con Men: choose a resource to steal. (2 left)"}
+{"t":1793547697607,"type":"move","seat":2,"round":3,"n":180,"kind":"choose","option":"take:3:white","label":"Dee's white (1) — value hint 2.55","think":"Dee's white","prompt":"Con Men: choose a resource to steal. (1 left)"}
+{"t":1793547697607,"type":"log","text":"Cal's Con Men stole 5 (5 white from Dee).","by":2}
+{"t":1793547707683,"type":"move","seat":2,"round":3,"n":181,"kind":"buy","option":"card:33","label":"Recruit Fan Club [2 green + 4 any; you pay 6 (2 green + 4 any); worth 3] — On Recruit: +1 green per Green space with anyone’s minion.","think":"Fan Club: 3 followers, refunds 2 green (Echo and Encore occupied), plus a Patroness follower and Bargain Bin blue off Trendsetters. A 5-white pile just sits there to be Crime Waved by Dee, so I'd rather convert now.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793547709372,"type":"move","seat":2,"round":3,"n":182,"kind":"pay","option":"pay:0-0-4-2","label":"Pay 4 white, 2 green (suggested)","think":"pay","prompt":"Cal: choose how to pay for Fan Club"}
+{"t":1793547709372,"type":"log","text":"Cal recruited Fan Club (4 white, 2 green).","by":2}
+{"t":1793547709372,"type":"log","text":"Cal's Fan Club: +2 green.","by":2}
+{"t":1793547709372,"type":"log","text":"New in the shop: Extra Hand.","by":2}
+{"t":1793547713365,"type":"move","seat":2,"round":3,"n":183,"kind":"choose","option":"card:42","label":"Extra Hand [9 any; worth 1] — On Use, once per game: +1 minion this round.","think":"Extra Hand out: an extra minion in round III is the one thing that could swing the late contests against me.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793547713365,"type":"log","text":"Cal's Trendsetters: Cal sends Extra Hand to the bottom of the pile.","by":2}
+{"t":1793547713365,"type":"log","text":"Cal's Patroness: +1 follower.","by":2}
+{"t":1793547713365,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547713365,"type":"log","text":"New in the shop: Desperado.","by":2}
+{"t":1793547730259,"type":"move","seat":3,"round":3,"n":184,"kind":"place","option":"slot:1-5","label":"Magenta · Poach → you'd get: +1 magenta; +3 followers; +3 members; rivals together 0..1 blue; rivals followers -3..-2; then you choose: Poach: recruit which member?; Churn: send which member to the bottom? (3 to go); Churn: send which member to the bottom? (2 to go); Churn: send which member to the bottom? (1 to go)","think":"Poach is the biggest swing on the board for me: Cal's Snobs pays him +1 per blue member at game end (7 of them), so taking it is about a 9-point hit to Cal and +3 to me. Recluse still sees Ava and Cal with more members.","prompt":"Dee: place a minion"}
+{"t":1793547730259,"type":"log","text":"Dee took Poach (Magenta).","by":3}
+{"t":1793547730259,"type":"log","text":"Dee's Poach: +1 magenta.","by":3}
+{"t":1793547733702,"type":"move","seat":3,"round":3,"n":185,"kind":"choose","option":"card:2","label":"Cal's Snobs (6) — value hint 10","think":"Snobs: worth 2 printed plus ~7 game-end to Cal; biggest hit to him.","prompt":"Poach: recruit which member?"}
+{"t":1793547733702,"type":"say","seat":3,"text":"Cal, I think Scouts not triggering Bargain Bin or Patroness reads wrong; the card says send to the bottom, same words as Savings. Worth flagging. Also: Encore and Echo chaining on Con Men three times in one round is the strongest thing in this game so far."}
+{"t":1793547733702,"type":"log","text":"Dee pulled a heist: Cal's Snobs.","by":3}
+{"t":1793547740021,"type":"move","seat":3,"round":3,"n":186,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Spend the magenta on a follower; Money Changers adds a white. Keep the green.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793547742072,"type":"move","seat":3,"round":3,"n":187,"kind":"pay","option":"pay:0-1-0-0","label":"Pay 1 magenta (suggested)","think":"magenta","prompt":"Dee: choose how to pay for 1 followers"}
+{"t":1793547742072,"type":"log","text":"Dee bought 1 follower (1 magenta).","by":3}
+{"t":1793547742072,"type":"log","text":"Dee's Money Changers: +1 white.","by":3}
+{"t":1793547742072,"type":"log","text":"Cal's Doormen: +1 blue.","by":3}
+{"t":1793547752154,"type":"move","seat":3,"round":3,"n":188,"kind":"place","option":"slot:3-2","label":"Green · Reprise → you'd get: +1 magenta, +1 green; +3 followers; +3 members; rivals together 0..1 blue; rivals followers -3..-2; then you choose: Reprise: copy which of your spaces?; Poach: recruit which member?; Churn: send which member to the bottom? (3 to go); Churn: send which member to the bottom? (2 to go); Churn: send which member to the bottom? (1 to go)","think":"Reprise copies my own Poach: a second heist from Cal. Patroness pays its owner on every shop bury, and Cal's Trendsetters buries one every recruit, so moving it to me flips his engine into my pocket.","prompt":"Dee: place a minion"}
+{"t":1793547752154,"type":"log","text":"Dee took Reprise (Green).","by":3}
+{"t":1793547752154,"type":"log","text":"Dee's Reprise: +1 green.","by":3}
+{"t":1793547754264,"type":"move","seat":3,"round":3,"n":189,"kind":"choose","option":"space:now:1-5","label":"Poach (Dee): do Poach yourself — value hint 12.5","think":"Poach again","prompt":"Reprise: copy which of your spaces?"}
+{"t":1793547754264,"type":"log","text":"Dee's Reprise: +1 magenta.","by":3}
+{"t":1793547754264,"type":"log","text":"Dee copies Poach: doing it again.","by":3}
+{"t":1793547757311,"type":"move","seat":3,"round":3,"n":190,"kind":"choose","option":"card:1","label":"Cal's Patroness (8) — value hint 10.5","think":"Patroness","prompt":"Poach: recruit which member?"}
+{"t":1793547757311,"type":"say","seat":3,"text":"Poach plus Reprise on your own Poach is two member steals in one double turn. Sorry Cal; that center space feels a notch too strong when Reprise can repeat it."}
+{"t":1793547757311,"type":"log","text":"Dee pulled a heist: Cal's Patroness.","by":3}
+{"t":1793547763849,"type":"move","seat":3,"round":3,"n":191,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"With Help Yourself, Crime Wave, Shake Down and Encore-on-Con-Men all live, a pile held this early just gets stolen. Bank 5 followers now (Money Changers adds a white) and rebuild green and white with my late turns; I place last in the round.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793547766067,"type":"move","seat":3,"round":3,"n":192,"kind":"pay","option":"pay:0-1-0-4","label":"Pay 1 magenta, 4 green (suggested) — spending this gives up your contest lead in green","think":"keep the white","prompt":"Dee: choose how to pay for 5 followers"}
+{"t":1793547766067,"type":"log","text":"Dee bought 5 followers (1 magenta, 4 green).","by":3}
+{"t":1793547766067,"type":"log","text":"Dee's Money Changers: +1 white.","by":3}
+{"t":1793547766067,"type":"log","text":"Cal's Doormen: +1 blue.","by":3}
+{"t":1793547786156,"type":"move","seat":2,"round":3,"n":193,"kind":"place","option":"slot:0-5","label":"Blue · Spree → you'd get: +5 blue","think":"Dee's double Poach took Snobs and Patroness, that hurts: now every Trendsetters bury feeds her a follower. Spree: +5 blue and three recruits turns my whole pile into bodies before Ava can steal it; I'll fight blue on my last turn, after Ava's last two.","prompt":"Cal: place a minion"}
+{"t":1793547786156,"type":"say","seat":2,"text":"Poach plus Reprise on it is rough: two of my best cards gone in one double turn, and now my own shop churn pays Dee through Patroness. Center space that takes a member is one thing, letting Reprise repeat it feels like too much."}
+{"t":1793547786156,"type":"log","text":"Cal took Spree (Blue).","by":2}
+{"t":1793547786156,"type":"log","text":"Cal's Spree: +5 blue.","by":2}
+{"t":1793547786156,"type":"log","text":"Cal goes on a spree: 3 recruits this turn.","by":2}
+{"t":1793547797312,"type":"move","seat":2,"round":3,"n":194,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Doing the math, buying followers beats the members now: 10 for 10 with Regular refunding a blue each buy, and no Trendsetters bury feeding Dee's stolen Patroness. Costs me Dee +1 white per buy through Money Changers, which I'll have to watch.","prompt":"Cal: recruit a member or followers (3 recruits left), or pass"}
+{"t":1793547799750,"type":"move","seat":2,"round":3,"n":195,"kind":"pay","option":"pay:8-0-1-1","label":"Pay 8 blue, 1 white, 1 green (suggested) — spending this gives up your contest lead in blue","think":"keep a green","prompt":"Cal: choose how to pay for 10 followers"}
+{"t":1793547799750,"type":"log","text":"Cal bought 10 followers (8 blue, 1 white, 1 green).","by":2}
+{"t":1793547799750,"type":"log","text":"Cal's Regular: +1 blue.","by":2}
+{"t":1793547799750,"type":"log","text":"Dee's Money Changers: +1 white.","by":2}
+{"t":1793547803118,"type":"move","seat":2,"round":3,"n":196,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Regular makes a 1-buy free","prompt":"Cal: recruit a member or followers (2 recruits left), or pass"}
+{"t":1793547804983,"type":"move","seat":2,"round":3,"n":197,"kind":"pay","option":"pay:1-0-0-0","label":"Pay 1 blue (suggested)","think":"pay blue","prompt":"Cal: choose how to pay for 1 followers"}
+{"t":1793547804983,"type":"log","text":"Cal bought 1 follower (1 blue).","by":2}
+{"t":1793547804983,"type":"log","text":"Cal's Regular: +1 blue.","by":2}
+{"t":1793547804983,"type":"log","text":"Dee's Money Changers: +1 white.","by":2}
+{"t":1793547807907,"type":"move","seat":2,"round":3,"n":198,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"last recruit, same free buy","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793547808009,"type":"move","seat":2,"round":3,"n":199,"kind":"pay","option":"pay:1-0-0-0","label":"Pay 1 blue (suggested)","think":"pay blue","prompt":"Cal: choose how to pay for 1 followers"}
+{"t":1793547808009,"type":"log","text":"Cal bought 1 follower (1 blue).","by":2}
+{"t":1793547808009,"type":"log","text":"Cal's Regular: +1 blue.","by":2}
+{"t":1793547808009,"type":"log","text":"Dee's Money Changers: +1 white.","by":2}
+{"t":1793547832702,"type":"move","seat":1,"round":3,"n":200,"kind":"place","option":"slot:1-0","label":"Magenta · Help Yourself → you'd get: +0..1 blue, +3..4 white, +0..1 green; rivals together -1..0 blue, -4..-3 white, -1..0 green; then you choose: Help Yourself: choose a resource to steal.","think":"Cashing in last turn was right; Cal and Dee both raided right after. Now I have no members, so Shake Down can't touch me, and if I take Help Yourself now and Crime Wave next, nobody can steal my pile. Then I fill up late on Peek and Build Up. Help Yourself takes all 5 of Dee's white (Ava is shielded).","prompt":"Ben: place a minion"}
+{"t":1793547832702,"type":"say","seat":1,"text":"Cal, Scouts not firing Bargain Bin reads wrong to me too, same 'send to the bottom' wording. Also, having zero members turns out to be a shield in this round: Shake Down and Poach have nothing to take."}
+{"t":1793547832702,"type":"log","text":"Ben took Help Yourself (Magenta).","by":1}
+{"t":1793547832902,"type":"move","seat":1,"round":3,"n":201,"kind":"choose","option":"take:2:blue","label":"Cal's blue (1) — value hint 3","think":"Dee's white","prompt":"Help Yourself: choose a resource to steal. (5 left)"}
+{"t":1793547833006,"type":"move","seat":1,"round":3,"n":202,"kind":"choose","option":"take:2:green","label":"Cal's green (1) — value hint 3","think":"Dee's white","prompt":"Help Yourself: choose a resource to steal. (4 left)"}
+{"t":1793547833091,"type":"move","seat":1,"round":3,"n":203,"kind":"choose","option":"take:3:white","label":"Dee's white (5) — value hint 7","think":"Dee's white","prompt":"Help Yourself: choose a resource to steal. (3 left)"}
+{"t":1793547833178,"type":"move","seat":1,"round":3,"n":204,"kind":"choose","option":"take:3:white","label":"Dee's white (4) — value hint 6","think":"Dee's white","prompt":"Help Yourself: choose a resource to steal. (2 left)"}
+{"t":1793547833283,"type":"move","seat":1,"round":3,"n":205,"kind":"choose","option":"take:3:white","label":"Dee's white (3) — value hint 5","think":"Dee's white","prompt":"Help Yourself: choose a resource to steal. (1 left)"}
+{"t":1793547833283,"type":"log","text":"Ben stole 5 (1 blue and 1 green from Cal, 3 white from Dee).","by":1}
+{"t":1793547838458,"type":"move","seat":1,"round":3,"n":206,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Fumbled the steal order: meant all 5 from Dee's white, ended up with Cal's blue and green plus 3 white. Still leads white 3-2 and green 2-1. Holding everything.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793547838458,"type":"log","text":"Ben passed.","by":1}
+{"t":1793547850991,"type":"move","seat":0,"round":3,"n":207,"kind":"place","option":"slot:3-5","label":"Green · Greatest Hits → you'd get: +1 blue, +2 magenta, +5 white, +3 green; rivals together -1 blue, -5 white, -2 green; then you choose: Greatest Hits: copy which member's On Recruit first? (2 to go); Con Men: choose a resource to steal.; Accomplice: choose a resource to steal.","think":"Greatest Hits fires Con Men (5) and Accomplice (3): 8 steals is literally every resource my rivals hold, plus 2 Fence magenta. I end up leading all four colors with rivals at zero, and Lie Low means nobody can take it back by stealing.","prompt":"Ava: place a minion"}
+{"t":1793547850991,"type":"say","seat":0,"text":"Con Men has now been fired four times this game off one purchase. Encore/Echo/Greatest Hits all treating its On Recruit as a free 5-steal is the loudest thing on this table."}
+{"t":1793547850991,"type":"log","text":"Ava took Greatest Hits (Green).","by":0}
+{"t":1793547850991,"type":"log","text":"Ava's Greatest Hits: +1 green.","by":0}
+{"t":1793547852761,"type":"move","seat":0,"round":3,"n":208,"kind":"choose","option":"card:48","label":"Con Men [7 any; worth 2] — Counts as 2 members. On Recruit: steal 5 resources.","think":"Con Men first.","prompt":"Greatest Hits: copy which member's On Recruit first? (2 to go)"}
+{"t":1793547852761,"type":"log","text":"Ava copies Con Men's On Recruit.","by":0}
+{"t":1793547854998,"type":"move","seat":0,"round":3,"n":209,"kind":"choose","option":"take:1:white","label":"Ben's white (3) — value hint 4.2","think":"Ben's white.","prompt":"Con Men: choose a resource to steal. (5 left)"}
+{"t":1793547857174,"type":"move","seat":0,"round":3,"n":210,"kind":"choose","option":"take:1:white","label":"Ben's white (2) — value hint 3.2","think":"Ben's white.","prompt":"Con Men: choose a resource to steal. (4 left)"}
+{"t":1793547859073,"type":"move","seat":0,"round":3,"n":211,"kind":"choose","option":"take:1:white","label":"Ben's white (1) — value hint 2.2","think":"Ben's white.","prompt":"Con Men: choose a resource to steal. (3 left)"}
+{"t":1793547860990,"type":"move","seat":0,"round":3,"n":212,"kind":"choose","option":"take:3:white","label":"Dee's white (2) — value hint 4","think":"Dee's white.","prompt":"Con Men: choose a resource to steal. (2 left)"}
+{"t":1793547863179,"type":"move","seat":0,"round":3,"n":213,"kind":"choose","option":"take:3:white","label":"Dee's white (1) — value hint 3","think":"Dee's last white.","prompt":"Con Men: choose a resource to steal. (1 left)"}
+{"t":1793547863179,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793547863179,"type":"log","text":"Ava's Con Men stole 5 (3 white from Ben, 2 white from Dee).","by":0}
+{"t":1793547863179,"type":"log","text":"Ava copies Accomplice's On Recruit.","by":0}
+{"t":1793547865387,"type":"move","seat":0,"round":3,"n":214,"kind":"choose","option":"take:1:green","label":"Ben's green (2) — value hint 3.2","think":"green","prompt":"Accomplice: choose a resource to steal. (3 left)"}
+{"t":1793547865493,"type":"move","seat":0,"round":3,"n":215,"kind":"choose","option":"take:1:green","label":"Ben's green (1) — value hint 2.2","think":"green","prompt":"Accomplice: choose a resource to steal. (2 left)"}
+{"t":1793547867224,"type":"move","seat":0,"round":3,"n":216,"kind":"choose","option":"take:1:blue","label":"Ben's blue (1) — value hint 2.2","think":"blue","prompt":"Accomplice: choose a resource to steal. (1 left)"}
+{"t":1793547867224,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793547867224,"type":"log","text":"Ava's Accomplice stole 3 (2 green and 1 blue from Ben).","by":0}
+{"t":1793547883748,"type":"move","seat":0,"round":3,"n":217,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Holding 5 blue, 6 magenta, 6 white, 4 green with every rival at zero. Nothing in the shop beats 1 follower per resource, and I'll convert leftovers on my last turn.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793547883748,"type":"log","text":"Ava passed.","by":0}
+{"t":1793547904369,"type":"move","seat":0,"round":3,"n":218,"kind":"place","option":"slot:3-0","label":"Green · Build Up → you'd get: +5 green","think":"Every rival is at zero, so it's about which contest I can't win back later. Blue has five spaces to answer a Peek with, white has Allowance to answer Estate Sale, but green only has Build Up; taking it puts me at 9 green and only Cover's +1 is left.","prompt":"Ava: place a minion"}
+{"t":1793547904369,"type":"log","text":"Ava took Build Up (Green).","by":0}
+{"t":1793547904369,"type":"log","text":"Ava's Build Up: +5 green.","by":0}
+{"t":1793547911323,"type":"move","seat":0,"round":3,"n":219,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Green surplus: 9 vs a max rival reach of about 1-2 now Build Up is gone. Cash 5 green into followers and keep 4.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793547914995,"type":"move","seat":0,"round":3,"n":220,"kind":"pay","option":"pay:0-0-0-5","label":"Pay 5 green","think":"All green.","prompt":"Ava: choose how to pay for 5 followers"}
+{"t":1793547914995,"type":"log","text":"Ava bought 5 followers (5 green).","by":0}
+{"t":1793547914995,"type":"log","text":"Dee's Money Changers: +1 white.","by":0}
+{"t":1793547932268,"type":"move","seat":1,"round":3,"n":221,"kind":"place","option":"slot:0-2","label":"Blue · Peek → you'd get: +6 blue; then you choose: Peek: which goes on top?; Peek: which goes next?","think":"Greatest Hits firing Con Men and Accomplice wiped me again; Ava now leads all four colors and is shielded by Lie Low. Blue is the cheapest to flip: Peek +6 beats her 5. Cal and Dee should be happy to let me take blue off Ava, so the threat is Ava's two last minions; I'll take Crime Wave next to close that.","prompt":"Ben: place a minion"}
+{"t":1793547932268,"type":"say","seat":1,"text":"Greatest Hits on Con Men plus Accomplice is an 8-steal off one center space. Con Men's On Recruit is being treated as a repeatable action by three different spaces; that's the card I'd look at first."}
+{"t":1793547932268,"type":"log","text":"Ben took Peek (Blue).","by":1}
+{"t":1793547932268,"type":"log","text":"Ben's Peek: +6 blue.","by":1}
+{"t":1793547932268,"type":"log","text":"Ben peeks at the top 4 of the pile.","by":1}
+{"t":1793547935459,"type":"move","seat":1,"round":3,"n":222,"kind":"choose","option":"card:36","label":"Tribute Band [8 green + 4 any; worth 3] — On Use, once per game: choose a rival. Do every action they have a minion on this round.","think":"Expensive, harmless card on top so no steal-on-recruit comes out.","prompt":"Peek: which goes on top?"}
+{"t":1793547937751,"type":"move","seat":1,"round":3,"n":223,"kind":"choose","option":"card:17","label":"Double Agent [3 magenta + 5 any; worth 1] — On Recruit: swap this member for a rival’s member you choose.","think":"Double Agent next; steals stay buried.","prompt":"Peek: which goes next?"}
+{"t":1793547939722,"type":"move","seat":1,"round":3,"n":224,"kind":"choose","option":"card:19","label":"Shoplifter [3 magenta + 4 any; worth 1] — Whenever you recruit, steal 1 resource.","think":"Shoplifter before Extortionist.","prompt":"Peek: which goes next?"}
+{"t":1793547939722,"type":"log","text":"Ben puts the top 4 of the pile back in a new order.","by":1}
+{"t":1793547943007,"type":"move","seat":1,"round":3,"n":225,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold 6 blue for the contest.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793547943007,"type":"say","seat":1,"text":"Cal, Dee: I'm the only one who can take blue off Ava right now. Leaving my pile alone helps you more than it helps me."}
+{"t":1793547943007,"type":"log","text":"Ben passed.","by":1}
+{"t":1793547963444,"type":"move","seat":2,"round":3,"n":226,"kind":"place","option":"slot:0-4","label":"Blue · Bury → you'd get: +3..7 blue; rivals followers 1; then you choose: Bury: send which member to the bottom?","think":"Three-way tie for first-ish: Ava 41, me 40, Dee 40, and Ava leads three contests under Lie Low so I can't steal from her. Blue is the one I can win: Bury on Wallflower is about +7 blue now, then build on it so my turn 19, after Ava's last two, settles it. Dee's Crime Wave on turn 20 is the risk.","prompt":"Cal: place a minion"}
+{"t":1793547963444,"type":"log","text":"Cal took Bury (Blue).","by":2}
+{"t":1793547963444,"type":"log","text":"Cal's Bury: +1 blue.","by":2}
+{"t":1793547965273,"type":"move","seat":2,"round":3,"n":227,"kind":"choose","option":"card:32","label":"Wallflower [6 green + 4 any; worth 1] — Whenever you copy an action, double the resources it gives you.","think":"Wallflower, cost 10","prompt":"Bury: send which member to the bottom?"}
+{"t":1793547965273,"type":"log","text":"Bury: Cal sends Wallflower to the bottom of the pile.","by":2}
+{"t":1793547965273,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793547965273,"type":"log","text":"Dee's Patroness: +1 follower.","by":2}
+{"t":1793547965273,"type":"log","text":"Cal's Bury: +5 blue.","by":2}
+{"t":1793547965273,"type":"log","text":"New in the shop: Tribute Band.","by":2}
+{"t":1793547968254,"type":"move","seat":2,"round":3,"n":228,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Free follower via Regular, keeps blue at 7.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793547968373,"type":"move","seat":2,"round":3,"n":229,"kind":"pay","option":"pay:1-0-0-0","label":"Pay 1 blue (suggested)","think":"pay","prompt":"Cal: choose how to pay for 1 followers"}
+{"t":1793547968373,"type":"log","text":"Cal bought 1 follower (1 blue).","by":2}
+{"t":1793547968373,"type":"log","text":"Cal's Regular: +1 blue.","by":2}
+{"t":1793547968373,"type":"log","text":"Dee's Money Changers: +1 white.","by":2}
+{"t":1793547997098,"type":"move","seat":3,"round":3,"n":230,"kind":"place","option":"slot:2-4","label":"White · Estate Sale → you'd get: +1..9 white; +-2..0 followers; +-2..0 members; then you choose: Estate Sale: cast out which member?","think":"Three-way tie at 41 and Ava is Lie Low, so I can't steal her piles. White is the contest I can actually take: Estate Sale on Patroness (cost 8) is +9 white, 11 vs her 6, and next turn I take Crime Wave so nobody can halve it.","prompt":"Dee: place a minion"}
+{"t":1793547997098,"type":"log","text":"Dee took Estate Sale (White).","by":3}
+{"t":1793547997098,"type":"log","text":"Dee's Estate Sale: +1 white.","by":3}
+{"t":1793548001372,"type":"move","seat":3,"round":3,"n":231,"kind":"choose","option":"card:1","label":"Patroness [5 blue + 3 any; worth 1] — Whenever a shop member goes to the bottom of the pile, +1 follower.","think":"Patroness: biggest cost, 8 white; I give up a follower and a couple of future triggers for a white lead that should hold.","prompt":"Estate Sale: cast out which member?"}
+{"t":1793548001372,"type":"log","text":"Dee sent Patroness to the bottom of the pile.","by":3}
+{"t":1793548001373,"type":"log","text":"Dee's Estate Sale: Patroness paid 8 white.","by":3}
+{"t":1793548004289,"type":"move","seat":3,"round":3,"n":232,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"the free follower: white comes straight back","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793548004378,"type":"move","seat":3,"round":3,"n":233,"kind":"pay","option":"pay:0-0-1-0","label":"Pay 1 white (suggested)","think":"white (only option)","prompt":"Dee: choose how to pay for 1 followers"}
+{"t":1793548004378,"type":"log","text":"Dee bought 1 follower (1 white).","by":3}
+{"t":1793548004378,"type":"log","text":"Dee's Money Changers: +1 white.","by":3}
+{"t":1793548012874,"type":"move","seat":3,"round":3,"n":234,"kind":"place","option":"slot:1-3","label":"Magenta · Crime Wave → you'd get: +3 blue, +1 magenta; rivals together -3 blue; then you choose: Crime Wave: choose a pile to halve.","think":"Crime Wave is the one thing that could halve my 11 white, so I take it myself. I'll halve Cal's blue: that hands blue to Ben, who's 17 back, instead of Cal who's tied with me.","prompt":"Dee: place a minion"}
+{"t":1793548012874,"type":"log","text":"Dee took Crime Wave (Magenta).","by":3}
+{"t":1793548012874,"type":"log","text":"Dee's Crime Wave: +1 magenta.","by":3}
+{"t":1793548015831,"type":"move","seat":3,"round":3,"n":235,"kind":"choose","option":"take:2:blue","label":"Cal: steal 3 blue — value hint 3.99","think":"Cal","prompt":"Crime Wave: choose a pile to halve."}
+{"t":1793548015831,"type":"say","seat":3,"text":"Ben, you got your wish: blue's yours to defend now. Cal, Ava, we're dead level at 41 so the contests decide this."}
+{"t":1793548015831,"type":"log","text":"Dee stole 3 blue from Cal.","by":3}
+{"t":1793548022149,"type":"move","seat":3,"round":3,"n":236,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Dump blue and magenta (no contest for me there) into 5 followers; the 1 white I spend comes back via Money Changers.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793548025388,"type":"move","seat":3,"round":3,"n":237,"kind":"pay","option":"pay:3-1-1-0","label":"Pay 3 blue, 1 magenta, 1 white (suggested)","think":"suggested, keeps max white","prompt":"Dee: choose how to pay for 5 followers"}
+{"t":1793548025388,"type":"log","text":"Dee bought 5 followers (3 blue, 1 magenta, 1 white).","by":3}
+{"t":1793548025388,"type":"log","text":"Dee's Money Changers: +1 white.","by":3}
+{"t":1793548054404,"type":"move","seat":2,"round":3,"n":238,"kind":"place","option":"slot:0-0","label":"Blue · Savings → you'd get: +4..5 blue; then you choose: Savings: send a shop member to the bottom of the pile?","think":"Dee's Estate Sale on the Patroness she poached from me, 8 white, plus Crime Wave on my blue: she's at 46 and owns white. Ava's under Lie Low, and every steal space is now taken, so a blue pile is finally safe. Savings to ~10 blue against Ben 6 and Ava 5, then my turn 19 tops up or cashes in depending on what Ben does.","prompt":"Cal: place a minion"}
+{"t":1793548054404,"type":"say","seat":2,"text":"Estate Sale on a poached Patroness for 8 white is a big two-step: the steal pays you twice. Not sure that's wrong, but it's the swingiest line I've seen."}
+{"t":1793548054404,"type":"log","text":"Cal took Savings (Blue).","by":2}
+{"t":1793548054404,"type":"log","text":"Cal's Savings: +4 blue.","by":2}
+{"t":1793548054603,"type":"move","seat":2,"round":3,"n":239,"kind":"choose","option":"card:41","label":"Alchemists [5 any; worth 3] — All your resources count as any when you recruit a member.","think":"Alchemists out, cheapest follower buy for Ava.","prompt":"Savings: send a shop member to the bottom of the pile?"}
+{"t":1793548054603,"type":"log","text":"Savings: Cal sends Alchemists to the bottom of the pile.","by":2}
+{"t":1793548054603,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":2}
+{"t":1793548054603,"type":"log","text":"New in the shop: Double Agent.","by":2}
+{"t":1793548058483,"type":"move","seat":2,"round":3,"n":240,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Free follower again through Regular, blue stays at 9.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793548058597,"type":"move","seat":2,"round":3,"n":241,"kind":"pay","option":"pay:1-0-0-0","label":"Pay 1 blue (suggested)","think":"pay","prompt":"Cal: choose how to pay for 1 followers"}
+{"t":1793548058597,"type":"log","text":"Cal bought 1 follower (1 blue).","by":2}
+{"t":1793548058597,"type":"log","text":"Cal's Regular: +1 blue.","by":2}
+{"t":1793548058597,"type":"log","text":"Dee's Money Changers: +1 white.","by":2}
+{"t":1793548080285,"type":"move","seat":1,"round":3,"n":242,"kind":"place","option":"slot:3-4","label":"Green · Cover → you'd get: +0..4 blue, +0..6 magenta, +1 green; +0..3 followers; +0..3 members; rivals together -4..1 blue; rivals followers -3..0; then you choose: Cover: copy which empty action?; Out of Style: send which color to the bottom?; Shake Down: choose a rival.; Churn: send which member to the bottom? (3 to go); Churn: send which member to the bottom? (2 to go); Churn: send which member to the bottom? (1 to go)","think":"Blue is Cal 9, me 6, Ava 5, and the +10 is the only prize I can still reach. Cover copying the empty Recruit Twice gives +3 plus Impressionist's +1, so I'm at 10 and Recruit Twice stays open for me at turn 18. Ava has to spend both her minions on blue to pass me.","prompt":"Ben: place a minion"}
+{"t":1793548080285,"type":"log","text":"Ben took Cover (Green).","by":1}
+{"t":1793548080285,"type":"log","text":"Ben's Cover: +1 green.","by":1}
+{"t":1793548082190,"type":"move","seat":1,"round":3,"n":243,"kind":"choose","option":"space:empty:0-3","label":"Recruit Twice: Recruit twice this turn. +3 blue. — value hint 5","think":"Recruit Twice for blue","prompt":"Cover: copy which empty action?"}
+{"t":1793548082190,"type":"log","text":"Ben copies Recruit Twice: doing it.","by":1}
+{"t":1793548082190,"type":"log","text":"Ben's Impressionist: +1 blue.","by":1}
+{"t":1793548082190,"type":"log","text":"Ben recruits twice this turn.","by":1}
+{"t":1793548085165,"type":"move","seat":1,"round":3,"n":244,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Spare green into a follower; blue stays at 10.","prompt":"Ben: recruit a member or followers (2 recruits left), or pass"}
+{"t":1793548087468,"type":"move","seat":1,"round":3,"n":245,"kind":"pay","option":"pay:0-0-0-1","label":"Pay 1 green (suggested)","think":"green","prompt":"Ben: choose how to pay for 1 followers"}
+{"t":1793548087468,"type":"log","text":"Ben bought 1 follower (1 green).","by":1}
+{"t":1793548087468,"type":"log","text":"Dee's Money Changers: +1 white.","by":1}
+{"t":1793548092127,"type":"move","seat":1,"round":3,"n":246,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Pass; a second recruit would also feed Cal's Doormen a blue.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793548092127,"type":"say","seat":1,"text":"Ava, you're the only one who can still catch my blue. Two minions on Recruit Twice and Out of Style gets you there, but that's your whole round."}
+{"t":1793548092127,"type":"log","text":"Ben passed.","by":1}
+{"t":1793548142993,"type":"move","seat":0,"round":3,"n":247,"kind":"place","option":"slot:2-3","label":"White · Farewell → you'd get: +1 white; +-1..5 followers; +-3..0 members; then you choose: Farewell: cast out which member?","think":"Chasing blue needs both minions for a coin flip against Ben and Cal (and Out of Style feeds Cal's Bargain Bin). Magenta and green are mine already, so I convert: Farewell on Martyrs pays 4 + Martyrs' own 4 for losing a 3-follower card, +5 net.","prompt":"Ava: place a minion"}
+{"t":1793548142993,"type":"say","seat":0,"text":"Ben, blue's all yours and Cal's; I'd need my whole round for a maybe. Farewell on Martyrs is the quiet monster here, by the way: it pays its cost twice."}
+{"t":1793548142993,"type":"log","text":"Ava took Farewell (White).","by":0}
+{"t":1793548142993,"type":"log","text":"Ava's Farewell: +1 white.","by":0}
+{"t":1793548146365,"type":"move","seat":0,"round":3,"n":248,"kind":"choose","option":"card:27","label":"Martyrs [2 white + 2 any; worth 3] — Whenever this member leaves your cult, gain followers equal to its cost.","think":"Martyrs: +4 from Farewell, +4 from its own leave trigger, -3 worth.","prompt":"Farewell: cast out which member?"}
+{"t":1793548146365,"type":"log","text":"Ava's Martyrs left: +4 followers.","by":0}
+{"t":1793548146365,"type":"log","text":"Ava sent Martyrs to the bottom of the pile.","by":0}
+{"t":1793548146365,"type":"log","text":"Ava's Farewell: Martyrs paid 4 followers.","by":0}
+{"t":1793548151431,"type":"move","seat":0,"round":3,"n":249,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Buy 10 from the surplus: all 5 blue, 3 green (keep 1), 2 white. Magenta stays at 6.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793548155480,"type":"move","seat":0,"round":3,"n":250,"kind":"pay","option":"pay:5-0-2-3","label":"Pay 5 blue, 2 white, 3 green","think":"5 blue, 2 white, 3 green.","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793548155480,"type":"log","text":"Ava bought 10 followers (5 blue, 2 white, 3 green).","by":0}
+{"t":1793548155480,"type":"log","text":"Dee's Money Changers: +1 white.","by":0}
+{"t":1793548166611,"type":"move","seat":0,"round":3,"n":251,"kind":"place","option":"slot:2-2","label":"White · Exchange → you'd get: -3..0 magenta, -2..1 white, -1..0 green; +0..6 followers; then you choose: Exchange: turn which resource into 2 followers?","think":"Exchange turns 3 spare white into 6 followers; that's the best rate left. Magenta (6) and green (1) stay put for their +10s.","prompt":"Ava: place a minion"}
+{"t":1793548166611,"type":"log","text":"Ava took Exchange (White).","by":0}
+{"t":1793548166611,"type":"log","text":"Ava's Exchange: +1 white.","by":0}
+{"t":1793548168791,"type":"move","seat":0,"round":3,"n":252,"kind":"choose","option":"color:white","label":"1 white → 2 followers — value hint 1.43","think":"white","prompt":"Exchange: turn which resource into 2 followers? (3 left)"}
+{"t":1793548168791,"type":"log","text":"Ava's Exchange: 1 white became 2 followers.","by":0}
+{"t":1793548168889,"type":"move","seat":0,"round":3,"n":253,"kind":"choose","option":"color:white","label":"1 white → 2 followers — value hint 1.42","think":"white","prompt":"Exchange: turn which resource into 2 followers? (2 left)"}
+{"t":1793548168889,"type":"log","text":"Ava's Exchange: 1 white became 2 followers.","by":0}
+{"t":1793548169116,"type":"move","seat":0,"round":3,"n":254,"kind":"choose","option":"color:white","label":"1 white → 2 followers — value hint 1.41","think":"white","prompt":"Exchange: turn which resource into 2 followers? (1 left)"}
+{"t":1793548169116,"type":"log","text":"Ava's Exchange: 1 white became 2 followers.","by":0}
+{"t":1793548174978,"type":"move","seat":0,"round":3,"n":255,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Only a 1-pack fits; 2 white wasted. Magenta 6 beats any single Stash, green 1 can't be caught with every green space full.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793548178633,"type":"move","seat":0,"round":3,"n":256,"kind":"pay","option":"pay:0-0-1-0","label":"Pay 1 white (suggested)","think":"white","prompt":"Ava: choose how to pay for 1 followers"}
+{"t":1793548178633,"type":"say","seat":0,"text":"Note for the designer pile: buying followers only in 1/5/10 packs strands odd leftovers on the last turn; I'm throwing away 2 white here."}
+{"t":1793548178633,"type":"log","text":"Ava bought 1 follower (1 white).","by":0}
+{"t":1793548178633,"type":"log","text":"Dee's Money Changers: +1 white.","by":0}
+{"t":1793548207452,"type":"move","seat":1,"round":3,"n":257,"kind":"place","option":"slot:0-1","label":"Blue · Out of Style → you'd get: +2..3 blue; rivals together 1 blue; then you choose: Out of Style: send which color to the bottom?","think":"Last minion. Blue is me 10, Cal 9, and Cal places after me. Either blue space leaves Cal the other for a 13-13 tie: Out of Style on blue gets me 13 and his Bargain Bin 10, then Recruit Twice gets him 13. Recruit Twice for me lets his Out of Style hit 13 too. No line wins it outright; Out of Style at least clears blue cards from his shop.","prompt":"Ben: place a minion"}
+{"t":1793548207452,"type":"log","text":"Ben took Out of Style (Blue).","by":1}
+{"t":1793548207452,"type":"log","text":"Ben's Out of Style: +1 blue.","by":1}
+{"t":1793548209942,"type":"move","seat":1,"round":3,"n":258,"kind":"choose","option":"color:blue","label":"blue (2) — value hint 2","think":"blue","prompt":"Out of Style: send which color to the bottom?"}
+{"t":1793548209942,"type":"log","text":"Out of Style: Ben sends 2 blue members to the bottom.","by":1}
+{"t":1793548209942,"type":"log","text":"Cal's Bargain Bin: +1 blue.","by":1}
+{"t":1793548209942,"type":"log","text":"Ben's Out of Style: +2 blue.","by":1}
+{"t":1793548209942,"type":"log","text":"New in the shop: Shoplifter, Extortionist.","by":1}
+{"t":1793548218379,"type":"move","seat":1,"round":3,"n":259,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Surprise: the math says cash out. Holding 13 blue is a likely 13-13 tie with Cal for +5, maybe +10 if he misses; buying 10 followers is +10 for sure, and blue left at game end is worth nothing. Cal gets blue now, but I can't catch anyone for 3rd either way.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793548218379,"type":"say","seat":1,"text":"Ava's point about stranded leftovers is real: my last turn is +10 now or a coin-flip contest, and the 3 blue left over is just gone."}
+{"t":1793548220964,"type":"move","seat":1,"round":3,"n":260,"kind":"pay","option":"pay:10-0-0-0","label":"Pay 10 blue (suggested) — spending this gives up your contest lead in blue","think":"pay","prompt":"Ben: choose how to pay for 10 followers"}
+{"t":1793548220964,"type":"log","text":"Ben bought 10 followers (10 blue).","by":1}
+{"t":1793548220964,"type":"log","text":"Dee's Money Changers: +1 white.","by":1}
+{"t":1793548244830,"type":"move","seat":2,"round":3,"n":261,"kind":"place","option":"slot:0-3","label":"Blue · Recruit Twice → you'd get: +3 blue","think":"Ava's Farewell on Martyrs and two big buys put her at 63, out of reach. Playing for second against Dee: Recruit Twice to 13 blue, buy 10 and buy 1 with Regular refunding a blue each time, so I still hold 4 blue over Ben's 3 for the +10.","prompt":"Cal: place a minion"}
+{"t":1793548244830,"type":"say","seat":2,"text":"Ava, agreed on the 1/5/10 packs stranding leftovers; Regular is the only thing that made my odd blue useful. And Farewell on Martyrs paying twice is the strongest single play I saw today."}
+{"t":1793548244830,"type":"log","text":"Cal took Recruit Twice (Blue).","by":2}
+{"t":1793548244830,"type":"log","text":"Cal's Recruit Twice: +3 blue.","by":2}
+{"t":1793548244830,"type":"log","text":"Cal recruits twice this turn.","by":2}
+{"t":1793548246871,"type":"move","seat":2,"round":3,"n":262,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"buy 10","prompt":"Cal: recruit a member or followers (2 recruits left), or pass"}
+{"t":1793548248900,"type":"move","seat":2,"round":3,"n":263,"kind":"pay","option":"pay:10-0-0-0","label":"Pay 10 blue (suggested)","think":"pay","prompt":"Cal: choose how to pay for 10 followers"}
+{"t":1793548248900,"type":"log","text":"Cal bought 10 followers (10 blue).","by":2}
+{"t":1793548248900,"type":"log","text":"Cal's Regular: +1 blue.","by":2}
+{"t":1793548248900,"type":"log","text":"Dee's Money Changers: +1 white.","by":2}
+{"t":1793548251285,"type":"move","seat":2,"round":3,"n":264,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"free follower via Regular","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793548251424,"type":"move","seat":2,"round":3,"n":265,"kind":"pay","option":"pay:1-0-0-0","label":"Pay 1 blue (suggested)","think":"pay","prompt":"Cal: choose how to pay for 1 followers"}
+{"t":1793548251424,"type":"log","text":"Cal bought 1 follower (1 blue).","by":2}
+{"t":1793548251424,"type":"log","text":"Cal's Regular: +1 blue.","by":2}
+{"t":1793548251424,"type":"log","text":"Dee's Money Changers: +1 white.","by":2}
+{"t":1793548267096,"type":"move","seat":3,"round":3,"n":266,"kind":"place","option":"slot:2-0","label":"White · Allowance → you'd get: +4 white","think":"Last placement of the game. Cash In is +18 but hands Ava the white prize; Allowance to 22 white then buying 10 followers leaves me 13 white, still winning white. That's about 71 for me either way, and it keeps 10 away from Ava. Ava's magenta and green are out of reach under Lie Low, so I'm playing for second.","prompt":"Dee: place a minion"}
+{"t":1793548267096,"type":"say","seat":3,"text":"Money Changers quietly fed me something like 12 white this round off everyone else's follower buys. In a round where everyone dumps piles into followers, that artifact is a contest by itself."}
+{"t":1793548267096,"type":"log","text":"Dee took Allowance (White).","by":3}
+{"t":1793548267096,"type":"log","text":"Dee's Allowance: +4 white.","by":3}
+{"t":1793548269302,"type":"move","seat":3,"round":3,"n":267,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"10 followers; 13 white left still wins white","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793548271472,"type":"move","seat":3,"round":3,"n":268,"kind":"pay","option":"pay:0-0-10-0","label":"Pay 10 white (suggested)","think":"pay","prompt":"Dee: choose how to pay for 10 followers"}
+{"t":1793548271472,"type":"log","text":"Dee bought 10 followers (10 white).","by":3}
+{"t":1793548271472,"type":"log","text":"Dee's Money Changers: +1 white.","by":3}
+{"t":1793548271472,"type":"log","text":"Round III ends. Most blue: Cal +10 · Most magenta: Ava +10 · Most white: Dee +10 · Most green: Ava +10","by":3}
+{"t":1793548271472,"type":"log","text":"Dee's Recluse: +4 followers.","by":3}
+{"t":1793548271472,"type":"log","text":"Dee's Snobs: +2 followers.","by":3}
+{"t":1793548271472,"type":"log","text":"Game over. Ava wins with 83 followers.","by":3}

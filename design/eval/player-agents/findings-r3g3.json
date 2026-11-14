@@ -1,0 +1,524 @@
+[
+ {
+  "subject": "Kidnappers",
+  "kind": "member",
+  "claim": "A card worth 2 members that also takes a member at round end swings 3 or 4 members each time it moves, so whoever holds it at round end takes the Most members contest.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Dee",
+   "Ben"
+  ],
+  "evidence": "It changed hands four times; Ava won round II Most members 6 to 5 only because of it, and in round III the final retake turned an 11-11 tie into Cal alone (+10).",
+  "strength": 5
+ },
+ {
+  "subject": "Kidnappers",
+  "kind": "member",
+  "claim": "The back-and-forth over Kidnappers was the most memorable part of the game for every player.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal",
+   "Ava"
+  ],
+  "evidence": "Promote, Body Snatchers, Poach and Mutineers each moved it, and all four debriefs mention it.",
+  "strength": 3
+ },
+ {
+  "subject": "Recruiting members",
+  "kind": "rule",
+  "claim": "Member takes (Swindle, Kidnappers, Mutineers, Body Snatchers) feed one pile that scores both Most members and Most members of one color, so one player can sweep both member contests plus Most resources in round III.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Dee",
+   "Ava"
+  ],
+  "evidence": "Cal went from 5 to 14 members in round III and took three +10 prizes, 35 of his 52 contest followers.",
+  "strength": 5
+ },
+ {
+  "subject": "Magenta Cloak",
+  "kind": "cloak",
+  "claim": "With steal members, the Magenta Cloak pays several times more than any other cloak and makes Most resources one player's contest all game.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Cal",
+   "Ava"
+  ],
+  "evidence": "It paid 42 magenta from 21 steals against Red Cloak 14, Silver Cloak 12, Blue Cloak 9; Cal won Most resources every round with piles of 6, 10, 14 against 3, 3, 0.",
+  "strength": 5
+ },
+ {
+  "subject": "Shoplifter",
+  "kind": "member",
+  "claim": "Shoplifter steals on every recruit, including a 1-follower buy and member takes, so with the Magenta Cloak it pays back far more than its price and breaks rivals' exact-change plans without their choosing.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Dee",
+   "Cal"
+  ],
+  "evidence": "11 triggers stole 17 resources and paid 22 cloak magenta, about 39 resources for a 9-cost card.",
+  "strength": 5
+ },
+ {
+  "subject": "Most resources",
+  "kind": "contest",
+  "claim": "In round III only a player with surplus resources can contest Most resources, because everyone else converts their pile to followers.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Round III end: Cal 14 resources, the other three 0; Cal took +10 uncontested.",
+  "strength": 4
+ },
+ {
+  "subject": "Fewest silver",
+  "kind": "contest",
+  "claim": "Fewest silver is never won outright because any player can spend their last silver on a pack or a payment, so in round III everyone ties at 0.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Ben",
+   "Dee"
+  ],
+  "evidence": "Two-way ties in rounds I and II, a four-way tie at 0 in round III; every player got 5 in round III.",
+  "strength": 4
+ },
+ {
+  "subject": "Fewest silver",
+  "kind": "contest",
+  "claim": "Choosing which colors to pay with decides silver shares, which makes payments and steals real decisions.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal",
+   "Ava",
+   "Dee"
+  ],
+  "evidence": "About 15 decisions name a payment or steal choice made for the silver contest; Dee's last Toast forced Cal to spend his last placement and recruit to get back to 0.",
+  "strength": 3
+ },
+ {
+  "subject": "Silver Cloak",
+  "kind": "cloak",
+  "claim": "The Silver Cloak's silver works against Paupers and Fewest silver.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Dee",
+   "Cal"
+  ],
+  "evidence": "The cloak paid 12 silver that Dee spent on packs; she missed 0 silver in round I because of Ava's forced Toast and in round II because she discarded Debutantes for a silver, not because of the cloak.",
+  "strength": 2
+ },
+ {
+  "subject": "Silver members",
+  "kind": "member",
+  "claim": "Silver members that reward holding silver are not recruited at a table with Fewest silver.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal",
+   "Ben"
+  ],
+  "evidence": "Of ten silver members only Paupers and Kingmakers (bought to dump 2 silver) were recruited; five sat in the round III shop untouched.",
+  "strength": 3
+ },
+ {
+  "subject": "Party Gifts",
+  "kind": "space",
+  "claim": "Party Gifts and Largesse pay followers directly and leave the recruit free, so a zero-member player can keep pace with member engines.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Ava",
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "Dee took 28 followers from four gift placements (6 per Party Gifts, 10 for Largesse) and tied second on 69 with 0 members.",
+  "strength": 3
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "A pure follower-buying line tops out short of a contest sweeper.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Dee"
+  ],
+  "evidence": "Dee bought 30 followers and took 5 from contests; without her two round-end silver mistakes she reaches about 84, still behind Cal's 91.",
+  "strength": 2
+ },
+ {
+  "subject": "Purifiers",
+  "kind": "member",
+  "claim": "Purifiers only helps the smaller cult and costs that cult a body in the member contests it targets, so it never gets used.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal",
+   "Ava"
+  ],
+  "evidence": "Two owners, about nine chances to use it, never fired.",
+  "strength": 2
+ },
+ {
+  "subject": "Line Cutters",
+  "kind": "member",
+  "claim": "Line Cutters overrides the fewest-followers-first turn order, so the trailing player loses the catch-up.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Dee",
+   "Ava"
+  ],
+  "evidence": "Dee was last on 9 after round I and placed second behind Ava every round; Ava used first pick on Heist and Poach yet finished last.",
+  "strength": 2
+ },
+ {
+  "subject": "Borrow",
+  "kind": "space",
+  "claim": "Borrow's member leaves before scoring, so it is a +1 red space unless the borrowed member's ability combines with something that turn.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Dee",
+   "Ben"
+  ],
+  "evidence": "Dee's Loyalists did nothing; Cal borrowed Desperado and added 4 resources to two Shoplifter steals.",
+  "strength": 1
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "Leftover 1 to 4 resources at the end of a turn have no use but a 1-follower buy, which feels like a dead recruit.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Dee",
+   "Ava",
+   "Ben"
+  ],
+  "evidence": "20 of the 30 follower buys were 1-packs (Ben 8, Ava 6, Dee 5, Cal 1).",
+  "strength": 3
+ },
+ {
+  "subject": "Polish",
+  "kind": "space",
+  "claim": "The first taker of Polish gets its +1 silver after turning all silver into another color, so they end holding 1 silver.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben took Polish in round I and spent a recruit on a 1-follower buy to clear the silver.",
+  "strength": 1
+ },
+ {
+  "subject": "Toast",
+  "kind": "space",
+  "claim": "Toast and Party Gifts dirty rivals' silver for the silver contest, a readable piece of interaction.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Dee",
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "Dee's three Toasts gave rivals 12 silver; her last one pushed Cal off 0 silver with one turn left.",
+  "strength": 2
+ },
+ {
+  "subject": "Largesse",
+  "kind": "space",
+  "claim": "Largesse hands 12 resources to rivals, and the receiver spends them at once, so the split can feed the leader.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Dee"
+  ],
+  "evidence": "Dee gave Cal 9 silver, and he spent all 9 on Con Men, which stole 5 more resources.",
+  "strength": 2
+ },
+ {
+  "subject": "Promote",
+  "kind": "space",
+  "claim": "Promote and Demote reaching into rival cults make the red middle ring the most exciting part of the wheel.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "Four Promote or Demote swaps changed a contest lead, including Window Shopper for Kidnappers (+6 Most members in round II).",
+  "strength": 3
+ },
+ {
+  "subject": "Promote",
+  "kind": "space",
+  "claim": "Swaps late in round III change a contest lead on someone else's turn with no chance to reply.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Ava's back-to-back Promote and Demote cost Cal 5 followers (Ghost) and took Ben's Blue lead in consecutive turns.",
+  "strength": 2
+ },
+ {
+  "subject": "Ghost",
+  "kind": "member",
+  "claim": "Ghost does nothing for you in the shop.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "It was used twice as a weapon (Swindle, then Promote), costing Ava and Cal 5 each.",
+  "strength": 1
+ },
+ {
+  "subject": "Swindle",
+  "kind": "space",
+  "claim": "Choosing the shop member to hand the victim turns reading the shop into a weapon.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Cal took Dabblers twice and handed Ava Window Shopper, then the Ghost (-5).",
+  "strength": 2
+ },
+ {
+  "subject": "Test Drive",
+  "kind": "space",
+  "claim": "Test Drive on Seat Filler gives a free member costing up to 8, and on once-per-game cards a one-shot effect, which is strong and fun.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben got Last-Minute Shopper and Thrift Hunters free and took 8 magenta from Cal with Heist Crew's effect.",
+  "strength": 3
+ },
+ {
+  "subject": "Test Drive",
+  "kind": "space",
+  "claim": "Test Drive on a card whose text says 'this member' (Double Agent) does not say what happens when you do not own it.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben passed on Double Agent at [79] because he could not tell what it would do.",
+  "strength": 1
+ },
+ {
+  "subject": "Out of Style",
+  "kind": "space",
+  "claim": "Out of Style with the Blue Cloak pays twice per discard and makes discards a payday and a denial at once.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben's turn-one Out of Style paid 6 red plus blue; in round III one discard also denied Cal Clan.",
+  "strength": 2
+ },
+ {
+  "subject": "Late Shift",
+  "kind": "space",
+  "claim": "Late Shift's reach growing with each minion placed makes minion order a puzzle.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava",
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "It recruited Line Cutters, Repossessors and Assimilators free, each planned a turn or two ahead.",
+  "strength": 2
+ },
+ {
+  "subject": "Last-Minute Shopper",
+  "kind": "member",
+  "claim": "A round-end recruit after the last minion makes holding resources a real choice.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Free via Test Drive, it gave Ben 9 blue and three extra recruits worth 11 bought followers.",
+  "strength": 3
+ },
+ {
+  "subject": "Markdown",
+  "kind": "space",
+  "claim": "In round I the deck runs out and the discard pile is shuffled back, so Markdown finds nothing to recruit.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal",
+   "Ben"
+  ],
+  "evidence": "The round I deck ran out twice (after 3 and 1 discards); Cal's Markdown found an empty pile.",
+  "strength": 2
+ },
+ {
+  "subject": "Snitch",
+  "kind": "member",
+  "claim": "Snitch's ability is close to blank when only one player steals.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "It cost three rivals 1 follower each and steered at least eight steal picks away from Cal.",
+  "strength": 1
+ },
+ {
+  "subject": "Catch Up",
+  "kind": "space",
+  "claim": "Catch Up pays the lean player enough to reach exact change.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal",
+   "Dee"
+  ],
+  "evidence": "Cal opened with +5; Dee's last Catch Up gave exactly the 4 magenta she needed for a 5-pack.",
+  "strength": 1
+ },
+ {
+  "subject": "Repossessors",
+  "kind": "member",
+  "claim": "A once-per-game discard of a rival's member is clean counterplay against a leader's key card.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben removed Cal's Spoilsport before it cancelled a +6 or +10 prize.",
+  "strength": 2
+ },
+ {
+  "subject": "Con Men",
+  "kind": "member",
+  "claim": "A big steal on a table with nothing left forces picks that zero rivals' silver and hand them silver shares.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Con Men's 5 steals took everything Ava and Ben held, putting Ben into the round III silver tie.",
+  "strength": 1
+ },
+ {
+  "subject": "Mannequin",
+  "kind": "member",
+  "claim": "Mannequin depends on shop cards and can be swapped away before it counts.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben paid 7 blue for it; Ava Demoted it away before scoring.",
+  "strength": 1
+ },
+ {
+  "subject": "Assimilators",
+  "kind": "member",
+  "claim": "Assimilators turns grey members, even the Ghost, into members of your biggest color for the Red contest.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal",
+   "Ben"
+  ],
+  "evidence": "Cal's five greys made Red 10 to Ben's 5: +10 alone instead of a 5-5 tie.",
+  "strength": 4
+ },
+ {
+  "subject": "Cheerleaders",
+  "kind": "member",
+  "claim": "Cheerleaders pays the player already winning contests more.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "It paid Cal 8 plus 1 printed for 7 resources in round III.",
+  "strength": 2
+ },
+ {
+  "subject": "Round end",
+  "kind": "rule",
+  "claim": "Round III decides the game: the round II leader can finish last and the third-placed player can win easily.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "After round II Ava 37, Ben 32, Cal 28, Dee 27; in round III Cal scored 63 and Ava 6, finishing 91 and 43.",
+  "strength": 5
+ },
+ {
+  "subject": "Flaunt",
+  "kind": "space",
+  "claim": "Silver's middle ring (Flaunt and Buyout) pays for holding silver and is never taken at a Fewest silver table.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Neither Flaunt nor Buyout was taken in 36 placements over rounds II and III, though Cal held 10 silver after Largesse.",
+  "strength": 3
+ },
+ {
+  "subject": "Recruiting members",
+  "kind": "rule",
+  "claim": "Taking a member by a swap or steal counts as recruiting it, so recruit triggers fire on member takes, and no card text tells the player so.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "3 of Shoplifter's 11 triggers came from Body Snatchers, Swindle and Mutineers; Ava's Red Cloak paid on Promote, Demote and Poach, and Poach also set off Snitch.",
+  "strength": 2
+ },
+ {
+  "subject": "Dabblers",
+  "kind": "member",
+  "claim": "Dabblers counts as 2 in Red's contest although Red's rim says each card counts 1.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ava's round II Red count was 3 (Window Shopper plus Dabblers as 2), giving her a +3 share she would not have had at 2.",
+  "strength": 1
+ },
+ {
+  "subject": "Desperado",
+  "kind": "member",
+  "claim": "Desperado's fewest-followers condition fired for a player leading two contests, because his score sat in resources.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "In round II Cal's Shoplifter stole 3 instead of 1 twice while he held Most resources.",
+  "strength": 1
+ },
+ {
+  "subject": "Party Gifts",
+  "kind": "space",
+  "claim": "Gifted silver is spendable resources for the receiver, not only a silver-contest penalty.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Rivals received 39 silver from gift spaces and Toasts and spent it at once on packs and members, Cal on a 9-cost Con Men.",
+  "strength": 2
+ }
+]

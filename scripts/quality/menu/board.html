@@ -1,0 +1,131 @@
+<title>Cults Member Piles</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: the game's walnut table with one paper column per color, side by side; a count grid on top jumps to a column. */
+:root{
+  --bg:#efe6d2; --surface:#fbf6ea; --surface-2:#f3ead6; --fg:#2b2018; --fg-2:#6e5c49; --fg-3:#a39078; --hair:rgba(43,32,24,.14);
+  --accent:#9a6a1c; --deck:#2b2018; --short:#2f7a52; --consider:#a8741b; --cut:#b04a37; --note:#6b4f99;
+  --c-red:#c4533f; --c-purple:#7d5ba6; --c-silver:#8695a4; --c-yellow:#c9b21f; --c-market:#4a80b8; --c-thieves:#b2386c; --c-trading:#b8ab90; --c-echo:#3f9467; --c-guests:#8f8576;
+  --serif:'Alegreya',Georgia,serif; --sans:'Alegreya Sans',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1d1611; --surface:#2b2119; --surface-2:#33271e; --fg:#f3e6c8; --fg-2:#cbb894; --fg-3:#8f7f66; --hair:rgba(242,232,210,.12);
+  --accent:#ffd99a; --deck:#f3e6c8; --short:#5fbf8a; --consider:#e0a948; --cut:#e07a64; --note:#b89be0; --c-trading:#e6dcc6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1d1611; --surface:#2b2119; --surface-2:#33271e; --fg:#f3e6c8; --fg-2:#cbb894; --fg-3:#8f7f66; --hair:rgba(242,232,210,.12);
+  --accent:#ffd99a; --deck:#f3e6c8; --short:#5fbf8a; --consider:#e0a948; --cut:#e07a64; --note:#b89be0; --c-trading:#e6dcc6; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.4 var(--sans);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 40px}
+h1{font:800 28px/1.1 var(--serif);margin:0;text-wrap:balance}
+.sub{margin:4px 0 0;color:var(--fg-2);max-width:72ch}
+.bar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:14px 0 10px}
+.seg{display:inline-flex;border:1px solid var(--hair);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{font:500 14px var(--sans);color:var(--fg-2);background:none;border:0;padding:6px 11px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+label.tg{display:inline-flex;gap:6px;align-items:center;color:var(--fg-2);font-size:14px}
+input[type=search]{font:15px var(--sans);color:var(--fg);background:var(--surface);border:1px solid var(--hair);border-radius:8px;padding:6px 10px;flex:1 1 180px;min-width:0;max-width:320px}
+button:focus-visible,input:focus-visible,.card:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.counts{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px;margin-bottom:14px}
+.counts th,.counts td{padding:4px 10px;text-align:center;border-bottom:1px solid var(--hair);white-space:nowrap}
+.counts th:first-child,.counts td:first-child{text-align:left}
+.counts thead th{font-weight:700;color:var(--fg-2)}
+.counts a{color:var(--fg);text-decoration:none;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.counts a:hover{text-decoration:underline}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,1fr);gap:12px;align-items:start;padding-bottom:8px}
+.col{background:var(--surface-2);border-radius:10px;border-top:5px solid var(--cc);min-width:0}
+.col h2{font:800 20px/1 var(--serif);margin:0;padding:10px 12px 4px;display:flex;justify-content:space-between;align-items:baseline}
+.col h2 small{font:500 13px var(--sans);color:var(--fg-2);font-variant-numeric:tabular-nums}
+.sec{padding:6px 10px 10px;display:flex;flex-direction:column;gap:6px}
+.sec>h3{margin:4px 2px 0;font:700 12px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--pc);display:flex;gap:6px}
+.sec>h3 span{color:var(--fg-3)}
+.card{background:var(--surface);border:1px solid var(--hair);border-left:3px solid var(--pc);border-radius:6px;padding:7px 9px;cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%;display:block}
+.card .nm{font:700 15.5px/1.2 var(--serif);display:flex;gap:6px;justify-content:space-between;align-items:baseline}
+.card .tag{font:700 10.5px var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--pc);white-space:nowrap}
+.card .tx{margin-top:2px;font-size:14px;color:var(--fg)}
+.card .pr{margin-top:3px;font-size:12.5px;color:var(--fg-3)}
+.card .cy{display:none;margin-top:5px;padding-top:5px;border-top:1px dashed var(--hair);font-size:13.5px;color:var(--note)}
+.card .cy b{font-weight:700}
+.card:hover .cy,.card.open .cy,.shownotes .card .cy{display:block}
+.card.nonote{cursor:default}
+details.cutbox{margin:0 10px 10px}
+details.cutbox summary{cursor:pointer;font:700 12px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--cut);padding:4px 2px}
+details.cutbox .sec{padding:4px 0 0}
+.p-deck{--pc:var(--deck)} .p-short{--pc:var(--short)} .p-consider{--pc:var(--consider)} .p-cut{--pc:var(--cut)}
+.empty{color:var(--fg-3);font-size:13px;padding:2px}
+.legend{color:var(--fg-2);font-size:13.5px;margin:8px 0 0}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}}
+</style>
+
+<div class="wrap">
+  <h1>Your member piles</h1>
+  <p class="sub">Every member you've rated in your voice notes (Nov 4 and 5), one column per color. Hover or tap a card to see what you said. "In the deck" is every card live now: 10 per color, 12 grey. A live card you said to cut keeps its place there with a red tag; Archive/cut holds the out-of-deck cards you said no to.</p>
+  <div class="bar">
+    <div class="seg" id="pileSeg" role="group" aria-label="Show piles">
+      <button data-p="all" aria-pressed="true">All piles</button>
+      <button data-p="deck" aria-pressed="false">In the deck</button>
+      <button data-p="short" aria-pressed="false">Short list</button>
+      <button data-p="consider" aria-pressed="false">Consideration</button>
+      <button data-p="cut" aria-pressed="false">Archive/cut</button>
+    </div>
+    <label class="tg"><input type="checkbox" id="notes"> Show all my notes</label>
+    <input type="search" id="q" placeholder="Find a member or a word" aria-label="Find a member">
+  </div>
+  <div class="scroll"><table class="counts" id="counts"></table></div>
+  <div class="scroll"><div class="board" id="board"></div></div>
+  <p class="legend">Colors: Blue is the shop color, Magenta steals, White trades and casts out, Green copies, Grey is the guests.</p>
+</div>
+
+<script>
+const DATA = /*DATA*/null;
+const COLORS = [['red','Red'],['purple','Purple'],['silver','Silver'],['yellow','Yellow'],['market','Blue'],['thieves','Magenta'],['trading','White'],['echo','Green'],['guests','Grey']];
+const PILES = [['deck','In the deck'],['short','Short list'],['consider','Consideration'],['cut','Archive/cut']];
+const BLAB = {short:'short list',consider:'consider',cut:'you said cut'};
+const st = {pile:'all', q:''};
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function cardHtml(c){
+  const tag = c.pile === 'deck' && c.b ? BLAB[c.b] : (c.pile === 'cut' && c.live ? 'in deck now' : '');
+  return `<button type="button" class="card p-${c.pile}${c.cory?'':' nonote'}" aria-expanded="false">
+    <div class="nm"><span>${esc(c.n)}</span>${tag?`<span class="tag p-${c.b||c.pile}">${tag}</span>`:''}</div>
+    <div class="tx">${esc(c.t)}</div>
+    <div class="pr">${esc(c.p)}</div>
+    ${c.cory?`<div class="cy"><b>You said:</b> ${esc(c.cory)}</div>`:''}
+  </button>`;
+}
+function render(){
+  const q = st.q;
+  const match = c => !q || (c.n+' '+c.t+' '+c.cory).toLowerCase().includes(q);
+  let head = '<thead><tr><th>Color</th>' + PILES.map(p => `<th class="p-${p[0]}" style="color:var(--pc)">${p[1]}</th>`).join('') + '</tr></thead><tbody>';
+  let cols = '';
+  for (const [c, name] of COLORS){
+    const all = DATA.filter(x => x.c === c);
+    const n = p => all.filter(x => x.pile === p).length;
+    head += `<tr><td><a href="#col-${c}"><span class="dot" style="background:var(--c-${c})"></span>${name}</a></td>` + PILES.map(p => `<td>${n(p[0])}</td>`).join('') + '</tr>';
+    const vis = all.filter(match);
+    let body = '';
+    for (const [p, lab] of PILES){
+      if (st.pile !== 'all' && st.pile !== p) continue;
+      const xs = vis.filter(x => x.pile === p);
+      if (p === 'deck') xs.sort((a,b) => ({short:0,'':1,consider:2,cut:3}[a.b] ?? 1) - ({short:0,'':1,consider:2,cut:3}[b.b] ?? 1));
+      const inner = xs.length ? xs.map(cardHtml).join('') : '<div class="empty">None</div>';
+      if (p === 'cut' && st.pile === 'all') body += `<details class="cutbox"><summary>Archive/cut (${xs.length})</summary><div class="sec p-cut">${inner}</div></details>`;
+      else body += `<div class="sec p-${p}"><h3>${lab} <span>${xs.length}</span></h3>${inner}</div>`;
+    }
+    cols += `<section class="col" id="col-${c}" style="--cc:var(--c-${c})"><h2>${name}<small>${n('deck')} in deck · ${n('short')} short</small></h2>${body}</section>`;
+  }
+  $('counts').innerHTML = head + '</tbody>';
+  $('board').innerHTML = cols;
+}
+$('pileSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; st.pile = b.dataset.p; for (const x of $('pileSeg').children) x.setAttribute('aria-pressed', x === b); render(); });
+$('notes').addEventListener('change', e => document.body.classList.toggle('shownotes', e.target.checked));
+$('q').addEventListener('input', e => { st.q = e.target.value.toLowerCase(); render(); });
+$('board').addEventListener('click', e => { const c = e.target.closest('.card'); if (!c || c.classList.contains('nonote')) return; const o = c.classList.toggle('open'); c.setAttribute('aria-expanded', o); });
+document.addEventListener('click', e => { const a = e.target.closest('a[href^="#col-"]'); if (!a) return; e.preventDefault(); const el = document.querySelector(a.getAttribute('href')); el && el.scrollIntoView({behavior:'smooth', inline:'start', block:'nearest'}); });
+render();
+</script>

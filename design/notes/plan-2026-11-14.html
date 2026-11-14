@@ -1,0 +1,138 @@
+<title>Cults: Where We Stand</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap">
+<style>
+/* Layout: one narrow phone column; each item is one line, tap to open its detail */
+:root{
+  --bg:#f6f4f8; --card:#ffffff; --fg:#1d1824; --muted:#6a6175; --line:#e3dde9; --accent:#6b3fa0;
+  --ok:#2f7d4f; --warn:#a8650c; --bad:#b0343a;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#16131b; --card:#211c28; --fg:#efeaf4; --muted:#a59cb0; --line:#342d3d; --accent:#b48be6;
+  --ok:#6cc495; --warn:#e3a54f; --bad:#ec7c80; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#16131b; --card:#211c28; --fg:#efeaf4; --muted:#a59cb0; --line:#342d3d; --accent:#b48be6;
+  --ok:#6cc495; --warn:#e3a54f; --bad:#ec7c80; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.45 var(--body)}
+.wrap{max-width:640px;margin:0 auto;padding-block:20px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:22px}
+h1{font:700 26px/1.15 var(--display);margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0}
+h2{font:700 13px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.list{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+details{border-top:1px solid var(--line)}
+details:first-child{border-top:0}
+summary{list-style:none;cursor:pointer;padding:11px 14px;display:flex;gap:10px;align-items:baseline}
+summary::-webkit-details-marker{display:none}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+summary .t{flex:1;min-width:0}
+summary::after{content:"+";color:var(--muted);font-weight:600}
+details[open] summary::after{content:"–"}
+.d{padding:0 14px 12px 14px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:6px}
+.d p{margin:0}
+.d b{color:var(--fg)}
+.pill{font:600 11px/1 var(--body);padding:4px 7px;border-radius:99px;white-space:nowrap;border:1px solid currentColor}
+.ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+.n{font:700 14px/1 var(--display);color:var(--accent);min-width:1.2em}
+.ask{background:var(--card);border:2px solid var(--accent);border-radius:10px;padding:12px 14px}
+.ask b{display:block;margin-bottom:4px}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Where Cults stands, and what's next</h1>
+  <p class="sub">Nov 7 to 13. Tap any line for the detail. Goal: "8 sets of colors with good actions and members and no obvious bugs. and we're confident in the strategy/fun."</p>
+</header>
+
+<section>
+<h2>The goal, part by part</h2>
+<div class="list">
+<details><summary><span class="t">All 8 colors have 6 spaces and 10 members in the game</span><span class="pill ok">done</span></summary>
+<div class="d"><p>Every color's last member slots filled on Nov 11 and 12 from your picks. What's left is tuning single cards (next section), not empty slots.</p></div></details>
+<details><summary><span class="t">No obvious bugs</span><span class="pill warn">close</span></summary>
+<div class="d"><p>Card-combo checks fixed 19 rules. AI player games found 2 real bugs (Blue Cloak not paying, log lines showing the wrong amount), both fixed Nov 13.</p><p>Open: 3 rule questions have waited on you since Nov 11. Under your over-2-days rule we decide them and send one list you can overrule.</p></div></details>
+<details><summary><span class="t">Confident in the strategy and fun</span><span class="pill bad">not yet</span></summary>
+<div class="d"><p>We have no measure you trust yet (see "What didn't work").</p><p>Your Nov 12 note is still open: "you want to buy members and build an engine, but the game is fun when you can move members around. so it sometimes feels not worth it to go for the things you want."</p><p>Your Nov 13 note too: make small cults and skipping the shop "slightly less appealing".</p></div></details>
+<details><summary><span class="t">Fresh testers and an online game with friends</span><span class="pill bad">not started</span></summary>
+<div class="d"><p>The last end of the road map: new testers learn from the rulebook alone, then you play one online game with three friends.</p></div></details>
+</div>
+</section>
+
+<section>
+<h2>Each color</h2>
+<div class="list">
+<details><summary><span class="t">Red: new members you haven't played yet</span><span class="pill ok">close</span></summary>
+<div class="d"><p><b>Brethren</b> (Whenever you recruit a member of a color you already have, +1 follower.), <b>Purists</b> (Round End: if your members have 2 or fewer colors, +3 followers.), <b>Assimilators</b> (Your grey members count as members of your biggest color.) are new since Nov 11.</p><p>Red's contest now counts members, not cards (your Nov 13 call).</p></div></details>
+<details><summary><span class="t">Green: your worry about too much member copying</span><span class="pill warn">watch</span></summary>
+<div class="d"><p><b>Greatest Hits</b> (Choose a color other than green. Copy every action with your minion on its spaces. +1 green.) is live for you to try.</p><p><b>Copyist</b> (Whenever you copy an action, +2 followers.) goes up to 3 green + 4 any.</p><p>Nov 11 you pulled Body Doubles over "maybe we're leaning too hard into the member copying".</p></div></details>
+<details><summary><span class="t">Magenta: no open items from your passes</span><span class="pill ok">close</span></summary>
+<div class="d"><p><b>Heist</b> is now "Steal 3 followers and 3 resources. +1 magenta." (was 4 and 4, your Nov 13 call).</p></div></details>
+<details><summary><span class="t">Blue: Mannequin, and the cloak turning blue</span><span class="pill warn">open</span></summary>
+<div class="d"><p><b>Mannequin</b> (Blue members in the shop count as your members when contests are scored.): "i dont love mannequins".</p><p><b>Blue Cloak</b> becomes "Whenever you discard a member, +1 blue." (being built now).</p><p>4 new members that recruit from the discard pile, not yet played by you.</p></div></details>
+<details><summary><span class="t">Purple: settled after the Goes Last fixes</span><span class="pill ok">close</span></summary>
+<div class="d"><p>Gossip is out. <b>Place Keepers</b> (Round Start: choose your place in this round's turn order.) and <b>Last Callers</b> (On Use, once per round: take the Goes Last token.) are in. The Goes Last token now holds all your minions.</p></div></details>
+<details><summary><span class="t">White: small cults and skipping the shop</span><span class="pill warn">open</span></summary>
+<div class="d"><p><b>Monks</b> (Round End: if you have 5 or fewer members, +4 followers.) just changed. <b>Minimalists</b> (Game End: +2 followers per member you have costing 8 or more.) changed twice.</p><p>Your call: White Cloak stays; make small cults and skipping the shop slightly less appealing instead.</p></div></details>
+<details><summary><span class="t">Yellow: Makeover needs a rework</span><span class="pill warn">open</span></summary>
+<div class="d"><p><b>Makeover</b> (+4 yellow. Then rearrange your resources into any colors.): "Makeover being bad is definitely a problem". Late in the game the rearrange does nothing, since buys take any color.</p><p>Grey now counts as a color for Yellow's contest.</p></div></details>
+<details><summary><span class="t">Silver: settled</span><span class="pill ok">close</span></summary>
+<div class="d"><p>Silver Cloak stays ("I like silver cloak"). <b>Buyout</b> (Recruit a rival's member, paying them its cost in silver. +1 silver.) filled round II. <b>Splurgers</b> (Whenever you recruit a silver member, you may also buy followers.) is cheaper, 6 from 7.</p></div></details>
+</div>
+</section>
+
+<section>
+<h2>What worked</h2>
+<div class="list">
+<details><summary><span class="t">Your hands-on card passes, built the same night</span></summary>
+<div class="d"><p>About 170 of your calls from Nov 10 to 13, almost all live within hours. The game went through about 60 versions (v0.99.712 to v0.99.771).</p></div></details>
+<details><summary><span class="t">Fixes go live the moment they pass</span></summary>
+<div class="d"><p>No batching or waiting for a time slot since your Nov 3 note.</p></div></details>
+<details><summary><span class="t">Combo checks and AI games found real rule bugs</span></summary>
+<div class="d"><p>Examples: the Goes Last token, round-end order, Blue Cloak skipping some discards. Each fixed the same day.</p></div></details>
+<details><summary><span class="t">Small screen asks landed fast</span></summary>
+<div class="d"><p>Spoilsport's round-end "meh", followers shown by where they came from, picking several colors in one step.</p></div></details>
+</div>
+</section>
+
+<section>
+<h2>What didn't work</h2>
+<div class="list">
+<details><summary><span class="t">Bot win rates lost your trust</span></summary>
+<div class="d"><p>The skill tests played our existing bots against each other instead of building your principles in ("we already knew that"). The one principle we did build won nothing extra in 22 games.</p></div></details>
+<details><summary><span class="t">AI player idea lists missed the point</span></summary>
+<div class="d"><p>You asked how the game felt. They gave vague fixes with no prices, not grouped by color ("whiffed on the entire point of the exercise").</p></div></details>
+<details><summary><span class="t">Pitches skipped the brainstorm steps</span></summary>
+<div class="d"><p>Round I cards needing members, hard-to-track cards, ideas mixed together, corrected Nov 10, 11 and 12. Since Nov 11 a check refuses any pitch without the written steps.</p></div></details>
+<details><summary><span class="t">Our own shorthand, and slow replies</span></summary>
+<div class="d"><p>Three corrections each on Nov 12.</p></div></details>
+<details><summary><span class="t">Cut cards stayed in the game</span></summary>
+<div class="d"><p>Deprogrammers, Gossip and Bodyguards were still dealt after you cut them.</p></div></details>
+<details><summary><span class="t">Too many threads, stale notes</span></summary>
+<div class="d"><p>About 18 threads say "working" but have been silent for a day or more. The road map and the handoff notes were last updated Nov 3.</p></div></details>
+</div>
+</section>
+
+<section>
+<h2>Next, in order</h2>
+<div class="list">
+<details><summary><span class="n">1</span><span class="t">Keep building your card calls the same night</span></summary>
+<div class="d"><p><b>Why first:</b> your own passes moved the game more this week than any test did.</p></div></details>
+<details><summary><span class="n">2</span><span class="t">Clear your open card items, by color, priced and short</span></summary>
+<div class="d"><p>Makeover, Mannequin, <b>Spoilsport</b>'s price (Round End: choose a contest; nobody wins it this round.), Body Snatchers (Round Start: swap one of your members with any rival's member.: "just seems too good"), which members get followers back after every member went to worth 1, and your idea that members can't leave your cult if you have the fewest followers.</p><p>Each goes through the brainstorm steps before you see it.</p><p><b>Why second:</b> these are the named gaps in "good actions and members".</p></div></details>
+<details><summary><span class="n">3</span><span class="t">Tidy up, ours, no calls from you</span></summary>
+<div class="d"><p>Decide the 3 rule questions and send them as one list you can overrule. Close silent threads. Check every cut card is out of the deck. Bring the road map up to date.</p><p><b>Why now:</b> stale notes are how cut cards stayed in.</p></div></details>
+<details><summary><span class="n">4</span><span class="t">One way to judge feel that you trust</span></summary>
+<div class="d"><p>Your own games come first. AI players answer only "what felt good or bad, when, on which card", grouped by color, with no fixes. Bot games only measure one change you asked about.</p><p><b>Why before more testing:</b> no more runs until the results are ones you'd believe.</p></div></details>
+<details><summary><span class="n">5</span><span class="t">Settle the big strategy question</span></summary>
+<div class="d"><p>Building an engine versus moving members around (your Nov 12 note), and small cults and skipping the shop being a bit too good.</p><p><b>Why after 1 to 4:</b> it's the largest open part of "confident in the strategy/fun", and it needs settled cards to judge.</p></div></details>
+<details><summary><span class="n">6</span><span class="t">Rename every member</span></summary>
+<div class="d"><p>Your Nov 11 call: "The names are so fucking bad."</p><p><b>Why here:</b> once the cards settle, and before the rulebook check and fresh testers.</p></div></details>
+<details><summary><span class="n">7</span><span class="t">Finish line: rulebook, fresh testers, one game with friends</span></summary>
+<div class="d"><p>Every card's words checked against the game, testers who learn from the rulebook alone, then one online game with three friends, then 1.0.</p></div></details>
+</div>
+</section>
+
+<div class="ask"><b>Is this order right? [yes]</b>Say which step to move and I'll reorder.</div>
+</div>

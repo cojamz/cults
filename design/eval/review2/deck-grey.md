@@ -1,0 +1,24 @@
+# Grey (shared): the live 10-card deck and spaces (Nov 8)
+
+- grey member (price 7) **Party Crasher**: "On Use, once per game: your next minion can be placed on a space a rival already took."
+  - Cory's mark: fine: The problem is it’s just objectively very good? a little boring. can feel like a cheap investment for a huge swing
+- grey member (price 7) **Alchemists**: "All your resources count as any when you recruit a member."
+  - Cory's mark: star: I really like this as a mid tier engine enabler. actually secretly really interactive with colors
+- grey member (price 10) **Extra Hand**: "On Use, once per game: +1 minion this round."
+  - Cory's mark: star: Really good. almost too strong. but this is a good one to fight over. we probably don’t need this and party crashers
+- grey member (price 4) **Line Cutters**: "You go first every round."
+  - Cory's mark: weak: it just plays weak. idk if going first is really even that good. but it does feel elemental and is nice as a cheap one so idk
+- grey member (price 5) **Ghost**: "Worth 0 members. Whenever this member joins your cult, −5 followers."
+  - Cory's mark: star: I really like this. maybe we should slightly redesign so that yeah it doesn’t require something
+- grey member (price 5) **Dabblers**: "Counts as 2 wild members."
+  - Cory's mark: star: I like a lot
+- grey member (price 7) **Cheerleaders**: "Whenever you win a contest, +2 followers."
+  - Cory's mark: fine: better in a dedicated competition color
+- grey member (price 8) **Anarchist**: "On Use, once per round: swap any 2 members that cost the same, in any cult or the shop."
+  - Cory's mark: star: I think maybe too good. needs redesign.
+- grey member (price 8) **Spoilsport**: "Round End: choose a contest; nobody wins it this round."
+  - Cory's mark: star: this is really interesting strategically.
+- grey member (price 9) **Con Men**: "On Recruit: steal 5 resources."
+  - Cory's mark: star: I really like. fun when it jumps around cults
+- grey member (price 7) **Sore Loser**: "Round End: if you win no contest, steal 5 followers from the rival who wins the most."
+  - Cory's mark: fine: confusing. should be contest color. needs redesign

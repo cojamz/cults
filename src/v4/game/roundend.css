@@ -1,0 +1,95 @@
+/* The round's scoring card, redone (Cory, Nov 9: "this is visually awful"): one tidy row a contest with every cult's
+   count as a pill (the winners lit in the rim's color), one row a cult with its gains as small tags and the total at
+   the right, and the next round in one box with the snake drawn as the cults themselves. Every rule is scoped under
+   .overlay .dialog.roundend so it outranks the older layers in v4.css and lamp-b.css. */
+.overlay .dialog.roundend{max-width:560px;width:calc(100vw - 24px);gap:12px}
+.overlay .dialog.roundend[data-seats]{max-width:560px}
+.overlay .dialog.roundend h2{font-size:24px;margin:0}
+.overlay .dialog.roundend .re-body{gap:10px}
+.overlay .dialog.roundend .re-phase{margin:4px 0 -4px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* contests */
+.overlay .dialog.roundend .re-rows{gap:6px}
+.overlay .dialog.roundend .re-rows > li{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"q chip" "counts counts";
+  align-items:center;gap:6px 10px;padding:8px 10px 9px 12px;border-radius:10px;background:var(--table);border-left:3px solid var(--c)}
+.overlay .dialog.roundend .re-rows > li.none{opacity:.7}
+.overlay .dialog.roundend .re-q{grid-area:q;text-align:left;align-items:flex-start;display:flex;flex-direction:column;gap:1px;min-width:0;font-size:16px;font-weight:700;line-height:1.2}
+.overlay .dialog.roundend .re-q .re-tb{font-size:14px;font-weight:400;color:var(--muted)}
+.overlay .dialog.roundend .re-chip{grid-area:chip;font-size:15px;padding:2px 10px}
+.overlay .dialog.roundend .re-counts{grid-area:counts;display:flex;flex-wrap:wrap;gap:5px;font-size:14px;color:var(--muted)}
+.overlay .dialog.roundend .re-pill{display:inline-flex;align-items:center;gap:6px;padding:2px 9px 2px 5px;border-radius:999px;
+  background:rgba(243,230,200,.05);box-shadow:inset 0 0 0 1px rgba(243,230,200,.1);white-space:nowrap}
+.overlay .dialog.roundend .re-pill .who-name{font-weight:500}
+.overlay .dialog.roundend .re-pill .n{font-weight:800;color:var(--cream-2);margin:0}
+.overlay .dialog.roundend .re-pill small{font-size:12px}
+.overlay .dialog.roundend .re-pill.won{background:color-mix(in srgb,var(--c) 26%,transparent);box-shadow:inset 0 0 0 1.5px var(--c);color:var(--ink)}
+.overlay .dialog.roundend .re-pill.won .who-name{font-weight:700}
+.overlay .dialog.roundend .re-pill.won .n{color:var(--ink)}
+.overlay .dialog.roundend .re-none{font-style:normal;align-self:center;margin-right:4px}
+
+/* followers */
+.overlay .dialog.roundend .re-totals{gap:0}
+.overlay .dialog.roundend .re-p{display:grid;grid-template-columns:minmax(76px,auto) minmax(0,1fr) auto;align-items:center;gap:4px 12px;
+  padding:7px 4px;border-bottom:1px solid rgba(243,230,200,.07)}
+.overlay .dialog.roundend .re-p:last-child{border-bottom:0}
+.overlay .dialog.roundend .re-p .nm{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:0;text-transform:none}
+.overlay .dialog.roundend .re-gains,.overlay .dialog.roundend .re-this,.overlay .dialog.roundend .re-this > span{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
+.overlay .dialog.roundend .re-gains{text-align:left}
+.overlay .dialog.roundend .re-g{display:inline-block;padding:1px 8px;border-radius:999px;background:rgba(243,230,200,.06);color:var(--cream-2);font-size:14px;line-height:20px;white-space:nowrap}
+.overlay .dialog.roundend .re-g.re-prize{background:rgba(var(--lamp),.16);color:var(--lamp-ink);font-weight:700}
+.overlay .dialog.roundend .re-g.lost{color:#e5907f}
+.overlay .dialog.roundend .re-g.quiet{background:none;color:var(--muted);padding-left:0}
+.overlay .dialog.roundend .re-f{font-size:22px;font-weight:800;text-align:right;min-width:2ch}
+.overlay .dialog.roundend .re-p[data-me]{background:var(--table-2)}
+.overlay .dialog.roundend .re-p[data-me] .nm{color:var(--lamp-ink)}
+
+/* followers, simplest (Cory, Nov 9 second pass): name, the round's change, the total big */
+.overlay .dialog.roundend .re-p{grid-template-columns:minmax(0,1fr) auto auto!important;grid-template-areas:none!important;gap:14px;padding:6px 6px}
+.overlay .dialog.roundend .re-p > *{grid-area:auto!important}
+.overlay .dialog.roundend .re-p .nm{font-size:17px}
+.overlay .dialog.roundend .re-delta{font-size:15px;color:var(--muted);text-align:right;cursor:help}
+.overlay .dialog.roundend .re-delta.lost{color:#e5907f}
+.overlay .dialog.roundend .re-f{font-size:28px;line-height:1;min-width:3ch}
+/* the lines after the contests (members that answer them, Game End bonuses): plain lines, no boxes */
+.overlay .dialog.roundend .re-final{background:none;box-shadow:none;padding:0 2px;font-size:14px;color:var(--cream-2)}
+.overlay .dialog.roundend .re-final > b:first-child{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-right:6px}
+
+/* the next round */
+.overlay .dialog.roundend .re-nextround{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 12px;border-radius:12px;
+  background:rgba(var(--lamp),.06);box-shadow:inset 0 0 0 1px rgba(var(--lamp),.22);text-align:center}
+.overlay .dialog.roundend .re-nextround p{margin:0}
+.overlay .dialog.roundend .re-nr-head{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:4px 10px;font-size:14px;color:var(--muted)}
+.overlay .dialog.roundend .re-nr-head b{font-family:var(--serif);font-size:19px;color:var(--lamp-ink)}
+.overlay .dialog.roundend .re-snake{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px}
+.overlay .dialog.roundend .re-turn{display:inline-flex;align-items:center;padding:1px 8px 1px 4px;border-radius:999px;background:rgba(243,230,200,.06);font-size:14px;color:var(--cream-2)}
+.overlay .dialog.roundend .re-turn.back::before{content:'↩';margin:0 6px 0 2px;color:var(--muted)}
+.overlay .dialog.roundend .re-turn.back{background:none;padding-left:0}
+.overlay .dialog.roundend .re-turn.back .who-tag{background:rgba(243,230,200,.06);border-radius:999px;padding:1px 8px 1px 4px}
+.overlay .dialog.roundend .re-turn.more{background:none;color:var(--muted)}
+.overlay .dialog.roundend .re-nr-line{font-size:14px;line-height:1.35;color:var(--cream-2)}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* laptop: a contest is one line (rule, every count, prize), so the whole card fits 1270×700 without scrolling */
+@media (min-width:760px){
+  .overlay .dialog.roundend,.overlay .dialog.roundend[data-seats]{max-width:700px}
+  .overlay .dialog.roundend .re-rows > li{grid-template-columns:168px minmax(0,1fr) auto;grid-template-areas:"q counts chip";padding:6px 10px 6px 12px}
+  .overlay .dialog.roundend .re-rows{gap:5px}
+  .overlay .dialog.roundend .re-p{padding:4px 4px;grid-template-columns:110px minmax(0,1fr) auto}
+  .overlay .dialog.roundend h2{font-size:22px}
+  .overlay .dialog.roundend .re-body{gap:8px}
+}
+
+/* phone: the gains drop under the name, the total stays at the right */
+@media (max-width:520px){
+  .overlay .dialog.roundend{padding-left:14px;padding-right:14px}
+  .overlay .dialog.roundend .re-p{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nm f" "gains gains"}
+  .overlay .dialog.roundend .re-p .nm{grid-area:nm}
+  .overlay .dialog.roundend .re-p .re-gains{grid-area:gains}
+  .overlay .dialog.roundend .re-p .re-f{grid-area:f}
+}
+
+/* second pass (Cory, Nov 9: "this is awful"): fewer boxes. Only the winners wear a pill; the rest of the counts are
+   faint plain text, and the next round is plain lines under a rule, not a box */
+.overlay .dialog.roundend .re-pill:not(.won){background:none;box-shadow:none;padding-left:2px;padding-right:4px;opacity:.6}
+.overlay .dialog.roundend .re-nextround{background:none;box-shadow:none;border-top:1px solid var(--rim);border-radius:0;padding:10px 0 0}
+.overlay .dialog.roundend .re-turn,.overlay .dialog.roundend .re-turn.back .who-tag{background:none}

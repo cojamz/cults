@@ -1,0 +1,254 @@
+<title>Color Pairs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral+SC:wght@600&family=Work+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a lookup grid (row color × column color) with the chosen pair read out beside it, then every pair listed. */
+:root{
+  --bg:#f6f4f8; --panel:#ffffff; --fg:#1e1b24; --muted:#6b6577; --line:#dcd7e3; --accent:#5b3f86;
+  --c-red:#c8372d; --c-blue:#2f62c9; --c-white:#f2efe6; --c-silver:#a3a9b3; --c-magenta:#c2307f; --c-yellow:#e2b31f; --c-green:#2e9a52; --c-purple:#6f3fb0;
+  --display:"Spectral SC",Georgia,serif; --body:"Work Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17141c;--panel:#211d28;--fg:#ece8f2;--muted:#a49db0;--line:#3a3445;--accent:#b79be6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17141c;--panel:#211d28;--fg:#ece8f2;--muted:#a49db0;--line:#3a3445;--accent:#b79be6;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+h1{font-family:var(--display);font-size:34px;margin:0;letter-spacing:.02em;text-wrap:balance}
+h2{font-family:var(--display);font-size:22px;margin:0 0 10px;text-wrap:balance}
+p.lead{margin:6px 0 0;color:var(--muted);max-width:68ch}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid rgba(0,0,0,.35);vertical-align:-1px;margin-right:6px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:13px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--accent);margin-right:5px;vertical-align:-1px}
+.dot.strong{background:var(--accent)} .dot.some{background:linear-gradient(90deg,var(--accent) 50%,transparent 50%)} .dot.thin{background:transparent}
+.colors{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.color{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.color b{font-weight:600}
+.color div{color:var(--muted);font-size:13.5px}
+.main{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:1fr}}
+.gridbox{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:12.5px}
+th,td{border:1px solid var(--line);padding:6px;vertical-align:top}
+th{font-weight:600;font-size:12px;white-space:nowrap;text-align:left}
+td.pair{cursor:pointer;line-height:1.3}
+td.pair:hover,td.pair:focus-visible{background:color-mix(in srgb,var(--accent) 12%,transparent);outline:none}
+td.pair.on{background:color-mix(in srgb,var(--accent) 22%,transparent)}
+td.self{color:var(--muted);font-style:italic;background:color-mix(in srgb,var(--fg) 4%,transparent)}
+.read{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+.pick{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+select{font:inherit;padding:5px 8px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
+.rhead{font-family:var(--display);font-size:22px;margin:0}
+.gist{color:var(--accent);font-weight:600;margin:2px 0 10px}
+dl{margin:0;display:grid;gap:8px}
+dt{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+dd{margin:0}
+.all{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
+.card h3{margin:0;font-size:15px}
+.card .gist{margin:2px 0 8px}
+.card dl{gap:6px;font-size:14px}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Color Pairs</h1>
+    <p class="lead">How each two colors can meet at the table, in theory, from their contests and what their spaces do. No current members. Pick a row and a column, or tap a square. Each pair is played from both sides, then what it opens up for new cards. A card still has to work with no other color in the game.</p>
+  </header>
+
+  <section>
+    <h2>The eight colors</h2>
+    <div class="colors" id="colors"></div>
+  </section>
+
+  <div class="legend"><span><i class="dot strong"></i>Strong: the contests pull against each other, or one color's spaces swing the other's contest</span><span><i class="dot some"></i>Some: one side feels it</span><span><i class="dot thin"></i>Thin: they barely touch</span></div>
+
+  <section class="main">
+    <div class="gridbox"><table id="grid"></table></div>
+    <aside class="read" aria-live="polite">
+      <div class="pick"><select id="a" aria-label="First color"></select><span>×</span><select id="b" aria-label="Second color"></select></div>
+      <div id="out"></div>
+    </aside>
+  </section>
+
+  <section>
+    <h2>Every pair</h2>
+    <div class="all" id="all"></div>
+  </section>
+</div>
+
+<script>
+const C=[
+ ["red","Red","Most members of one color (grey counts as a color)","Moves and swaps members between cults and the shop"],
+ ["blue","Blue","Most members","Recruits more often, and controls the shop and the pile"],
+ ["white","White","Fewest members (0 counts)","Turns resources into followers, and casts out its own members"],
+ ["silver","Silver","Fewest silver (0 counts)","Gives silver to rivals, and turns silver into other colors"],
+ ["magenta","Magenta","Most resources","Steals resources, followers and members"],
+ ["yellow","Yellow","Most member colors","Makes any color, and recruits colors it is missing"],
+ ["green","Green","Most minions on green","Copies actions and members' On Recruit abilities"],
+ ["purple","Purple","Went last","Changes turn order: goes last, skips turns, takes extra turns"]
+];
+const N=Object.fromEntries(C.map(c=>[c[0],c[1]]));
+// [a,b,strength,gist,contests,a does to b,b does to a,opens up]
+const P=[
+["red","blue","some","Same shop, different shopping lists",
+ "Both like a big cult, so neither contest hurts the other.",
+ "A swap never changes Blue's member count, so Red can take a Blue player's member of its color and hand back an off-color one without costing Blue its contest. The biggest cult is the best place for Red to shop.",
+ "Clearing every member of one color from the shop, or setting the order of the pile, starves the color Red is collecting.",
+ "Red spaces that reach into the biggest cult. Blue shop-clearing used as a weapon against a one-color plan."],
+["red","white","strong","Red has leftovers, White wants none",
+ "White wants as few members as it can. Red only cares about one color, so it holds members it doesn't need.",
+ "Any way to move a member into a rival's cult (not a swap) hits White twice: one more member, and one Red didn't want. A swap leaves White's count alone.",
+ "Members White casts out go back toward the shop. If they land in the shop, White may be handing Red its color.",
+ "A Red space that moves one of your members into a rival's cult, which mostly stings White. A White way to shed members that lets it choose where they land."],
+["red","silver","thin","They barely touch",
+ "Red counts members and Silver counts silver. Neither moves the other's number.",
+ "Little. Red doesn't hold or move silver.",
+ "Silver has to give silver to someone, and Red doesn't mind holding it and can spend it on members. Red is the safe place to dump silver, which helps Red.",
+ "Only Silver's choice of who to give to. Probably leave this pair thin."],
+["red","magenta","strong","Trade against theft",
+ "Magenta wants resources on hand. Red spends its resources on members, so it holds few.",
+ "Red can swap a stolen member back, or swap an unwanted member onto a Magenta player.",
+ "Stealing one member out of Red's stack drops Red's count by one. It's the cleanest attack on Red. Red's small pile makes it a poor target for resource theft.",
+ "Both colors move members between cults; one asks for nothing back. Theft aimed at the top of a one-color stack, and Red ways to guard it or win it back."],
+["red","yellow","strong","Opposite collections, natural trading partners",
+ "Red wants many of one color, Yellow wants one of each. Grey counts as a color for both.",
+ "Red's spare off-color members are what Yellow lacks, and Yellow's doubles are what Red wants, so one swap can help both: a deal across the table. Red can also take a Yellow player's only member of a color and drop a color from their count.",
+ "Recruiting a missing color from the shop can take the very member Red was waiting for.",
+ "Swaps that reward both sides, or that need the rival to agree. Yellow spaces that trade a double away."],
+["red","green","thin","A copied swap",
+ "Green counts minions on green, Red counts one color. No pull.",
+ "Little.",
+ "Copying the action just taken turns one swap into two, or undoes it.",
+ "Mostly through Green copying. Leave thin."],
+["red","purple","some","The last swap before scoring",
+ "Neither contest touches the other.",
+ "Little.",
+ "Going last lets a player make the final move of the round after Red has set up, and skipping Red's turn can stop a swap before contests are scored.",
+ "Red moves that are strongest at the end of the round, where Purple controls who acts last."],
+["blue","white","strong","Most members against fewest",
+ "Direct opposites.",
+ "Blue drains the shop and is happy to take members off White's hands.",
+ "Every member White gives away or puts back in the shop is one Blue can pick up. White has to choose where its members go: away for good, to a rival who isn't Blue, or into Blue's hands.",
+ "White shedding with a choice of where members land. Blue spaces that recruit what others gave up."],
+["blue","silver","some","Silver's gifts pay for Blue's recruits",
+ "No pull between what they count.",
+ "Blue spends fast, so it keeps its silver low and is a hard rival in Fewest silver.",
+ "Silver has to give silver to someone. A Blue player turns it into members, so dumping on Blue costs them the silver contest but helps them win Most members.",
+ "Silver gifts where who you give to really matters. Blue spaces that let any color pay for a recruit."],
+["blue","magenta","strong","The biggest cult is the best target",
+ "Blue wants members, Magenta wants resources.",
+ "Spending everything every turn is Blue's defense against resource theft. Clearing the shop can deny Magenta recruits.",
+ "Stealing a member costs Blue one in its contest and adds one to the thief's. Blue holds few resources, so resource theft barely touches it.",
+ "Theft that grows with the size of a rival's cult. Spending fast as protection."],
+["blue","yellow","strong","Who controls the shop",
+ "Both want members; Yellow needs only one of each color, Blue wants any.",
+ "Clearing a color from the shop, or setting the order of the pile, keeps Yellow's missing color out of reach.",
+ "Yellow takes the odd colors and leaves Blue the doubles. Little sting.",
+ "Shop control as a weapon. Yellow ways to reach a color the shop doesn't show."],
+["blue","green","some","Borrowing the big recruit",
+ "Green wants its minions on green, so it can't also take Blue's spaces.",
+ "Little.",
+ "Copying an extra-recruit action gives Green a Blue-sized turn without leaving green, and takes members Blue wanted.",
+ "Green as the color that borrows another color's best turn while staying home."],
+["blue","purple","strong","Turns are recruits",
+ "No pull between what they count.",
+ "Little.",
+ "Skipping a Blue player's turn costs them a recruit. Extra turns are extra recruits.",
+ "Purple's skip lands hardest on the color that wins by taking turns."],
+["white","silver","strong","Both want to give things away",
+ "Two Fewest contests. Both often tie at 0.",
+ "White can hand its members to a Silver player, who doesn't mind holding them.",
+ "Silver given to White becomes followers, since White turns resources into followers. Feeding White is a gift, not a sting.",
+ "These two help each other, so the table will see deals and maybe kingmaking. Ways for a player to refuse a gift."],
+["white","magenta","strong","Steal the wrong thing and you help them",
+ "Magenta wants resources on hand. White turns its resources into followers.",
+ "Turning everything into followers leaves White nothing to steal.",
+ "Stealing White's resources right before it cashes them in is the sting. Stealing a member from White helps White, since it lowers their count.",
+ "Theft where the thief has to pick the right thing. Cashing in early as White's defense."],
+["white","yellow","some","Few members, but all different",
+ "Yellow wants about five members of different colors. White wants as few as it can.",
+ "Members White puts back in the shop may be the colors Yellow lacks.",
+ "Little.",
+ "A small cult with every member a different color chases both. A real choice for one player."],
+["white","green","thin","Copying a cash-in",
+ "No pull.",
+ "Little.",
+ "Green can copy White's turn-resources-into-followers spaces.",
+ "Leave thin."],
+["white","purple","some","Cash in last",
+ "No pull.",
+ "Little.",
+ "Going last lets a player shed members or cash in after everyone else. Skipping a White player's turn can leave them holding resources or members at scoring.",
+ "When you shed matters as much as how."],
+["silver","magenta","strong","Every handoff has a winner",
+ "Magenta wants the most resources, Silver wants the least silver.",
+ "Giving silver to a Magenta player helps them, so Silver must give elsewhere.",
+ "Stealing silver from a Silver player helps the Silver player, so Magenta must steal other colors.",
+ "Gifts and theft where the color that moves decides who it helps. The cleanest pair in the game."],
+["silver","yellow","some","Yellow shrugs off gifts",
+ "No pull.",
+ "Silver given to Yellow gets turned into any color, so it barely stings.",
+ "Little.",
+ "Yellow is the hard target for Silver's gifts, so Silver aims elsewhere."],
+["silver","green","thin","Copying a gift",
+ "No pull.",
+ "Little.",
+ "Copying a gift space makes Green give silver too, which helps Green in Fewest silver.",
+ "Leave thin."],
+["silver","purple","strong","The last gift wins",
+ "Fewest silver is decided by whoever moves silver last before scoring.",
+ "Little.",
+ "Going last lets a player give silver away after rivals can't answer. Skipping a Silver player's turn can leave them holding silver at scoring.",
+ "Silver and Purple both live in the last moments before contests are scored."],
+["magenta","yellow","strong","Steal their only one",
+ "Yellow counts colors, Magenta counts resources.",
+ "Stealing a Yellow player's only member of a color drops a color from their count. Yellow also holds many colors of resources, an easy target.",
+ "Making any color lets Yellow rebuild fast after a theft.",
+ "Theft aimed at the single member of a color."],
+["magenta","green","some","Copying a steal",
+ "No pull.",
+ "Little.",
+ "Copying the action just taken steals a second time, possibly from the thief.",
+ "Green as the answer to a thief: copy the steal and point it back."],
+["magenta","purple","strong","Steal at the last moment",
+ "Most resources is counted when the round ends.",
+ "Little.",
+ "Going last lets a thief steal after everyone has stopped spending, right before scoring. Skipping the thief's turn stops it.",
+ "Theft that is stronger the later in the round it happens."],
+["yellow","green","some","A varied cult is the best menu",
+ "No pull.",
+ "Little.",
+ "Copying a rival member's On Recruit: a Yellow cult has the most different abilities to choose from.",
+ "Green copying from the most varied cult at the table."],
+["yellow","purple","thin","The last missing color",
+ "No pull.",
+ "Little.",
+ "Going last can take the last member of a color from the shop.",
+ "Leave thin."],
+["green","purple","strong","Order decides what gets copied",
+ "Green counts minions on green, Purple counts who went last. Both are about placing minions.",
+ "Little.",
+ "Copying the action just taken depends on who went right before you, and Purple controls the order. Going last lets a player copy the best action of the round.",
+ "Copying and turn order work as one system. A space that copies the last action of the round."]
+];
+const key=(a,b)=>[a,b].join("|");
+const M={};P.forEach(p=>{M[key(p[0],p[1])]={a:p[0],b:p[1],s:p[2],g:p[3],c:p[4],ab:p[5],ba:p[6],o:p[7]};M[key(p[1],p[0])]=M[key(p[0],p[1])]});
+const sw=c=>`<i class="sw" style="background:var(--c-${c})"></i>`;
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+document.getElementById("colors").innerHTML=C.map(c=>`<div class="color">${sw(c[0])}<b>${c[1]}</b><div>Contest: ${c[2]}</div><div>Its spaces: ${c[3]}</div></div>`).join("");
+let html="<tr><th></th>"+C.map(c=>`<th>${sw(c[0])}${c[1]}</th>`).join("")+"</tr>";
+for(const r of C){html+=`<tr><th>${sw(r[0])}${r[1]}</th>`;for(const c of C){if(r[0]===c[0]){html+=`<td class="self">${r[2]}</td>`;continue}const m=M[key(r[0],c[0])];html+=`<td class="pair" tabindex="0" data-a="${r[0]}" data-b="${c[0]}"><i class="dot ${m.s}"></i>${esc(m.g)}</td>`}html+="</tr>"}
+const grid=document.getElementById("grid");grid.innerHTML=html;
+const body=(m,a,b)=>{const ab=m.a===a?m.ab:m.ba,ba=m.a===a?m.ba:m.ab;return `<dl><dt>The contests</dt><dd>${esc(m.c)}</dd><dt>${N[a]} against ${N[b]}</dt><dd>${esc(ab)}</dd><dt>${N[b]} against ${N[a]}</dt><dd>${esc(ba)}</dd><dt>Opens up</dt><dd>${esc(m.o)}</dd></dl>`};
+const A=document.getElementById("a"),B=document.getElementById("b"),out=document.getElementById("out");
+[A,B].forEach(s=>s.innerHTML=C.map(c=>`<option value="${c[0]}">${c[1]}</option>`).join(""));
+function show(a,b){A.value=a;B.value=b;grid.querySelectorAll("td.on").forEach(t=>t.classList.remove("on"));
+ if(a===b){const c=C.find(x=>x[0]===a);out.innerHTML=`<p class="rhead">${sw(a)}${c[1]}</p><p class="gist">Pick a second color.</p><dl><dt>Contest</dt><dd>${c[2]}</dd><dt>Its spaces</dt><dd>${c[3]}</dd></dl>`;return}
+ const m=M[key(a,b)];grid.querySelector(`td[data-a="${a}"][data-b="${b}"]`)?.classList.add("on");
+ out.innerHTML=`<p class="rhead">${sw(a)}${N[a]} × ${sw(b)}${N[b]}</p><p class="gist"><i class="dot ${m.s}"></i>${esc(m.g)}</p>${body(m,a,b)}`}
+grid.addEventListener("click",e=>{const t=e.target.closest("td.pair");if(t)show(t.dataset.a,t.dataset.b)});
+grid.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){const t=e.target.closest("td.pair");if(t){e.preventDefault();show(t.dataset.a,t.dataset.b)}}});
+A.addEventListener("change",()=>show(A.value,B.value));B.addEventListener("change",()=>show(A.value,B.value));
+show("blue","white");
+const order={strong:0,some:1,thin:2};
+document.getElementById("all").innerHTML=[...P].sort((x,y)=>order[x[2]]-order[y[2]]).map(p=>{const m=M[key(p[0],p[1])];return `<div class="card"><h3>${sw(p[0])}${N[p[0]]} × ${sw(p[1])}${N[p[1]]}</h3><p class="gist"><i class="dot ${m.s}"></i>${esc(m.g)}</p>${body(m,p[0],p[1])}</div>`}).join("");
+</script>

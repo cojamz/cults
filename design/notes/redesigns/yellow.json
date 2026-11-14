@@ -1,0 +1,92 @@
+{
+  "color": "Yellow",
+  "id": "yellow",
+  "slots": [
+    {
+      "current": {
+        "name": "Melting Pot",
+        "text": "+2 yellow, and +1 of each color among your members.",
+        "why weak (one line)": "Six resources in round II beside Housewarming's free member; Caravan's full set again; nobody notices it."
+      },
+      "options": [
+        {
+          "name": "Full House",
+          "text": "+2 followers per full set you hold. +2 yellow.",
+          "moment": "Round III: Makeover makes 6 full sets, then Full House pays 12 followers and you keep the sets.",
+          "ties": "Full sets, the full-sets contest, followers; a Counterfeiters target.",
+          "risk": "Cory set Melting Pot's rule himself on Nov 5."
+        },
+        {
+          "name": "Keep Melting Pot",
+          "text": "+2 yellow, and +1 of each color among your members.",
+          "moment": "Round II, members in 4 colors: +2 yellow and one of each, a full set.",
+          "ties": "Members of many colors; Dabblers gives one of everything.",
+          "risk": ""
+        }
+      ],
+      "pick": "Full House",
+      "pickWhy": "The only space paying Yellow's own goal; round III 8 to 12 followers versus Melting Pot's 6 resources."
+    },
+    {
+      "current": {
+        "name": "New Blood",
+        "text": "+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 yellow in round I, +3 in round II, +4 in round III.",
+        "why weak (one line)": "Gather's shape with Guest Book's and Housewarming's trigger; usually just +2 by round III."
+      },
+      "options": [
+        {
+          "name": "Keep New Blood",
+          "text": "+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 yellow in round I, +3 in round II, +4 in round III.",
+          "moment": "Round I, first member: +2, recruit a red member, +2 more; 6 with Guest Book.",
+          "ties": "Members of a new color; pays when resources are scarcest.",
+          "risk": "Same trigger as Guest Book and Housewarming."
+        }
+      ],
+      "pick": "keep",
+      "pickWhy": "Every replacement was refused before or a twin; it pays early, when Survey and Full House don't."
+    },
+    {
+      "current": {
+        "name": "Survey",
+        "text": "+1 yellow per minion on the busiest color's spaces. +1 yellow.",
+        "why weak (one line)": "Pays 2 early and 7 late; you wait and take yellow, nobody reacts."
+      },
+      "options": [
+        {
+          "name": "Keep Survey",
+          "text": "+1 yellow per minion on the busiest color's spaces. +1 yellow.",
+          "moment": "Round III, last turn, Red's 6 spaces full: 7 yellow.",
+          "ties": "Reads every player's minions on the wheel.",
+          "risk": "Still feels small when taken early."
+        }
+      ],
+      "pick": "keep",
+      "pickWhy": "Cory's own rule from Nov 5; every alternative was refused, tiny, or Harvest that waits."
+    },
+    {
+      "current": {
+        "name": "Seamstress",
+        "text": "On Use, once per game: double your full sets.",
+        "why weak (one line)": "After Makeover it adds 24 resources and the +10 contest: three times any round III space."
+      },
+      "options": [
+        {
+          "name": "Seamstress, capped",
+          "text": "On Use, once per game: double your full sets, at most 3 more.",
+          "moment": "Round III, 3 sets each with a rival: double to 6, take the +10 contest alone.",
+          "ties": "Full sets and the full-sets contest.",
+          "risk": "With Makeover and Full House: 18 followers, three cards."
+        },
+        {
+          "name": "Keep Seamstress",
+          "text": "On Use, once per game: double your full sets.",
+          "moment": "Round III after Makeover: 6 sets become 12, +24 resources and the +10.",
+          "ties": "Full sets and the full-sets contest.",
+          "risk": "About 30 followers' worth in one turn: breaks."
+        }
+      ],
+      "pick": "Seamstress, capped",
+      "pickWhy": "Same usual turn; the Makeover top case drops from about 30 to about 12."
+    }
+  ]
+}

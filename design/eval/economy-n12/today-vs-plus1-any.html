@@ -1,0 +1,37 @@
+<title>Today vs +1 Any</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap">
+<style>
+/* one table: what the judges felt, which price won each line */
+:root{--bg:#f6f5f2;--fg:#1d1b22;--mute:#615d6b;--line:#dcd8e2;--head:#ebe8f0;--accent:#6b3fa0;--good:#2f7d4f;
+--display:"Space Grotesk",system-ui,sans-serif;--body:Inter,system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17151c;--fg:#ece9f2;--mute:#a49fae;--line:#35303d;--head:#231f2a;--accent:#b98ce8;--good:#6cc392;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17151c;--fg:#ece9f2;--mute:#a49fae;--line:#35303d;--head:#231f2a;--accent:#b98ce8;--good:#6cc392;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--display);font-size:1.6rem;margin:0 0 6px;text-wrap:balance}
+p{max-width:65ch;margin:0 0 10px;color:var(--mute)}
+.wrap{overflow-x:auto;margin:16px 0 8px;border:1px solid var(--line);border-radius:6px;max-width:640px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:center}
+th{background:var(--head);font-family:var(--display);font-weight:500;font-size:.8rem;color:var(--mute)}
+th:first-child,td:first-child{text-align:left}
+tr.total td{font-weight:700;font-family:var(--display)}
+.win{color:var(--good);font-weight:700}
+.cost{color:var(--accent)}
+</style>
+<h1>Today vs +1 any, 10 deals</h1>
+<p>Only member prices change. <span class="cost">Today</span>: Purists ("Round End: if your members have 2 or fewer colors, +3 followers.") costs 3 red + 3 any. <span class="cost">+1 any</span>: 3 red + 4 any. Spaces give what they print, and each space's +1 goes to its first player.</p>
+<p>10 fresh deals, each played by bots at both prices. One judge per deal (taking turns: one judging as you, one seasoned worker-placement player, one casual friend) read both games without being told which was which and said which felt better on each line. Which game they read first was switched every other deal; the game read first won only 2 of 10.</p>
+<div class="wrap"><table>
+<thead><tr><th>What the judges looked at</th><th>Today better</th><th>+1 any better</th><th>Same</th></tr></thead>
+<tbody>
+<tr class="total"><td>Overall, which game they'd rather play</td><td class="win">7</td><td>3</td><td>0</td></tr>
+<tr><td>Close race</td><td class="win">7</td><td>3</td><td>0</td></tr>
+<tr><td>Different plans compete</td><td class="win">6</td><td>2</td><td>2</td></tr>
+<tr><td>Real choices on your turn</td><td class="win">4</td><td>1</td><td>5</td></tr>
+<tr><td>Game feels big</td><td class="win">4</td><td>0</td><td>6</td></tr>
+<tr><td>Resources worth fighting for</td><td>2</td><td>2</td><td>6</td></tr>
+<tr><td>Members feel planned</td><td>4</td><td class="win">6</td><td>0</td></tr>
+<tr><td>Easy to follow every cult</td><td>1</td><td class="win">7</td><td>2</td></tr>
+</tbody></table></div>
+<p>Of the 10 overall picks, 4 were "clearly" (2 each way) and 6 were "slightly".</p>

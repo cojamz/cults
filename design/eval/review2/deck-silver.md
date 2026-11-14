@@ -1,0 +1,35 @@
+# Silver: the live 10-card deck and spaces (Nov 8)
+
+- space (round I) **Toast**: "+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III."
+  - Cory's mark: fine: I like, it’s good.
+- space (round I) **Polish**: "Turn 2 of your silver into 4 of any colors."
+  - Cory's mark: weak: this feels off
+- space (round I) **Party Gifts**: "Give rivals up to 3 silver from the bank, split as you choose. +2 followers per silver you give."
+  - Cory's mark: fine: haven’t played it with the contest, maybe it makes that fun
+- space (round II) **Sweet Nothings**: "+3 silver. Give rivals up to 3 of your silver, split as you choose: +2 of any colors each."
+  - Cory's mark: weak: weird honestly
+- space (round II) **Sweet Talk**: "+3 silver. Then turn as many of your silver as you want into other colors."
+  - Cory's mark: weak: too close to yellow
+- space (round III) **Largesse**: "Give rivals 12 silver from the bank, split as you choose. +10 followers."
+  - Cory's mark: star: i think this is rather good at the moment
+- member (price 7) **Godparent**: "On Use, once per game: give one of your members to a rival. Gain followers equal to its cost."
+  - Cory's mark: weak: more a White card
+- member (price 7) **Caterer**: "Whenever you gift silver, +2 silver."
+  - Cory's mark: weak: i don’t like
+- member (price 5) **Guest of Honor**: "On Use, once per round: give a rival one of your members. +4 followers."
+  - Cory's mark: weak: should be white
+- member (price 5) **Toastmaster**: "Whenever you take a Silver space, +1 follower."
+  - Cory's mark: fine: maybe. just boring but maybe a nice extra way to get points
+- member (price 11) **Debutantes**: "On Use, once per game: double your silver. Each rival +2 silver."
+  - Cory's mark: weak: with the new competition, straight up shouldn’t be in the deck. i’m realizing now we should designed more from the competitions
+- member (price 12) **Smooth Talkers**: "Your silver pays for any color."
+  - Cory's mark: star: Actually quite a good way to help get rid of silver and pursue non silver strategy. redundant with alchemists though. but can just allow two players to do that
+- member (price 9) **Debt Collectors**: "On Use, once per round: each rival gives you 2 silver, if they have it."
+  - Cory's mark: weak: counter to the competition
+- member (price 9) **High Society**: "Whenever a rival takes a Silver space, +1 follower."
+  - Cory's mark: fine: 
+- member (price 10) **Ballroom Dancers**: "On Use, once per game: +2 followers per minion on Silver spaces."
+  - Cory's mark: fine: It’s ok, not as in love as i once was. feels like it can be a lot of points really easily
+- member (price 6) **Kingmakers**: "Round End: give a rival 3 silver from the bank. +3 followers."
+  - Cory's mark: star: I like this a lot.
+- member (price 8) **Patron Saints**: "Game End: +1 follower per silver member, anyone’s."

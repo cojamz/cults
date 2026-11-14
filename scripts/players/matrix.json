@@ -1,0 +1,17 @@
+{
+  "note": "12 games after the pilot (Cory, Nov 12: 'I want to see a game first, but then, yeah, 12 game set'). Each of the 8 live colors appears 4-5 times; every table mixes experienced and new players.",
+  "games": [
+    { "id": "g01", "colors": ["red", "purple", "silver", "yellow"], "kinds": ["exp", "new", "exp", "new"] },
+    { "id": "g02", "colors": ["market", "thieves", "trading", "echo"], "kinds": ["new", "exp", "new", "exp"] },
+    { "id": "g03", "colors": ["red", "thieves", "yellow", "echo"], "kinds": ["exp", "exp", "new", "new"] },
+    { "id": "g04", "colors": ["purple", "silver", "market", "trading"], "kinds": ["new", "new", "exp", "exp"] },
+    { "id": "g05", "colors": ["red", "market", "echo"], "kinds": ["exp", "new", "exp"] },
+    { "id": "g06", "colors": ["purple", "thieves", "trading"], "kinds": ["new", "exp", "new"] },
+    { "id": "g07", "colors": ["silver", "yellow", "echo"], "kinds": ["exp", "new", "new"] },
+    { "id": "g08", "colors": ["red", "trading", "yellow"], "kinds": ["new", "exp", "exp"] },
+    { "id": "g09", "colors": ["silver", "thieves"], "kinds": ["exp", "new"] },
+    { "id": "g10", "colors": ["purple", "market"], "kinds": ["new", "exp"] },
+    { "id": "g11", "colors": ["yellow", "trading"], "kinds": ["exp", "new"] },
+    { "id": "g12", "colors": ["echo", "silver"], "kinds": ["new", "exp"] }
+  ]
+}

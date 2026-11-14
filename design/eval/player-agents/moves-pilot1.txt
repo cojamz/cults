@@ -1,0 +1,537 @@
+[1] Ava: White's artifact: White Cloak — Whenever you buy followers, +2 white.
+   White Cloak pays +2 white on every follower purchase, even a 1-resource buy, so it pays out on nearly every turn I don't take a member. That beats Yellow's few new-color triggers or Magenta's need to keep stealing. It also feeds the white I can later turn into followers with Cash In.
+   FEEL: Picking first as the last seat feels like a fair trade, but White Cloak looks clearly ahead of the others, since it pays every time I buy followers and the rest need conditions.
+[2] Ben: Yellow's artifact: Yellow Cloak — Whenever you recruit a member of a color none of your members have, +2 yello
+   The Yellow Cloak pays +2 yellow every time I recruit a member in a new color, and grey counts as a color, so that could be four or five triggers over the game. It also pushes me toward many member colors, which is exactly what the Yellow contest scores. Magenta and Purple felt more tied to specific spaces that rivals can block.
+   FEEL: Picking a cloak before seeing the shop felt like a blind guess, though the Yellow Cloak at least seems flexible.
+[3] Dee: Magenta's artifact: Magenta Cloak — Whenever you steal, +2 magenta.
+   Magenta Cloak adds +2 magenta to every steal, and steals are spread across all three rounds: Help Yourself, Heist, Swindle and Poach, plus members like Accomplice and Extortionist. Each steal both grows my pile toward the most-resources contest and shrinks a rival's. Purple Cloak only pays when I take the Goes Last token, and the other three will likely fight over that token, so I'm leaving it to Cal.
+   FEEL: The last cloak pick being a straight two-way choice felt clean; both options are clearly tied to a plan, so it didn't feel like getting leftovers.
+[4] Cal: Purple · Sleep In → you'd get: +6 purple
+   Sleep In gives me 4 purple plus 2 from my Purple Cloak, 7 purple in all. That lets me buy Picket Line (worth 3, and it pays me purple whenever a rival takes a Purple space) this same turn. It also puts me in line to win the Went Last contest unless someone takes the token from me with On a Roll.
+   FEEL: The Purple Cloak lining up with Sleep In on the very first placement feels like a satisfying combo right away.
+[5] Cal: Recruit Picket Line [3 purple + 3 any; you pay 6 (3 purple + 3 any); worth 3] — Whenever a rival takes a Purpl
+   Picket Line is the plan: worth 3 followers, it gives Yellow-contest presence, and it pays me +1 purple every time a rival takes a Purple space for the rest of the game. Buying 5 followers is 2 more right now, but Picket Line's income should beat that over three rounds. The cost is my Magenta lead and a share of the Fewest Members tie, so I'm watching Dee's steals.
+   FEEL: Spending nearly all my resources on one engine card this early feels like a real commitment, and that tension is nice.
+[6] Cal: Pay 6 purple (suggested)
+   Paying 6 purple for Picket Line as planned, which leaves me 1 purple. The 3 followers it's worth plus +1 purple each time a rival takes a Purple space should pay off over three rounds.
+[7] Dee: Magenta · Help Yourself → you'd get: +0..1 yellow, +3 magenta, +0..1 white, +0..1 purple; rivals together -1..
+   Magenta's most-resources contest is my natural fight. Help Yourself now guarantees its fresh +1, and with the cloak it nets 4 resources while taking 1 from a rival, versus 3 from Stash. Ben or Ava would likely grab it before my double turn anyway. Stash and the White piles stay open for my Dee-Dee turns to keep stacking my pile.
+   FEEL: Help Yourself growing with each minion placed makes me want to hold it for late, but the first-taker +1 and the risk of a rival grabbing it pull me to take it now; that tug feels like a real decision.
+[8] Dee: Cal's purple (1)
+   Cal is already ahead at 4 followers with Picket Line, so his purple is the one that matters: it slows his path to Latecomers or Timekeeper and keeps him off my resource count. Ava's white and Ben's yellow are just single coins with no plan behind them yet.
+[9] Dee: Pass (recruit nothing)
+   I lead the most-resources contest with 5 against 1, 1 and 0, but Ava and Ben each still have three placements, and Stash, Catch Up and Harvest are open, so every resource I hold matters for the +4. Dabblers would also cost me my share of the fewest-members tie, and buying followers 1:1 just trades a contest lead for the same number of followers. I'll hold everything and build the pile on my double turn.
+   FEEL: Passing my recruit felt right but a little flat: in round I the most-resources contest makes nearly every buy feel like shooting my own lead.
+[10] Ben: Yellow · Harvest → you'd get: +0..3 yellow, +0..3 magenta, +0..2 white, +0..2 purple; then you choose: Harvest
+   Harvest as 3 white gives me 1 yellow + 3 white, so next turn New Blood (+2 yellow) lets me buy Anchorites (3 white + 3 any): +5 followers every round end, plus New Blood's +3 yellow and my Yellow Cloak's +2. Dabblers is my fallback if Ava grabs Anchorites.
+   FEEL: Starting with a single resource and every member costing 5+ makes the first turn feel like pure setup, though planning a two-turn combo with New Blood and the cloak is satisfying.
+[11] Ben: +1 white
+   First of three white picks for my plan: 3 white plus my 1 yellow, then New Blood's +2 yellow covers Anchorites (3 white + 3 any). New Blood then adds +3 yellow and the Yellow Cloak adds +2.
+[12] Ben: +1 white
+   Second white of three for Anchorites (3 white + 3 any); after this I'll hold 1 yellow + 2 white, then the last pick makes 3 white.
+[13] Ben: +1 white
+   Third white completes the plan: 1 yellow + 3 white now, then New Blood's +2 yellow covers Anchorites (3 white + 3 any) next turn, with New Blood's +3 yellow and the Yellow Cloak's +2 on top. Ava holds 1 white and could take Anchorites first, so Dabblers stays my fallback.
+[14] Ben: Pass (recruit nothing)
+   I'm keeping all 4 resources. Next turn New Blood's +2 yellow lets me afford Anchorites (3 white + 3 any). Spending even 1 now on a follower would break that, and it also keeps me close to Dee (5) in the Most resources race.
+[15] Ava: Magenta · Catch Up → you'd get: +5 magenta
+   Catch Up pays +5 magenta right now, since Dee and Ben both hold more than me, and it takes me to 6 resources and the lead in the Most resources contest. I also have back-to-back turns, so I can stack another space next. Then I'll use my recruit on single-follower buys, which with the White Cloak return more than they cost.
+   FEEL: Catch Up paying +5 to the player who is behind feels good. Sitting last with almost nothing turned into the strongest opening space.
+[16] Ava: Buy followers: 1 of anything, pay 1 get +1
+   Buying 1 follower costs 1 resource and the White Cloak gives back 2 white, so I go to 2 followers and 7 resources. That keeps my Most resources lead over Dee (5) and Ben (4). Buying 5 converts the same total value but drops me to 3 resources and hands the magenta contest to Dee or Ben. Staying at 0 members also keeps my share of Fewest members.
+   FEEL: A 1-for-1 follower buy that leaves me richer than before feels almost too good. The White Cloak turns the weakest recruit into a money printer.
+[17] Ava: Pay 1 white (suggested)
+   Total resources are the same either way for the Most resources contest. I'll pay the 1 white and keep my 5 magenta intact; the White Cloak refunds 2 white anyway, which leaves me at 7 resources and still ahead of Dee.
+[18] Ava: Purple · On a Roll → you'd get: +4 purple; rivals together 1 purple
+   On a Roll on my second turn in a row pays +4 purple, the best gain on the board, and it takes the Goes Last token from Cal. My last minion then waits until the end, so I should win Went last for +4. It also takes me to 11 resources, which pads my Most resources lead over Dee (5). The risk I'm watching is Dee: she could take Right Away and recruit Latecomers to grab the token back, and Cal gets +1 purple from Picket Line either way.
+   FEEL: Taking the Goes Last token right out from under Cal with a big payout feels sharp and exciting, though the way it shuffles Cal's waiting minions back into the turn order takes a moment to picture.
+[19] Ava: Buy followers: 1 of anything, pay 1 get +1
+   I'll buy 1 follower again: pay 1 and the White Cloak refunds 2 white, so I go to 3 followers and 12 resources. That pads my Most resources lead against Ben, who could reach about 10 with Stash plus Nest Egg. Any member would cost 5-6 resources and also lose my share of Fewest members, so I'm passing on Latecomers even though Dee could use it to grab the token.
+   FEEL: Repeating the same 1-follower buy because it nets resources feels a bit degenerate; the other choices barely compete.
+[20] Ava: Pay 1 purple (suggested)
+   My total stays the same whichever color I pay, so the Most resources lead holds at 12. Paying purple leaves me 3 purple, still enough for Latecomers or Timekeeper. White climbs to 4 after the White Cloak refund, which covers Anchorites' 3 white next round.
+[21] Ben: Yellow · New Blood → you'd get: +2 yellow
+   Sticking to the plan: New Blood's +2 yellow gives me 3 yellow + 3 white, enough for Anchorites (3 white + 3 any). As a new member color it also triggers New Blood's +3 yellow and my Yellow Cloak's +2, and Anchorites pays +5 followers this round end. Survey would leave me with more resources now but no bonuses, so New Blood comes out well ahead.
+   FEEL: Watching a two-turn setup come together exactly as planned feels great, especially since Ava holding white made it feel tense.
+[22] Ben: Recruit Anchorites [3 white + 3 any; you pay 6 (3 white + 3 any); worth 1] — Round End: if you have 5 or fewer
+   This is the payoff of my plan. Anchorites takes all 6 of my resources (3 white + 3 any), then New Blood's +3 yellow and the Yellow Cloak's +2 hand me back 5 yellow. It pays +5 followers at this round end and ties me with Cal on member colors in Yellow. Joining the White fewest-members tie would only have been worth a split share, so +5 every round easily beats it.
+   FEEL: Paying everything and getting 5 yellow straight back from New Blood and the cloak feels like a neat little engine clicking into place.
+[23] Ben: Pay 3 yellow, 3 white (suggested)
+   Paying 3 yellow + 3 white for Anchorites. That's the only way I can pay, and it completes the plan; New Blood's +3 yellow and the Yellow Cloak's +2 refill me right after.
+[24] Dee: White · Modest Means → you'd get: +4 white
+   Modest Means pays 4 white because Ben and Cal each have a member, and it puts me at 9 resources against Ava's 12. That keeps the most-resources fight alive. I can recruit Accomplice this turn to steal 3 from Ava, which would make it 9 against 9, and Survey or Stash is still there for my last minion. Ava has the final placement on the Goes Last token, so I need to be clearly ahead before she moves.
+   FEEL: Ava sits on the Goes Last token and gets to answer every contest last, so chasing her resource lead feels like racing someone who always gets the final word.
+[25] Dee: Buy followers: 5 of anything, pay 5 get +5
+   Ava places the round's last minion with Goes Last, so even if I tie her at 9 she answers with Stash or Nest Egg, and Magenta's +4 is a stretch. Accomplice nets me about +1 follower and costs my half of the fewest-members contest. Turning 5 resources into 5 followers now beats both, and it keeps my 0 members for the White split.
+   FEEL: Realising the most-resources contest is basically decided by whoever holds Goes Last made my whole round-I pile feel like it was building toward nothing.
+[26] Dee: Pay 1 magenta, 4 white
+   I'm spending the white and keeping 3 magenta and 1 purple. Magenta pays for Accomplice or Extortionist and their steals with my cloak, and the lone purple brings me closer to Latecomers or Timekeeper next round. White does nothing for my plan, since I'm not chasing Downsizers.
+[27] Cal: Yellow · Survey → you'd get: +4 yellow
+   I have two turns in a row. My plan is Survey now (+4 yellow), then Stash (+3 magenta) next turn, then recruit Accomplice. Accomplice steals 3 resources and gives me a second member color, which should take the Yellow contest from Ben, and I'd still carry resources into round II. That looks better than just converting about 8 resources into 8 followers. Ava's Goes Last token means I can't win Went Last this round.
+   FEEL: Losing the Goes Last token to Ava's On a Roll right after I built around it stung, but my Picket Line paid me for it, which softened the blow nicely.
+[28] Cal: Pass (recruit nothing)
+   I'm sticking to the plan: Stash next turn for +3 magenta, then Accomplice (2 magenta + 3 any) to steal 3 and add a second member color, which takes the Yellow contest from Ben. Buying followers now at 1:1 gains nothing over doing it later, and keeping the yellow keeps my options open for round II.
+[29] Cal: Magenta · Stash → you'd get: +3 magenta
+   Sticking with the plan: Stash for +3 magenta, then recruit Accomplice by paying 2 magenta and 3 yellow, and steal 3 from Ava. That gives me two member colors, so I take the Yellow contest lead from Ben for +4. Right Away into Latecomers is worth 2 followers, but purple adds no new color and Ava still places last.
+   FEEL: Being able to set up a two-turn plan through the snake turn order and have it actually come together feels good.
+[30] Cal: Recruit Accomplice [2 magenta + 3 any; you pay 5 (2 magenta + 3 any); worth 1] — On Recruit: steal 3 resources
+   Sticking to the plan: Accomplice for 2 magenta + 3 yellow. It is worth 1, steals 3 resources (I'll take them from Ava, who leads Magenta), and gives me a second member color, so I take the Yellow lead from Ben for +4 unless his last minion adds a new color. Dabblers is worth 2, but '2 wild members' is unclear for the colors contest, and the steal is worth more.
+   FEEL: Dabblers' 'counts as 2 wild members' confused me: I couldn't tell whether 'wild' means wild colors for the Yellow contest or just bulk for the member count.
+[31] Cal: Pay 3 yellow, 2 magenta (suggested)
+   Paying 3 yellow and 2 magenta keeps one of each of yellow, magenta and purple. The spare purple keeps purple members like Latecomers and Timekeeper within reach next round, and my total for the Magenta contest is the same whichever way I pay.
+[32] Cal: Ava's purple (3)
+   Ava is the real threat. She holds 12 resources, places the last minion and leads Magenta, so I'm draining her. I'll start with her purple, which also sets me up for Latecomers or Timekeeper in round II.
+   FEEL: Choosing a victim one resource at a time across several rivals is a nice little tactical puzzle.
+[33] Cal: Ava's white (4)
+   I'm still draining Ava, the leader with the most resources. I'll take her white now and plan to take a second white next. That drops her below the 3 white she needs for Martyrs or Downsizers before her last turn, and it narrows her Magenta lead either way.
+[34] Cal: Ava's white (3)
+   Finishing the plan: I take Ava's second white, which drops her to 2 white. That keeps Martyrs and Downsizers (3 white each) out of reach on her last turn. Either way it trims her resource lead, though she still wins Magenta comfortably.
+[35] Dee: White · Nest Egg → you'd get: +3 white
+   Ava places the round's last minion, so Magenta's +4 is out of reach. Right Away does nothing on my last minion except feed Cal's Picket Line a purple. Nest Egg's +3 white is the biggest gain left, puts me at 7 resources for buying followers or a round-II member, and keeps Ben off the space.
+   FEEL: Right Away on my final minion of the round is a dead option, and it even pays a rival through Picket Line, so it felt like filler on the list.
+[36] Dee: Buy followers: 5 of anything, pay 5 get +5
+   My placements are done, Magenta's +4 is out of reach, and Ava places the round's last minion. If I stay at 0 members I keep half of the fewest-members prize, worth 2. Buying 5 followers gives +5 now plus that 2, against Martyrs' worth of 3 and losing the split. The Martyrs plus Farewell combo is tempting, but with the most followers I go last in round II and probably won't reach Farewell first.
+   FEEL: Martyrs with Farewell looks like a juicy combo, but going last as the leader in round II made it feel too risky to set up now, which was a little frustrating.
+[37] Dee: Pay 2 magenta, 3 white
+   Magenta's +4 is already Ava's, so all that matters is what I carry into round II. Paying 2 magenta and 3 white keeps 1 magenta and 1 purple. That leaves me a start toward Accomplice or Extortionist for my cloak's steals, and toward Latecomers or Timekeeper. White is the color I need least.
+[38] Ben: White · Splurge → you'd get: +2 white
+   This is my last minion and Ava places after me, so Right Away's extra turn does nothing for me. Splurge gives the same +2 resources, and it also pays +2 followers if I recruit Dabblers (5 any) this turn. Dabblers would also trigger my Yellow Cloak (grey as a new color) and might tie Cal for member colors. I'll weigh that against simply buying 5 followers.
+   FEEL: Right Away being useless on my final minion made the choice feel thinner than two options suggest.
+[39] Ben: Recruit Purifiers [6 any; you pay 6 (6 any); worth 1] — On Use, once per game: discard one of your members. Ea
+   Purifiers (6 any) with Splurge pays +3 followers. It's worth 1 and is grey, a new color, so the Yellow Cloak gives +2 yellow back. It also ties Cal at 2 member colors for a split +2 in Yellow, about +6 in all. Dabblers comes to about the same, but it counts as 2 members, which eats into Anchorites' 5-member cap and the White contest. Buying 5 followers gives only +5 and nothing lasting.
+   FEEL: Splurge plus the cloak refund makes buying a mediocre member feel better than buying followers outright, a nice stacking moment.
+[40] Ben: Pay 5 yellow, 1 white (suggested)
+   Pay with 5 yellow and 1 white. The Yellow Cloak hands 2 yellow back, so I end with 2 yellow + 1 white. Either way I keep 3 resources, but holding a white is a start toward Martyrs or Downsizers next round.
+[41] Ben: Pass (recruit nothing)
+   Purifiers would only cost me a member right now. Cal ties me at 2 and Ava and Dee have 0, so no rival has more members than me and nobody else would discard. I'll keep it for a later round when someone bloats their cult.
+   FEEL: Purifiers feels like a card that does nothing until rivals outgrow me, so holding it is a waiting game.
+[43] Ava: Buy followers: 5 of anything, pay 5 get +5
+   This is the last recruit of round I and nobody can move after me. Buying 5 takes me from 11 to 8 resources after the White Cloak refund, which still beats Cal's 7 for Most resources. It turns 5 resources into followers with one recruit, against only 1 if I buy a single follower. I stay at 0 members, so I keep my half of Fewest members with Dee, and Went last is already mine.
+   FEEL: Ending round I on track to sweep or share three of four contests from a near-empty start feels strong, maybe too strong for one cloak plus Catch Up.
+[44] Ava: Pay 4 magenta, 1 purple — spending this gives up your contest lead in magenta
+   My total comes out the same whichever colors I pay, so I'm keeping the white and purple that member costs use and spending magenta. I end at 6 resources plus the White Cloak's 2 white, so 8, which should still beat Cal's 7 for Most resources. I think the warning only counts the payment and not the refund.
+## Round I ends. Went last: Ava +4 · Most resources: Ava +4 · Most member colors: Cal +4 · Fewest members: Ava & Dee +2
+   FEEL: The 'gives up your contest lead' warning on every payment option confused me, because it seems to ignore the White Cloak refund that lands right after, and I had to recount to trust my own math.
+NOTES Cal: In round I I built around purple: Purple Cloak plus Sleep In, then Picket Line. After that I used the Survey/Stash snake double-turn to land Accomplice, which took the Yellow contest and drained Ava's white. The combos felt good, but losing Goes Last to Ava's On a Roll showed me that Went Last is very easy to contest, and Picket Line only softens that. The big lesson is that Ava and Dee sit at 0 members and still lead (18 and 13 followers vs my 9). Fewest Members plus followers bought with resources seems to outscore members early, so a member has to earn its keep. Round II contests pay +6, so I should aim for two contests at once and keep resources high for Magenta, while watching Ava, who goes last in turn order and holds White.
+[45] Cal: Magenta · Heist → you'd get: +0..2 yellow, +2..3 magenta, +1..3 white, +0..2 purple; +4 followers; rivals toge
+   Heist is the strongest swing on the board. I steal 4 followers from Ava (18→14) and gain 4 (9→13), plus 4 of her resources and the first-taker +1 magenta, which pushes me toward the Magenta lead. Last Call's +3 followers and the Goes Last token look nice, but Ava showed last round how easily Went Last gets contested.
+   FEEL: Opening round II with a direct 4-follower steal from the leader feels punchy and satisfying, like a real catch-up tool.
+[46] Cal: Ava (18 followers)
+   Taking the 4 followers from Ava, the runaway leader at 18, is the whole point of this Heist. It drops her to 14 and puts me at 13.
+[47] Cal: Ava (17 followers)
+   I'm still taking followers from Ava, the leader at 17. Each one I take drops her and lifts me, so it's a 2-point swing against the player I have to beat.
+   FEEL: Taking the Heist followers one at a time with a fresh victim prompt each time was a little surprising, but it does let me split the steal if I wanted to.
+[48] Cal: Ava (16 followers)
+   I keep hitting Ava, the leader. She is at 16 and drops to 15 while I go up to 12, a 2-point swing against the player I have to beat.
+[49] Cal: Ava (15 followers)
+   This is the last Heist follower, and it goes from Ava, who still leads at 15. That drops her to 14 and puts me at 13, which brings us nearly level.
+[50] Cal: Ava's white (4)
+   Ava is tied with me on Magenta at 8 and is the leader I have to beat, so every resource I take from her is a 2-point swing in that race. White is her biggest pile, and taking one also covers the 1 white I'm short for Old Guard or Leavetakers.
+[51] Cal: Ava's white (3)
+   Ava is still my rival in the Magenta race, so each resource I take from her is a 2-point swing. Her white is her biggest pile. A third white also gets me to the 3 white that Old Guard or Leavetakers need, while keeping her short of white for her White Cloak plans.
+[52] Cal: Ava's white (2)
+   Ava is my tie partner in the Magenta race and the leader, so stealing from her is a 2-point swing. Her white gets me to the 3 white that Old Guard or Leavetakers need, and it starves her White Cloak plans.
+   FEEL: The table shows Ava with 4 white but the option says 2, and that mismatch left me unsure which count is current.
+[53] Cal: Ava's white (1) — if the round ended right after this: your contests +3 followers (you'd win Purple, Yellow, M
+   This is the last Heist resource, and it comes from Ava again, since she is my rival for the Magenta lead and the overall leader. Her white gives me a 2-point swing in the resource race and should get me to the 3 white that Old Guard or Leavetakers need.
+   FEEL: My own white count on the table still reads 2 after three white steals, while Ava's option shows 1 and her table line shows 4, so I can't trust which numbers are live mid-action.
+[54] Cal: Pass (recruit nothing)
+   Buying followers is just a 1:1 swap I can make any time, and Old Guard or Leavetakers would cost 7 resources for a 1-follower member. I'm passing so I keep my 12 resources. That holds my Magenta lead over Ava's 4 for the +6, and I'll convert the resources later.
+   FEEL: Realizing that followers bought 1:1 are pure conversion makes most cheap members feel like a tax unless their ability fits a plan right away.
+NOTES Ben: Round I plan: New Blood plus the Yellow Cloak let me buy Anchorites almost for free, and Splurge then made Purifiers pay +3 followers and a cloak refund. That chain of stacking bonuses felt great. What felt bad: Right Away does nothing on your last minion, and Purifiers just sits idle while rivals stay small. Ava and Dee bought no members and still lead 14 and 13 to my 11, so followers bought outright plus contest wins add up fast. Lessons: watch contest leads (Cal holds a big resource lead in Magenta, and Ava and Dee take White by default), take the first-taker +1 spaces like Swindle early, and since Anchorites pays +5 every round I should keep my cult at 5 or fewer members.
+[55] Ben: Magenta · Swindle → you'd get: +2..3 yellow, +1..3 magenta, +0..1 white, +0..2 purple; +1..3 followers; +1 mem
+   Swindle is a first-taker space and the strongest play. I'll steal Cal's Picket Line (worth 3, purple), which gives me 3 member colors (white, grey, purple) to take the lead in Yellow, and I keep the +1 magenta. In its place I'll give Cal a weak worth-1 member, which knocks the round I leader down. Last Call (+3 followers, +4 purple) was the other contender, but this swing is bigger and takes Cal's purple income too.
+   FEEL: Swindle feels juicy: one placement shifts followers, member colors and a rival's engine all at once.
+[56] Ben: Cal's Picket Line (6) — if the round ended right after this: your contests +6 followers (you'd win Purple, Yel
+   Sticking with the plan: Picket Line is worth 3 followers against Accomplice's 1, and it adds purple as a new member color, which puts me ahead in Yellow. Taking it also cuts off Cal's income from rivals' Purple spaces. Accomplice's steal only fires on recruit, so it does nothing for whoever takes it this way.
+   FEEL: Taking a rival's best member, worth 3 followers, with a single space feels punchy and a bit mean, in a fun way.
+[57] Ben: Leavetakers [3 white + 4 any; worth 1] — Whenever one of your members leaves your cult, +2 white.
+   I want Cal to get the deadest worth-1 card that's cheap, because Farewell and Write-Off pay out a member's cost. Double Agent (10) and the 8-cost cards would give a bigger Farewell payout, and Gift Swappers could swing members back at me. Old Guard gives steady white, so Leavetakers (7) is the most inert.
+   FEEL: Picking which junk card to hand a rival is a fun little extra decision, but I had to check the Farewell and Write-Off cost payouts to make sure my 'gift' wasn't secretly a present.
+[58] Ben: Recruit Early Traders [3 yellow + 2 any; you pay 5 (3 yellow + 2 any); worth 1] — Round Start: +2 yellow. Swap
+   Early Traders is yellow, a new color for me, so the Yellow Cloak refunds +2 yellow at once. It gives me 4 member colors against Cal's 2, locking up Yellow (+6 now, and a head start on +10 in round III). Its Round Start +2 yellow next round makes up most of the gap to buying 5 followers outright, and 4 members still keeps Anchorites live.
+   FEEL: Swindle handing me a new color right before the buy step makes the color-collecting plan feel like it's snowballing nicely.
+[59] Ben: Pay 4 yellow, 1 magenta (suggested)
+   I'm paying 4 yellow and 1 magenta, so I keep the white. The Yellow Cloak refunds 2 yellow, which leaves me 2 yellow and 1 white. White is a start toward Old Guard, and Early Traders' Round Start swap can fix colors later anyway.
+[60] Ben: Pass (recruit nothing)
+   Purifiers still does nothing useful: no rival has more members than me (I have 4, Cal 2, Ava and Dee 0), so I'd just lose a member of my own. I'll pass and hold it for round III.
+NOTES Dee: In round I I went for the most-resources contest with Help Yourself and Modest Means, then turned my pile into followers with two 5-for-5 buys once it was clear Ava would place last on the Goes Last token and answer whatever I built. Holding 0 members to share the fewest-members prize with Ava felt like a quiet, satisfying edge. What felt bad was watching my resource lead become pointless once I saw that Goes Last basically decides Magenta's contest. Right Away on my last minion was a dead option that would only have fed Cal's Picket Line.
+[61] Dee: Purple · Last Call → you'd get: +4 purple; +3 followers; rivals together 1 purple
+   Last Call pays 4 purple and 3 followers right now, and it hands me the Goes Last token. With the token my last three minions answer everyone else: Catch Up, Stash and Help Yourself can then go after Cal's 12-resource lead in the most-resources contest, and I'd also place the round's last minion for Purple's +6. Cal's Purple Cloak makes Sleep In or On a Roll tempting for him to take the token back, but even then I keep the followers and purple, and I stay at 0 members for my share of fewest members.
+   FEEL: Last Call feels like the space that steers the whole round, since the token decides both Purple's contest and, in practice, Magenta's, so grabbing it early felt both exciting and a little obligatory.
+[62] Dee: Pass (recruit nothing)
+   I hold the Goes Last token, so my last three minions answer everyone. Catch Up, Stash and Help Yourself (with my cloak's +2 magenta on the steal) can take my 6 resources past Cal's 12 for Magenta's +6. Buying followers now would only shrink the pile I need for that, so I'll keep it and convert later if the fight dies.
+   FEEL: Holding the token makes passing feel strong rather than idle: I know I'll get the last word on the resource fight this time.
+NOTES Ava: I went for a zero-member economy built on the White Cloak: Catch Up for +5 magenta, then single-follower buys that each netted resources, and On a Roll to snatch the Goes Last token from Cal for Went last. Going from last seat and an empty hand to sharing three of four contests felt strong, maybe lopsided, and repeating the same 1-follower buy because it paid me back felt degenerate rather than clever. The contest-lead warning on payments ignored the cloak refund, so I had to recount by hand to trust my own math. Looking at the board now, I notice Cal's Heist and Ben's Swindle already landed, so the steal pressure in round II is real for a cult like mine with no members to protect.
+[63] Ava: Magenta · Catch Up → you'd get: +4 magenta
+   I have back-to-back turns, so I'm opening with Catch Up while Cal (12) and Dee (6) both out-hold me: that's +4 magenta, and doing it first matters because a cloak-refunded buy would put me level with Dee and halve the payout. Next turn I'm weighing On a Roll (+4 and the Goes Last token from Dee) against Crunch Time into a three-turn run that ends on a +6 On a Roll. I'm watching Dee and Cal, who can take the token back with Sleep In.
+   FEEL: Losing 4 followers and 4 white to Cal's Heist hurt, but Catch Up handing the robbed player +4 straight back makes the swing feel self-correcting rather than crushing.
+[64] Ava: Buy followers: 1 of anything, pay 1 get +1
+   Buying 1 follower costs 1 and the White Cloak refunds 2 white, so I go to 15 followers and 9 resources. That keeps me in the race against Cal's 12 for Most resources, especially with On a Roll (+4 purple) coming on my very next turn. Buying 5 would drop me to 5 resources and all but concede magenta to Cal, and Gift Swappers would break my 0-member share of Fewest members with Dee.
+   FEEL: Once again the 1-follower buy is the obvious choice almost every turn. It nets resources and followers at the same time, so the decision feels automatic rather than interesting.
+[65] Ava: Pay 1 purple
+   My total is the same either way for Most resources, and the purple contest is Went last, so purple held does nothing for me. I'll keep the 5 magenta toward Double Agent or Bodyguards and pay the purple, which On a Roll should refill on my next turn.
+[66] Ava: Purple · Sleep In → you'd get: +5 purple; rivals together 1 purple
+   I'm taking Sleep In for +5 purple and the Goes Last token from Dee. That should take me to 14 resources, past Cal's 12 for Most resources, and puts my last two minions in line for Went last. I'm picking it over On a Roll (+4) because Sleep In would hand Cal +7 with his Purple Cloak if I left it open, while On a Roll only gives him +6. Cal and Dee can still fight back for the token, so I'll need to watch the purple spaces late.
+   FEEL: Purple's Goes Last token is turning into a game of hot potato. Each round the fight is less about the spaces and more about who grabs the token last, which is tense but feels a little samey.
+[67] Ava: Buy followers: 1 of anything, pay 1 get +1
+   Another 1-follower buy: pay 1 and the White Cloak refunds 2 white, so I go to 16 followers and 15 resources, widening my Most resources lead over Cal's 12 while Cal still has three minions for Stash, Nest Egg or Help Yourself. I hold the Goes Last token, so my last two recruits come after everyone else's and I can cash any surplus over Cal's final total with a 5 or 10 buy then. A member now would cost 8-10 resources and break my 0-member share of Fewest members with Dee.
+   FEEL: Holding the token means I get to make the final conversion after seeing everyone's piles, which feels like a very comfortable seat for a contest decided on resources held.
+[68] Ava: Pay 1 purple (suggested)
+   Purple held does nothing for Went last, and my total for Most resources is the same whichever color I pay. I'll keep magenta toward Bodyguards or Double Agent and white toward Old Guard, so purple it is. With the cloak refund I end at 16 followers and 15 resources.
+[69] Dee: Purple · On a Roll → you'd get: +2 purple; rivals together 1 purple
+   On a Roll takes the Goes Last token back from Ava, and nobody can take it again this round. Sleep In and Last Call are used, and Right Away and Crunch Time don't grab the token, so I lock in placing the round's last minion for Purple's +6. My last two minions then answer everyone else on Magenta, with Help Yourself (3 steals plus my cloak's +2) and Stash, against Ava's 15 and Cal's 12. Crunch Time would get me three quick turns but leave Ava the token and both of those prizes.
+   FEEL: The Goes Last token bouncing back and forth between Ava and me feels like the real fight of the round. It's tense and fun, but almost every other space feels secondary to it.
+[70] Dee: Pass (recruit nothing)
+   I hold the Goes Last token, so my last two minions answer everyone. Help Yourself (steal 3 or 4, +1 magenta, +2 from my cloak) plus Stash could take my 8 up toward 17 or more against Ava's 15 and Cal's 12. Buying now only shrinks that pile, and if the fight dies I can still turn everything into followers with a single 10-buy on my last recruit.
+   FEEL: Holding a pile of purple I can't spend on anything I want, purely to stay in the resource fight, feels a bit like hoarding for its own sake, though knowing I get the last word makes it tense in a good way.
+[71] Ben: Yellow · Melting Pot → you'd get: +1..2 yellow, +0..1 magenta, +1..2 white, +1..2 purple; +4 followers; then y
+   Melting Pot pays a follower and a resource for each of my member colors, so about +4 followers and 4 resources. That is the best single placement here. Farewell on Purifiers would net about +5 followers but would cost me a member color, and my Yellow lead over Cal is thin. I'll keep Farewell in mind for a later minion and watch Ava and Dee, who sit one ahead at 16.
+   FEEL: Melting Pot rewarding the wide cult I've been building feels like the color-collecting plan finally paying out in followers, not just in contests.
+[72] Ben: +1 white
+   White gets me to the 3 white that Old Guard needs, and it builds toward Cash In in round III. Any extra resource counts the same in the Magenta total, so this costs me nothing there. Ava's 15 resources are out of reach anyway.
+[73] Ben: Buy followers: 10 of anything, pay 10 get +10
+   Duty Collector and Old Guard each cost 7 resources for 1 to 3 followers, which is worse than buying followers 1:1. I can't catch Ava's 15 in Magenta anyway, so I'll turn all 10 resources into +10 followers now (19 to 29). That keeps them safe from Cal's steals and from a Heist next round, and Farewell or the Purple spaces on my last two minions don't need resources.
+   FEEL: Buying followers at 1:1 often beats every member in the shop, so a buy step that looks rich in options really comes down to one choice.
+[74] Ben: Pay 3 yellow, 3 white, 4 purple (suggested)
+   Paying all 10 resources (3 yellow, 3 white, 4 purple) for +10 followers takes me from 19 to 29, which puts it out of reach of steals and Heist. Picket Line refills purple whenever a rival goes on Purple.
+[75] Ben: Pass (recruit nothing)
+   Purifiers still has no target: nobody has more members than my 4, so using it would only cost me a member and maybe a color. I'll pass and keep it for round III.
+[76] Cal: White · Write-Off → you'd get: +8..10 white; -1 followers; -1 members; rivals followers 1; then you choose: Wr
+   My plan is to Write-Off Accomplice now: 5 white for its cost, +1, and +2 from Leavetakers, so 8 white that also pushes me to the top on Magenta. Next turn I Farewell Leavetakers for +7 followers, which drops me to 0 members and shares the White contest. I'll hand Accomplice to Ava rather than Ben, because it breaks her 0-member White tie and keeps Ben, who is leading at 29, from gaining anything.
+   FEEL: Spotting that two White spaces chain into a plan where I dump my whole cult for followers, resources and a contest share feels clever and exciting.
+[77] Cal: Accomplice [2 magenta + 3 any; worth 1] — On Recruit: steal 3 resources.
+   Sticking to the plan: Write-Off Accomplice, worth 5 white plus 1 from the space plus 2 from Leavetakers. Next turn I Farewell Leavetakers for 7 followers and drop to 0 members to share White. I'm keeping Leavetakers because it pays the +2 here and costs 7, against Accomplice's 5 for Farewell.
+[78] Cal: Ava (16 followers) — if the round ended right after this: your contests +6 followers (you'd win Purple, Magent
+   I'm giving Accomplice to Ava as planned. It breaks her 0-member tie on White, so once I Farewell Leavetakers it should be just Dee and me splitting the White contest. It also lands an unwanted member on the White Cloak player rather than adding a follower to Ben, who leads at 29.
+   FEEL: Handing a rival a member as a weapon against their Fewest Members plan feels sneaky and fun.
+[79] Cal: Pass (recruit nothing)
+   I'm holding all 20 resources so I keep my Magenta lead over Ava's 15. Buying even 5 followers would only tie her and halve the +6. Next turn I Farewell Leavetakers for 7 followers, +1 white and +2 from its own leave trigger, which drops me to 0 members to share White with Dee. I'll convert the resources to followers later.
+   FEEL: Passing again feels odd but right: the Magenta contest makes hoarding resources more valuable than spending them, so the shop sits untouched.
+[80] Cal: White · Farewell → you'd get: +3 white; +6 followers; -1 members; then you choose: Farewell: discard which mem
+   Sticking to the plan: I Farewell Leavetakers for +6 followers and +3 white (the space's +1 plus Leavetakers' own +2 on leaving). That drops me to 0 members to share White with Dee and lifts me to 23 resources, which keeps my Magenta lead over Ava's 15.
+   FEEL: Watching a member pay me on its way out the door feels like a satisfying little combo payoff.
+[82] Cal: Pass (recruit nothing)
+   I'm passing again to hold all 23 resources. Ava sits at 15 with two turns left, and Stash plus a Help Yourself steal from me could close that gap fast. Buying followers is a 1:1 swap I can make anytime, and my 17 white looks perfect for Cash In in round III.
+   FEEL: Sitting on a big pile of resources and passing turn after turn feels oddly passive, even though it's clearly the right play.
+[83] Ben: Yellow · Makeover → you'd get: +0..4 yellow, +0..4 magenta, +0..4 white, +0..4 purple; then you choose: Makeov
+   I have no resources, and none of the contests are in reach this round: Cal leads Magenta with 23, I can't win White with 4 members, and Dee places the last minion. So I'll just take the biggest raw gain. Makeover gives +4, which beats Harvest or Survey at +3 and Help Yourself at 2 stolen plus 1. I'll turn it straight into followers in the buy step so nobody can steal it.
+   FEEL: With nothing in my hand and every contest out of reach, this placement is just picking the biggest number, which feels flat.
+[84] Ben: Pass (keep your colors)
+   I'm turning all 4 into followers in the buy step anyway, and bought followers accept any color. So it doesn't matter what color they are, and I'll keep them yellow. Nothing in the shop is affordable with 4.
+   FEEL: The rearrange step is pointless for me here: when all I'll do is buy followers, the color choice changes nothing.
+[85] Ben: Buy followers: 1 of anything, pay 1 get +1
+   With 4 yellow and one minion left, nothing useful is in reach. Duty Collector needs 7, and Splurge's +2 white still leaves me 1 short. Cal's 23 resources lock Magenta. So I'll turn the yellow into followers 1:1 now, before Ava's two minions can steal it with Help Yourself.
+   FEEL: Buying followers one at a time with only the 1-for-1 option feels fiddly; it's the same rate as the bigger bundles, just more clicks.
+[86] Ben: Pay 1 yellow (suggested)
+   Paying 1 yellow for +1 follower, as I planned, so Ava's Help Yourself can't steal it. I'll repeat this for the rest of the yellow.
+[87] Ben: Pass (recruit nothing)
+   I've already used this turn's recruit on the 1-for-1 follower buy, so the other 3 yellow stay with me. Purifiers still has no target, since nobody has more than my 4 members. I'll pass and keep it, and spend the yellow on my last minion's buy step.
+   FEEL: I misread the buy step: I planned to buy followers 1-for-1 repeatedly, but each purchase is a whole recruit, so 3 yellow is left exposed to Ava's steals.
+[88] Ava: White · Modest Means → you'd get: +3 white
+   Purple is out of reach now that Dee holds the token and no token spaces are left, and Cal's Write-Off pinned Accomplice on me, so Fewest members is gone too. That leaves Most resources against Cal, 23 to my 15. Modest Means gives me +3 and denies Cal its +4. Then on my back-to-back turn, Help Yourself as my 4th minion steals 4 from Cal, and with 1-follower buys and their cloak refunds I should reach about 25 against Cal's best of around 22.
+   FEEL: Getting a member shoved onto me by Write-Off to knock me out of Fewest members was a sneaky, satisfying play from Cal, and it stung.
+[89] Ava: Buy followers: 1 of anything, pay 1 get +1
+   I'm buying 1 follower again: I pay 1 and the White Cloak refunds 2 white, so I go to 18 followers and 19 resources. On my back-to-back turn, Help Yourself as my 4th minion steals 4 from Cal (23 down to 19) and gets me to about 24, then another refunded buy makes 25. Cal's best last spot is a +3 (Stash, Nest Egg or Harvest) for 22, and a member now would cost 7 to 10 and throw away Most resources.
+   FEEL: The cloak-refunded 1-follower buy is once again so clearly right that this recruit hardly feels like a decision.
+[90] Ava: Pay 1 purple (suggested)
+   Purple held does nothing for me in Went last now that Dee holds the token, and my Most resources total is the same whichever color I pay. I'll keep magenta and white for round III targets like Bodyguards or Old Guard and the Cash In plan, so I pay the purple.
+[91] Ava: Magenta · Help Yourself → you'd get: +2..4 yellow, +0..2 magenta, +0..2 white, +0..2 purple; rivals together -
+   Help Yourself as my 4th minion steals 4 from Cal, taking him from 23 to 19 and me from 19 to 24 with the +1 magenta. Then a refunded 1-follower buy puts me at 25, and Cal's last minion can reach only about 22 with Stash or Nest Egg, so Most resources should be mine. Harvest would only get me to about 23 while Cal could climb to 26, so stealing is the clear play.
+   FEEL: A steal that scales with how many minions you've placed is a satisfying late-round haymaker, and it swings a two-way contest by double its face value.
+[92] Ava: Cal's white (17)
+   All four steals go to Cal: that takes him from 23 to 19 and me to 24 for Most resources. I'm taking white from his 17 pile because it feeds my own Cash In plan for round III and shrinks his.
+[93] Ava: Cal's white (16)
+   Continuing all steals from Cal: his white 16 down to 13 after this set, keeping him below me for Most resources and feeding my own Cash In plan for round III.
+[94] Ava: Cal's white (15)
+   I keep every steal on Cal, my only rival for Most resources. After these last two he drops to 19 and I climb to 23 with the +1 magenta. Taking his white also shrinks his Cash In fuel for round III and feeds my own.
+[95] Ava: Cal's white (14) — if the round ended right after this: your contests +6 followers (you'd win Purple, Magenta;
+   My last steal goes to Cal as well, since he is my only real rival for Most resources. This drops him to 19 against my 23 before my refunded buy. I take his white because it also shrinks his Cash In fuel for round III and adds to mine.
+[96] Ava: Buy followers: 1 of anything, pay 1 get +1
+   This is my last recruit of round II. A refunded 1-follower buy takes me to 19 followers and 24 resources. Cal's best last minion is a +3 (Stash, Nest Egg or Harvest) for 22, and every steal space is gone, so Most resources stays mine. A 5-buy would drop me to 20 and hand Cal the +6, and every member here costs 7 to 10 and would wreck the lead.
+   FEEL: The cloak-refunded 1-follower buy is again the only sensible recruit, and it ends my round on autopilot rather than a real choice.
+[97] Ava: Pay 1 purple (suggested)
+   I'm paying purple again. It does nothing for Went last now that Dee holds the token, while I need white for Cash In and magenta toward Bodyguards' 6. My Most resources total comes out the same whichever color I pay.
+[98] Ben: Yellow · Survey → you'd get: +4 yellow
+   It's my last minion and every contest is out of reach, so I want the biggest raw gain. Survey gives +4 yellow, taking me to 7. Splurge's doubling needs a member I can pay for with 5, and none fit. Next I'll buy 5 followers, which beats Duty Collector's 3 followers for 7.
+   FEEL: Survey paying out on how crowded the wheel is felt like a nice little reward for reading the board, even on a flat last placement.
+[99] Ben: Buy followers: 5 of anything, pay 5 get +5
+   I'm buying 5 followers for 5 yellow, which takes me from 30 to 35. Duty Collector would give only 3 followers for all 7, and it would fill my last Anchorites slot. Its payout depends on rivals recruiting members, and they barely do. The 2 yellow left over will help in round III alongside Early Traders.
+   FEEL: Duty Collector loses to a plain follower buy even when it fits my colors, so the shop feels like a trap rather than a temptation.
+[100] Ben: Pay 5 yellow (suggested)
+   Paying 5 of my 7 yellow for +5 followers takes me from 30 to 35, as planned. That leaves 2 yellow to carry into round III with Early Traders.
+[101] Ben: Pass (recruit nothing)
+   Purifiers still has no target. Even if I drop to 3 members, nobody has more than that: Ava has 1, Cal and Dee have 0. I'll pass and keep it for round III, and the 2 yellow carries over toward Early Traders' swap.
+   FEEL: Purifiers has been offered to me every turn for two rounds and has never had a target, because my rivals simply don't recruit members.
+[102] Cal: White · Nest Egg → you'd get: +3 white
+   I can't catch Ava's 24 on Magenta, since the most I can reach is 22 and no steal spaces are left. Dee places last, so Purple is hers. That means this minion is just banking for round III: Nest Egg puts me at 16 white for Cash In, and I hold 0 members to keep my White split with Dee. I'll stay low on followers too, so I should go first in round III and grab Cash In.
+   FEEL: My last minion of the round can't touch any contest, so the placement feels like pure banking, a bit flat after the clever White combo.
+[103] Cal: Pass (recruit nothing)
+   I can't catch Ava's 24 on Magenta now, so spending wouldn't cost me a contest, but it wouldn't gain anything either: buying followers is the same 1:1 swap in round III. Holding keeps me at 16 followers, so I should go first in round III. It also gives me a head start on the +10 Magenta contest and keeps my 16 white for Cash In.
+   FEEL: Passing to stay low on followers so I go first next round feels like a neat bit of timing, but it's a little odd that the score track rewards me for not scoring.
+[104] Dee: Yellow · Harvest → you'd get: +0..3 yellow, +0..3 magenta, +0..2 white, +0..2 purple; then you choose: Harvest
+   Everyone else is out of minions, so I place the round's last two and Purple's +6 is mine. Magenta is out of reach: even Harvest plus Stash only takes me to 14 against Ava's 24. Harvest now takes me to 11 for a single 10-buy, then Stash and a 1-buy next turn, about +11 plus half of fewest members with 0 members. That beats Splurge into Gift Swappers, which comes out even but costs me the fewest-members share and puts a member in front of Ben's Purifiers going into round III.
+   FEEL: Being the only one with minions left at the end, with nothing contestable to react to, makes my last two placements feel like a solo bookkeeping exercise rather than a decision.
+[105] Dee: +1 magenta
+   These three resources mostly go into a 10-buy, so the color barely matters. Magenta is the most likely leftover to be useful going into round III, toward Double Agent or Bodyguards to use with my cloak's steals, so I take magenta for all three picks.
+[106] Dee: +1 magenta
+   Same plan as the first pick: these go into a 10-buy anyway, and any leftover magenta is the most useful into round III toward Double Agent or Bodyguards with my cloak.
+[107] Dee: +1 magenta
+   These go into a 10-buy anyway. Magenta is the most useful leftover going into round III, toward Double Agent or Bodyguards to pair with my cloak's steals.
+[108] Dee: Buy followers: 10 of anything, pay 10 get +10
+   As planned: the 10-buy turns 10 of my 11 resources into +10 followers. Next turn Stash plus a 1-buy adds a bit more, and I stay at 0 members for half of fewest members. Double Agent stealing Ben's Picket Line would net me only about +3 and cost me that share.
+   FEEL: Ending the round by quietly converting a pile I couldn't win with into followers feels like correct but unexciting bookkeeping.
+[109] Dee: Pay 3 magenta, 7 purple
+   This is the 10-buy, paid as 3 magenta and 7 purple so I keep 1 magenta instead of 1 purple. Stash next turn adds 3 more magenta, and a magenta leftover is the more useful one heading toward Double Agent or Bodyguards in round III.
+[110] Dee: Magenta · Stash → you'd get: +3 magenta
+   This is my last minion and the round's last placement, so Purple's +6 is mine whatever I take. Stash gives +3 magenta and feeds nobody, while Right Away does nothing on a final minion and hands Ben a purple through Picket Line. With 4 magenta I'll use this recruit on a 1-buy and carry 3 magenta into round III toward a magenta member to pair with my cloak, staying at 0 members for my share of fewest members.
+   FEEL: The final placement of the round is a forced bookkeeping pick, since nothing is left to contest, and two of the five options (Right Away and Crunch Time) do literally nothing for me.
+[111] Dee: Buy followers: 1 of anything, pay 1 get +1
+   As planned, I turn 1 magenta into +1 follower with this last recruit and carry 3 magenta into round III. The shop deals a fresh row anyway, so holding a 4th magenta for a magenta member I may never see isn't worth giving up a sure follower. Magenta's contest is out of reach with Ava on 24.
+[112] Dee: Pay 1 magenta (suggested)
+   Paying the 1-buy with 1 magenta as planned, carrying 3 magenta into round III toward a magenta member for my cloak.
+## Round II ends. Went last: Dee +6 · Most member colors: Ben +6 · Most resources: Ava +6 · Fewest members: Cal & Dee +3
+NOTES Ben: Round II plan: I couldn't contest anything except Yellow, so I took raw gains (Makeover, Survey) and turned the resources into followers 1:1. That took me to 46 and the lead, with Anchorites and the Yellow win paying again. What felt bad: the shop rarely beat a plain follower buy, Purifiers never had a target because rivals hold 0-1 members, and each follower purchase using a whole recruit left yellow sitting exposed to steals. Lessons: followers bought at 1:1 are the baseline every member must beat, holding resources at round end invites theft unless I'm chasing Magenta, and in round III with +10 contests I should protect my Yellow lead, keep members at 5 or fewer for Anchorites, and watch Ava and Cal's big white piles, since Cash In could turn them into a lot of followers.
+[113] Ben: Swap nothing
+   Keeping my 4 yellow, since Caravan and Dyer both need 5 yellow and New Blood or Makeover will top me up. Swapping into magenta, white or purple helps no buy I'm planning, and Ava's steals take any color anyway.
+   FEEL: The Early Traders swap rarely matters when my plans all run on yellow, so this step feels like a formality.
+NOTES Cal: In round II I went for White: I used Write-Off to give Accomplice to Ava, which broke her 0-member tie, then Farewell on Leavetakers to drop to 0 members and share White with Dee, all while banking white for Cash In. The Leavetakers chain paying me as members left felt like a great combo, but I lost Magenta to Ava's late Stash (24 vs my 22), and my last minion on Nest Egg was pure banking with no contest at stake. I learned that holding resources does double duty: it covers the Magenta contest and stores followers I can buy later. Staying low on followers buys me first pick next round, so now I go first in III with 16 white ready for Cash In while Ben leads at 46. The +10 contests and the big swing spaces (Cash In, Heist, Last Call) are where I can catch up.
+[114] Cal: Magenta · Heist → you'd get: +0..2 yellow, +2..4 magenta, +0..2 white, +0..2 purple; +4 followers; rivals toge
+   Cash In is really just a 1:1 swap, since I can buy followers 1:1 anyway, so I'll leave it. Heist is the unique swing space: I take 4 followers from Ben, the leader at 46, and if I can, 4 resources from Ava, which puts me at about 27 against her 20 in the +10 Magenta contest. Last Call is tempting at about 11 value, but Heist would likely go to Dee or Ava before my next turn.
+   FEEL: It surprised me that Cash In, which I banked for all of round II, turns out to be almost the same as just buying followers; the plan feels like it fizzled.
+[115] Cal: Ben (46 followers)
+   I'm taking the 4 followers from Ben, the runaway leader at 46. That brings him to 42 and me to 23, which hurts the player I most need to catch more than hitting Dee at 36 or Ava at 25 would.
+   FEEL: Stealing straight off the leader's score feels like a real catch-up tool, the first time this game I could touch Ben directly.
+[116] Cal: Ben (45 followers)
+   I'm taking the next follower from Ben too. He leads at 45 and is the one I have to catch, so every point off him counts double in the race.
+   FEEL: Picking the target one follower at a time is a bit fiddly when I already know I want them all from the leader.
+[117] Cal: Ben (44 followers)
+   I'm taking another follower from Ben, who leads at 44. Every point off the leader narrows the gap I actually have to close.
+[118] Cal: Ben (43 followers)
+   This is the last follower from the Heist, and it goes to Ben too. He leads at 43, so taking him to 42 narrows the gap I have to close to win.
+[119] Cal: Ava's white (15)
+   Every resource I take from Ava swings the +10 Magenta race by 2. She leads that race 24 to my 22, so all four steals go to her. I'll take white, the biggest pile, which also trims her Cash In stock.
+[120] Cal: Ava's white (14)
+   I'm sticking with Ava for the Heist steals. Each one swings the +10 Magenta race by 2, and white is her biggest pile and the fuel for her Cash In.
+[121] Cal: Ava's white (13)
+   I'm staying on Ava for the last two Heist steals. Each one swings the +10 Magenta race by 2, and white is her biggest pile and her Cash In fuel.
+[122] Cal: Ava's white (12) — if the round ended right after this: your contests +10 followers (you'd win Purple, White, 
+   This is the last Heist steal and it goes to Ava again. Every resource I take from her swings the +10 Magenta race by 2, so I end at about 26 to her 20. White is her biggest pile, so I'll take that.
+   FEEL: Four separate picks of the same target in a row for one Heist felt like busywork once the choice was obvious.
+[123] Cal: Pass (recruit nothing)
+   I'm passing. Any member breaks my 0-member tie for White (worth 5), and spending resources now shrinks my 26-to-20 Magenta lead over Ava. I'll keep the pile as a Magenta shield and turn it into followers on my last turns, or through Cash In.
+   FEEL: Passing again right after a big Heist feels flat, because the best move with a pile of resources is to sit on it.
+NOTES Ava: In round II I kept running the White Cloak economy: refunded 1-follower buys, Help Yourself as my fourth minion to strip 4 white from Cal and take Most resources, while Dee grabbed the Goes Last token for Went last. The late Help Yourself swing felt like a real, satisfying decision, but nearly every recruit was the same cloak-refunded single-follower buy, which felt automatic rather than interesting. Cal's Heist and his Write-Off pushing a member onto me to knock me out of Fewest members both stung in a fun, interactive way. Even so, Ben sits at 42 with four members while I'm at 25, so the steal-and-buy loop seems to keep me in contests without catching the leader.
+[124] Ava: White · Cash In → you'd get: -10 white; +11 followers
+   Cash In turns my 11 white into followers plus the fresh +1, taking me from 25 to about 36 without spending a recruit. More importantly it takes the space before Cal can cash in his 20 white. Cal's Heist already wrecked my Most resources lead, so I'm converting now and keeping my recruits for refunded buys and members.
+   FEEL: Opening round III on a race to Cash In against Cal's 20-white pile feels tense in a good way: one space decides a 20-follower swing for him.
+[125] Ava: Buy followers: 5 of anything, pay 5 get +5
+   Cal's untouched 20 white means I can't take Most resources, and Fewest members and Yellow are out of reach, so my resources are just money now apart from a late grab at Went last. A cloak-refunded 5-buy turns 5 into +5 followers (to 41) and gives back 2 white, leaving 7 and making me a smaller target for Dee's Help Yourself. Consolation Prize was close at roughly +7-9 for 7 resources, but it is Poach and Swindle bait and gives no refund.
+   FEEL: With Cal's white pile still sitting there, three of four contests are settled for me on turn one of round III, so my resources stop mattering for anything but buying followers, which feels a bit flat.
+[126] Ava: Pay 5 magenta
+   I'm paying all 5 magenta and keeping my 4 purple. After the cloak refund I'll hold 3 white and 4 purple, exactly enough for Last Callers (3 purple + 4 any). That keeps a late grab at the Goes Last token and the +10 Went last open. Magenta does nothing for me now that Cal's 26 owns Most resources.
+NOTES Dee: In round II I grabbed Last Call early to fight Ava for the Goes Last token, since the token decides Purple's contest and in practice Magenta's too, then turned my pile into followers with a 10-buy and a 1-buy while staying at 0 members to share fewest members. The token bouncing between Ava and me was the tense, fun heart of the round. Holding purple I couldn't use, just to stay in the resource fight, felt like hoarding. Once I was the only one with minions left, my last placements (Stash, with Right Away and Crunch Time doing nothing) felt like solo bookkeeping. Cal quietly piling 20 white while Ava took Cash In shows how much the late spaces decide the round.
+[127] Dee: Purple · Last Call → you'd get: +5 purple; +4 followers; rivals together 1 purple
+   Last Call is the best raw gain on the board: +4 followers now plus 5 purple I can turn into followers later. It also takes the Goes Last token, which decides Purple's +10. Magenta is out of reach with Cal on 26, so I stay at 0 members to keep my share of fewest members. I expect Ava or Cal to fight back with Sleep In, On a Roll or Overtime, and I'll answer with whichever is left. Ben at 42 and Ava at 41 are the ones I must catch.
+   FEEL: Round III opening with three more token-grabbing spaces still on the board makes taking the token early feel like the start of a bidding war rather than a lock, which is tense in a good way.
+[128] Dee: Recruit Last Callers [3 purple + 4 any; you pay 7 (3 purple + 4 any); worth 1] — On Use, once per round: take 
+   Last Callers is the swing piece for Purple's +10. Three token spaces are still open (Sleep In, On a Roll, Overtime) and Ava and Cal both want them, so a once-per-round retake that needs no space lets me answer after those spaces are used up. Buying it also keeps it away from Ava and Cal. It costs me my half of fewest members (+5) and 7 resources, but that beats likely losing a +10 fight against Ben at 42 and Ava at 41.
+   FEEL: A member that grabs the token without a space feels close to a lock on a +10 contest, so buying it feels urgent rather than like a real choice.
+[129] Dee: Pay 3 magenta, 4 purple (suggested)
+   Paying 3 magenta and 4 purple leaves me 1 purple. That fits better if I take another purple space or want Courier later. Magenta from Help Yourself or Poach would refill the other side anyway.
+[130] Ben: Magenta · Poach → you'd get: +2..3 yellow, +1..3 magenta, +1..3 white, +0..2 purple; +1 followers; +1 members;
+   I place twice in a row now, so I'll Poach first: take Ava's Accomplice for free. Its On Recruit steals 3 (from Cal's white), the Yellow Cloak gives +2 yellow for a new color, and I get +1 magenta. That also strips Ava's only member. With magenta added, Melting Pot on my next turn pays 5 followers and 5 resources instead of 4, and I stay at 5 members for Anchorites.
+   FEEL: Spotting that Poach sets up Melting Pot on my back-to-back turns felt like a real combo, the kind of planning I wanted more of.
+[131] Ben: Ava's Accomplice (5)
+   Sticking to the plan: I take Ava's Accomplice. Its steal of 3 hits Cal's 20 white, the Yellow Cloak pays +2 yellow for magenta as a new member color, and Ava is left with no members. Last Callers is purple, which I already have, so it adds nothing to my Yellow count or to Melting Pot. Its Goes Last trick is tempting, but Dee holds four minions at the end of the order.
+   FEEL: Taking a rival's only member for free, with the steal and cloak bonus on top, feels like a satisfying swing.
+[132] Ben: Ava's purple (4)
+   I planned to hit Cal's 20 white, but Cal is at 23 followers and I can't catch his Magenta lead anyway (26 against my 8). Ava at 40 and Dee at 41 are my real rivals, and Dee holds only 1 purple. Every resource I take from Ava is roughly one follower she can't buy, so I'm taking from her 4 purple.
+   FEEL: Choosing steal targets one resource at a time makes me weigh who's actually threatening me, which feels like a meaningful little decision.
+[133] Ben: Ava's white (3)
+   I'm still draining Ava: she's at 40 and right behind me, and every resource she holds is about one follower she could buy. Cal's 20 white is tempting, but Cal is far back at 23 and his Magenta lead is out of reach anyway. Her white and purple are worth the same to her, so I'll take a white this time.
+[134] Ben: Dee's purple (1)
+   For the last steal, I'm taking Dee's only purple. At 41, Dee is my closest rival, and this leaves her with nothing to spend. Ava has already lost 2 to me, and each steal costs a rival about one follower either way. So I'd rather hit the leader behind me.
+[135] Ben: Buy followers: 10 of anything, pay 10 get +10
+   I'm turning 10 of my 11 resources into +10 followers now, which takes me from 43 to 53 and puts them out of reach of Ava's and Dee's steals. Caravan or Cheerleaders would return less than 1:1. A sixth member would also cost me Anchorites' +5, and Cal's 26 makes Magenta unwinnable anyway. Melting Pot on my next turn will refill me.
+   FEEL: The biggest follower pack is clearly the best buy here, so the colorful shop row is pure scenery at the moment that should be most exciting.
+[136] Ben: Pay 6 yellow, 1 magenta, 1 white, 2 purple (suggested)
+   I'm paying the suggested mix and keeping 1 purple. Whichever single resource I keep is about the same: it's 1 follower later, or bait for Ava's and Dee's steals, and Melting Pot will top me up next turn anyway.
+[137] Ben: Pass (recruit nothing)
+   Purifiers would only cost me a member: no rival has more members than my 5, and I need all 4 colors for Melting Pot and my Yellow lead. I'll pass and take Melting Pot on my back-to-back turn.
+   FEEL: Purifiers has been an idle option for the whole game, and right now using it would only hurt me.
+[138] Ben: Yellow · Melting Pot → you'd get: +1..2 yellow, +1..2 magenta, +1..2 white, +1..2 purple; +5 followers; then y
+   Sticking with the back-to-back plan: Melting Pot counts 5 colors among my members (yellow, magenta, white, purple, plus grey Purifiers), so it pays +5 followers and 5 resources. I can turn those into another 5 followers right away. Offering would only gain me 5 yellow and cost Ava about 4, so Melting Pot's roughly +10 for me is better.
+   FEEL: Watching the Poach set up a fatter Melting Pot pay off exactly as planned feels rewarding.
+[139] Ben: +1 yellow
+   This is the grey Purifiers' free-choice resource. I'll spend it on followers right away anyway, so the color hardly matters. I'm taking yellow because it's the color most of my spaces and members feed.
+   FEEL: Picking a color for one resource I'm about to spend 1:1 on followers feels like a formality.
+[140] Ben: Buy followers: 5 of anything, pay 5 get +5
+   I'm turning 5 of my 6 resources into +5 followers, which takes me to 63 and puts them out of reach of steals. Protesters would be a 6th member and cost me Anchorites' +5. It also can't touch Cash In, which Ava already holds. Purifiers would only shrink me. So the 5-pack is the clean 1:1 buy.
+[141] Ben: Pay 2 yellow, 1 magenta, 1 white, 1 purple (suggested)
+   I'm paying the suggested mix and keeping 1 purple. The one leftover resource is worth about one follower either way, and keeping a purple fits alongside Picket Line's purple income if I want a Purple space later.
+[142] Ben: Pass (recruit nothing)
+   Purifiers would only shrink my cult. No rival has more than my 5 members, and dropping one would cost me a Yellow color, so I'm passing and keeping the 1 purple.
+[143] Ava: Purple · Sleep In → you'd get: +6 purple; rivals together 1 purple
+   Ben at 63 with Yellow and Anchorites is almost out of reach, so I'm racing Dee for second and maximizing raw followers. Sleep In's +6 purple is the biggest resource gain on the board, and it takes 11 resources to a cloak-refunded 10-buy this turn. Grabbing the Goes Last token also forces Dee to spend her Last Callers to win Went last back. Swindle would give me a member and cost me my Fewest members share with Cal.
+   FEEL: With Dee sitting on both the token and Last Callers, a Went last fight costs me nothing to start but probably can't win, so the purple contest feels pre-decided by whoever owns the re-grab member.
+[144] Ava: Buy followers: 10 of anything, pay 10 get +10
+   This is the cloak-refunded 10-buy I set up with Sleep In. I pay 10 of my 11 to go from 40 to 50 followers and get 2 white back for later 1-follower buys. Any member here would cost my shared Fewest members +5 with Cal, and Cheerleaders or Consolation Prize can't beat a clean +10 on one recruit. Most resources is Cal's anyway, so holding resources is pointless.
+   FEEL: Banking a +10 recruit off a single big space feels like a real payoff for setting it up last turn, though the cloak refund makes the buy itself automatic again.
+[145] Ava: Pay 2 white, 8 purple (suggested)
+   This is the cloak-refunded 10-buy I set up with Sleep In, taking me from 40 to 50. Either split leaves me 3 resources after the +2 white refund, and those only matter now as fuel for more refunded 1-follower buys. Cal's 26 owns Most resources, so which color I pay doesn't matter and I'll take the suggested split.
+   FEEL: Choosing which colors to pay felt pointless here, because once a contest is out of reach every color is the same money.
+[146] Cal: Purple · Overtime → you'd get: +6 purple; 1 extra turns; rivals together 1 purple
+   I'm taking Overtime: +4 purple, +2 more from my Purple Cloak, and an extra minion. It also takes the Goes Last token off Ava, so I have a shot at Purple's +10, though Dee's Last Callers can snatch it back. Ben's 40-follower lead is probably out of reach, so I'm maximising resources and placements: they keep my Magenta lead safe and can become followers on my final turn.
+   FEEL: Being 40 behind with one round left makes me feel I'm playing for second rather than for the win.
+[147] Cal: Buy followers: 10 of anything, pay 10 get +10
+   I'm turning 10 resources into followers now. My Magenta lead is 32 to 3, so I have plenty of cushion, and resources sitting in my pile can be stolen with Help Yourself while bought followers can't be touched now that Heist is gone. Cheerleaders would break my 0-member White share and nets less than buying followers 1 for 1.
+   FEEL: With a huge Magenta lead and no members to buy, the only real choice is when to cash resources into followers, which feels more like bookkeeping than a decision.
+[148] Cal: Pay 1 yellow, 2 magenta, 7 white
+   Colors don't matter to my plan any more, but Ben's members span all four colors, so an Offering would strip 2 of each color I hold. Paying off my stray yellow and magenta leaves only white and purple, which caps that hit at 4 and protects my Magenta lead.
+   FEEL: Picking one of 56 near-identical payment splits is tedious, even though one hidden reason, Offering, makes the choice matter a little.
+[149] Ava: Yellow · Offering → you'd get: +5 yellow
+   Offering is the biggest raw gain left at +5 yellow, and its discard does nothing since I have no members. That makes 8 resources, enough for a cloak-refunded 5-buy to 55 with 5 left over. I'll stay at 0 members to keep my Fewest members split with Cal, and I'm eyeing Help Yourself on my last minion, where it would steal 5 from Cal's pile.
+   FEEL: Offering's rival-discard punish goes blank for a zero-member cult, so the round III center space is just a plain +5 for me, which feels a bit anticlimactic.
+[150] Ava: Buy followers: 5 of anything, pay 5 get +5
+   A cloak-refunded 5-buy takes me from 50 to 55 and the +2 white refund leaves me 5 resources to build on with Help Yourself and my last recruits. Any member here would break my shared Fewest members with Cal, which is worth 5. Consolation Prize looks like about +9, but after losing that share and paying 7 it nets less than a clean +5. I'm racing Dee for second; Ben at 63 is the leader.
+   FEEL: The refunded buy is the obvious recruit again, so this decision is more bookkeeping than choice.
+[151] Ava: Pay 5 yellow
+   Colors don't matter for any contest now: Cal's pile owns Most resources and I already hold the token for Went last. So I'll dump all 5 yellow and keep 2 white and 1 purple, which becomes 4 white after the cloak refund and stays flexible for my last refunded buys.
+   FEEL: Picking which colors to pay is pure bookkeeping again, because every contest my resources could affect is already settled.
+[152] Dee: Purple · On a Roll → you'd get: +2 purple; rivals together 1 purple
+   Cal holds the token on Overtime with 4 minions waiting, and On a Roll is the only token space left. If I take it now, the token is mine and nobody can take it back: Sleep In, Overtime and Last Call are used, and Latecomers is in the discard. That locks Purple's +10 and lets me make my last three placements after everyone else, with Last Callers still in hand as a backup. Later I can Farewell Last Callers with my final minions to drop to 0 members for a share of fewest members, but Ben at 63 heading toward roughly 78 is still far ahead.
+   FEEL: Realizing that the last open token space is the whole Purple fight, and that grabbing it ends the bidding war on the spot, felt decisive but a little anticlimactic.
+[153] Dee: Buy followers: 1 of anything, pay 1 get +1
+   I already hold the token from On a Roll and nothing open can take it back, so using Last Callers now gains nothing. My 2 purple only matter as followers, and I'll still have three recruits after this. I'll turn 1 purple into +1 now and keep the plan to Farewell Last Callers later for 7 followers and 0 members.
+   FEEL: Holding Last Callers as pure insurance once the token is locked makes its On Use feel pointless, even though it was the reason I bought it.
+[154] Dee: Pay 1 purple (suggested)
+   Paying the 1-buy with 1 purple as planned, leaving 1 purple; I hold the token and the purple has no other use for me.
+[155] Ben: White · Farewell → you'd get: +3..5 followers; -1 members; then you choose: Farewell: discard which member?
+   Farewell on Accomplice (cost 5, worth 1, its steal is long spent) nets +4 followers plus 1 white. That gives me exactly 5 resources for a 5-pack now, so nothing sits exposed to Dee's or Ava's steals. I keep 3 member colors, which still beats Dee's 1 for Yellow, and Anchorites stays live at 4 members. Survey or Makeover would leave yellow lying around for thieves.
+   FEEL: Cashing in a spent member for its full price feels like finding money in an old coat.
+[156] Ben: Purifiers [6 any; worth 1] — On Use, once per game: discard one of your members. Each rival with more members 
+   I'm switching from Accomplice to Purifiers. Purifiers cost 6 and is worth 1, so Farewell nets +5 instead of +4, and it has been idle all game. Losing its grey color still leaves me 4 colors against Dee's 1 for Yellow, and Anchorites stays live at 4 members.
+   FEEL: Finally getting value out of Purifiers by throwing it away is funny, and it makes clear the card never had a real use in this game.
+[157] Ben: Buy followers: 1 of anything, pay 1 get +1
+   Buying 1 follower turns one idle purple into +1 now and leaves less for Help Yourself to steal. I can't catch Cal's 22 for Magenta, so holding resources gains me nothing. My next placement, such as Right Away or Harvest, can still top me back up to a 5-pack.
+   FEEL: Only being allowed one recruit per turn makes the single-follower buy feel like a chore of a choice rather than a real decision.
+[158] Ben: Pay 1 purple (suggested)
+   I'm paying 1 purple for the single follower, the only way to pay.
+[159] Ben: Magenta · Help Yourself → you'd get: +2..4 white, +0..2 purple; rivals together -4..-2 white, -2..0 purple; th
+   Help Yourself is my 4th minion this round, so it steals 4 plus +1 magenta. That is 5 resources, more than Makeover's net +4. I'll take the steal from Ava's white, since she is my nearest chaser at 55 and that knocks her down too. Cal's 22 is out of reach for Magenta anyway, so I'll turn the haul into a 5-pack right after.
+   FEEL: A steal that grows with how many minions I've placed makes a late-round placement feel meatier than the flat spaces.
+[160] Ben: Ava's white (4)
+   I'm taking Ava's white. She is my closest chaser at 55 to my 69, and every resource I take from her is a follower she can't buy. Cal's big pile only matters for Magenta, and I can't win that contest anyway.
+   FEEL: Stealing straight from the runner-up feels like a satisfying double swing, my gain and her loss in one move.
+[161] Ben: Ava's white (3)
+   I'm still draining Ava, my closest chaser at 55. Every white I take is a follower she can't buy or Cash In, and Cal's pile only matters for a Magenta contest I've already ceded.
+[162] Ben: Ava's white (2)
+   I'm taking the rest of Ava's white so she's down to almost nothing. She's my closest chaser at 55 to my 69. Cal's 22-resource lead in Magenta is safe whatever I take, so stealing from him only adds to my haul.
+[163] Ben: Ava's white (1)
+   Last steal goes to Ava's final white, which leaves her with just 1 purple. She's my closest chaser at 55, and every resource she loses is a follower she can't buy with her last 2 minions. Cal's 22 is irrelevant to me now: he's at 33 and holds Magenta whatever I do.
+[164] Ben: Buy followers: 5 of anything, pay 5 get +5
+   I'm buying a 5-pack with 5 of my 7 resources. That keeps 2 back, so my last placement (Harvest +3) can top me up to another 5-pack. Cheerleaders would only make about +5 from the Yellow win and leave my final recruit stuck on a 1-follower buy.
+   FEEL: Working out that one recruit per turn makes a 7-cost member worse than leftover change feels more like arithmetic than a choice.
+[165] Ben: Pay 2 white, 3 purple (suggested)
+   Paying 2 white and 3 purple for the 5-pack. The 2 white I keep are just change for my last placement, and no color-based effects are left that could hit them.
+[166] Ava: White · Modest Means → you'd get: +4 white
+   Ben at 74 is out of reach, so I'm locking in second over Dee and just maximizing raw followers. Modest Means gives +4 white, taking me to 5 resources for a cloak-refunded 5-buy (55 to 60), with 2 white back for my last turn. Survey, Makeover and Catch Up give about the same amount, but Right Away would feed Ben's Picket Line and Swindle would break my shared Fewest members with Cal.
+   FEEL: Ben's Help Yourself taking my 4 white just before my turn stung, but now most of the spaces on offer are the same flat +4 for me, so this pick feels interchangeable.
+[167] Ava: Buy followers: 5 of anything, pay 5 get +5
+   I'll pay all 5 (4 white, 1 purple) for the 5-buy, taking me from 55 to 60, and the cloak refunds 2 white for my last minion's recruit. Holding resources does nothing for me: Cal's 22 owns Most resources, and Went last depends on the token, not my pile. Dee at 42 is the one I'm keeping behind for second.
+   FEEL: Another automatic refunded buy: in round III the cloak loop leaves me no real choice on recruits.
+[168] Ava: Pay 4 white, 1 purple (suggested)
+   Only one way to pay: 4 white and 1 purple for the 5-buy, taking me from 55 to 60. The cloak hands back 2 white for my last minion's recruit. Dee at 42 stays behind me for second.
+[169] Cal: Yellow · Survey → you'd get: +4 yellow
+   Ben at 74 is out of reach, so I'm just maximising followers. Each resource becomes 1 follower at the end, and Survey's +4 yellow ties Makeover and Right Away for the best gain. Unlike Right Away, it feeds Ben nothing through Picket Line. My Magenta lead (22 vs 2) and my 0-member White share both stay intact.
+   FEEL: With the winner already decided, my last four placements are just picking whichever space says +4, which feels like going through the motions.
+[170] Cal: Buy followers: 10 of anything, pay 10 get +10
+   I'm turning 10 into followers now. After this I still hold 16, and Dee, the only one who could gain much, can reach roughly 14 at most even with Catch Up, Stash and Harvest. Help Yourself, Heist and Offering are all used, so nothing can take my pile, and Cheerleaders would only net 3 for 7 and break my 0-member White share.
+   FEEL: Once every way to steal is used up, my turns are just converting resources to followers at 1 for 1, which feels like bookkeeping.
+[171] Cal: Pay 7 white, 3 purple (suggested)
+   Colors no longer matter: Offering, Cash In and every steal are used up, so I'll take the suggested 7 white and 3 purple and keep 16 resources as my Magenta lead.
+   FEEL: Choosing among 44 payment splits that all lead to the same result feels like pure busywork.
+[172] Cal: Yellow · Makeover → you'd get: -4..16 yellow, +0..20 magenta, -6..14 white, -6..14 purple; then you choose: Ma
+   Ben is out of reach, so I'm just adding resources, since each one becomes a follower and pads my Magenta lead. Makeover's +4 yellow ties Right Away and feeds Ben nothing through Picket Line. Catch Up would give only 1 and Harvest only 3.
+   FEEL: Late in round III every open space is just a +3 or +4 resource tap, so placement no longer feels like a real decision.
+[173] Cal: Pass (keep your colors)
+   Colors no longer matter: Offering, Help Yourself and Heist are all used up, and every resource counts the same for Magenta and for buying followers at the end. So I'm keeping my colors as they are.
+   FEEL: Being asked to repaint 20 resources when color has stopped mattering is just an extra click.
+[174] Cal: Buy followers: 10 of anything, pay 10 get +10
+   Spare resources are worth nothing at game end, and Dee's three minions all come after my last turn. So I'll have to cash in almost everything before then anyway, and keeping enough to hold Magenta would cost more followers than its +10 pays. I'm buying 10 followers now and will convert the rest over my next two turns, since only one recruit is allowed per turn.
+   FEEL: Realizing that my Magenta lead will just evaporate because Dee places last makes the contest feel like a trap rather than a choice.
+[175] Cal: Pay 4 white, 6 purple (suggested)
+   Colors no longer matter now that Offering, Help Yourself and Heist are all used, so I'm taking the suggested 4 white and 6 purple. That leaves 10 resources to cash in on my last turns.
+   FEEL: Picking from 43 payment splits that all end the same way feels like busywork.
+[176] Ava: White · Nest Egg → you'd get: +3 white
+   This is my last minion, so all that counts is raw followers for second place. Nest Egg's +3 white takes me to 5 for one more cloak-refunded 5-buy, 60 to 65. Right Away's bigger +4 is wasted on a single recruit and would feed Ben's Picket Line. Swindling Anchorites off Ben would break my shared Fewest members with Cal and still not close a 14+ gap.
+   FEEL: My last placement is a choice between several identical +3s, which makes the round III finish feel like it's coasting rather than climaxing.
+[177] Ava: Buy followers: 5 of anything, pay 5 get +5
+   This is my last recruit, so I'm turning all 5 white into a 5-buy, 60 to 65, and the cloak hands back 2 white that won't matter. Holding the 5 wins me nothing, since Cal's 10 already owns Most resources. Dee at 42 can't catch me for second.
+   FEEL: The final recruit of the game is the same refunded 5-buy as the last several, so the ending feels like a formality rather than a decision.
+[178] Ava: Pay 5 white (suggested)
+   Only payment available: 5 white for the final 5-buy, 60 to 65, keeping me ahead of Dee for second.
+[179] Ben: Yellow · Harvest → you'd get: +0..3 yellow, +0..3 magenta, +0..2 white, +0..2 purple; then you choose: Harvest
+   Harvest +3 brings my 2 white up to 5, so my last recruit is a full 5-pack for +5 followers. Swindle only nets about +2 and hands Dee a shop member. Write-Off on Accomplice nets about +4 and costs me a member color. I'm at 74 and heading for roughly 94 with Anchorites and the Yellow win, and Ava at 65 can't catch that.
+   FEEL: My last placement is pure arithmetic toward the next 5-pack, which is tidy but quiet with the game already decided.
+[180] Ben: +1 white
+   The color barely matters, since I'll spend all 5 on a 5-pack right away. White matches the 2 I already hold, and no open space left can strip a color from me.
+   FEEL: Picking colors one at a time for resources I'm about to spend at 1:1 feels like busywork.
+[181] Ben: +1 white
+   White again; the color doesn't matter since all five go straight into a 5-pack this turn.
+[182] Ben: +1 white
+   Last white makes 5, which goes straight into a 5-pack for +5 followers this turn.
+[183] Ben: Buy followers: 5 of anything, pay 5 get +5
+   Buying the 5-pack with my 5 white for +5 followers, which is exactly what the Harvest setup was for. That takes me to 79, and Anchorites (+5) plus the Yellow win (+10) should land me around 94. Ava at 65 has no minions left, so she can't catch me.
+[184] Ben: Pay 5 white (suggested)
+   Paying all 5 white for the 5-pack, which finishes the Harvest plan: 79 followers before Anchorites and the Yellow win.
+[185] Cal: Purple · Right Away → you'd get: +4 purple; rivals together 1 purple
+   Ben at 79 is out of reach, so I'm just maximising followers. Right Away (+4 purple) and then Stash (+3) bring me to 17, which converts to 10 + 5 followers over my two recruits. Holding 13+ for Magenta isn't safe: Dee's three closing turns could reach that with Catch Up, Write-Off and Swindle steals.
+   FEEL: Knowing Dee gets three uninterrupted turns after my last one makes contesting Magenta feel hopeless rather than a real gamble.
+[186] Cal: Buy followers: 10 of anything, pay 10 get +10
+   I'll buy 10 followers now, leaving 4. Next turn Stash brings me to 7, so I buy 5 and keep 2. Holding 14+ to defend Magenta would cost as much as the +10 it pays, and Dee's three closing turns make that lead unsafe anyway.
+   FEEL: With one recruit per turn and leftovers that score nothing, the last turns come down to arithmetic about which 5-or-10 bundle wastes the fewest resources.
+[187] Cal: Pay 4 yellow, 2 white, 4 purple (suggested)
+   Colors don't matter any more, so I'll take the suggested split. That leaves me 4 resources; Stash next turn brings it to 7, and I'll cash in 5 of those.
+   FEEL: Another long list of payment splits that all end the same way makes the closing turns feel like paperwork.
+[188] Cal: Magenta · Stash → you'd get: +3 magenta
+   This is my last minion. Stash takes me to 7 resources, and I buy 5 followers to reach 68, leaving 2 behind. Swindle would hand me a member, which breaks my White tie with Ava and gives her the full +10. Holding 7 for Magenta loses to Dee's three closing turns (Catch Up, Crunch Time, steals).
+   FEEL: My final placement is just picking the biggest resource tap so it rounds nicely into a 5-follower bundle, which feels flat for a last turn.
+[189] Cal: Buy followers: 5 of anything, pay 5 get +5
+   Ben is out of reach, so I'm locking in second place over Ava. Buying 5 puts me at 68, and my half of White makes 73, ahead of Ava's 70. Passing to hold 7 for Magenta loses to Dee's Catch Up alone (+7 takes her to 8), and that would leave me at 68, below Ava.
+   FEEL: Dee's three uninterrupted closing turns make the Magenta lead I built feel like it was never really mine to defend.
+[190] Cal: Pay 4 yellow, 1 magenta (suggested)
+   Colors don't matter any more: no Offering, steal or color check is left that cares about them. So I'll take the suggested 4 yellow and 1 magenta, which leaves 2 magenta as a token Magenta holding.
+   FEEL: A third list of payment splits on my final purchase, when every split ends at the same score, makes the finish feel like clerical work.
+[191] Dee: Magenta · Catch Up → you'd get: +4 magenta
+   Catch Up first, while Ava and Cal out-hold me, for +4 magenta. Then Write-Off hands Last Callers away, giving me about 8 white and 0 members so I share fewest members, and Splurge comes last. I'll convert about 12 resources with my three recruits and still keep 3 to take Magenta's +10 outright, on top of Purple's +10 from going last. Ben at 79 with Yellow locked is out of reach, so I'm playing to pass Cal and Ava.
+   FEEL: Being the only player with minions left means I can plan my last three turns with zero interaction, which feels like solving a puzzle rather than playing against anyone.
+[192] Dee: Buy followers: 1 of anything, pay 1 get +1
+   I'm sequencing my last three recruits. A 1-buy now leaves me 4. Write-Off on Last Callers then brings me to 12, and a 10-buy leaves 2. Splurge brings me to 4, and a final 1-buy leaves 3, which still beats Ava and Cal's 2 for Magenta's +10. That converts 12 resources, better than any 5-first ordering, which only converts 11.
+   FEEL: With no rivals left to act, this turn is pure arithmetic on recruit sizes, a puzzle rather than a contest.
+[193] Dee: Pay 1 purple (suggested)
+   Paying the 1-buy with my last purple. My resource total for Magenta's contest is the same either way, and purple has no further use for me now that I hold the token.
+[194] Dee: White · Write-Off → you'd get: +7 white; -1 followers; -1 members; rivals followers 1; then you choose: Write-
+   This is the planned Write-Off. Giving Last Callers away nets me 8 white (12 resources total) and drops me to 0 members, so I share fewest members. I'll give it to Cal: at 68 he's the rival above me who would otherwise split White, so he loses that share. Then a 10-buy, Splurge plus a 1-buy, keeping 3 to beat the 2s for Magenta's +10 on top of Purple's +10.
+   FEEL: Dumping a member onto a rival purely to wreck their fewest-members tie feels sneaky and fun, a real interaction in an otherwise solo endgame.
+[196] Dee: Cal (68 followers) — if the round ended right after this: your contests +5 followers (you'd win Purple, White,
+   Sticking with the plan: Last Callers goes to Cal. That breaks the Ava–Cal tie at 0 members, so I split White with Ava for +5. Handing it to Ben would leave three of us at 0 and cut my share to 4. Ben at 79 is out of reach whichever of Ava or Cal I pick, so I'm denying the 5 to the higher of the two.
+   FEEL: Choosing which rival eats a member is a fun little kingmaker moment, but with Ben locked in, it only decides second place, so it feels more like spite than strategy.
+[197] Dee: Buy followers: 10 of anything, pay 10 get +10
+   I hold 11 (4 magenta, 7 white), so a 10-buy now leaves 1. Splurge next gives +2, and I keep 3 to beat Ava and Cal's 2 for Magenta's +10. Spending down to 2 would only tie three ways for 4, and any member here costs me my White share, so the 10-buy plus holding 3 is the best line.
+   FEEL: The Write-Off preview showed +7 white, but I'd counted on 8 in my plan. That small gap between the preview and the card's cost made me re-check my arithmetic instead of trusting either.
+[198] Dee: Pay 3 magenta, 7 white (suggested) — spending this gives up your contest lead in magenta
+   Either payment leaves me 1 resource, and Magenta's contest counts every color together, so the split doesn't matter. Splurge next adds +2 white, which gets me to 3 against Ava and Cal's 2. I'll take the suggested 3 magenta and 7 white.
+   FEEL: The warning that this gives up my magenta lead is technically true for this instant, but it ignores that Splurge refills me before round end, so it nudged me to re-check a plan I'd already counted.
+[199] Dee: White · Splurge → you'd get: +2 white
+   Splurge as planned: +2 white takes me to 3 resources against Ava's and Cal's 2, so I win Magenta's +10 outright. I keep 0 members to split White with Ava, and Purple's +10 is already mine as last placer. Swindle would give me a member and cost my White share. Crunch Time also gets me to 3, but it feeds Ben's Picket Line a purple, so Splurge is cleaner. I'll pass the recruit afterwards rather than drop to a three-way tie at 2.
+   FEEL: My final placement is a one-line arithmetic check with no rival able to answer, so the climax of the game feels like filling in a form.
+[200] Dee: Pass (recruit nothing)
+   I hold 3 against Ava's and Cal's 2, so passing wins Magenta's +10 outright. A 1-buy would get me +1 follower but drop me into a three-way tie at 2, worth only 4. Passing is better by 5.
+## Round III ends. Went last: Dee +10 · Fewest members: Ava & Dee +5 · Most resources: Dee +10 · Most member colors: Ben +10
+   FEEL: Passing on the last recruit of the game because keeping one resource beats spending it is a neat little tension, but by now it's just checking a sum.
+NOTES Ava: In round III I kept running the zero-member White Cloak loop: Offering, Modest Means, Nest Egg and Cash In fed cloak-refunded 5-buys, and I held my share of Fewest members with Dee. It ended with me third at 70, behind Dee's 77. I had written Dee off at 42, so her late surge past me was a real surprise and shows I misjudged her. Ben's four-member engine (Anchorites, Picket Line, Early Traders) finished well clear at 94. The round felt like coasting: every recruit was the same refunded buy, and my last placements were interchangeable flat +3/+4 spaces. Offering's discard punish did nothing from a memberless cult, so the climactic +10 round felt anticlimactic rather than tense.
+NOTES Ben: Round III plan: protect my Yellow lead (4 member colors against Cal's 1), keep my cult at 4 members for Anchorites, and turn every resource into followers in 5-packs. Farewell on Purifiers, Help Yourself's growing steal and Poach all added up, and I won 94 to Dee's 77. What felt good was Farewell paying full price for a dead card and Help Yourself scaling with my placements. What felt bad was the endgame becoming arithmetic: Harvest color picks one at a time for resources I spent straight away, and one recruit per turn making 7-cost members like Cheerleaders worse than a follower buy. Lesson for the whole game: a small cult of cheap, wide-colored members that wins Yellow every round and collects Anchorites +5 each round beats rivals who skip members and take White, because I banked recurring followers while they relied on 1:1 buys and contests they had to share.
+NOTES Cal: In round III I went for Cash In on my 16 white plus Overtime and Heist, then converted everything into followers. I finished 4th at 69, one behind Ava. I misjudged my own position badly: I counted on half of White, but Last Callers kept me at 1 member while Ava and Dee sat at 0, so the +5 I planned on never came. That single member cost me third place. What felt bad was the closing stretch: Dee's three uninterrupted final turns made my Magenta lead impossible to defend, and the last turns shrank to working out which 5- or 10-follower bundle wasted the fewest resources, picking from long lists of payment splits that all ended the same. The lesson for the whole game is that 0 members plus buying followers dominated, since Ava and Dee never recruited and beat me. Ben won by stacking Anchorites, Melting Pot and the Yellow contest on a small member set. Any member I keep must clearly pay for losing White, and I should recheck my own member count before banking on a tie.
+NOTES Dee: In round III I held the Goes Last token for Purple's +10, used Write-Off to dump Last Callers on Cal so I split White with Ava, then tuned my recruits (1-buy, 10-buy, Splurge, pass) to finish with 3 resources and take Magenta's +10 outright, landing second at 77. The Write-Off moment felt good: handing a rival a member to break their fewest-members tie was a real, sneaky interaction. What felt pointless was that once everyone else was out of minions, my last three placements were solo arithmetic with nobody able to answer, and Ben's 94 was already out of reach, so the climax read like filling in a form. Passing my final recruit because one held resource beat one bought follower was a neat tension, but by then it was just checking a sum.
