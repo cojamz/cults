@@ -41,7 +41,7 @@ The deck has 10 members per color plus 15 grey. 6 show in round I, 7 in round II
 ![The shop: total price in the dark circle, its colors along the foot](rules-img/shop.jpg)
 
 ## Round end
-1. Round-end abilities happen.
+1. Round-end abilities happen, in turn order.
 2. Each contest is scored in turn. The leader gets **+4 followers** in round I, **+6** in round II, **+10** in round III. Tied leaders each get half, rounded up. In a "most" contest you need at least 1 of what's counted; in a "fewest" contest, 0 counts.
 3. Minions come home and the shop deals a fresh row.
 
