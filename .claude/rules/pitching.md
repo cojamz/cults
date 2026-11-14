@@ -10,6 +10,8 @@ Chat threads don't load the /brainstorm skill, so read .claude/skills/brainstorm
 
 6. **Judged like his marks**: run it through design/notes/card-judging-v2-2026-11-07.md and design/eval/card-judging/taste-guide.md in writing, judged against the bar on its own (not against a card it would replace; Cory, Nov 7) with "none of these" allowed, and play it at the table's real state that round (round I: most players hold 0 or 1 members). (Cory, Nov 8: "your ideas were fucking awful there its like you applied none of what we learned.")
 
+10. **Nobody acts on another player's turn**: a card or space must not make a rival choose, pay or respond during someone else's turn (Cory, Nov 13: "Generally should avoid all other players having to act during another players turn").
+
 7. **Public and certain**: no drawing from the top of the pile, no randomness, no hidden cards; everything a player could use is public (Cory, Nov 7, said many times: "i don't like drawing from the top of the pile. i don't like randomness. In general the game should be all public information."). presend bounces it.
 
 8. **Color interactions** (pairs, the intersection table, ties between colors): follow .claude/skills/brainstorm/references/color-interactions.md in writing. A shared moment both colors cause, paid off by a card naming neither; never a generic shop or cult rule, their existing overlap, a crossed tie, or a card built on today's cards (Cory, Nov 7: "ties need to be intuitive", "these aren't really blue and red interactions").

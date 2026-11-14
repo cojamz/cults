@@ -2237,3 +2237,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-13 8:13pm Eastern) Round-end abilities happen in turn order: "round end abilities happen in turn order". The game already does this (core.js roundEnd uses turnOrder); the rulebook now says it.
 - (Cory, 2026-11-13 8:14pm Eastern, tentative: "I think fine if Downsizers discards itself? idk") Downsizers (On Use, once per round: discard one of your members. +4 white.) may discard itself, as its text reads. Today the game says no; change routed to the coordinator.
 - (Cory, 2026-11-13 8:16pm Eastern: "yes.") Confirms the line above: Downsizers may discard itself.
+- (Cory, 2026-11-13 8:17pm Eastern) Design principle: "Generally should avoid all other players having to act during another players turn." Applies to every new space, member and cloak.

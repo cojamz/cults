@@ -46,6 +46,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 - When he sets a count ("batches of 5"), deliver exactly that many good ideas: keep generating until that many pass and each is one you'd defend yourself; never pad to hit the count, and say plainly if one is weaker (Cory, Nov 7: "do you go until you fucking have 5 good ideas for me", "it's 5 ideas that YOU FEEL ARE GOOD").
 - In a live back-and-forth, speed first: answer his message within a minute; write the record and the draft so presend passes the first time (check names against the card files, fill every step past 20 characters) instead of bouncing and re-running the reader (Cory, Nov 11, three times: "Every message takes so long").
 - Label your own fill-ins. Options: about 5 per open slot in one message, within a minute or two, no quoted wait.
+- Card recommendation lists (cards to add, change or cut) are grouped by color, changes to existing cards first, ranked inside each color; every idea is checked against the game before it is rated: cut anything impossible in the game state ("pay to keep a contest lead": who leads is a fact of what players hold), unpriced, or that makes a rival act on someone else's turn (Cory, Nov 13: "wait these aren't recommended by color? what the fuck are we doing here.", "Generally should avoid all other players having to act during another players turn").
 - A note ending in * is logged only. Voice notes: pull out calls, ideas and to-dos, log them, read back only what's ambiguous.
 
 ## Never make him ask

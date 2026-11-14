@@ -34,7 +34,7 @@ const G=[
 ]],
 ['Medium','Member contests end up as one player’s private prize','Fewest members went uncontested at 0 or 1 members in 3 games; a 14-member cult took +30 in one round.',[
  [89,'High','Answers the uncontested Fewest members; would have paid about 5 a round'],
- [18,'High','Same idea from another game: two players reached it alone'],
+ [18,'High','Same as Big Household, from another game; answers the uncontested Fewest members'],
  [85,'Medium','Lets a small cult push on a member lead without swapping'],
  [34,'Medium','Lets anyone challenge a runaway leader; the gaps came from nobody trying'],
  [24,'Medium','Pushes a member onto the zero player; close to Guest of Honor'],
