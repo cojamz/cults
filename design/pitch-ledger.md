@@ -542,3 +542,4 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - **Insurance Agents** (player idea, Cal: "whenever a rival takes one of your members, gain followers equal to its cost"). Cory, 8:23pm Eastern: "Insurance Agents is good too. Maybe half its cost though" (followers equal to half the taken member's cost).
 - **Bodyguard** (player idea, Dee: "once per game, when a rival swaps or takes one of your members, cancel it"). Cory, 8:24pm Eastern: "Bodyguards is a good revamp." Read as: a new text for the existing magenta Bodyguards (6 magenta + 4 any, worth 2, counts as 2 members: "Whenever a rival steals from you, steal 1 back from them."). Not built; needs his confirm.
 - **Sanctuary** (player ideas, three versions). Cory, 8:24pm Eastern: "Sanctuary good". Asked which version.
+- **Cory idea, 8:25pm Eastern** (likely his Sanctuary answer): "Members can't leave your cult by any means if you have the fewest followers". Logged, not built.
