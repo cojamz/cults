@@ -98,8 +98,10 @@ export function extraMinion(ctx, p, what) {
   if (!spareSpace(ctx)) { ctx.log(`${p.name}'s ${what}: no free space this round, so no extra minion.`); return 0; }
   // before the round closes: ahead of allPlaced, or, once that has run (a recruit during Straggler's after-the-last-minion
   // step), ahead of the round's end; never after it (a seeded game placed a minion after the game was over, Nov 4)
-  const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced'), end = q.findIndex(t => t.t === 'endRound');
-  q.splice(close >= 0 ? close : end >= 0 ? end : q.length, 0, { t: 'turn', p: p.id });
+  // into the normal order (Cory, Nov 14: "it just inserts into the normal", "only goes last effects"): your next turn
+  // in the round's order that no minion of yours is waiting for, else after the round's order
+  const { at, slot } = ctx.extraTurnAt(p.id);
+  ctx.state.queue.splice(at, 0, { t: 'turn', p: p.id, ...(slot !== null ? { slot } : {}) });
   p.left += 1;
   ctx.log(`${p.name}'s ${what}: ${p.name} gets 1 more minion this round.`);
   extraHooks(ctx, p);
@@ -155,7 +157,8 @@ function skipNext(ctx, p, why, by = p, quiet = false, { token = false, last = fa
   if (token) { task.token = true; delete task.now; }
   // where the turn sat, a marker: the turn is really skipped when play reaches it (Gossip pays then); a token's marker
   // turns back into the turn if the token is taken first (the minion goes back to its owner's hand)
-  q.splice(i, 0, { t: 'content', p: p.id, h: 'purple.skipped', data: token ? { why, by: by.id, token: true, ...(at !== undefined ? { at } : {}) } : { why, by: by.id } });
+  q.splice(i, 0, { t: 'content', p: p.id, h: 'purple.skipped', data: { ...(token ? { why, by: by.id, token: true, ...(at !== undefined ? { at } : {}) } : { why, by: by.id }), ...(Number.isInteger(task.slot) ? { slot: task.slot } : {}) } });
+  task.moved = true; // it places at the end now, out of its place in the order
   q.splice(stop, 0, task);
   // its new place: after every other turn of the round's order still to come
   if (at !== undefined && at !== order.length - 1) {
@@ -251,17 +254,32 @@ function takeToken(ctx, p, why, what = '') {
   const close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
   const on = q.slice(0, stop).filter(t => t.t === 'turn' && t.p === o.id && t.token);
   on.forEach(t => { delete t.token; });
-  // a passed turn still to come is the minion's own turn again
-  for (const t of on) {
+  // a passed turn still to come is the minion's own turn again (its own, matched by its place in the order)
+  const left = [...on];
+  for (;;) {
     const m = q.findIndex(x => x.t === 'content' && x.h === 'purple.skipped' && x.p === o.id && x.data && x.data.token);
-    if (m < 0) break;
-    const at = q[m].data.at;
+    if (m < 0 || !left.length) break;
+    const at = q[m].data.at, k = q[m].data.slot;
+    const pick = left.findIndex(t => Number.isInteger(k) && t.slot === k);
+    const [t] = left.splice(pick >= 0 ? pick : left.findIndex(t => !t.joined) >= 0 ? left.findIndex(t => !t.joined) : 0, 1);
+    if (Number.isInteger(k)) t.slot = k;
+    delete t.moved; delete t.joined;
     q.splice(q.indexOf(t), 1);
     q.splice(q.findIndex(x => x.t === 'content' && x.h === 'purple.skipped' && x.p === o.id && x.data && x.data.token), 1, t);
     if (s.early && s.early.round === s.round) {
-      const k = s.early.moves.findIndex(mv => mv.p === o.id && mv.late && mv.from === at);
-      if (k >= 0) s.early.moves.splice(k, 1);
+      const e = s.early.moves.findIndex(mv => mv.p === o.id && mv.late && mv.from === at);
+      if (e >= 0) s.early.moves.splice(e, 1);
     }
+  }
+  // a minion gained while on the token (Extra Hand) had no turn passed: it goes back to its own place in the order
+  for (const t of left) if (t.joined && Number.isInteger(t.slot)) {
+    q.splice(q.indexOf(t), 1);
+    delete t.moved; delete t.joined;
+    const end = q.findIndex(x => x.t === 'endTurn' || x.t === 'previewHold') + 1, close2 = q.findIndex(x => x.t === 'allPlaced');
+    let i = end;
+    const stop2 = close2 < 0 ? q.length : close2;
+    while (i < stop2 && !(((q[i].t === 'turn' && !q[i].now && !q[i].moved) && Number.isInteger(q[i].slot) && q[i].slot > t.slot) || (q[i].t === 'content' && q[i].h === 'purple.skipped' && Number.isInteger(q[i].data?.slot) && q[i].data.slot > t.slot))) i++;
+    q.splice(i, 0, t);
   }
   ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token${what} from ${o.name}${on.length ? `, and ${on.length === 1 ? 'the minion on it goes' : `the ${on.length} minions on it go`} back to ${o.name}` : ''}.`);
 }
@@ -359,6 +377,8 @@ const lastWaits = (ctx, p) => {
 /** The skip marker reached: p's turn is passed over now. Gossip (Cory, 2026-10-22: "+1 follower every time a players
  *  turn is skipped", anyone's, yours too; Oct 23: "should pay when turn is actually skipped"). */
 function skipped(ctx, p, value, data) {
+  // the order has come to this place, though nobody places in it
+  if (Number.isInteger(data?.slot)) ctx.state.slotAt = Math.max(ctx.state.slotAt ?? -1, data.slot);
   // Early Birds checked when the skipped turn comes, not when the skip was set (Cory, 2026-10-22: "your turns cannot be
   // skipped, your own Sleep In and Last Call too"): one recruited after the skip was set (Sleep In, then Early Birds on
   // the same turn) gives the turn back; the minion waiting on the token, if any, comes off it and places now.

@@ -747,7 +747,7 @@ function lastCallLast(state) {
   // places before a rival's turn or shows in the holder's hand beside the token (Cory, Nov 14: "why is this happening still")
   // Early Birds ("Your turns can't be skipped."), recruited after the take, keeps the holder's turns where they are
   const early = state.players[holder].members.some(u => effectiveDefs(state.cards[u], state).some(d => d.noSkip));
-  if (!early) for (let i = 0; i < stop; i++) if (q[i].t === 'turn' && q[i].p === holder && !q[i].now) q[i].token = true;
+  if (!early) for (let i = 0; i < stop; i++) if (q[i].t === 'turn' && q[i].p === holder && !q[i].now && !q[i].token) Object.assign(q[i], { token: true, moved: true, joined: true });
   // a turn moved up to now (Right Away, Crunch Time, a copy of either) stays where it was put
   const late = t => !t.now && t.token && t.p === holder;
   const turns = at.map(i => q[i]), sorted = [...turns.filter(t => !late(t)), ...turns.filter(late)];
@@ -1118,6 +1118,8 @@ function runTask(state, task) {
       }
       state.current = p.id;
       (state.turns = state.turns || []).push(p.id);
+      // how far the round's order has come (a turn moved up, or sent to the end, doesn't move it)
+      if (Number.isInteger(task.slot) && !task.now && !task.moved) state.slotAt = Math.max(state.slotAt ?? -1, task.slot);
       // two turns in a row (a snake turnaround, Right Away, Crunch Time, Clockmakers, +1 minion placed now): Courier
       if (state.turns.length > 1 && state.turns[state.turns.length - 2] === p.id) {
         const ctx = ctxFor(state);
@@ -1310,7 +1312,10 @@ function startRound(state, r) {
     return [id, grants];
   }));
   const rowNotes = [];
-  const snake = state.order.map(id => ({ t: 'turn', p: id }));
+  // each turn knows its place in the round's order (slot), so a minion gained mid-round can take its owner's next
+  // turn in that order (Cory, Nov 14: "it just inserts into the normal", "only goes last effects")
+  const snake = state.order.map((id, slot) => ({ t: 'turn', p: id, slot }));
+  state.slotAt = -1; state.slotN = snake.length;
   // Clockmakers (flag firstTwoInRow, Cory 2026-10-29): your first two turns of the round come in a row. Your last snake
   // turn moves up to right after your first, as Right Away moves one (your turns between stay where they are)
   // Early Risers (REPLACE7, flag firstTwoIfFewest): the same, while you have the fewest followers (ties count)
@@ -1321,6 +1326,7 @@ function startRound(state, r) {
     const f = snake.findIndex(t => t.p === id), l = snake.findLastIndex(t => t.p === id);
     if (f < 0 || l <= f + 1 || snake[f + 1].p === id) continue; // already two in a row (a snake end)
     const [t] = snake.splice(l, 1);
+    t.moved = true; // placed early: its own place in the order is left empty
     snake.splice(f + 1, 0, t);
     const why = flagName(state, state.players[id], rowFlag(id));
     if (!state.early || state.early.round !== r) state.early = { round: r, moves: [] };
@@ -1959,6 +1965,32 @@ function memberJoined(state, p, uid) {
   // Kinfolk (idea pipeline pool 8, candidates only): "Whenever a member joins your cult" on another card (or itself)
   eachMemberOf(state, p, (held, d) => { if (d.pool && d.onMemberJoins && p.members.includes(uid)) d.onMemberJoins(ctx, p, held, w); }, ['onMemberJoins']);
 }
+/**
+ * Where a minion gained mid-round places (Cory, Nov 14: "it just inserts into the normal", "only goes last effects"):
+ * its owner's next place in the round's order that has no minion of theirs waiting for it (one emptied when Crunch Time,
+ * Right Away or Clockmakers moved that turn up), else after the round's order. Returns the queue index to insert at.
+ */
+export function extraTurnAt(state, pid) {
+  const q = state.queue, close = q.findIndex(t => t.t === 'allPlaced'), endRound = q.findIndex(t => t.t === 'endRound');
+  const stop = close >= 0 ? close : endRound >= 0 ? endRound : q.length;
+  const lo = state.slotAt ?? -1, n = state.slotN ?? 0;
+  // a slot is held by the minion still waiting for it (its turn, or the marker of a skipped one); a turn moved up to
+  // now, or placed early, left its slot empty
+  const slotOf = t => (t.t === 'turn' && Number.isInteger(t.slot) && !t.now ? t.slot
+    : t.t === 'content' && t.h === 'purple.skipped' && Number.isInteger(t.data?.slot) ? t.data.slot : null);
+  const held = new Set(q.slice(0, stop).map(slotOf).filter(k => k !== null));
+  let j = -1;
+  for (let k = lo + 1; k < n; k++) if (state.order[k] === pid && !held.has(k)) { j = k; break; }
+  if (j < 0) return { at: stop, slot: null };
+  // before the first thing still to come whose place in the order is later (never inside the turn being played)
+  const from = q.findIndex(t => t.t === 'endTurn' || t.t === 'previewHold') + 1;
+  for (let i = from; i < stop; i++) {
+    const k = slotOf(q[i]);
+    if (k !== null && k > j && !q[i].moved) return { at: i, slot: j };
+  }
+  return { at: stop, slot: j };
+}
+
 /**
  * A member that adds minions in this round (Extra Hand: "+1 minion in round III"), recruited during it, adds them at
  * once: extra turns after everyone else's, before the round closes, as at round start (Claude, under Cory's
@@ -2806,6 +2838,8 @@ function ctxFor(state) {
     note: (p, member, text, res = null) => note(state, p, member, text, res),
     /** This round's order with turns taken early moved up (roundOrder). */
     roundOrder: () => roundOrder(state),
+    /** Where a minion gained now places: { at: queue index, slot } (extraTurnAt). */
+    extraTurnAt: pid => extraTurnAt(state, pid),
     cardLeaves: (p, uid) => cardLeaves(state, p, uid),
     /** Run fn on behalf of owner's member `name` (a hook content code calls itself, e.g. Choir reacting to a copy):
      *  whatever it changes and doesn't log is logged under that name, like the engine's own member hooks. */
