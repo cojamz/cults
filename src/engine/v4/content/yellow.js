@@ -94,7 +94,7 @@ const hwCost = c => c.def.s + c.def.w;
 const hwList = (ctx, p) => ctx.shopCards().filter(c => hwCost(c) <= 4 + MORE + richUp(ctx.state) && newColor(ctx, p, c, { grey: true }));
 /** Open House (REPLACE14=openhouse, Members E lane, Nov 4; quality/pitches/E-redo1.md, paper 17 vs 15; a play A/B under
  *  "paper filters, play ranks"), in Melting Pot's place: a free extra recruit costing up to 2 per member color. */
-const ohList = (ctx, p) => { const cap = 2 * memberColors(ctx, p).length; return ctx.shopCards().filter(c => hwCost(c) <= cap); };
+const ohList = (ctx, p) => { const cap = 2 * ctx.memberColorsWithGrey(p).length; return ctx.shopCards().filter(c => hwCost(c) <= cap); };
 const OPEN_HOUSE = {
   key: 'openhouse', ring: 2, name: 'Open House', copyDoesIt: true,
   text: '+2 yellow. Recruit a shop member costing up to 2 per color among your members, for free.',
@@ -102,7 +102,7 @@ const OPEN_HOUSE = {
   resolve(ctx, p) {
     ctx.gain(p, Y, 2, { fromAction: true });
     const list = ohList(ctx, p);
-    if (!list.length) { ctx.log(`${p.name}'s Open House: no shop member costs ${2 * memberColors(ctx, p).length} or less.`); return; }
+    if (!list.length) { ctx.log(`${p.name}'s Open House: no shop member costs ${2 * ctx.memberColorsWithGrey(p).length} or less.`); return; }
     ctx.choose(p, 'Open House: recruit which member for free?', list.map(c => ({
       id: `card:${c.uid}`, label: `${c.def.name} (${hwCost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + hwCost(c),
     })), 'yellow.openHouse');
@@ -850,7 +850,7 @@ export default {
     // Cory, Nov 5: "1 to 3 members of" (was "exactly one member of"; most members count as 2 or more)
     m('bigtent', 'Big Tent', 3, 3, 'Game End: +2 followers per color you have 1 to 3 members of.', {
       // Dabblers never pushes a color past 3 (Cory, Nov 1: Dabblers and Drifters always work in the owner's favor)
-      onGameEnd: (ctx, owner) => 2 * ctx.state.quadrants.filter(q => { const n = ctx.countMembersOfColor(owner, q, { wild: false }); return n >= 1 && n <= 3; }).length,
+      onGameEnd: (ctx, owner) => 2 * ctx.memberColorsWithGrey(owner, { wild: false }).filter(q => ctx.countMembersOfColor(owner, q, { wild: false }) <= 3).length, // grey is a color (Cory, Nov 13)
     }),
     // Cory, 2026-10-31: named Book Cookers; "agree this gives multiple followers"
     m('bookcooker', 'Book Cookers', 5, 4, 'On Use, once per game: rearrange your resources into any mix of colors.', { f: 3, keepCount: true, /* given back: costs 10+ */
@@ -939,10 +939,10 @@ export default {
       botActivate: (ctx, owner) => ctx.shopCards().some(c => hwCost(c) >= 5 && hwCost(c) <= 7 + richUp(ctx.state)),
     }),
     // Cory, 2026-11-11 8:31pm Eastern, his card: "Round end plus 1 follower for each color you have"; "do mine… It's good
-    // for anybody". Grey members are no color. Name and price are Claude's fill-ins.
+    // for anybody". Grey is a color (Cory, Nov 13: "it should count for everything as a color"). Name and price are Claude's fill-ins.
     m('cosmopolitans', 'Cosmopolitans', 2, 2, 'Round End: +1 follower per color among your members.', {
       onAllPlaced(ctx, owner) {
-        const n = ctx.state.quadrants.filter(q => ctx.countMembersOfColor(owner, q) > 0).length;
+        const n = ctx.memberColorsWithGrey(owner).length; // grey is a color (Cory, Nov 13)
         if (!n) { ctx.log(`${owner.name}'s Cosmopolitans: no colors among their members.`); return; }
         owner.bonus += n;
         ctx.log(`${owner.name}'s Cosmopolitans: ${n} color${n === 1 ? '' : 's'} among their members, +${n} follower${n === 1 ? '' : 's'}.`);

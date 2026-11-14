@@ -293,10 +293,10 @@ describe('Cosmopolitans: "Round End: +1 follower per color among your members."'
     const { s } = run('cosmo-dabblers', { quads: Q, queue: END, members: [['yellow.cosmopolitans', 'benders.dabblers']] }, []);
     expect(s.players[0].bonus).toBe(4);
   });
-  it('a grey member is no color; Drifters counts as its chosen color', () => {
+  it('grey is a color (Cory, Nov 13); Drifters counts as its chosen color', () => {
     const { s } = run('cosmo-grey-drifters', { quads: Q, queue: END, members: [['yellow.cosmopolitans', 'benders.launderer', 'yellow.drifters']] }, [],
       st => { st.cards[uidOf(st, 'yellow.drifters')].asColor = 'trading'; });
-    expect(s.log).toContain("P1's Cosmopolitans: 2 colors among their members, +2 followers.");
+    expect(s.log).toContain("P1's Cosmopolitans: 3 colors among their members, +3 followers."); // yellow, grey, white (Drifters)
   });
   it('4 players: each owner reads only their own members, in turn order', () => {
     const { s } = run('cosmo-4p', { quads: Q, n: 4, queue: END,

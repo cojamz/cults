@@ -272,8 +272,8 @@ describe('Yellow members', () => {
   it('Big Tent: game end, +2 followers per color you have 1 to 3 members of', () => {
     const s = sc({ members: [['yellow.bigtent', 'red.twins', 'red.intern', 'gold.banker']] });
     const tent = cardDef(s, uidOf(s, 'yellow.bigtent', 0));
-    expect(tent.onGameEnd({ state: s, countMembersOfColor: (p, q) => ({ yellow: 1, red: 2, gold: 3 })[q] || 0 }, s.players[0])).toBe(6);
-    expect(tent.onGameEnd({ state: s, countMembersOfColor: (p, q) => ({ yellow: 1, red: 4 })[q] || 0 }, s.players[0])).toBe(2);
+    expect(tent.onGameEnd({ state: s, countMembersOfColor: (p, q) => ({ yellow: 1, red: 2, gold: 3 })[q] || 0, memberColorsWithGrey: () => ['yellow', 'red', 'gold'] }, s.players[0])).toBe(6);
+    expect(tent.onGameEnd({ state: s, countMembersOfColor: (p, q) => ({ yellow: 1, red: 4 })[q] || 0, memberColorsWithGrey: () => ['yellow', 'red'] }, s.players[0])).toBe(2);
   });
   it('Gardeners: round start +1 of each color you have none of, named; Midas leaves member income alone', () => {
     const s = sc({ res: [{ gold: 2 }], members: [['yellow.gardener', 'gold.midas']], queue: [{ t: 'round', r: 2 }] });

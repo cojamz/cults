@@ -233,8 +233,8 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
     cleanLog(s);
   });
 
-  it('exactly 2 colors with grey members (no color): +3; 3 colors: nothing', () => {
-    const { s } = go('pu-2', { quads: QR, round: 2, queue: END, members: [['red.purists', 'thieves.snitch', 'benders.tiebreaker', 'benders.scout'], ['red.purists', 'thieves.snitch', 'market.repeatcustomers']] }, []);
+  it('grey is a color (Cory, Nov 13): red and grey is 2 colors: +3; red, magenta and grey is 3: nothing', () => {
+    const { s } = go('pu-2', { quads: QR, round: 2, queue: END, members: [['red.purists', 'benders.tiebreaker', 'benders.scout'], ['red.purists', 'thieves.snitch', 'benders.squatter']] }, []);
     expect(lines(s, /Purists/)).toEqual(["P1's Purists: members of 2 colors: +3 followers."]);
     expect([bonusOf(s, 0), bonusOf(s, 1)]).toEqual([3, 0]);
   });

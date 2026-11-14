@@ -892,8 +892,8 @@ const trading = {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
-        const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid);
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Downsizers: no other member to discard.`); return; }
+        // it may discard itself (Cory, Nov 13: "I think fine if Downsizers discards itself?", then "yes.")
+        const list = ctx.membersOf(owner);
         ctx.choose(owner, 'Downsizers: discard which member for 4 white?', list.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: -(c.def.f + (c.def.onDiscard ? -6 : 0)),
         })), 'trading.moneylender');

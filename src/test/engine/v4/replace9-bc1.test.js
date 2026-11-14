@@ -196,17 +196,26 @@ describe('Downsizers: "On Use, once per round: discard one of your members. +4 w
     expect([d.s, d.w]).toEqual([3, 2]);
     expect(defById('trading.shopkeeper').retired).toBe(true);
   });
-  it('offers every other member, whatever it costs (Cory, Nov 5); the one cast out goes to the discard pile, +4 white', () => {
+  it('offers every member, itself included, whatever it costs (Cory, Nov 5); the one cast out goes to the discard pile, +4 white', () => {
     let s = table(Q, { n: 2, round: 2, members: [['trading.moneylender', 'red.volunteer', 'market.shopaholic']] });
     const ml = uidIn(s, 'trading.moneylender', 0), vol = uidIn(s, 'red.volunteer', 0);
     s = move(s, `use:${ml}`);
     const ids = s.pending.options.map(o => o.id);
     expect(ids).toContain(`card:${vol}`);
-    expect(ids).not.toContain(`card:${ml}`);
+    expect(ids).toContain(`card:${ml}`); // it may discard itself (Cory, Nov 13: "yes.")
     expect(ids).toContain(`card:${uidIn(s, 'market.shopaholic', 0)}`);
     s = move(s, `card:${vol}`);
     expect(s.players[0].members).not.toContain(vol);
     expect(s.discard.at(-1)).toBe(vol);
+    expect(s.players[0].res.white).toBe(4);
+  });
+  it('discards itself: Downsizers to the discard pile, +4 white (Cory, Nov 13: "I think fine if Downsizers discards itself?", "yes.")', () => {
+    let s = table(Q, { n: 2, round: 2, members: [['trading.moneylender']] });
+    const ml = uidIn(s, 'trading.moneylender', 0);
+    s = move(s, `use:${ml}`);
+    s = move(s, `card:${ml}`);
+    expect(s.players[0].members).not.toContain(ml);
+    expect(s.discard.at(-1)).toBe(ml);
     expect(s.players[0].res.white).toBe(4);
   });
   it('once per round: usable again the next round', () => {

@@ -82,7 +82,7 @@ export const GLOSSARY = [
   { key: 'steal', word: 'Steal', match: /\bsteals?\b/,
     def: 'Take resources or a member from a rival. Stolen resources keep their colors. Lie Low stops steals and Poach on you until round end (swaps still go through).' },
   { key: 'colorless', word: 'Grey', match: /\b(?:grey|colou?rless)\b/i,
-    def: 'A grey member has no color of its own. Its whole cost is paid in any colors. Its member quantity still counts, but never toward a color, and it brings nothing to cards that pay “its color”.' },
+    def: 'Grey is a color: wherever colors among your members are counted, grey counts as one. A grey member’s whole cost is paid in any colors, and it has no resource of its own, so cards that pay “its color” give nothing for it unless they say so.' },
   { key: 'any', word: 'Any (cost)', link: false, match: /\bin any colors\b/,
     def: '“Any” in a cost or a gain: resources of any colors, your choice.' },
   { key: 'contest', word: 'Contest', match: /\bcontests?\b/,

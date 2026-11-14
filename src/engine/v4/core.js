@@ -356,6 +356,12 @@ const paintedFaces = (state, p) => p.members.some(u => effectiveDefs(state.cards
 // greys in each tied color (the best reading for the player, Cory Nov 4). With no colored member, greys stay grey.
 const assimilates = (state, p) => p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.greyToBiggest));
 const countOne = (state, p, q, opts) => countOfColor(state, p, q, opts, q === 'yellow' && state.quadrants.includes(q) && paintedFaces(state, p));
+/** The colors among p's members, grey included (Cory, Nov 13: "Grey is a color… it should count for everything as a
+ *  color"): the table's colors with a member of p's, plus 'guest' when p has a grey member. */
+// Dabblers is a grey card but counts as every table color, never as grey too (Cory, Nov 7: "I think just counts as one").
+const greyColor = (state, p) => countMembersOfColor(state, p, 'guest', { cards: true, wild: false })
+  - counted(state, p).filter(u => !state.cards[u].asColor && defById(state.cards[u].def).quadrant === 'guest' && countsAsEveryColor(state, u)).length > 0;
+export const memberColorsWithGrey = (state, p, opts) => [...state.quadrants.filter(q => countMembersOfColor(state, p, q, opts) > 0), ...(greyColor(state, p) ? ['guest'] : [])];
 export const countMembersOfColor = (state, p, q, opts) => {
   const n = countOne(state, p, q, opts);
   if (!assimilates(state, p)) return n;
@@ -1455,8 +1461,10 @@ export function scoringOf(state, qid) {
     // cards, not member weight, so one card that counts as 4 can't lock it). contestFix.red 'held' tries most red held.
     if (fix.red === 'cards') by.red = { label: 'Most red members', counts: 'your red member cards when the round ends (each card counts 1, Dabblers 2)',
       score: (ctx, p) => countMembersOfColor(state, p, 'red', { cards: true }) };
-    if (fix.red === 'oneColor') by.red = { label: 'Most members of one color', counts: 'your biggest group of members of one color when the round ends, grey members included (each card counts 1)',
-      score: (ctx, p) => Math.max(0, ...[...state.quadrants, 'guest'].map(q => countMembersOfColor(state, p, q, { cards: true }))) };
+    // Members, not cards (Cory, Nov 13 8:12pm: "Red contest is supposed to be #members not #cards"): a member that counts
+    // as 2 members counts 2. Grey is a color (Cory, same night: "Grey is a color… it should count for everything as a color").
+    if (fix.red === 'oneColor') by.red = { label: 'Most members of one color', counts: 'your members of your biggest color when the round ends (grey is a color)',
+      score: (ctx, p) => Math.max(0, ...[...state.quadrants, 'guest'].map(q => countMembersOfColor(state, p, q))) };
     // Blue (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-blue.md): contestFix.market
     // 'cards' counts member cards (each counts 1, as Red's), 'blue' blue member cards, 'held' the blue you hold
     if (fix.market === 'cards') by.market = { label: 'Most member cards', counts: 'your member cards when the round ends (each card counts 1)',
@@ -1485,9 +1493,12 @@ export function scoringOf(state, qid) {
     // Yellow: Most member colors (Cory, 2026-11-07 11:40pm: "let's actually swtich yellow to that goal. For now we can make
     // it 'most member colors'"; the goal later: "at least one member of every color"). Colors in play; Dabblers counts as each.
     // Dabblers adds one color you lack, not every color (Cory, 11:41pm: "dabblers is kind of an auto win there? … I think just counts as one")
-    if (fix.yellow === 'colors') by.yellow = { label: 'Most member colors', counts: 'the colors among your members when the round ends',
+    // Grey counts as one more color (Cory, Nov 13 8:12pm: "Grey is a color, it counts for yellows contest"); Dabblers fills
+    // the table's colors, not grey.
+    if (fix.yellow === 'colors') by.yellow = { label: 'Most member colors', counts: 'the colors among your members when the round ends (grey is a color)',
       score: (ctx, p) => { const have = state.quadrants.filter(q => countMembersOfColor(state, p, q, { cards: true, wild: false }) > 0).length;
-        return Math.min(state.quadrants.length, have + p.members.filter(u => countsAsEveryColor(state, u)).length); } };
+        const grey = greyColor(state, p) ? 1 : 0;
+        return Math.min(state.quadrants.length, have + p.members.filter(u => countsAsEveryColor(state, u)).length) + grey; } };
     // Silver: plain Fewest silver, 0 counts (Cory, 2026-11-07 11:47pm: "why at least one???")
     if (fix.silver === 'fewest0') by.silver = { label: 'Fewest silver', counts: 'the silver you hold when the round ends',
       score: (ctx, p) => 1000 - (p.res.silver || 0), show: (ctx, p) => ({ count: p.res.silver || 0 }) };
@@ -2749,6 +2760,7 @@ function ctxFor(state) {
     memberCount: p => memberCount(state, p),
     memberWeight: card => memberWeight(state, typeof card === 'number' ? card : card.uid),
     countMembersOfColor: (p, q, opts) => countMembersOfColor(state, p, q, opts),
+    memberColorsWithGrey: (p, opts) => memberColorsWithGrey(state, p, opts),
     card: uid => wrap(state, state.cards[uid]),
     defOf: c => (typeof c === 'number' ? cardDef(state, c) : c.def),
     /** every def a card plays as: its own, a Doppelganger's copy, an Impersonator's borrowed ability (passives too; Cory's
