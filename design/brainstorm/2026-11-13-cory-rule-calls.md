@@ -13,3 +13,7 @@ Verdict: send
 ## Idea: Monks
 Source: Cory, 2026-11-13: "anchorites needs rename, and it can give 4 followers instead of 5", "make it Monks"
 Verdict: send
+
+## Idea: Blue Cloak
+Source: Cory, 2026-11-13: "we should probably make the blue cloak +blue. everything else is"
+Verdict: send
