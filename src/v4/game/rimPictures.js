@@ -17,9 +17,16 @@ export const picturesOn = () => typeof document !== 'undefined' && typeof reques
 // key → { url, box } once drawn, or a promise while drawing
 const cache = new Map();
 const MAX = 32;
+// A picture leaves the cache, but the board may still show it (an old rim picture stays up while its new one is drawn):
+// revoking it then broke the picture on screen ("Failed to load resource: net::ERR_FILE_NOT_FOUND", online check
+// Nov 14), so it is let go only once no <image> shows it
+const release = url => {
+  if (typeof document !== 'undefined' && [...document.querySelectorAll('image[href^="blob:"]')].some(im => im.getAttribute('href') === url)) { setTimeout(() => release(url), 5000); return; }
+  URL.revokeObjectURL(url);
+};
 const remember = (key, v) => {
   cache.set(key, v);
-  while (cache.size > MAX) { const [k, old] = cache.entries().next().value; cache.delete(k); if (old && old.url) URL.revokeObjectURL(old.url); }
+  while (cache.size > MAX) { const [k, old] = cache.entries().next().value; cache.delete(k); if (old && old.url) release(old.url); }
 };
 
 /** The text's own identity: what it says, how it's set and where it runs, whichever copy (live or other-way-up) it is. */
