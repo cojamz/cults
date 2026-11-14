@@ -2244,3 +2244,5 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-13 8:27pm Eastern) "Makeover being bad is definitely a problem". Makeover (+4 yellow. Then rearrange your resources into any colors.) needs rework: its rearrange is an empty click late, when buys take any color. Open for a Yellow redesign.
 - (Cory, 2026-11-13 8:29pm Eastern) Spoilsport (8 any, worth 1. Round End: choose a contest; nobody wins it this round.) stays: "I like spoilsport. we could make it more expensive i guess." Text unchanged; a higher price is open, no number picked yet.
 - (Cory, 2026-11-13 8:29pm Eastern) Anchorites: "anchorites needs rename, and it can give 4 followers instead of 5". New text: Round End: if you have 5 or fewer members, +4 followers. Price unchanged (3 white + 3 any). New name to come.
+- (Cory, 2026-11-13 8:30pm Eastern) Anchorites is renamed Monks: "yeah make it Monks". Monks: 3 white + 3 any, worth 1. Round End: if you have 5 or fewer members, +4 followers.
+- (Cory, 2026-11-13 8:30pm Eastern) Line Cutters (4 any, worth 1. You go first every round.) stays as is: "I also think Line Cutters is interesting."
