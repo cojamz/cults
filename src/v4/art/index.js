@@ -202,7 +202,7 @@ for (const [id, name, source] of [
 // (Claude's picks, as earlier new members did; Cory may swap any). A space borrows an old space's drawing, or the one
 // it stands in for when its color has none spare.
 for (const [id, name, source] of [
-  ['trading.anchorites', 'Anchorites', 'trading.shopkeeper'], ['trading.oldguard', 'Old Guard', 'trading.bulkbuyer'],
+  ['trading.anchorites', 'Monks', 'trading.shopkeeper'], ['trading.oldguard', 'Old Guard', 'trading.bulkbuyer'],
   ['market.repossessors', 'Repossessors', 'market.hawkers'], ['benders.protesters', 'Protesters', 'benders.insider'],
   ['thieves.racket', 'Protection Racket', 'thieves.ransom'], ['silver.roundrobin', 'Round Robin', 'silver.gift'],
   ['trading.bequest', 'Bequest', 'trading.haggle'], ['market.rummage', 'Rummage', 'market.pricecheck'],

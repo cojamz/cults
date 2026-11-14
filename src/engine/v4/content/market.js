@@ -1014,7 +1014,7 @@ const market = {
     // (Claude's fill-in: he called bottom-of-pile payouts "too strong between rounds" on Oct 20).
     // Blue's artifact only, never dealt (Cory, 2026-10-24: "whenever shop members go to the bottom of the pile, gain 1
     // blue… one per batch"). Name is Claude's fill-in.
-    m('bargainbin', 'Bargain Bin', 0, 0, 'Whenever you discard a member, +1 of its color (grey: any color).', { artifact: true, bottomBlue: true }),
+    m('bargainbin', 'Bargain Bin', 0, 0, 'Whenever you discard a member, +1 blue.', { artifact: true, bottomBlue: true }),
     m('patroness', 'Patroness', 5, 2, 'Whenever shop members go to the discard pile, +1 follower.', { bottomFollowers: true, ...old3, ...old14('ragpicker') }),
     // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-redo1.md, paper 18 vs 16; a play A/B under "paper
     // filters, play ranks"): Patroness' place, same price. Core offers the pile's bottom card beside the shop (flag pileBottom).

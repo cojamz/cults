@@ -752,11 +752,12 @@ const trading = {
     }), 'pool14'),
     // 3 or fewer since Nov 8 (Cory: "Plus five. Let's try that… owners won 14%… maybe we buff it… three or fewer members");
     // 5 or fewer since Nov 12 (Cory, 6:26pm Eastern: "anchorites needs to be moved to like 5 members or something")
-    pool(m('anchorites', 'Anchorites', 2, 1, 'Round End: if you have 5 or fewer members, +5 followers.', {
+    // Monks since Nov 13 (Cory, 8:30pm Eastern: "anchorites needs rename, and it can give 4 followers instead of 5", "make it Monks")
+    pool(m('anchorites', 'Monks', 2, 1, 'Round End: if you have 5 or fewer members, +4 followers.', {
       onAllPlaced(ctx, owner) {
         const n = ctx.memberCount(owner);
         if (n > 5) return;
-        ctx.asMember(owner, 'Anchorites', () => { owner.bonus += 5; ctx.log(`${owner.name}'s Anchorites: ${n} member${n === 1 ? '' : 's'}, +5 followers.`); });
+        ctx.asMember(owner, 'Monks', () => { owner.bonus += 4; ctx.log(`${owner.name}'s Monks: ${n} member${n === 1 ? '' : 's'}, +4 followers.`); });
       },
       ...see(info => ((info.owner?.members.length || 0) <= 4 ? 4 : 1) * endsAhead(info).length), // BOTSEE: while the cult stays small
     }), 'pool14'),

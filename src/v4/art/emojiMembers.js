@@ -100,7 +100,7 @@ const M = {
   martyrs: ['🕯️', '♾️ Discarded: +4 white, +4 followers'],
   recluse: ['🏚️', '🌙 +2 followers per rival with more members'],
   // the test version's members (Nov 8, Claude's fill-ins until Cory picks)
-  anchorites: ['⛪', '🌙 5 or fewer members: +5 followers'],
+  monks: ['⛪', '🌙 5 or fewer members: +4 followers'],
   'old-guard': ['🧓', '🔁 Discard another member, using its On Use first; +2 white'],
   repossessors: ['🚚', '☝️ Discard a rival’s member costing up to 8'],
   protesters: ['⛔', '🔁 Block an open space this round'],

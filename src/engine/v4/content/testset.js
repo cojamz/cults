@@ -24,7 +24,7 @@ export const TEST_SPACES = {
 // own action, +1 follower.", is the stand-in from the action test until the members work names Green's replacement)
 // Nov 11 9:01pm: Regulars takes the slot for good, so Ensemble leaves (back to CUT10).
 export const TEST_MEMBERS = new Set(['trading.anchorites', 'market.repossessors', 'trading.oldguard', 'benders.protesters', 'benders.giftswappers', 'benders.purifiers', 'benders.mutineers']); // Mutineers joins the grey members (Cory, Nov 12)
-/** Live members the test version leaves out: Recluse (Anchorites), Misers (Old Guard), Regular (Repossessors). */
+/** Live members the test version leaves out: Recluse (Monks), Misers (Old Guard), Regular (Repossessors). */
 export const TEST_OUT = new Set(['trading.recluse', 'trading.heirs', 'market.regular']);
 /** Whether a member is in this table's decks under the test version (null: the live rule decides). */
 // rules.membersIn / rules.membersOut (member ids) put a card in or take one out of this table's decks, over every other

@@ -2660,10 +2660,10 @@ function bargainCost(state, k, actor = null) {
   // the pile into a new deck before the cloak pays (player-agents review r3g6, Nov 13: Out of Style's 3 paid 1, Test
   // Drive's 1 paid 0)
   for (const uid of (state.recentDiscards || discardOf(state)).slice(-k)) {
-    const c = colorOf(cardDef(state, uid)), n = Number(mode.slice(4)) || 1;
-    // grey is wild (Cory, Nov 6): its holder picks the color
-    if (!state.resources.includes(c)) { greyPick(ctx, p, cloak, n, uid); continue; }
-    const color = c;
+    const n = Number(mode.slice(4)) || 1;
+    // +1 blue for each, whatever its color (Cory, Nov 13 8:33pm Eastern: "we should probably make the blue cloak +blue.
+    // everything else is"); before that +1 of its color, grey wild (Nov 6)
+    const color = 'blue';
     ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, n); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
   }
 }

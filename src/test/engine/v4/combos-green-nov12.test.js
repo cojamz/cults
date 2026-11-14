@@ -52,12 +52,13 @@ const QS = ['echo', 'silver', 'red', 'thieves'];
 const RICH = { green: 9, red: 9 };
 
 describe('Mimics: "On Recruit: use the On Recruit of any member in play."', () => {
+  // Die-Hards, not Regulars, since Copyist costs 7 (Cory, Nov 13: "Copyist can be more expensive")
   it("copies a rival's Exchange Students: swaps one of the Mimics owner's members for a same-cost rival member", () => {
-    const { s } = go('mimics-exchange', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [['echo.copyist'], ['yellow.exchangestudents', 'silver.bookies', 'echo.regulars']], res: [RICH] },
-      [/Gather/, /Mimics/, /Exchange Students/, /Copyist ↔ P2: Regulars/]);
-    expect(names(s, 0).sort()).toEqual(['Mimics', 'Regulars']);
+    const { s } = go('mimics-exchange', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [['echo.copyist'], ['yellow.exchangestudents', 'silver.bookies', 'echo.diehards']], res: [RICH] },
+      [/Gather/, /Mimics/, /Exchange Students/, /Copyist ↔ P2: Die-Hards/]);
+    expect(names(s, 0).sort()).toEqual(['Die-Hards', 'Mimics']);
     expect(names(s, 1).sort()).toEqual(['Bookies', 'Copyist', 'Exchange Students']);
-    expect(has(s, /P1's Exchange Students: swaps Copyist for P2's Regulars/)).toBe(true);
+    expect(has(s, /P1's Exchange Students: swaps Copyist for P2's Die-Hards/)).toBe(true);
     cleanLog(s);
   });
 
