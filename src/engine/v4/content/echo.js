@@ -1190,7 +1190,7 @@ const echoQ = {
     // REPLACE10=copyist,copyist2: the +2 version (pitches/D-green-4.md), for a trial beside the +1
     // Live Nov 5 in Roadie's place (Cory: "swap roadie out for shortlist green"); Roadie's price, 2 green + 1 any.
     // Cory, Nov 13 8:31pm Eastern: "Copyist can be more expensive": 3 green + 4 any as a player sees it (was 2 + 3)
-    m('copyist', 'Copyist', 2, 2, `Whenever you copy an action, +${COPYIST} follower${COPYIST > 1 ? 's' : ''}.`, { round: 1 }), // keeps its round I deck (price moves never move a member's round)
+    m('copyist', 'Copyist', 2, 2, `Whenever you copy an action, +${COPYIST} follower${COPYIST > 1 ? 's' : ''}.`),
     // REPLACE10 bot test (Nov 4 noon, scale-up batch 2): Roadie's place (pitched in D-roadie.md, passed in D-scale2). 2 green +
     // 1 any as a player sees it. At round end, before the minions go home: your minions on Green's spaces (joined spots count).
     ...add10(m('stagehand', 'Stagehand', 1, 1, 'Round End: +1 follower per minion you have on Green spaces.', {
