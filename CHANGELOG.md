@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.773 — 2026-11-14
+
+- Purple's Went last contest now shows who goes last as the turns stand (the Goes Last token holder), not whoever placed most recently
+
 ## v0.99.772 — 2026-11-13
 
 - Anchorites is now Monks and gives +4 followers; Copyist costs 3 green + 4 any; Blue Cloak gives +1 blue for each member you discard
