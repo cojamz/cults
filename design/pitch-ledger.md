@@ -531,3 +531,7 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - 2026-11-11 9:06pm Eastern · Bandwagoners ("copy the action with the most minions") ❌ "such a fundamental misunderstanding of the game"; Originals ❌ "dumb and bad" · tags: green, members, misread-rules
 
 - 2026-11-12 (economy test thread) Economy levers pitched beside Cory's four price settings: Unclaimed +1 grows, Round III spaces +1, first player on a space gets +2 (record design/brainstorm/2026-11-12-economy-levers.md). All three played as bot settings on the same 60 deals (design/eval/economy-n12/); verdict pending: Cory asked which economy to play next at the table.
+
+## 2026-11-13 · Player-agent card ideas (Cory reading the player ideas list)
+- **Interloper** (player idea, Cal, purple member: "Whenever a rival takes three or more turns in a row, you take one placement immediately after their run ends."). Cory, 8:21pm Eastern: "Interlopers is good. Like, if a rival takes three or more turns in a row, get an extra minion and the Goes Last token." His version is the one to keep. Not built yet.
+- **Last Rites** (player idea, Cal, member, no color named: "once per game, when one of your members is swapped or stolen away, recruit a discard-pile member costing up to that much."). Cory, 8:22pm Eastern: "Last Rites is cool. what color is it?" Not built yet.
