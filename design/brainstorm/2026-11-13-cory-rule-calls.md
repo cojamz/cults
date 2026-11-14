@@ -9,3 +9,7 @@ Verdict: send
 Source: Cory, 2026-11-13: "Grey is a color, it counts for yellows contest. it should count for everything as a color"
 Built as said: Most member colors counts grey as a color.
 Verdict: send
+
+## Idea: Monks
+Source: Cory, 2026-11-13: "anchorites needs rename, and it can give 4 followers instead of 5", "make it Monks"
+Verdict: send
