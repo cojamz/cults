@@ -2247,3 +2247,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-13 8:30pm Eastern) Anchorites is renamed Monks: "yeah make it Monks". Monks: 3 white + 3 any, worth 1. Round End: if you have 5 or fewer members, +4 followers.
 - (Cory, 2026-11-13 8:30pm Eastern) Line Cutters (4 any, worth 1. You go first every round.) stays as is: "I also think Line Cutters is interesting."
 - (Claude, under Cory's go-with-your-gut, 2026-11-13 8:31pm Eastern; Cory: "Copyist can be more expensive") Copyist goes from 2 green + 3 any to 3 green + 4 any (Whenever you copy an action, +2 followers.). Why: it paid 16 and 18 followers for 5 resources in the player games; 7 puts it beside Hot Streak, which paid 13 for 7. Moves every named cost and deck limit with it.
+- (Cory, 2026-11-13 8:31pm Eastern) Silver Cloak (Whenever you gift silver, +2 silver.) stays: "I like silver cloak." Drop the player-agent finding against it.
