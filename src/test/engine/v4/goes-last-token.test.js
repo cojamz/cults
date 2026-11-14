@@ -64,6 +64,31 @@ describe('the Goes Last token', () => {
     s = take(s, 'purple.lastcall');
     expect(s.goesLast.pid).toBe(1);
     expect(s.players[0].bonus).toBe(2);
-    expect(s.queue.some(t => t.t === 'turn' && t.token)).toBe(false);
+    // none of the Early Birds player's minions go on it (the holder's own minions wait on it, as every holder's do: Nov 12)
+    expect(s.queue.some(t => t.t === 'turn' && t.p === 0 && t.token)).toBe(false);
+  });
+});
+
+// Cory, Nov 14 ("why is this happening still"): his seat showed one minion in hand beside the token. On a Roll took the
+// token, then Extra Hand added a minion after the take, and that minion's turn was not on the token. Every minion its
+// holder has left waits on the token, whenever it was gained (Nov 12), and a turn moved up to now that the token then
+// sends to the end isn't "now" any more.
+describe('the Goes Last token holds minions gained after the take', () => {
+  it('a minion added after the token is taken waits on it too, and places after every rival', () => {
+    let s = take(sceneQ({ quadrants: Q, round: 2, left: 2, queue: [...turns(0, 1, 0, 1), { t: 'allPlaced' }] }), 'purple.skip');
+    s = toPlace(s);
+    // a new minion for the holder, as Extra Hand adds one, sitting before a rival's turn
+    const at = s.queue.findIndex(t => t.t === 'turn' && t.p === 1);
+    s.queue.splice(at + 1, 0, { t: 'turn', p: 0 });
+    s.players[0].left += 1;
+    s.queue.splice(at + 2, 0, { t: 'turn', p: 1 });
+    s.players[1].left += 1;
+    s = applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.kind === 'slot').id });
+    const close = s.queue.findIndex(t => t.t === 'allPlaced');
+    const mine = s.queue.slice(0, close).filter(t => t.t === 'turn' && t.p === 0);
+    expect(mine.length).toBe(2);
+    expect(mine.every(t => t.token)).toBe(true);
+    const { placed } = playOut(s);
+    expect(placed).toEqual([1, 1, 0, 0]);
   });
 });

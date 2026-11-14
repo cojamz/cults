@@ -42,8 +42,11 @@ describe('Stragglers (Purple)', () => {
     s.goesLast = { round: 1, pid: 1 };
     s = go(s, [...q]);
     const o = order(s);
-    expect(o.at(-1)).toBe(1);
-    expect(o.at(-2)).toBe(0);
+    // every minion P2 has left waits on the token (Cory, Nov 12: "goes last makes ALL minions go last"), so all of
+    // P2's turns come after Stragglers' turn
+    const after = o.slice(o.lastIndexOf(0) + 1);
+    expect(after.length).toBeGreaterThan(0);
+    expect(after.every(p => p === 1)).toBe(true);
   });
 });
 

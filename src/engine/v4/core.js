@@ -742,6 +742,12 @@ function lastCallLast(state) {
   const q = state.queue, close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
   const at = [];
   for (let i = 0; i < stop; i++) if (q[i].t === 'turn') at.push(i);
+  // the token holds every minion its holder has left (Cory, Nov 12: "goes last makes ALL minions go last. thats what
+  // the token does"), a minion gained after the take too (Extra Hand, a stolen turn): it joins the token, so it never
+  // places before a rival's turn or shows in the holder's hand beside the token (Cory, Nov 14: "why is this happening still")
+  // Early Birds ("Your turns can't be skipped."), recruited after the take, keeps the holder's turns where they are
+  const early = state.players[holder].members.some(u => effectiveDefs(state.cards[u], state).some(d => d.noSkip));
+  if (!early) for (let i = 0; i < stop; i++) if (q[i].t === 'turn' && q[i].p === holder && !q[i].now) q[i].token = true;
   // a turn moved up to now (Right Away, Crunch Time, a copy of either) stays where it was put
   const late = t => !t.now && t.token && t.p === holder;
   const turns = at.map(i => q[i]), sorted = [...turns.filter(t => !late(t)), ...turns.filter(late)];

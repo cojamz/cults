@@ -151,7 +151,8 @@ function skipNext(ctx, p, why, by = p, quiet = false, { token = false, last = fa
   for (const t of seq) if (j < order.length && order[j] === t.pid) t.at = j++;
   const [task] = q.splice(i, 1);
   const at = (seq.find(t => t.task === task) || {}).at;
-  if (token) task.token = true;
+  // on the token it waits for every hand to empty, so a turn moved up to now (Right Away) loses that: it's last again
+  if (token) { task.token = true; delete task.now; }
   // where the turn sat, a marker: the turn is really skipped when play reaches it (Gossip pays then); a token's marker
   // turns back into the turn if the token is taken first (the minion goes back to its owner's hand)
   q.splice(i, 0, { t: 'content', p: p.id, h: 'purple.skipped', data: token ? { why, by: by.id, token: true, ...(at !== undefined ? { at } : {}) } : { why, by: by.id } });
