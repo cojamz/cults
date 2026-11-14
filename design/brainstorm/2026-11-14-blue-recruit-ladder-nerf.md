@@ -97,3 +97,56 @@ Verdict: send
 8. Color interactions: none, a single-color tuning of a live Blue space.
 9. Biggest case: Echo: 6 blue, 2 saved, +7: about 15.
 Verdict: cut (too small a change; Markdown +1 blue cuts more and keeps the name honest)
+
+# Part 2: the discard pile shuffling back in round III
+
+Asked by Cory (Nov 14, 6:30pm Eastern): "the discard pile coinciding with the end of round 3 often shuffling back in is tough"
+Rule today (discard.js, Cory Nov 6): "when discard is done it gets shuffled and turns back into the deck": when the deck is empty and the shop needs a card, the whole discard pile is shuffled into a new deck.
+Counted with scripts/v4-reshuffle-count.mjs (Normal bots, 10-card decks, tables the game deals by seat count):
+- 4 players (gold, red, blue, green): 0 of 60 games. The deck holds about 28 at round III start.
+- 3 players (gold, red, blue): 40 of 40 games; in round III in 36 of 40, with 14 to 29 members (about 20) shuffled away from the discard pile, at any point in the round (0 to 17 minions already placed). The deck holds about 10 at round III start; the old row (6) goes on the discard pile and Blue's discards churn the rest. Round I also runs out in 3-player games (the round I deck is small), shuffling 0 to 2 members each time.
+- 2 players (gold, red, no Blue): 20 of 40 games, all in round III, 10 to 18 members.
+Why: the deck is 10 per color on the table plus grey, so a 2 or 3 player deck is a third to a half smaller, while each player still recruits and discards as much. Blue's spaces (Out of Style discards 3, Test Drive 1, the row each round) move cards from deck to discard fast.
+Who it hurts: Spree ("Recruit two members from the discard pile now. +7 blue."), Recruit Twice and Markdown, Thrift Hunters ("Whenever you recruit from the discard pile, +2 followers."), Swap Shoppers, Repeat Customers: after the shuffle the discard pile is empty, so they pay only their blue.
+
+## Idea: Refill from the discard pile
+
+1. Printed text: (rule) "When the deck runs out, the shop refills from the bottom of the discard pile. The discard pile is never shuffled." Cards it touches: Out of Style: "Discard 3 shop members and refill. +1 of each discarded member’s color. +1 blue."; Spree: "Recruit two members from the discard pile now. +7 blue."
+2. Played turn: 3 players, round III, 8th minion, deck empty, discard pile 20 members. Today: Ava's Out of Style discards 3, the refill shuffles all 23 into a deck; Ben's Spree next turn has an empty pile and pays only 7 blue. New: Ava's 3 go on top, the refill takes the 3 oldest from the bottom; Ben's Spree picks from 20 members. Gain for Ben: two members (about 2 to 6 followers with Thrift Hunters) instead of none.
+3. Both sides: no choice in the rule.
+4. Who feels it: Blue players keep their pile; a player who discards a member to deny it no longer sees it shuffled away, it stays in reach of Blue (a reason to block).
+5. Not refused: the discard pile itself is Cory's (Nov 6); no line in the ledger or verdicts on how it returns. Different shape from the shuffle.
+6. Judged: Intuitive: one rule, the oldest card comes back first, like a queue. Fun: Blue's round III plans stop failing on a shuffle nobody chose. Interacts: the discard pile stays shared all game. Powerful: no new power, keeps the color's spaces working. Engine or counter: keeps the discard-pile engine running late. Its color: Blue's "discard pile is our thing" (Nov 11).
+10. Nobody acts on another player's turn: no.
+7. Public and certain: no shuffle at all, so it removes the game's one mid-game random draw; the order comes from what players discarded, in public.
+8. Color interactions: none, a table rule for every color.
+9. Biggest case: round III, 3 players, Spree with a 25-member pile, Green copying it with Echo: four discard recruits, paid at full price from about 7+7 blue plus your own; with Thrift Hunters +8 followers and Power Shoppers +3. About the same as Spree today when the pile is full; it only stops the pile from vanishing. Nothing over 10 that isn't already possible.
+Verdict: send
+
+## Idea: No reshuffle in round III
+
+1. Printed text: (rule) "In round III, when the deck runs out, the shop isn't refilled." Cards it touches: Out of Style, Spree, as above.
+2. Played turn: 3 players, round III, 8th minion, deck empty, pile 20. Ava's Out of Style discards 3 and the shop drops from 7 to 4 members. Ben's Spree picks from 23. Everyone else recruits from a shrinking shop.
+3. Both sides: no choice.
+4. Who feels it: everyone recruiting from the shop late in round III; Blue gains a full pile.
+5. Not refused: no ledger line on it.
+6. Judged: Intuitive: yes. Fun: a shrinking shop in the burst round works against "round 3 is the intended burst". Interacts: Out of Style becomes a way to empty the shop on rivals. Powerful: no. Engine or counter: a counter to shop buyers, by accident. Its color: Blue only by accident.
+10. Nobody acts on another player's turn: no.
+7. Public and certain: yes.
+8. Color interactions: none, a table rule for every color.
+9. Biggest case: a heavy Blue round III empties the shop: in the 3-player games about 10 refills had no card, so the shop would end near empty for every player in the round meant for big recruits.
+Verdict: cut (refill from the discard pile does the same for Blue without emptying the shop)
+
+## Idea: Bigger deck for 2 and 3 players
+
+1. Printed text: (setup) "With 2 or 3 players, add <N> more grey members to the deck." (N Claude's fill-in, about 10). Cards it touches: the grey members.
+2. Played turn: 3 players, round III start: deck about 20 instead of 10, so most games end before it runs out.
+3. Both sides: no choice.
+4. Who feels it: nobody directly; fewer shuffles.
+5. Not refused: Cory set 10 per color (Oct 31: "a 75 card deck feels excessive"); this adds cards only on small tables.
+6. Judged: Intuitive: a setup line. Fun: more grey in the shop, fewer color members, which dilutes colors. Interacts: no. Powerful: no. Engine or counter: no. Its color: no. Leaves the rule that shuffles a full discard pile away; heavy Blue churn still runs out.
+10. Nobody acts on another player's turn: no.
+7. Public and certain: yes.
+8. Color interactions: none, a table rule for every color.
+9. Biggest case: a Blue-heavy 3 player game discards about 30 members by round III, more than 10 added cards cover; the shuffle still happens in some games.
+Verdict: cut (treats the count, not the rule; dilutes colors; refill from the discard pile fixes it on every table)
