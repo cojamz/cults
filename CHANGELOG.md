@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.776 — 2026-11-14
+
+- Clan's text says grey is its own color (grey members are not added to your biggest color)
+
 ## v0.99.775 — 2026-11-14
 
 - A minion gained during a round (Extra Hand) goes into the normal turn order, such as a turn Right Away or Crunch Time already took early; only the Goes Last token sends minions after everyone else's. Holding the Goes Last token, a minion you gain afterwards waits on it too.
