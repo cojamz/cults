@@ -864,7 +864,7 @@ export default {
     // Cory, 2026-11-11 12:13am Eastern: "Yeah Clan is good. Round End might be a bit too strong but lets try it." Pays
     // Red's contest count (biggest group of one color, grey counts, each card 1), the same count the contest uses.
     // Price is Claude's fill-in (Patriarch's); Patriarch leaves the deck for it (cull.js; Claude's pick pending Cory).
-    m('clan', 'Clan', 4, 1, 'Round End: +1 follower per member in your biggest group of one color (grey counts).', {
+    m('clan', 'Clan', 4, 1, 'Round End: +1 follower per member in your biggest group of one color (grey is its own color).', {
       onRoundEnd(ctx, owner) {
         const n = Math.max(0, ...[...ctx.state.quadrants, 'guest'].map(q => ctx.countMembersOfColor(owner, q, { cards: true })));
         if (!n) return;
