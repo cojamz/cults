@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.771 — 2026-11-13
+
+- Red's contest counts members (a member that counts as 2 counts 2); grey counts as a color for Yellow's contest, Purists, Cosmopolitans and Big Tent; Downsizers can discard itself
+
 ## v0.99.770 — 2026-11-13
 
 - Blue Cloak pays for every discard, including when the deck reshuffles and at Round Start; copy and Write-Off log lines show only what was paid
