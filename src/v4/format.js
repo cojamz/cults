@@ -600,7 +600,24 @@ export function toStanding(c) {
 export function standings(state) {
   let table;
   try { table = contestTable(state); } catch { return []; }
-  return table.map(toStanding);
+  return table.map(toStanding).map(st => wentLastNow(state, st));
+}
+/**
+ * Purple's "Went last" while minions are still to place: "if the round ended now" names whoever placed most recently,
+ * which says nothing (Cory, Nov 14: "the 'leading' on the purple contest is weird and misleading"). It goes to whoever
+ * places the round's last minion, so it names the player whose turn is last as the turns stand now (the queue: the
+ * Goes Last token's minions after everyone's, extra and skipped turns counted), a thing a table reads off the turn
+ * order and the token. forecast: { pid, token } (token: they hold the Goes Last token).
+ */
+function wentLastNow(state, st) {
+  if (st.label !== 'Went last' || !(state.round >= 1) || state.over) return st;
+  let seq;
+  try { seq = turnSequence(state).filter(t => t.at !== 'done'); } catch { return st; }
+  if (!seq.length) return st;
+  const pid = seq[seq.length - 1].pid;
+  const token = !!(state.goesLast && state.goesLast.round === state.round && state.goesLast.pid === pid);
+  return { ...st, leaders: [pid], margin: 0, top: 1, forecast: { pid, token },
+    rows: st.rows.map(r => ({ ...r, shown: r.id === pid ? 'last' : '' })).sort((a, b) => (b.id === pid) - (a.id === pid)) };
 }
 /** A round's contests as recorded when they were scored (state.contests), or null for an old save. */
 export function scoredStandings(state, round) {

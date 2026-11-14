@@ -1305,7 +1305,7 @@ function Wheel({ state, interactionState = state, legal, rimPick = null, onRimPi
       rimHits.push(
         <path key={`rh${q}`} className="rim-hit" d={arc(a0 + 1, a1 - 1, RIM_HIT.r0, RIM_HIT.r1)} data-rim={qid}
           role="button" tabIndex={0} aria-haspopup="dialog"
-          aria-label={`Each round: ${ruleWords(qid, shortLabel(label)).replace(/^Most /, 'most ')}, +${RING_VALUE[paying - 1]} followers at this round's end.${tieLine}${leaders.length ? ` ${leaders.map(id => (id === meId ? 'You' : state.players[id].name)).join(' & ')} ${leaders.length > 1 || leaders[0] === meId ? 'lead' : 'leads'}.` : ' No one leads yet.'}${ruleLine} Show the standings.`}
+          aria-label={`Each round: ${ruleWords(qid, shortLabel(label)).replace(/^Most /, 'most ')}, +${RING_VALUE[paying - 1]} followers at this round's end.${tieLine}${leaders.length ? ` ${leaders.map(id => (id === meId ? 'You' : state.players[id].name)).join(' & ')} ${leaders.length > 1 || leaders[0] === meId ? 'lead' : 'leads'}${st && st.forecast ? `: ${leaders[0] === meId ? 'you go' : 'goes'} last as the turns stand now${st.forecast.token ? ', holding the Goes Last token' : ''}` : ''}.` : ' No one leads yet.'}${ruleLine} Show the standings.`}
           onPointerEnter={e => { if (hover && realHover(e) && !turningAt(stage.current)) hover.onPlaqueHover(qid, rimAnchor(qid) || e.currentTarget); }}
           onPointerLeave={e => { if (hover && e.pointerType === 'mouse') hover.onPlaqueHover(qid, null); }}
           onClick={e => { e.stopPropagation(); if (moved.current) return; if (hover) hover.onPlaqueHover(qid, rimAnchor(qid) || e.currentTarget, { pinned: true }); }}
@@ -1319,7 +1319,7 @@ function Wheel({ state, interactionState = state, legal, rimPick = null, onRimPi
   // changes: their elements are the same objects otherwise, and React passes over them (wheel pass, Nov 4: drawing them
   // was the board's biggest cost on a move that changed no contest)
   const rimSig = [rot.toFixed(2), Math.min(rimsUp, 99), paying, lampQid || '', scale, fontsIn, look, meId ?? '', state.quadrants.join(','), hover ? 1 : 0, rimPick ? [...rimPick].join(';') : '',
-    ...state.quadrants.map(qid => { const st = stdById[qid]; return st ? `${st.rule}/${st.label}/${st.tiebreak ? `${st.tiebreak.unit}:${st.tiebreak.text}` : ''}/${st.leaders.map(id => `${id}:${state.players[id].name}:${seatEmoji(state, id)}`).join(',')}` : '-'; })].join('|');
+    ...state.quadrants.map(qid => { const st = stdById[qid]; return st ? `${st.rule}/${st.label}/${st.forecast ? `last:${st.forecast.token ? 'token' : 'turn'}/` : ''}${st.tiebreak ? `${st.tiebreak.unit}:${st.tiebreak.text}` : ''}/${st.leaders.map(id => `${id}:${state.players[id].name}:${seatEmoji(state, id)}`).join(',')}` : '-'; })].join('|');
   const rimMemo = useRef(null);
   if (!rimMemo.current || rimMemo.current.sig !== rimSig || rimMemo.current.hover !== hover) rimMemo.current = { sig: rimSig, hover, ...drawRims() };
   const { hits: rimHits } = rimMemo.current;

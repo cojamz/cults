@@ -476,11 +476,19 @@ export function ContestStandings({ state, st, meId = null, scored = false, brief
     <div className="pop-card contest-card" style={{ '--c': `var(--${st.qid})` }} data-contest={st.qid}>
       {!brief && <div className="row"><b>{st.rule}</b><span className="num">+{st.prize}{scored ? '' : ' at round end'}</span></div>}
       {/* brief: the rim card's prize line says the tie rule; a tiebreak still says itself (picky bot, Nov 4) */}
-      {brief && plainCount && !st.tiebreak ? null : <small>{brief && plainCount ? ties : `Counts ${st.counts || st.rule.toLowerCase()}. ${ties}`}</small>}
+      {st.forecast ? <small data-went-last-now={st.forecast.pid}>{`${nm(st.forecast.pid)} ${st.forecast.pid === meId ? 'go' : 'goes'} last as the turns stand now${st.forecast.token ? ', holding the Goes Last token' : ''}. Taking the token, an extra turn or a skipped turn can still change who places the round’s last minion.`}</small>
+        : brief && plainCount && !st.tiebreak ? null : <small>{brief && plainCount ? ties : `Counts ${st.counts || st.rule.toLowerCase()}. ${ties}`}</small>}
       <ol className="contest-rows">
         {st.rows.map(r => {
           const tb = tiebreakNote(st, r);
           const lead = st.leaders.includes(r.id);
+          // Went last mid-round: no counts, the one who goes last as the turns stand says so (Cory, Nov 14)
+          if (st.forecast) return (
+            <li key={r.id} className={lead ? 'leads' : ''} style={{ '--pc': playerColor(r.id) }} data-pid={r.id} data-lead={lead ? '1' : '0'}>
+              <Who state={state} id={r.id} name={nm(r.id)} size={16} />
+              {lead && <em>goes last</em>}
+            </li>
+          );
           return (
             <li key={r.id} className={lead ? 'leads' : ''} style={{ '--pc': playerColor(r.id) }} data-pid={r.id} data-count={r.shown} data-lead={lead ? '1' : '0'}>
               <Who state={state} id={r.id} name={nm(r.id)} size={16} /><b className="num">{r.shown}</b>

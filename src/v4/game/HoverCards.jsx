@@ -760,7 +760,7 @@ export function StandingsCard({ state, qid, meId = null }) {
     <>
       {/* the prize once, the other rounds' once, the tie rule once (picky bot, Nov 4: it said the prize three ways and
           the tie rule twice); the rows in the seats' order, so a player is found where their seat is */}
-      <p className="lt-prize-line" data-prize-line={qid}>At the end of round {roman(now)}: +{RING_VALUE[now - 1]} followers to whoever has the {ruleWords(qid, st.rule).replace(/^Most /i, 'most ')} (round {RING_VALUE.map((v, k) => [k, v]).filter(([k]) => k + 1 !== now).map(([k, v]) => `${roman(k + 1)} +${v}`).join(', ')}). Tied leaders get half each, rounded up.</p>
+      <p className="lt-prize-line" data-prize-line={qid}>At the end of round {roman(now)}: +{RING_VALUE[now - 1]} followers to {st.label === 'Went last' ? 'whoever places the round’s last minion' : `whoever has the ${ruleWords(qid, st.rule).replace(/^Most /i, 'most ')}`} (round {RING_VALUE.map((v, k) => [k, v]).filter(([k]) => k + 1 !== now).map(([k, v]) => `${roman(k + 1)} +${v}`).join(', ')}).{st.label === 'Went last' ? '' : ' Tied leaders get half each, rounded up.'}</p>
       <ContestOrderLine state={state} qid={qid} />
       <ContestStandings state={state} st={{ ...st, rows: [...st.rows].sort((a, b) => seats.indexOf(a.id) - seats.indexOf(b.id)) }} meId={meId} brief />
     </>
