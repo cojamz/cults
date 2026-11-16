@@ -1,0 +1,67 @@
+<title>Cults: Road to 1.0</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap">
+<style>
+/* Layout: one phone column, four problem cards, a finish-line strip */
+:root{
+  --bg:#f5f3f8; --card:#fff; --fg:#1c1722; --muted:#6b6276; --line:#e2dbe9; --accent:#6b3fa0; --quote:#efe9f6;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15121a; --card:#201b27; --fg:#eee9f3; --muted:#a49bb0; --line:#332c3c; --accent:#b68de8; --quote:#2a2333; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15121a; --card:#201b27; --fg:#eee9f3; --muted:#a49bb0; --line:#332c3c; --accent:#b68de8; --quote:#2a2333; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.45 var(--body)}
+.wrap{max-width:560px;margin:0 auto;padding-block:18px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:14px}
+h1{font:700 24px/1.15 var(--display);margin:0}
+.sub{color:var(--muted);margin:2px 0 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.num{font:700 28px/1 var(--display);color:var(--accent);grid-row:span 3}
+.card h2{font:700 17px/1.2 var(--display);margin:0}
+q{display:block;background:var(--quote);border-radius:8px;padding:6px 9px;font-style:italic;font-size:14px;quotes:none}
+.do{margin:0}
+.do b{color:var(--accent)}
+.small{font-size:13px;color:var(--muted)}
+.strip{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.strip span{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:4px 9px;color:var(--fg)}
+.ask{border:2px solid var(--accent);border-radius:12px;padding:10px 14px;font-weight:700;background:var(--card)}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Road to 1.0</h1>
+  <p class="sub">All 8 colors have their 6 spaces and 10 members. What's left is "confident in the strategy/fun". Four problems, in your words:</p>
+</header>
+
+<div class="card"><div class="num">1</div>
+  <h2>Taking members beats building</h2>
+  <q>"you want to buy members and build an engine, but the game is fun when you can move members around. so it sometimes feels not worth it to go for the things you want." (Nov 12)</q>
+  <p class="do"><b>Do:</b> one list, by color, of every space and member that takes or swaps another player's member. You mark each keep, weaken or cut.</p>
+</div>
+
+<div class="card"><div class="num">2</div>
+  <h2>Which way of winning is too strong</h2>
+  <q>"in a red blue yellow game for example, the person with the most members most likely wins" (Nov 7) · "make small dekcs (and skipping shop) slightly less appealing" (Nov 13)</q>
+  <p class="do"><b>Do:</b> a table of how each winner won in your games and the 9 AI games: members held, followers bought, followers from cards. Then you pick which way to push.</p>
+</div>
+
+<div class="card"><div class="num">3</div>
+  <h2>Cards you flagged, still unfixed</h2>
+  <p class="small"><b>Makeover</b>: +4 yellow. Then rearrange your resources into any colors. · <b>Mannequin</b>: Blue members in the shop count as your members when contests are scored. · <b>Body Snatchers</b>: Round Start: swap one of your members with any rival's member. · <b>Spoilsport</b>'s price: Round End: choose a contest; nobody wins it this round.</p>
+  <p class="do"><b>Do:</b> options for each, through the brainstorm steps, one color at a time.</p>
+</div>
+
+<div class="card"><div class="num">4</div>
+  <h2>Words and names</h2>
+  <q>"Action wording is very confusing and maybe one of our biggest opportunities" (Nov 12) · "The names are so fucking bad" (Nov 11)</q>
+  <p class="do"><b>Do:</b> new member names by color for you to pick; every space's words checked against what it does.</p>
+</div>
+
+<p class="small">How we'll know: your games. No bot win rates or AI idea lists unless you ask.</p>
+
+<div class="strip">Then: <span>rulebook check</span>→<span>fresh testers</span>→<span>online game with friends</span>→<span>1.0</span></div>
+
+<div class="ask">Start with 1? [yes]</div>
+</div>

@@ -1,0 +1,83 @@
+{
+ "url": "http://localhost:5291",
+ "firefox": true,
+ "size": [
+  1512,
+  945
+ ],
+ "dpr": 2,
+ "cpu": null,
+ "per": {
+  "1": [
+   {
+    "frames": 95,
+    "ms": 2691,
+    "worst": 251,
+    "over50": 8,
+    "over100": 7,
+    "stall": 1114,
+    "kind": "keys",
+    "wall": 2668,
+    "events": "keydown 24 keydown 16 keydown 24 keyup 16 keydown 24 keyup 16 keydown 24 keyup 24"
+   },
+   {
+    "frames": 114,
+    "ms": 3542,
+    "worst": 167,
+    "over50": 17,
+    "over100": 9,
+    "stall": 1543,
+    "kind": "drag",
+    "wall": 3520,
+    "events": "pout 16 pdown 32 mousedown 32 gotpcapture 24 pup 24 lostpcapture 24 mouseup 24 click 24 pout 16 pover 16 mouseout 16 mouseover 16 pdown 24 mousedown 24 gotpcapture 24 pout 16 pover 16 pup 24 lostpcapture 24 mouseup 24 click 24 pout 16 pover 16 mouseout 16 mouseover 16"
+   },
+   {
+    "frames": 73,
+    "ms": 1973,
+    "worst": 267,
+    "over50": 6,
+    "over100": 3,
+    "stall": 748,
+    "kind": "flick",
+    "wall": 1947,
+    "events": "pdown 48 mousedown 48 pout 16 pover 16 gotpcapture 16 pup 24 lostpcapture 24 mouseup 24 click 24 pout 16 pover 16 mouseout 16 mouseover 16 pdown 24 mousedown 24 gotpcapture 24 pup 64 lostpcapture 64 mouseup 64 click 64 pout 64 pover 64 mouseout 64 mouseover 64"
+   }
+  ],
+  "2": [
+   {
+    "frames": 112,
+    "ms": 2715,
+    "worst": 183,
+    "over50": 9,
+    "over100": 4,
+    "stall": 810,
+    "kind": "keys",
+    "wall": 2699,
+    "events": "keydown 80 keyup 64 keydown 24 keyup 24 keydown 24 keyup 16 keydown 16 keydown 16"
+   },
+   {
+    "frames": 130,
+    "ms": 3552,
+    "worst": 217,
+    "over50": 12,
+    "over100": 9,
+    "stall": 1347,
+    "kind": "drag",
+    "wall": 3526,
+    "events": "pout 16 mousedown 16 pdown 16 pout 16 pover 16 gotpcapture 176 pout 16 pover 16 mouseover 16 mouseout 16 pup 24 lostpcapture 24 mouseup 24 click 24 pout 16 pover 16 mouseout 16 mouseover 16 pdown 24 mousedown 24 gotpcapture 24 pup 24 lostpcapture 24 mouseup 24 click 24 pout 24 pover 24 mouseout 24 mouseover 24"
+   },
+   {
+    "frames": 73,
+    "ms": 2061,
+    "worst": 200,
+    "over50": 8,
+    "over100": 5,
+    "stall": 847,
+    "kind": "flick",
+    "wall": 2038,
+    "events": "pdown 40 mousedown 40 gotpcapture 16 pup 200 lostpcapture 200 mouseup 200 click 200 pout 200 pover 200 mouseout 200 mouseover 200 pdown 32 mousedown 32 gotpcapture 120 pout 112 pover 112 mouseout 112 mouseover 112 pup 16 lostpcapture 16 mouseup 16 click 16 pout 16 pover 16 mouseout 16 mouseover 16"
+   }
+  ]
+ },
+ "errors": []
+}

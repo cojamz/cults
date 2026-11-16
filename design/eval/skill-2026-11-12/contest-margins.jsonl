@@ -1,0 +1,252 @@
+{"g":101,"round":1,"qid":"purple","label":"Went last","prize":4,"scores":[1,0,0,0],"winners":[1]}
+{"g":101,"round":1,"qid":"yellow","label":"Most member colors","prize":4,"scores":[2,2,1,0],"winners":[0,3]}
+{"g":101,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[3,3,3,2],"winners":[0,1,2]}
+{"g":101,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[6,6,3,2],"winners":[2,3]}
+{"g":101,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[7,6,5,4],"winners":[2]}
+{"g":101,"round":2,"qid":"purple","label":"Went last","prize":6,"scores":[1,0,0,0],"winners":[3]}
+{"g":101,"round":2,"qid":"yellow","label":"Most member colors","prize":6,"scores":[3,3,2,2],"winners":[0,2]}
+{"g":101,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[12,9,8,2],"winners":[1]}
+{"g":101,"round":3,"qid":"purple","label":"Went last","prize":10,"scores":[1,0,0,0],"winners":[3]}
+{"g":101,"round":3,"qid":"yellow","label":"Most member colors","prize":10,"scores":[4,4,4,2],"winners":[0,1,3]}
+{"g":101,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[12,10,10,7],"winners":[1]}
+{"g":101,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[11,6,6,1],"winners":[2]}
+{"g":102,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[10,3,3,2],"winners":[3]}
+{"g":102,"round":1,"qid":"silver","label":"Fewest silver","prize":4,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":102,"round":1,"qid":"yellow","label":"Most member colors","prize":4,"scores":[2,2,2,1],"winners":[0,1,2]}
+{"g":102,"round":1,"qid":"red","label":"Most members of one color","prize":4,"scores":[3,2,1,1],"winners":[1]}
+{"g":102,"round":2,"qid":"red","label":"Most members of one color","prize":6,"scores":[5,2,1,1],"winners":[3]}
+{"g":102,"round":2,"qid":"yellow","label":"Most member colors","prize":6,"scores":[4,3,3,1],"winners":[2]}
+{"g":102,"round":2,"qid":"silver","label":"Fewest silver","prize":6,"scores":[1000,998,998,998],"winners":[0]}
+{"g":102,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[12,9,5,4],"winners":[]}
+{"g":102,"round":3,"qid":"silver","label":"Fewest silver","prize":10,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":102,"round":3,"qid":"yellow","label":"Most member colors","prize":10,"scores":[4,4,2,1],"winners":[]}
+{"g":102,"round":3,"qid":"red","label":"Most members of one color","prize":10,"scores":[5,4,3,2],"winners":[2]}
+{"g":102,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[19,13,7,7],"winners":[2]}
+{"g":103,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[7,6,3,1],"winners":[1]}
+{"g":103,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[999,997,994,993],"winners":[0]}
+{"g":103,"round":1,"qid":"red","label":"Most members of one color","prize":4,"scores":[3,1,1,1],"winners":[2]}
+{"g":103,"round":1,"qid":"yellow","label":"Most member colors","prize":4,"scores":[2,2,1,1],"winners":[2,3]}
+{"g":103,"round":2,"qid":"red","label":"Most members of one color","prize":6,"scores":[4,1,1,1],"winners":[2]}
+{"g":103,"round":2,"qid":"yellow","label":"Most member colors","prize":6,"scores":[3,2,2,1],"winners":[2]}
+{"g":103,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[8,5,5,2],"winners":[1]}
+{"g":103,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[998,995,995,992],"winners":[0]}
+{"g":103,"round":3,"qid":"red","label":"Most members of one color","prize":10,"scores":[3,3,1,1],"winners":[1,2]}
+{"g":103,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[997,996,988,986],"winners":[0]}
+{"g":103,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[14,12,4,3],"winners":[2]}
+{"g":103,"round":3,"qid":"yellow","label":"Most member colors","prize":10,"scores":[4,4,2,2],"winners":[1,2]}
+{"g":104,"round":1,"qid":"yellow","label":"Most member colors","prize":4,"scores":[2,2,2,0],"winners":[1,2,3]}
+{"g":104,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[7,6,4,3],"winners":[2]}
+{"g":104,"round":1,"qid":"silver","label":"Fewest silver","prize":4,"scores":[1000,1000,999,998],"winners":[0,1]}
+{"g":104,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[3,3,3,2],"winners":[0,1,3]}
+{"g":104,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[8,6,5,5],"winners":[3]}
+{"g":104,"round":2,"qid":"silver","label":"Fewest silver","prize":6,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":104,"round":2,"qid":"yellow","label":"Most member colors","prize":6,"scores":[4,2,1,1],"winners":[2]}
+{"g":104,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[11,7,4,1],"winners":[1]}
+{"g":104,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[11,10,5,5],"winners":[1]}
+{"g":104,"round":3,"qid":"yellow","label":"Most member colors","prize":10,"scores":[4,4,3,2],"winners":[0,1]}
+{"g":104,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[10,7,2,1],"winners":[3]}
+{"g":104,"round":3,"qid":"silver","label":"Fewest silver","prize":10,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":105,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[999,998,997,996],"winners":[2]}
+{"g":105,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[8,4,4,2],"winners":[0]}
+{"g":105,"round":1,"qid":"yellow","label":"Most member colors","prize":4,"scores":[2,1,1,0],"winners":[1]}
+{"g":105,"round":1,"qid":"red","label":"Most members of one color","prize":4,"scores":[3,2,1,1],"winners":[1]}
+{"g":105,"round":2,"qid":"red","label":"Most members of one color","prize":6,"scores":[4,2,2,1],"winners":[0]}
+{"g":105,"round":2,"qid":"yellow","label":"Most member colors","prize":6,"scores":[3,1,1,1],"winners":[0]}
+{"g":105,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[13,12,7,4],"winners":[1]}
+{"g":105,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[996,996,995,994],"winners":[2,3]}
+{"g":105,"round":3,"qid":"yellow","label":"Most member colors","prize":10,"scores":[3,1,1,1],"winners":[2]}
+{"g":105,"round":3,"qid":"red","label":"Most members of one color","prize":10,"scores":[4,3,2,1],"winners":[0]}
+{"g":105,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[13,1,1,0],"winners":[1]}
+{"g":105,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[998,998,992,989],"winners":[1,3]}
+{"g":106,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[7,2,2,1],"winners":[2]}
+{"g":106,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[999,998,998,993],"winners":[3]}
+{"g":106,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[5,4,2,0],"winners":[0]}
+{"g":106,"round":1,"qid":"purple","label":"Went last","prize":4,"scores":[1,0,0,0],"winners":[0]}
+{"g":106,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[10,3,3,3],"winners":[1]}
+{"g":106,"round":2,"qid":"purple","label":"Went last","prize":6,"scores":[1,0,0,0],"winners":[2]}
+{"g":106,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[997,997,997,992],"winners":[0,2,3]}
+{"g":106,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[19,10,4,4],"winners":[3]}
+{"g":106,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[1000,995,991,989],"winners":[3]}
+{"g":106,"round":3,"qid":"purple","label":"Went last","prize":10,"scores":[1,0,0,0],"winners":[2]}
+{"g":106,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[9,4,1,0],"winners":[1]}
+{"g":106,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[11,10,9,0],"winners":[2]}
+{"g":107,"round":1,"qid":"echo","label":"Most minions on green","prize":4,"scores":[1,1,1,0],"winners":[0,1,3]}
+{"g":107,"round":1,"qid":"purple","label":"Went last","prize":4,"scores":[1,0,0,0],"winners":[0]}
+{"g":107,"round":1,"qid":"silver","label":"Fewest silver","prize":4,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":107,"round":1,"qid":"red","label":"Most members of one color","prize":4,"scores":[2,2,2,0],"winners":[0,1,3]}
+{"g":107,"round":2,"qid":"red","label":"Most members of one color","prize":6,"scores":[5,4,1,1],"winners":[1]}
+{"g":107,"round":2,"qid":"echo","label":"Most minions on green","prize":6,"scores":[2,2,1,0],"winners":[1,2]}
+{"g":107,"round":2,"qid":"purple","label":"Went last","prize":6,"scores":[1,0,0,0],"winners":[3]}
+{"g":107,"round":2,"qid":"silver","label":"Fewest silver","prize":6,"scores":[1000,1000,998,998],"winners":[0,2]}
+{"g":107,"round":3,"qid":"red","label":"Most members of one color","prize":10,"scores":[5,2,2,1],"winners":[1]}
+{"g":107,"round":3,"qid":"purple","label":"Went last","prize":10,"scores":[1,0,0,0],"winners":[3]}
+{"g":107,"round":3,"qid":"silver","label":"Fewest silver","prize":10,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":107,"round":3,"qid":"echo","label":"Most minions on green","prize":10,"scores":[3,2,1,0],"winners":[0]}
+{"g":108,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[8,7,1,1],"winners":[0]}
+{"g":108,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[999,999,993,992],"winners":[1,3]}
+{"g":108,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[6,4,3,2],"winners":[3]}
+{"g":108,"round":1,"qid":"red","label":"Most members of one color","prize":4,"scores":[2,1,1,1],"winners":[2]}
+{"g":108,"round":2,"qid":"red","label":"Most members of one color","prize":6,"scores":[3,3,2,1],"winners":[2,3]}
+{"g":108,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[14,7,3,1],"winners":[0]}
+{"g":108,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[999,997,993,986],"winners":[1]}
+{"g":108,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[9,9,7,1],"winners":[0,1]}
+{"g":108,"round":3,"qid":"red","label":"Most members of one color","prize":10,"scores":[5,3,1,1],"winners":[0]}
+{"g":108,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[17,10,4,4],"winners":[0]}
+{"g":108,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[996,996,990,983],"winners":[1,3]}
+{"g":108,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[15,7,3,3],"winners":[1]}
+{"g":109,"round":1,"qid":"purple","label":"Went last","prize":4,"scores":[1,0,0,0],"winners":[2]}
+{"g":109,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[7,6,4,1],"winners":[1]}
+{"g":109,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[999,997,997,995],"winners":[3]}
+{"g":109,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[5,3,3,1],"winners":[2]}
+{"g":109,"round":2,"qid":"purple","label":"Went last","prize":6,"scores":[1,0,0,0],"winners":[2]}
+{"g":109,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[1000,999,991,990],"winners":[1]}
+{"g":109,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[10,9,1,0],"winners":[2]}
+{"g":109,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[19,10,6,0],"winners":[3]}
+{"g":109,"round":3,"qid":"purple","label":"Went last","prize":10,"scores":[1,0,0,0],"winners":[2]}
+{"g":109,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[997,993,987,986],"winners":[1]}
+{"g":109,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[14,4,3,1],"winners":[1]}
+{"g":109,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[14,13,7,3],"winners":[2]}
+{"g":111,"round":1,"qid":"silver","label":"Fewest silver","prize":4,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":111,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[5,3,1,1],"winners":[3]}
+{"g":111,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[999,999,997,995],"winners":[0,2]}
+{"g":111,"round":1,"qid":"echo","label":"Most minions on green","prize":4,"scores":[1,1,1,0],"winners":[0,1,2]}
+{"g":111,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[1000,999,996,993],"winners":[2]}
+{"g":111,"round":2,"qid":"silver","label":"Fewest silver","prize":6,"scores":[1000,998,998,997],"winners":[1]}
+{"g":111,"round":2,"qid":"echo","label":"Most minions on green","prize":6,"scores":[2,1,1,1],"winners":[0]}
+{"g":111,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[8,4,1,0],"winners":[3]}
+{"g":111,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[1000,1000,990,987],"winners":[0,2]}
+{"g":111,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[15,10,0,0],"winners":[3]}
+{"g":111,"round":3,"qid":"silver","label":"Fewest silver","prize":10,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":111,"round":3,"qid":"echo","label":"Most minions on green","prize":10,"scores":[2,2,1,1],"winners":[0,3]}
+{"g":110,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[5,4,2,1],"winners":[2]}
+{"g":110,"round":1,"qid":"purple","label":"Went last","prize":4,"scores":[1,0,0,0],"winners":[1]}
+{"g":110,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[999,998,996,995],"winners":[1]}
+{"g":110,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[11,10,3,0],"winners":[3]}
+{"g":110,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[7,5,4,2],"winners":[0]}
+{"g":110,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[16,15,4,4],"winners":[3]}
+{"g":110,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[998,996,995,993],"winners":[1]}
+{"g":110,"round":2,"qid":"purple","label":"Went last","prize":6,"scores":[1,0,0,0],"winners":[1]}
+{"g":110,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[14,14,5,4],"winners":[0,3]}
+{"g":110,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[996,995,988,986],"winners":[1]}
+{"g":110,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[15,1,0,0],"winners":[0]}
+{"g":110,"round":3,"qid":"purple","label":"Went last","prize":10,"scores":[1,0,0,0],"winners":[1]}
+{"g":112,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[9,7,4,1],"winners":[0]}
+{"g":112,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[1000,1000,999,998],"winners":[2,3]}
+{"g":112,"round":1,"qid":"purple","label":"Went last","prize":4,"scores":[1,0,0,0],"winners":[1]}
+{"g":112,"round":1,"qid":"echo","label":"Most minions on green","prize":4,"scores":[2,1,0,0],"winners":[2]}
+{"g":112,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[999,999,998,995],"winners":[1,2]}
+{"g":112,"round":2,"qid":"purple","label":"Went last","prize":6,"scores":[1,0,0,0],"winners":[0]}
+{"g":112,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[19,5,4,1],"winners":[2]}
+{"g":112,"round":2,"qid":"echo","label":"Most minions on green","prize":6,"scores":[2,2,1,0],"winners":[1,3]}
+{"g":112,"round":3,"qid":"purple","label":"Went last","prize":10,"scores":[1,0,0,0],"winners":[0]}
+{"g":112,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[7,6,2,0],"winners":[0]}
+{"g":112,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[1000,1000,994,994],"winners":[1,2]}
+{"g":112,"round":3,"qid":"echo","label":"Most minions on green","prize":10,"scores":[2,2,2,0],"winners":[]}
+{"g":113,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[5,5,2,2],"winners":[0,1]}
+{"g":113,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[998,998,995,995],"winners":[2,3]}
+{"g":113,"round":1,"qid":"purple","label":"Went last","prize":4,"scores":[1,0,0,0],"winners":[0]}
+{"g":113,"round":1,"qid":"echo","label":"Most minions on green","prize":4,"scores":[1,1,1,0],"winners":[1,2,3]}
+{"g":113,"round":2,"qid":"purple","label":"Went last","prize":6,"scores":[1,0,0,0],"winners":[0]}
+{"g":113,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[11,11,3,0],"winners":[0,1]}
+{"g":113,"round":2,"qid":"echo","label":"Most minions on green","prize":6,"scores":[2,2,1,0],"winners":[1,2]}
+{"g":113,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[1000,997,989,989],"winners":[2]}
+{"g":113,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[13,7,5,3],"winners":[0]}
+{"g":113,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[997,995,993,987],"winners":[2]}
+{"g":113,"round":3,"qid":"purple","label":"Went last","prize":10,"scores":[1,0,0,0],"winners":[2]}
+{"g":113,"round":3,"qid":"echo","label":"Most minions on green","prize":10,"scores":[2,2,1,1],"winners":[]}
+{"g":115,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[4,3,2,1],"winners":[2]}
+{"g":115,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[999,998,997,996],"winners":[0]}
+{"g":115,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[11,4,4,2],"winners":[3]}
+{"g":115,"round":1,"qid":"yellow","label":"Most member colors","prize":4,"scores":[2,1,1,1],"winners":[1]}
+{"g":115,"round":2,"qid":"yellow","label":"Most member colors","prize":6,"scores":[4,3,2,0],"winners":[0]}
+{"g":115,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[17,5,4,2],"winners":[]}
+{"g":115,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[1000,995,993,992],"winners":[3]}
+{"g":115,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[8,7,5,0],"winners":[2]}
+{"g":115,"round":3,"qid":"yellow","label":"Most member colors","prize":10,"scores":[4,4,3,1],"winners":[0,1]}
+{"g":115,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[999,991,990,988],"winners":[3]}
+{"g":115,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[10,2,0,0],"winners":[3]}
+{"g":115,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[12,10,10,1],"winners":[]}
+{"g":116,"round":1,"qid":"silver","label":"Fewest silver","prize":4,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":116,"round":1,"qid":"echo","label":"Most minions on green","prize":4,"scores":[1,1,1,0],"winners":[0,1,3]}
+{"g":116,"round":1,"qid":"yellow","label":"Most member colors","prize":4,"scores":[1,1,1,0],"winners":[1,2,3]}
+{"g":116,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[999,999,999,997],"winners":[1,2,3]}
+{"g":116,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[1000,1000,999,996],"winners":[0,1]}
+{"g":116,"round":2,"qid":"echo","label":"Most minions on green","prize":6,"scores":[2,2,1,0],"winners":[1,2]}
+{"g":116,"round":2,"qid":"yellow","label":"Most member colors","prize":6,"scores":[2,1,0,0],"winners":[2]}
+{"g":116,"round":2,"qid":"silver","label":"Fewest silver","prize":6,"scores":[999,998,998,998],"winners":[0]}
+{"g":116,"round":3,"qid":"echo","label":"Most minions on green","prize":10,"scores":[3,2,1,0],"winners":[0]}
+{"g":116,"round":3,"qid":"yellow","label":"Most member colors","prize":10,"scores":[2,2,1,0],"winners":[2,3]}
+{"g":116,"round":3,"qid":"silver","label":"Fewest silver","prize":10,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":116,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[1000,999,995,993],"winners":[1]}
+{"g":114,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[8,7,3,2],"winners":[0]}
+{"g":114,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[6,6,4,1],"winners":[1,3]}
+{"g":114,"round":1,"qid":"red","label":"Most members of one color","prize":4,"scores":[3,1,1,1],"winners":[3]}
+{"g":114,"round":1,"qid":"yellow","label":"Most member colors","prize":4,"scores":[3,2,1,1],"winners":[0]}
+{"g":114,"round":2,"qid":"red","label":"Most members of one color","prize":6,"scores":[3,3,2,2],"winners":[0,3]}
+{"g":114,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[13,12,5,5],"winners":[0]}
+{"g":114,"round":2,"qid":"yellow","label":"Most member colors","prize":6,"scores":[4,4,3,1],"winners":[0,1]}
+{"g":114,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[9,7,3,3],"winners":[2]}
+{"g":114,"round":3,"qid":"red","label":"Most members of one color","prize":10,"scores":[5,3,3,2],"winners":[1]}
+{"g":114,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[19,15,13,8],"winners":[1]}
+{"g":114,"round":3,"qid":"yellow","label":"Most member colors","prize":10,"scores":[4,4,4,4],"winners":[0,1,2,3]}
+{"g":114,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[12,10,3,2],"winners":[3]}
+{"g":117,"round":1,"qid":"silver","label":"Fewest silver","prize":4,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":117,"round":1,"qid":"yellow","label":"Most member colors","prize":4,"scores":[2,1,1,0],"winners":[0]}
+{"g":117,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[2,2,1,0],"winners":[0,1]}
+{"g":117,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[4,4,4,1],"winners":[0,1,3]}
+{"g":117,"round":2,"qid":"silver","label":"Fewest silver","prize":6,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":117,"round":2,"qid":"yellow","label":"Most member colors","prize":6,"scores":[3,3,1,0],"winners":[0,1]}
+{"g":117,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[7,5,3,1],"winners":[]}
+{"g":117,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[10,5,4,4],"winners":[2]}
+{"g":117,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[12,10,8,3],"winners":[3]}
+{"g":117,"round":3,"qid":"silver","label":"Fewest silver","prize":10,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":117,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[12,2,1,0],"winners":[]}
+{"g":117,"round":3,"qid":"yellow","label":"Most member colors","prize":10,"scores":[4,3,3,1],"winners":[1]}
+{"g":118,"round":1,"qid":"silver","label":"Fewest silver","prize":4,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":118,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[8,6,3,0],"winners":[3]}
+{"g":118,"round":1,"qid":"red","label":"Most members of one color","prize":4,"scores":[4,3,1,1],"winners":[2]}
+{"g":118,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[8,5,4,1],"winners":[0]}
+{"g":118,"round":2,"qid":"silver","label":"Fewest silver","prize":6,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":118,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[10,2,1,0],"winners":[3]}
+{"g":118,"round":2,"qid":"red","label":"Most members of one color","prize":6,"scores":[5,3,2,2],"winners":[]}
+{"g":118,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[11,8,7,2],"winners":[0]}
+{"g":118,"round":3,"qid":"silver","label":"Fewest silver","prize":10,"scores":[1000,1000,999,999],"winners":[]}
+{"g":118,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[6,5,3,3],"winners":[0]}
+{"g":118,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[19,9,8,6],"winners":[1]}
+{"g":118,"round":3,"qid":"red","label":"Most members of one color","prize":10,"scores":[6,5,3,1],"winners":[1]}
+{"g":119,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[6,2,1,1],"winners":[1]}
+{"g":119,"round":1,"qid":"echo","label":"Most minions on green","prize":4,"scores":[1,1,1,0],"winners":[0,1,2]}
+{"g":119,"round":1,"qid":"thieves","label":"Most resources","prize":4,"scores":[9,8,2,1],"winners":[3]}
+{"g":119,"round":1,"qid":"silver","label":"Fewest silver","prize":4,"scores":[999,998,996,996],"winners":[1]}
+{"g":119,"round":2,"qid":"silver","label":"Fewest silver","prize":6,"scores":[1000,1000,1000,998],"winners":[0,1,3]}
+{"g":119,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[8,7,6,5],"winners":[1]}
+{"g":119,"round":2,"qid":"thieves","label":"Most resources","prize":6,"scores":[7,4,0,0],"winners":[3]}
+{"g":119,"round":2,"qid":"echo","label":"Most minions on green","prize":6,"scores":[2,1,1,1],"winners":[2]}
+{"g":119,"round":3,"qid":"echo","label":"Most minions on green","prize":10,"scores":[2,2,1,1],"winners":[2,3]}
+{"g":119,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[12,11,11,5],"winners":[0]}
+{"g":119,"round":3,"qid":"thieves","label":"Most resources","prize":10,"scores":[7,2,1,0],"winners":[3]}
+{"g":119,"round":3,"qid":"silver","label":"Fewest silver","prize":10,"scores":[1000,1000,999,998],"winners":[0,1]}
+{"g":120,"round":1,"qid":"market","label":"Most members","prize":4,"scores":[5,3,1,1],"winners":[2]}
+{"g":120,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[999,999,997,995],"winners":[0,3]}
+{"g":120,"round":1,"qid":"silver","label":"Fewest silver","prize":4,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":120,"round":1,"qid":"echo","label":"Most minions on green","prize":4,"scores":[2,1,0,0],"winners":[2]}
+{"g":120,"round":2,"qid":"echo","label":"Most minions on green","prize":6,"scores":[2,2,1,0],"winners":[1,3]}
+{"g":120,"round":2,"qid":"silver","label":"Fewest silver","prize":6,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":120,"round":2,"qid":"market","label":"Most members","prize":6,"scores":[8,7,4,3],"winners":[]}
+{"g":120,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[997,996,993,992],"winners":[0]}
+{"g":120,"round":3,"qid":"echo","label":"Most minions on green","prize":10,"scores":[2,2,1,1],"winners":[0,2]}
+{"g":120,"round":3,"qid":"market","label":"Most members","prize":10,"scores":[15,9,3,3],"winners":[2]}
+{"g":120,"round":3,"qid":"silver","label":"Fewest silver","prize":10,"scores":[1000,1000,1000,1000],"winners":[0,1,2,3]}
+{"g":120,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[997,997,991,985],"winners":[]}
+{"g":121,"round":1,"qid":"trading","label":"Fewest members","prize":4,"scores":[1000,998,996,994],"winners":[2]}
+{"g":121,"round":1,"qid":"purple","label":"Went last","prize":4,"scores":[1,0,0,0],"winners":[0]}
+{"g":121,"round":1,"qid":"red","label":"Most members of one color","prize":4,"scores":[3,1,1,0],"winners":[0]}
+{"g":121,"round":1,"qid":"yellow","label":"Most member colors","prize":4,"scores":[2,2,2,0],"winners":[0,1,3]}
+{"g":121,"round":2,"qid":"yellow","label":"Most member colors","prize":6,"scores":[4,3,2,1],"winners":[1]}
+{"g":121,"round":2,"qid":"red","label":"Most members of one color","prize":6,"scores":[3,2,1,1],"winners":[1]}
+{"g":121,"round":2,"qid":"trading","label":"Fewest members","prize":6,"scores":[998,996,992,989],"winners":[0]}
+{"g":121,"round":2,"qid":"purple","label":"Went last","prize":6,"scores":[1,0,0,0],"winners":[1]}
+{"g":121,"round":3,"qid":"red","label":"Most members of one color","prize":10,"scores":[3,3,3,1],"winners":[0,1,3]}
+{"g":121,"round":3,"qid":"trading","label":"Fewest members","prize":10,"scores":[999,993,989,987],"winners":[]}
+{"g":121,"round":3,"qid":"yellow","label":"Most member colors","prize":10,"scores":[4,4,2,1],"winners":[1,3]}
+{"g":121,"round":3,"qid":"purple","label":"Went last","prize":10,"scores":[1,0,0,0],"winners":[1]}

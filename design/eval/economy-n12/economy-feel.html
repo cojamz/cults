@@ -1,0 +1,35 @@
+<title>Economy Feel Judges</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap">
+<style>
+/* one wide table, settings as rows, the judges' words in the last column */
+:root{--bg:#f6f5f2;--fg:#1d1b22;--mute:#615d6b;--line:#dcd8e2;--head:#ebe8f0;--accent:#6b3fa0;--good:#2f7d4f;--bad:#b0443a;
+--display:"Space Grotesk",system-ui,sans-serif;--body:Inter,system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17151c;--fg:#ece9f2;--mute:#a49fae;--line:#35303d;--head:#231f2a;--accent:#b98ce8;--good:#6cc392;--bad:#e5857b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17151c;--fg:#ece9f2;--mute:#a49fae;--line:#35303d;--head:#231f2a;--accent:#b98ce8;--good:#6cc392;--bad:#e5857b;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--display);font-size:1.6rem;margin:0 0 6px;text-wrap:balance}
+p{max-width:65ch;margin:0 0 10px;color:var(--mute)}
+.wrap{overflow-x:auto;margin:16px 0 8px;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;min-width:980px;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:center;vertical-align:top}
+th{background:var(--head);font-family:var(--display);font-weight:500;font-size:.8rem;letter-spacing:.02em;color:var(--mute)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--bg);min-width:160px}
+th:first-child{background:var(--head)}
+td.said{text-align:left;min-width:300px;max-width:360px}
+.name{font-family:var(--display);font-weight:700}
+.cost{display:block;color:var(--accent);font-size:.85rem;margin-top:2px}
+.hi{color:var(--good);font-weight:600}.lo{color:var(--bad);font-weight:600}
+</style>
+<h1>Economy settings, judged by feel</h1>
+<p>Three judges read whole games blind: one judging as you, one seasoned worker-placement player, one casual friend. Each read the same deal played four times, once per setting, without being told which was which, and ranked them for how four friends would feel at the table. Two deals, so six rankings per setting. Spaces give what they print; each space's +1 goes to its first player only.</p>
+<p>Scores are 1 to 5, averaged over the six readings. Cost line: <b>Purists</b> ("Round End: if your members have 2 or fewer colors, +3 followers."), printed 2 red + 1 any.</p>
+<div class="wrap"><table>
+<thead><tr><th>Setting</th><th>Rankings<br>1st · 2nd · 3rd · 4th</th><th>Would play again</th><th>Easy to follow</th><th>Members feel planned</th><th>Real choices</th><th>Close race</th><th>Game feels big</th><th>What the judges said</th></tr></thead>
+<tbody>
+<tr><td><span class="name">Today</span><span class="cost">Purists: 3 red + 3 any</span></td><td class="hi">5 · 1 · 0 · 0</td><td class="hi">3.8</td><td>2.8</td><td>3.5</td><td class="hi">3.7</td><td class="hi">4.8</td><td>4.3</td><td class="said">A member was in reach every two or three turns and you saved up for it. Members and follower buys both competed. The closest finishes of the test (76 to 73, 80 to 79), with a late lead change.</td></tr>
+<tr><td><span class="name">Richer prices</span><span class="cost">Purists: 4 red + 4 any</span></td><td>1 · 2 · 0 · 3</td><td>2.8</td><td class="hi">4.3</td><td class="hi">3.8</td><td class="lo">2.5</td><td>3.5</td><td class="lo">2.5</td><td class="said">Split by deal. On one, most turns ended with nothing to buy and the round II leader won by 14. On the other, the closest race of the four. Easiest to follow, but colors' tricks rarely happened.</td></tr>
+<tr><td><span class="name">In between</span><span class="cost">Purists: 4 red + 3 any</span></td><td>0 · 3 · 0 · 3</td><td class="lo">2.5</td><td>3.7</td><td>2.8</td><td class="lo">2.5</td><td class="lo">2.7</td><td>3.3</td><td class="said">Split by deal. On one, planned buys and a close top two. On the other, the judged seat got 1 member all game, bought followers every turn, and lost by 31.</td></tr>
+<tr><td><span class="name">One less color</span><span class="cost">Purists: 2 red + 3 any</span></td><td>0 · 0 · 6 · 0</td><td class="lo">2.5</td><td class="lo">1.7</td><td class="lo">2.2</td><td>3.5</td><td>3.5</td><td class="hi">5.0</td><td class="said">A member was buyable almost every turn, so buys felt routine. Cults grew to 9 to 14 cards with constant swapping, and by round III nobody could follow whose cards were whose.</td></tr>
+</tbody></table></div>
+<p>Two deals is a small read: a ranking can turn on one deal, as Richer prices and In between did. Today placing first in 5 of 6 readings held on both deals.</p>

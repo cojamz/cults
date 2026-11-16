@@ -1,0 +1,18 @@
+# Yellow: the live 10-card deck and spaces (Nov 8)
+
+- space (round I) **Harvest**: "+3 in round I, +4 in round II, +5 in round III, in colors you choose."
+- space (round I) **Survey**: "+1 yellow per minion on the busiest color's spaces. +1 yellow."
+- space (round I) **New Blood**: "+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 yellow in round I, +3 in round II, +4 in round III."
+- space (round II) **Housewarming**: "+2 yellow. Recruit a shop member of a color none of your members have, costing up to 5, for free."
+- space (round II) **Melting Pot**: "+2 yellow, and +1 of each color among your members."
+- space (round III) **Makeover**: "+4 yellow, then rearrange your resources into any mix of colors."
+- member (price 8) **Duty Collector**: "Whenever a rival recruits a member of a color you have a member of, +1 of that color."
+- member (price 9) **Tourist**: "On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold."
+- member (price 8) **Seamstress**: "On Use, once per game: double your full sets."
+- member (price 8) **Matchmaker**: "Whenever you recruit a yellow member, +3 wild, +1 follower."
+- member (price 9) **Dyer**: "On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold."
+- member (price 5) **Night Traders**: "Round End: before contests are scored, swap up to 4 of your resources for other colors, one for one."
+- member (price 6) **Counterfeiters**: "On Use, once per round: turn all of a rival's resources into one color you choose."
+- member (price 9) **Big Tent**: "Game End: +2 followers per color you have 1 to 3 members of."
+- member (price 11) **Caravan**: "On Recruit: +1 of each color. Round Start: +1 of each color."
+- member (price 6) **Jack-of-All-Trades**: "When counting your full sets (1 of each color), your yellow can stand in for any missing color."

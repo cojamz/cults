@@ -1,0 +1,25 @@
+D01 readers=DDD panel=D cory=G(none) miss
+D02 readers=CCC panel=C cory=G(none) miss lenientOK
+D03 readers=CCA panel=C cory=D(none) miss
+D04 readers=BCC panel=C cory=B miss
+D05 readers=ADA panel=A cory=E(none) miss
+D06 readers=DDD panel=D cory=E(none) miss lenientOK
+D07 readers=AAA panel=A cory=B miss
+D08 readers=CBB panel=B cory=B OK
+D09 readers=DDA panel=D cory=D(none) OK
+D10 readers=BBD panel=B cory=C miss
+D11 readers=DDD panel=D cory=F(none) miss
+D12 readers=ABB panel=B cory=B OK
+D13 readers=ECC panel=C cory=B miss
+D14 readers=AAA panel=A cory=A OK
+D15 readers=AAA panel=A cory=A OK
+D16 readers=CCC panel=C cory=A miss
+D17 readers=BDB panel=B cory=D miss
+D18 readers=CEC panel=C cory=F(none) miss
+D19 readers=AAA panel=A cory=C(none) miss
+D20 readers=CCC panel=C cory=D(none) miss
+strict 5/20 (11%-47%); lenient 7/20; chance 4.6/20; always-none 10/20
+on 'none' calls 1/10; on 'picked a card' calls 4/10; unanimous 10/20
+reader 1 4 /20
+reader 2 6 /20
+reader 3 4 /20

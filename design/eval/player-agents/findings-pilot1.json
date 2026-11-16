@@ -1,0 +1,617 @@
+[
+ {
+  "subject": "White Cloak",
+  "kind": "cloak",
+  "claim": "The White Cloak pays far more over a game than any other cloak, because its holder buys followers on almost every recruit.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "It paid 24 white over 12 follower buys, against 10 yellow from the Yellow Cloak, 4 purple from the Purple Cloak and 2 magenta from the Magenta Cloak.",
+  "strength": 4,
+  "outdated": false
+ },
+ {
+  "subject": "White Cloak",
+  "kind": "cloak",
+  "claim": "The cloak-refunded 1-follower buy makes money, so every recruit becomes the same automatic buy.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "The refund is +2 white per recruit whatever the pack size; a 1-follower buy trades a whole recruit for 1 follower, and Ava chose that size to keep her pile for Most resources, which won her +4 and +6.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "In rounds II and III the members in the shop pay back less than a plain follower buy, so the shop is passed over.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Cal",
+   "Ava"
+  ],
+  "evidence": "Round II and III shop members cost 7 to 10 for 1 to 3 printed followers and cost a Fewest members share of 3 or 5; Ava's and Ben's sums at [150] and [99] were right.",
+  "strength": 3,
+  "outdated": false
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "Members are traps and staying at zero members while buying followers is the strongest plan.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "Ben, the only member builder, won by 17; his 17 resources spent on members returned about 85 in followers and resources.",
+  "strength": 4,
+  "outdated": false
+ },
+ {
+  "subject": "Fewest members",
+  "kind": "contest",
+  "claim": "Players with zero members tie for White's contest every round without doing anything for it.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Dee",
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "It was tied every round and paid 2, 3 and 5 per share; the most anyone took from it over the game was Dee's 10.",
+  "strength": 3,
+  "outdated": false
+ },
+ {
+  "subject": "Goes Last token",
+  "kind": "rule",
+  "claim": "The token decides Went last, and in round III its holder also wins Most resources because they move last.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Dee",
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "The token holder won Went last all three rounds and Most resources in rounds I and III.",
+  "strength": 3,
+  "outdated": false
+ },
+ {
+  "subject": "Goes Last token",
+  "kind": "rule",
+  "claim": "The token decides Most resources in general.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Dee",
+   "Cal"
+  ],
+  "evidence": "In round II Dee held the token and finished Most resources with 3 against Ava's 24.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Goes Last token",
+  "kind": "rule",
+  "claim": "The end of each round is a solo puzzle: the token holder places the last minions with nobody able to answer, on flat +2 to +4 spaces.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Dee",
+   "Cal",
+   "Ava",
+   "Ben"
+  ],
+  "evidence": "Dee placed her final 2 minions in round II and final 3 in round III after every rival was out; about 20 feel notes from all four players say this.",
+  "strength": 4,
+  "outdated": false
+ },
+ {
+  "subject": "Most resources",
+  "kind": "contest",
+  "claim": "Most resources rewards hoarding, so a player passes recruit after recruit.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal",
+   "Dee"
+  ],
+  "evidence": "Cal bought nothing at all in round II and passed 6 recruits over the game to hold his pile.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Right Away",
+  "kind": "space",
+  "claim": "Right Away and Crunch Time do nothing on a player's last minion.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Dee",
+   "Ben"
+  ],
+  "evidence": "They still pay +2/+3/+4 and +2 purple; only the extra turn is lost, and at [110] Right Away's +3 purple equalled Stash's +3 magenta.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Right Away",
+  "kind": "space",
+  "claim": "On a last minion the extra-turn half of Right Away is wasted, and it feeds a rival's Picket Line.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Dee",
+   "Ben"
+  ],
+  "evidence": "Ava's forced round I Right Away gave only +2 purple and +1 purple to Cal's Picket Line.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Payment warning",
+  "kind": "rule",
+  "claim": "The 'gives up your contest lead' warning on payments ignores refunds that come right after and names one color though Most resources counts every color.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Dee"
+  ],
+  "evidence": "At [44] the warning ignored Ava's +2 White Cloak refund; at [198] it ignored Dee's Splurge +2 still to come; it is the game's own warning, not only the agents'.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Dabblers",
+  "kind": "member",
+  "claim": "'Counts as 2 wild members' does not say how Dabblers counts for Most member colors.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Cal skipped Dabblers at [30] because of it; the game counts it as one color you lack.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Purifiers",
+  "kind": "member",
+  "claim": "Purifiers' discard never has a target when rivals stay small.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "No rival ever had more members than Ben, but the card still paid him about 15 for 6 resources through Splurge, the Yellow Cloak, Melting Pot and Farewell.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Offering",
+  "kind": "space",
+  "claim": "Offering's discard is blank against a table with no members.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "The discard counts the taker's own member colors; it was blank because Ava had none, and taken by Ben it would have cost Cal 8 of his 26 resources.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Cash In",
+  "kind": "space",
+  "claim": "Cash In is almost the same as buying followers, because its only edge is not using a recruit.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "No player ended round III with more than 3 resources unspent, so no one was short of recruits and the saved recruit was worth almost nothing.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "One recruit per turn",
+  "kind": "rule",
+  "claim": "Each follower buy uses the whole recruit, so a player cannot buy several small packs in one turn.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben planned repeated 1-follower buys at [85]; the rulebook says each purchase is one recruit, and he caught it at [87].",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "One recruit per turn",
+  "kind": "rule",
+  "claim": "Leftover resources that do not fill a 5 or 10 pack are wasted at the end.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "Final unspent resources were 1 to 3 per player.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Last Callers",
+  "kind": "member",
+  "claim": "Last Callers is close to a lock on Went last, so buying it feels mandatory.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Dee",
+   "Ava"
+  ],
+  "evidence": "It was never used: Ava and Cal took the token after Dee bought it, and Dee won it back with the On a Roll space at [152].",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Anchorites",
+  "kind": "member",
+  "claim": "The leader's member engine can't be seen or contested.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Dee"
+  ],
+  "evidence": "Anchorites' +5 was logged every round end and Swindle, open all of round III, could steal it (cost 6); nobody tried.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Write-Off",
+  "kind": "space",
+  "claim": "Write-Off's preview showed +7 white where the player expected 8.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Dee"
+  ],
+  "evidence": "Last Callers costs 7 and the +1 had gone to Cal, the first taker, in round II; Dee got 7.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Turn order",
+  "kind": "rule",
+  "claim": "Being far behind going into round III leaves a player playing for second.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Cal started round III 27 behind Ben (19 against 46); his own misplays in rounds II and III cost him about 6 more.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Write-Off",
+  "kind": "space",
+  "claim": "Giving a member to a rival with Write-Off breaks their Fewest members tie, using a member as a weapon.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal",
+   "Dee",
+   "Ava"
+  ],
+  "evidence": "It cost Ava 3 in round II and cost Cal 5 and third place in round III.",
+  "strength": 4,
+  "outdated": false
+ },
+ {
+  "subject": "Help Yourself",
+  "kind": "space",
+  "claim": "Help Yourself grows with the minions you have placed, so a late steal swings a contest.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Dee",
+   "Ava",
+   "Ben"
+  ],
+  "evidence": "Ava's 4 steals from Cal at [91] decided round II's Most resources, a 12-follower swing between them.",
+  "strength": 4,
+  "outdated": false
+ },
+ {
+  "subject": "Heist",
+  "kind": "space",
+  "claim": "Heist lets a trailing player hit the leader's score directly.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "It was the only direct hit on Ben all game (4 followers) and paid Cal 8 followers and 8 resources over two rounds.",
+  "strength": 3,
+  "outdated": false
+ },
+ {
+  "subject": "Swindle",
+  "kind": "space",
+  "claim": "Swindle takes a rival's best member, adds a member color and lets you pick the junk card they get back.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Swindling Picket Line was worth about +17 to Ben: 3 printed followers, 8 purple, a new color and +1 magenta.",
+  "strength": 4,
+  "outdated": true
+ },
+ {
+  "subject": "Melting Pot",
+  "kind": "space",
+  "claim": "Melting Pot pays a wide cult in followers, and Poach can set up a bigger Melting Pot on back-to-back turns.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "It paid Ben 9 followers and 9 resources over two rounds.",
+  "strength": 3,
+  "outdated": false
+ },
+ {
+  "subject": "Catch Up",
+  "kind": "space",
+  "claim": "Catch Up gives the poorest player a strong opening.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "It paid Ava +5 in round I and +4 in round II.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Yellow Cloak",
+  "kind": "cloak",
+  "claim": "New Blood with the Yellow Cloak, and Splurge with the cloak, stack bonuses into a cheap member on one turn.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Anchorites cost 6 and gave 5 yellow straight back; Purifiers with Splurge paid +3 followers and +2 yellow.",
+  "strength": 3,
+  "outdated": false
+ },
+ {
+  "subject": "Farewell",
+  "kind": "space",
+  "claim": "Farewell pays a member's full cost in followers, even for a spent card.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "Purifiers paid Ben 6 and Leavetakers paid Cal 7.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Goes Last token",
+  "kind": "rule",
+  "claim": "The fight over the token is tense and the heart of the round.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Dee",
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "The token changed hands 3 times in round II and 4 times in round III.",
+  "strength": 3,
+  "outdated": false
+ },
+ {
+  "subject": "Cash In",
+  "kind": "space",
+  "claim": "The race for Cash In decides a swing of about 20 followers.",
+  "verdict": 3,
+  "tone": "praise",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Cal's white converted at 1 for 1 with recruits he had to spare; the real swing was a few followers.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Most resources",
+  "kind": "contest",
+  "claim": "Passing the last recruit to win Most resources by one resource is a neat tension.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Dee"
+  ],
+  "evidence": "Dee won +10 holding 3 against 2 and 2; a 1-follower buy would have left a three-way tie at 5 each.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Picket Line",
+  "kind": "member",
+  "claim": "Picket Line pays you when a rival takes a Purple space, softening a lost token.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "It paid Cal 2 purple in round I.",
+  "strength": 1,
+  "outdated": true
+ },
+ {
+  "subject": "Survey",
+  "kind": "space",
+  "claim": "Survey rewards reading which color is busiest.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "It paid +4 yellow to Ben in round II and Cal in round III.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Accomplice",
+  "kind": "member",
+  "claim": "Choosing steal victims one resource at a time is a small tactical choice.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal",
+   "Ben"
+  ],
+  "evidence": "Cal and Ben spread or focused 3-resource steals by who led the contest or the race.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Picket Line",
+  "kind": "member",
+  "claim": "The fight over the Goes Last token feeds whoever holds Picket Line.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ben got 8 purple from Picket Line, every one paid by Ava, Cal and Dee taking Purple spaces.",
+  "strength": 3,
+  "outdated": true
+ },
+ {
+  "subject": "Most member colors",
+  "kind": "contest",
+  "claim": "Most member colors and Fewest members point opposite ways, so with several memberless players the one member builder takes Yellow alone while White is shared.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Yellow paid 20 to two players (Ben 3 colors against 1, then 4 against 1); White paid 20 across six shares.",
+  "strength": 4,
+  "outdated": false
+ },
+ {
+  "subject": "White Cloak",
+  "kind": "cloak",
+  "claim": "The White Cloak player, holding big piles for Most resources and Cash In, becomes the steal target.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ava lost 17 resources and 4 followers to steals, more than the other three combined.",
+  "strength": 3,
+  "outdated": false
+ },
+ {
+  "subject": "Write-Off",
+  "kind": "space",
+  "claim": "A member dumped on a rival with Write-Off can be taken by the leader with Poach and re-fire its ability.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Cal's Write-Off gave Accomplice to Ava; Ben Poached it, re-fired its 3-resource steal and gained a fifth color, about +9.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Swindle",
+  "kind": "space",
+  "claim": "The member Swindle hands back can be the best card for the victim.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ben's gift of Leavetakers gave Cal 4 white and set up a 7-follower Farewell.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Swindle",
+  "kind": "space",
+  "claim": "Nobody uses Swindle or Poach on the leader's engine member.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Swindle was open all of round III and could take Anchorites (cost 6, +5 at round end); nobody used it.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Most resources",
+  "kind": "contest",
+  "claim": "In round III resources are worth nothing after the game, so everyone spends and the last mover wins Most resources cheaply.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Dee won +10 holding 3; Cal led by up to 30 for most of the round and had to spend it.",
+  "strength": 4,
+  "outdated": false
+ },
+ {
+  "subject": "Cash In",
+  "kind": "space",
+  "claim": "Recruits are not the limit in round III, so not using a recruit is worth little.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "No player ended with more than 3 resources unspent.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Magenta Cloak",
+  "kind": "cloak",
+  "claim": "The Magenta Cloak pays nothing if its holder stops stealing.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "It paid 2 magenta all game; Dee took one steal space, in round I.",
+  "strength": 2,
+  "outdated": false
+ },
+ {
+  "subject": "Write-Off",
+  "kind": "space",
+  "claim": "The game log shows a +1 white on Write-Off that is paid only to the first taker.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Cal got 8 white in round II and Dee 7 in round III, though each log line shows an extra +1.",
+  "strength": 1,
+  "outdated": false
+ },
+ {
+  "subject": "Turn order",
+  "kind": "rule",
+  "claim": "Fewest followers goes first from round II, so a player who stays low gets the best opening space each round.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Cal stayed low on purpose and opened rounds II and III with Heist both times.",
+  "strength": 2,
+  "outdated": false
+ }
+]

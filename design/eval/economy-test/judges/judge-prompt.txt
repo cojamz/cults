@@ -1,0 +1,12 @@
+You are a feel judge for a board game economy test. Work only from files; do not run the game or any scripts, and do not open any folder other than the ones named here.
+
+1. Read /home/user/patrons/.econ-judge/personas.md and play the judge named **PERSONA** only.
+2. Read /home/user/patrons/design/eval/economy-test/judge-brief.md (what to judge, and how) and /home/user/patrons/design/rulebook.md (the rules).
+3. Read the three games in /home/user/patrons/.econ-judge/sheets/CODE/ (game1.md, game2.md, game3.md). Each is a whole game written out for one seat. They are long: read them fully, but you may skim the repeated table boxes once you have the picture.
+4. Write your verdict to /home/user/patrons/.econ-judge/out/CODE-PERSONA.md in this shape:
+   - For each of A to G: a heading line "A. Tracking: N/5", then one or two plain sentences that point at real turns (game number, round, player, turn).
+   - "Best moment:" and "Worst moment:" one line each.
+   - "Overall: N/5" and the one reason that decides it.
+   - Last line exactly: SCORES {"A":n,"B":n,"C":n,"D":n,"E":n,"F":n,"G":n,"overall":n}
+   Judge on the bar in the brief, absolutely, not against any other game. Plain words, no storytelling.
+5. Reply with only the SCORES line.

@@ -1,0 +1,1186 @@
+// Yellow 2.0 (Cory, 2026-10-30/31): "Yellow rewards going broad, i.e. having a combination of colors and being
+// flexible. it also allows you to translate currencies (kind of like launderer)". It changes colors, yours and rivals',
+// and pays for members of many colors. Contests stay a separate color's job: Yellow's contest is most yellow, as every
+// 2.0 color's is (Claude, under Cory's go-with-your-gut). The wheel and deck: design/decisions.md, Oct 30-31.
+import { MORE, richUp } from './price.js';
+import { discardOf } from '../discard.js';
+import { gainColorOf } from './color-of.js';
+import { startLaunder } from './launder.js';
+import { add1, old1, handlers1 } from './replace1.js';
+import { add2, old2 } from './replace2.js';
+import { add5, old5 } from './replace5.js';
+import { add9, old9, handlers9, ON9 } from './replace9.js';
+import { on12, handlers12 } from './replace12.js';
+import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
+import { swap14, handlers14 } from './replace14.js';
+import { add11, old11 } from './replace11.js';
+import { pool, poolSpace, freeAsk, freeTake } from './pool.js';
+const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
+// ---------- idea pipeline pool 8 helpers ----------
+const tint = c => c.asColor || c.def.quadrant;
+/** Is rec's color one none of owner's other members have? */
+const freshColor = (ctx, owner, rec) => !ctx.membersOf(owner).some(c => c.uid !== rec.uid && tint(c) === tint(rec));
+/** One more recruit this turn, right after the current one (as Blue's extraBuys). */
+function extraRecruit(ctx, p) {
+  const q = ctx.state.queue;
+  let at = 0;
+  for (let i = 0; i < q.length; i++) { if (q[i].p !== p.id) continue; if (q[i].t === 'endTurn') break; if (q[i].t === 'buy') { at = i; break; } }
+  q.splice(at, 0, { t: 'buy', p: p.id });
+}
+
+const Y = 'yellow';
+const colors = ctx => ctx.state.resources;
+const others = ctx => colors(ctx).filter(c => c !== Y);
+/** Full sets: one of each color on the table. */
+const ACT = new Set((globalThis.process?.env?.ACT || '').split(',').filter(Boolean)); // action bot tests (Nov 4): env only, never live
+const plainSets = (ctx, p) => Math.min(...colors(ctx).map(c => p.res[c] || 0));
+/** Jack-of-All-Trades (live since Nov 4): "Your yellow counts as any color in your full sets." (a Doppelganger copying it too) */
+const hasJack = (ctx, p) => colors(ctx).includes(Y) && (p.members || []).some(u => { const c = ctx.state.cards?.[u]; return !!c && (c.def === 'yellow.jack' || c.copy === 'yellow.jack'); });
+/** Yellow p spends filling the gaps in k sets, beyond the k yellow the sets need themselves. */
+const jackGap = (ctx, p, k) => others(ctx).reduce((a, c) => a + Math.max(0, k - (p.res[c] || 0)), 0);
+/** Full sets: one of each color on the table (with Jack-of-All-Trades, yellow fills any gap). */
+export const setsOf = (ctx, p) => {
+  if (!hasJack(ctx, p)) return plainSets(ctx, p);
+  let k = plainSets(ctx, p);
+  while ((p.res[Y] || 0) >= (k + 1) + jackGap(ctx, p, k + 1)) k += 1;
+  return k;
+};
+/** Pay k full sets: k of each color, yellow covering what's missing (Jack-of-All-Trades). */
+const paySets = (ctx, p, k) => {
+  const gap = colors(ctx).includes(Y) ? jackGap(ctx, p, k) : 0;
+  for (const c of others(ctx)) p.res[c] -= Math.min(k, p.res[c] || 0);
+  if (colors(ctx).includes(Y)) p.res[Y] -= k + gap;
+};
+const held = (ctx, p) => colors(ctx).filter(c => (p.res[c] || 0) > 0);
+const missing = (ctx, p) => colors(ctx).filter(c => !(p.res[c] > 0));
+const total = (ctx, p) => colors(ctx).reduce((a, c) => a + (p.res[c] || 0), 0);
+// a member's color, or null when its sphere isn't on this table (a guest member leaning to an absent sphere)
+const colorOf = (ctx, card) => { const r = ctx.quadrant(ctx.defOf(card).quadrant).resource; return ctx.state.resources.includes(r) ? r : null; };
+const eachColor = (ctx, p, n, opts) => { for (const c of colors(ctx)) ctx.gain(p, c, n, opts); };
+/** The table's colors p has at least one member of (Drifters counts as its chosen color). */
+const memberColors = (ctx, p) => ctx.state.quadrants.filter(q => ctx.countMembersOfColor(p, q) > 0);
+/** Dabblers ("Counts as 2 wild members.") and a copy of it: wild for every color. */
+const isWild = (ctx, card) => !!(ctx.defOf(card).everyColor || (card.copy && ctx.defOf({ def: card.copy }).everyColor));
+/** Guest Book: +2 yellow when member is the only member of its color in owner's cult. Dabblers always works in its
+ *  owner's favor (Cory, 2026-11-01: "Dabblers always works optimally for the player"): it never blocks a new color,
+ *  and recruiting it pays when its owner lacks any color on the table. */
+function guestBook(ctx, owner, member, card = null) {
+  if (!newColor(ctx, owner, member, { grey: true })) return;
+  ctx.gain(owner, Y, 2);
+  ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Guest Book')}: a new member color, +2 yellow.`);
+}
+/** member is of a color none of owner's other members have (Guest Book, Matchmaker). Dabblers never blocks, and
+ *  Dabblers itself is new while owner lacks any color on the table; Drifters reads as its chosen color. */
+function newColor(ctx, owner, member, { grey = false } = {}) {
+  const def = ctx.defOf(member);
+  const others = ctx.membersOf(owner).filter(c => c.uid !== member.uid && !isWild(ctx, c));
+  const has = q => others.some(c => (c.asColor || c.def.quadrant) === q);
+  // grey counts as a color for Guest Book (Cory, Nov 1: "Yes"), as for HR; Dabblers is grey and every color
+  const pool = grey ? [...ctx.state.quadrants, 'guest'] : ctx.state.quadrants;
+  if (isWild(ctx, member)) return pool.some(q => !has(q));
+  const q = member.asColor || def.quadrant;
+  return pool.includes(q) && !has(q);
+}
+/** New Blood's test, read by core when a member is recruited (recruitFollowersBonus). */
+export const isNewColor = (ctx, owner, member) => newColor(ctx, owner, member, { grey: true });
+/** Bots: a face-up member that would be a new color for p. */
+const newInShop = (ctx, p) => ctx.shopCards().some(c => newColor(ctx, p, c, { grey: true }));
+/**
+ * Housewarming (REPLACE11, Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-big-new-blood.md), in Big New
+ * Blood's place: "+2 yellow. Recruit a shop member of a color none of your members have, costing up to 6, for free."
+ * An extra recruit, as Initiation's (On Recruit fires); your turn's own recruit is still yours.
+ */
+const hwCost = c => c.def.s + c.def.w;
+const hwList = (ctx, p) => ctx.shopCards().filter(c => hwCost(c) <= 4 + MORE + richUp(ctx.state) && newColor(ctx, p, c, { grey: true }));
+/** Open House (REPLACE14=openhouse, Members E lane, Nov 4; quality/pitches/E-redo1.md, paper 17 vs 15; a play A/B under
+ *  "paper filters, play ranks"), in Melting Pot's place: a free extra recruit costing up to 2 per member color. */
+const ohList = (ctx, p) => { const cap = 2 * ctx.memberColorsWithGrey(p).length; return ctx.shopCards().filter(c => hwCost(c) <= cap); };
+const OPEN_HOUSE = {
+  key: 'openhouse', ring: 2, name: 'Open House', copyDoesIt: true,
+  text: '+2 yellow. Recruit a shop member costing up to 2 per color among your members, for free.',
+  estimate: (ctx, p) => 2 + Math.max(0, ...ohList(ctx, p).map(c => c.def.f + hwCost(c) * 0.6)),
+  resolve(ctx, p) {
+    ctx.gain(p, Y, 2, { fromAction: true });
+    const list = ohList(ctx, p);
+    if (!list.length) { ctx.log(`${p.name}'s Open House: no shop member costs ${2 * ctx.memberColorsWithGrey(p).length} or less.`); return; }
+    ctx.choose(p, 'Open House: recruit which member for free?', list.map(c => ({
+      id: `card:${c.uid}`, label: `${c.def.name} (${hwCost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + hwCost(c),
+    })), 'yellow.openHouse');
+  },
+};
+// cap 7 to 5 (Claude, under Cory's go-with-your-gut, Nov 8: "Housewarming is a little strong… like 7 fucking currency")
+const HOUSEWARMING = {
+  // Out of the wheel since Nov 11 (Makeover moved into its round II slot); kept for old saves and its tests
+  pool: true,
+  key: 'housewarming', ring: 2, name: 'Housewarming', copyDoesIt: true,
+  text: `+2 yellow. Recruit a free shop member costing up to ${4 + MORE}, in a color none of your members have.`,
+  estimate: (ctx, p) => 2 + Math.max(0, ...hwList(ctx, p).map(c => c.def.f + hwCost(c) * 0.6)),
+  resolve(ctx, p) {
+    ctx.gain(p, Y, 2, { fromAction: true });
+    const list = hwList(ctx, p);
+    if (!list.length) { ctx.log(`${p.name}'s Housewarming: no shop member of a new color costs ${4 + MORE + richUp(ctx.state)} or less.`); return; }
+    ctx.choose(p, 'Housewarming: recruit which member for free?', list.map(c => ({
+      id: `card:${c.uid}`, label: `${c.def.name} (${hwCost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + hwCost(c),
+    })), 'yellow.housewarming');
+  },
+};
+// Cory, Nov 6 11:13pm: "maybe it should just be any yellow member and should be 3 wild". A yellow member is the
+// card's own color, Dabblers (every color) or Drifters once it picks Yellow; Matchmaker itself doesn't count.
+// Exchange Students: [yours, a rival's] that cost the same and can be swapped
+function exchangePairs(ctx, p) {
+  const mine = ctx.membersOf(p).filter(c => ctx.canSwapMember(c.uid));
+  const theirs = ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'swap')).flatMap(o => ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid)));
+  const out = [];
+  for (const a of mine) for (const b of theirs) if (hwCost(a) === hwCost(b)) out.push([a, b]);
+  return out;
+}
+function matchmaker(ctx, owner) {
+  owner.bonus += 3;
+  ctx.log(`${owner.name}'s Matchmaker: a yellow member, +3 followers.`);
+  pickColors(ctx, owner, 2, 'Matchmaker');
+}
+// every recruit of Drifters (a steal too) runs its On Recruit color pick, and the pick settles color-reading cards
+const unpickedDrifters = (ctx, member) => ctx.defOf(member).key === 'drifters';
+const touchable = (ctx, p) => ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'change'));
+/** Quilter (REPLACE9 bot test): followers per full set. */
+const QUILT = 6, QUILT_MAX = 3;
+/** Toll Keeper (REPLACE9 bot test): rival o gives host 1 resource of their choice, `left` in all (asked one at a time). */
+function askToll(ctx, host, o, left, key) {
+  const have = colors(ctx).filter(c => (o.res[c] || 0) > 0);
+  if (!have.length) return;
+  ctx.choose(o, `Toll Keeper: you hold no full set. Give ${host.name} ${left === 1 ? '1 more resource' : `${left} resources`}: which color?`, have.map(c => ({
+    id: `color:${c}`, label: `Give 1 ${c}`, kind: 'color', value: c,
+    // bots give from their biggest pile, and keep a color they lead or tie the host in by 1 or less
+    hint: 0.3 * (o.res[c] || 0) - ((o.res[c] || 0) - (host.res[c] || 0) <= 1 && (o.res[c] || 0) >= (host.res[c] || 0) ? 1 : 0),
+  })), 'yellow.toll', { host: host.id, left, key }, { together: key });
+}
+
+// Grand Tour (REPLACE14, Members E lane, Nov 4; quality/pitches/E-meltingpot.md), in Melting Pot's place: read a
+// rival's cult instead of your own, so a narrow player borrows a wide rival's spread. Colors on this table only.
+/** Lost and Found (pool 15): the table colors among discard pile members, in table order. */
+const pileColors = ctx => { const qs = new Set(discardOf(ctx.state).map(u => ctx.card(u).def.quadrant)); return ctx.state.quadrants.map((q, i) => (qs.has(q) ? ctx.state.resources[i] : null)).filter(Boolean); };
+/** Melting Pot: a grey member (not Dabblers, which counts as every table color) among p's members. */
+const hasGrey = (ctx, p) => ctx.membersOf(p).some(c => !isWild(ctx, c) && !c.asColor && ['guest', 'benders'].includes(c.def.quadrant));
+const offeringColors = (ctx, p) => memberRes(ctx, p).filter(c => colors(ctx).includes(c));
+const memberRes = (ctx, p) => memberColors(ctx, p).map(q => ctx.state.resources[ctx.state.quadrants.indexOf(q)]);
+const GRAND_TOUR = {
+  key: 'grandtour', ring: 2, name: 'Grand Tour', text: '+2 yellow. Choose a rival: gain 1 of each color among their members.',
+  estimate: (ctx, p) => 2 + Math.max(0, ...ctx.rivals(p).map(o => memberRes(ctx, o).length)),
+  resolve(ctx, p) {
+    ctx.gain(p, Y, 2, { fromAction: true });
+    const opts = ctx.rivals(p).map(o => ({ o, cs: memberRes(ctx, o) })).filter(x => x.cs.length);
+    if (!opts.length) { ctx.log(`${p.name}'s Grand Tour: no rival has members yet, so only the yellow.`); return; }
+    ctx.choose(p, 'Grand Tour: gain 1 of each color among which rival\'s members?', opts.map(({ o, cs }) => ({
+      id: `player:${o.id}`, label: `${o.name}: +1 ${cs.join(', +1 ')}`, kind: 'player', value: o.id,
+      // bots take the most colors, a little more for colors they hold none of (sets, new members)
+      hint: cs.length + 0.3 * cs.filter(c => !(p.res[c] > 0)).length,
+    })), 'yellow.grandTour', {});
+  },
+};
+
+// Swap Meet (key moneychangers: the brief's Money Changers, renamed, as White has a Money Changers) and Small Change (idea pipeline pool 3, Nov 7; bot games only): swap your resources with one rival's,
+// one for one, colors the swapper picks each time; the rival +1 follower per resource swapped. Lie Low lets it through
+// (a color change, not a steal).
+const heldTotal = p => Object.values(p.res).reduce((a, b) => a + b, 0);
+// a bot swaps a big pile for a small one (more for a color it holds none of), keeps its yellow (the contest), and
+// counts the follower it hands the rival
+const swapHint = (p, c, t) => 0.4 * ((p.res[c] || 0) - (p.res[t] || 0) - 1) + (p.res[t] ? 0 : 0.3) - (c === Y ? 0.6 : 0) - 0.4;
+const swapPairs = (ctx, p, o) => {
+  const out = [];
+  for (const c of colors(ctx)) if (p.res[c] > 0) for (const t of colors(ctx)) if (t !== c && o.res[t] > 0) out.push([c, t]);
+  return out;
+};
+// idea pipeline pool 14 (Nov 7) variations through opts: Pocket Change (round I, +1 yellow, 1 swap), Bazaar (round III,
+// up to 2 with each rival in seat order, each paid its followers)
+const changeSpace = (key, name, max, { ring = 2, plus = 2, each = false, text = null, tag = 'pool3', pay = true } = {}) => poolSpace({
+  key, ring, name, text: text || `+2 yellow. Swap up to ${max} of your resources with a rival's, one for one, colors your choice.${pay ? ' They +1 follower per resource swapped.' : ''}`,
+  estimate: (ctx, p) => plus + (each ? 1.5 : 1) * Math.max(0, ...ctx.rivals(p).map(o => swapPairs(ctx, p, o).map(([c, t]) => swapHint(p, c, t)).filter(h => h > 0).length ? 1 : 0)),
+  resolve(ctx, p) {
+    ctx.gain(p, Y, plus, { fromAction: true });
+    const rivals = ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'change') && swapPairs(ctx, p, o).length);
+    if (!rivals.length) { ctx.log(`${p.name}'s ${name}: no resources to swap with a rival, so only the yellow.`); return; }
+    if (each) { moneyAsk(ctx, p, { name, max, pay, o: rivals[0].id, n: 0, next: rivals.slice(1).map(o => o.id) }); return; }
+    ctx.choose(p, `${name}: swap resources with which rival?`, rivals.map(o => ({
+      id: `player:${o.id}`, label: `${o.name} (${heldTotal(o)} resources)`, kind: 'player', value: o.id,
+      hint: Math.max(...swapPairs(ctx, p, o).map(([c, t]) => swapHint(p, c, t))) - 0.02 * ctx.followers(o),
+    })), 'yellow.moneyWith', { name, max, pay });
+  },
+}, tag);
+function moneyAsk(ctx, p, data) {
+  const o = ctx.player(data.o);
+  const pairs = data.n < data.max ? swapPairs(ctx, p, o) : [];
+  if (!pairs.length) { moneyDone(ctx, p, data); return; }
+  const opts = pairs.map(([c, t]) => ({ id: `swap:${c}:${t}`, label: `Give 1 ${c}, take 1 ${t}`, kind: 'choice', value: `${c}:${t}`, hint: swapHint(p, c, t) }));
+  opts.push({ id: 'done', label: data.n ? 'Done' : 'Swap nothing', kind: 'done', value: 'done', hint: 0 });
+  ctx.choose(p, `${data.name}: swap which resources with ${o.name}? (${data.n} of up to ${data.max} so far)`, opts, 'yellow.moneyStep', data);
+}
+function moneyDone(ctx, p, data) {
+  const o = ctx.player(data.o);
+  if (!data.n) ctx.log(`${p.name}'s ${data.name}: swaps nothing with ${o.name}.`);
+  else if (data.pay === false) ctx.log(`${p.name}'s ${data.name}: ${data.n} swapped with ${o.name}.`);
+  else {
+    o.bonus += data.n;
+    ctx.log(`${p.name}'s ${data.name}: ${o.name} +${data.n} follower${data.n === 1 ? '' : 's'} (${data.n} swapped).`);
+  }
+  // Bazaar (pool 14): the next rival, each with its own up-to count
+  const next = (data.next || []).filter(id => swapPairs(ctx, p, ctx.player(id)).length);
+  if (next.length) moneyAsk(ctx, p, { ...data, o: next[0], n: 0, next: next.slice(1) });
+}
+
+export default {
+  id: 'yellow',
+  name: 'Yellow',
+  resource: Y,
+  scoring: { label: 'Most yellow', counts: 'the yellow you hold when the round ends', score: (ctx, p) => p.res[Y] },
+
+  actions: [
+    // no followers for the rival since Nov 8 (Cory: "I don't think you should give them followers. I think the numbers are off, but I like the idea")
+    changeSpace('moneychangers', 'Swap Meet', 3, { pay: false }),
+    // idea pipeline pool 5 (Nov 7): one of each table color you hold none of, yellow included. No +1 yellow: not printed.
+    poolSpace({
+      key: 'oddsandends', ring: 1, name: 'Odds and Ends', text: "+1 of each color you don't hold.",
+      estimate: (ctx, p) => colors(ctx).filter(c => !(p.res[c] > 0)).length,
+      resolve(ctx, p) {
+        const cs = colors(ctx).filter(c => !(p.res[c] > 0));
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.log(cs.length ? `${p.name}'s Odds and Ends: +1 ${cs.join(', +1 ')}.` : `${p.name}'s Odds and Ends: holds every color, so nothing.`);
+      },
+    }, 'pool5'),
+    changeSpace('smallchange', 'Small Change', 2),
+    changeSpace('pocketchange', 'Pocket Change', 1, { ring: 1, plus: 1, tag: 'pool14', text: "+1 yellow. Swap 1 of your resources with a rival's, colors your choice. They +1 follower." }),
+    changeSpace('bazaar', 'Bazaar', 2, { ring: 3, each: true, tag: 'pool14', text: "+2 yellow. Swap up to 2 of your resources with each rival's, one for one, colors your choice. Each +1 follower per resource swapped." }),
+    // idea pipeline pool 11 (Nov 7): each color you hold, one at a time, up to 3 of it into followers, 1 for 1 (bots turn the most);
+    // the +1 yellow after, as printed.
+    poolSpace({
+      key: 'worldsfair', ring: 3, name: "World's Fair", copyDoesIt: true, text: 'Turn up to 3 of each color you hold into followers. +1 yellow.',
+      estimate: (ctx, p) => 1 + colors(ctx).reduce((n, c) => n + Math.min(3, p.res[c] || 0), 0),
+      resolve(ctx, p) { fairStep(ctx, p, { left: held(ctx, p), n: 0 }); },
+    }, 'pool11'),
+    {
+      // fuel with Yellow's flavor (Cory, 2026-10-30): "+3wild +4wild +5wild"
+      // Cory, Nov 11 11:58am: "let's just make harvest +3any.": the same +3 in every round
+      key: 'harvest', ring: 1, name: 'Harvest', text: '+3 in colors you choose.',
+      estimate: () => 3.5,
+      resolve(ctx, p) { pickColors(ctx, p, 3, 'Harvest', true); },
+    },
+    // REPLACE12=tagalong bot test (Nov 4, quality loop, lane D2; pitches/D2-batch1.md): Tag Along in Leaders' Tax's (now Survey's) place.
+    // Counts the colors whose spaces hold at least one of the chosen rival's minions (joined spots count), as the table
+    // sees them; nothing of the rival's changes.
+    ...(on12('tagalong') ? [{
+      key: 'tagalong', ring: 1, name: 'Tag Along', text: 'Choose a rival: +1 of each color they have a minion on. +1 yellow.',
+      estimate: (ctx, p) => 1 + Math.max(0, ...ctx.rivals(p).map(o => colorsWith(ctx, o).length)),
+      resolve(ctx, p) {
+        ctx.choose(p, 'Tag Along: which rival? +1 of each color they have a minion on.', ctx.rivals(p).map(o => {
+          const cs = colorsWith(ctx, o);
+          return { id: `player:${o.id}`, label: `${o.name} (+${cs.length}${cs.length ? `: ${cs.join(', ')}` : ''})`, kind: 'player', value: o.id, hint: cs.length * 2 };
+        }), 'yellow.tagAlong');
+      },
+    }] : []),
+    ...(on12('commonground') ? [{
+      key: 'commonground', ring: 1, name: 'Common Ground', text: '+1 of each color where both you and a rival have a minion. +1 yellow.',
+      estimate: (ctx, p) => 1 + commonColors(ctx, p).length,
+      resolve(ctx, p) {
+        const cs = commonColors(ctx, p);
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.log(`${p.name}'s Common Ground: +1 of each color where both they and a rival have a minion (${cs.length ? cs.join(', ') : 'none'}).`);
+        ctx.gain(p, Y, 1, { fromAction: true });
+      },
+    }] : []),
+    ...(on12('tagalong') || on12('commonground') ? [] : [{
+      // Cory, Nov 2-3: Trade Seeds "never felt useful"; Leaders' Tax replaces it (his "coordinator figure this shit out":
+      // the better of two candidates in bot games, Normal 400 and Hard). Key kept for old saves and records.
+      // Nov 4 (Claude, under Cory's go-with-your-gut, after his "anything that relies on a rival having more of resources
+      // should be reworked"): it counts rivals' minions on a color's spaces, which the table always shows, not their piles.
+      // Nov 5 (Cory: "Leaders tax should be renamed and should be +1 yellow per minion on the most occupied color"): every
+      // player's minions on the color whose spaces hold the most; a tie pays the same count. Your own minion counts,
+      // this one included when yellow is the busiest. No choice left. Name Claude's fill-in (was Leaders' Tax).
+      key: 'transmute', ring: 1, name: 'Survey', text: "+1 yellow per minion on the color with the most minions. +1 yellow.",
+      estimate: (ctx, p) => 1 + busiest(ctx).n,
+      resolve(ctx, p) { bandwagon(ctx, p); },
+    }]),
+    {
+      // New Blood (Claude, under Cory's go-with-your-gut, Nov 4; was Dilute, "+2 yellow, then change up to 3 of rivals'
+      // resources one for one"). Gather's shape: core pays it on the turn's first recruit of a member of a color none of
+      // your other members have (newColor below, as Guest Book reads it). Keys kept for old saves and records.
+      key: 'dilute', ring: 1, name: 'New Blood', copyDoesIt: true,
+      // Cory, Nov 4: "New Blood Should give additional yellow rather than followers": the new-color recruit pays yellow,
+      // same numbers (a follower buys at 1 of anything, so 1 yellow for 1 follower)
+      // Cory, Nov 11 11:58am: "Make it +2 yellow, +3 flat if the condition is met (no scaling)"
+      text: '+2 yellow. If you recruit a member this turn in a color none of your members have: +3 yellow.',
+      estimate: (ctx, p) => 2 + (newInShop(ctx, p) ? 0.6 * 3 : 0),
+      resolve(ctx, p) {
+        ctx.gain(p, Y, 2, { fromAction: true });
+        (p.recruitFollowers ||= []).push({ n: 3, name: 'New Blood', newColor: true, color: Y });
+      },
+    },
+    // Housewarming in Big New Blood's place, live since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality
+    // loop): paper 18 vs 14, A/B +0.42, Lab 120 games a side. Big New Blood's text: design/archive/spaces/retired-2026-11-04.md
+    // idea pipeline pool 15 (Nov 7, round 2): Rummage's sibling on the same public pile: one of each table color that a
+    // discarded member has (grey members have none); the +1 yellow last, as printed.
+    poolSpace({
+      key: 'lostandfound', ring: 2, name: 'Lost and Found', text: 'Gain 1 resource of each color that has a member in the discard pile. +1 yellow.',
+      estimate: (ctx) => 1 + pileColors(ctx).length,
+      resolve(ctx, p) {
+        const cs = pileColors(ctx);
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.gain(p, Y, 1, { fromAction: true });
+        ctx.log(cs.length ? `${p.name}'s Lost and Found: +1 ${cs.join(', +1 ')} from the discard pile.` : `${p.name}'s Lost and Found: no colored member in the discard pile, so only the yellow.`);
+      },
+    }, 'pool15'),
+    HOUSEWARMING,
+    {
+      // Cory, 2026-10-30: "let's stick with launderers effect round III", "+3 or +4 yellow". Name: Claude's fill-in.
+      // Nov 2: "oh no i like makeover as is" (the per-contest follower version was live briefly in v0.99.505)
+      // Nov 11: "Makeover could be RII": round II, in Housewarming's slot; Offering takes round III
+      key: 'makeover', ring: 2, name: 'Makeover', text: '+4 yellow. Then rearrange your resources into any colors.',
+      estimate: () => 5,
+      resolve(ctx, p) { ctx.gain(p, Y, ACT.has('makeover1') ? 1 : 4, { fromAction: true }); startLaunder(ctx, p, 'Makeover'); },
+    },
+    swap14(swap14({
+      // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 5: "melting pot should give 1 color for each
+      // different member color. And when i have dabblers it should give me 1 of every color": 1 of each of your member
+      // colors, no choosing (memberColors: Dabblers counts as every color on the table, Drifters as its chosen color)
+      // Cory, Nov 11 12:05pm: "+1 follower and + 1 of each color among your members (including a wild for grey)",
+      // "that'd be +10 if somebody had all four and a grey": a follower and a resource per color; grey members count as
+      // one color whose resource is your pick. The old +2 yellow goes.
+      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: 'For each color among your members: +1 follower and +1 of that color (grey: 1 of any color).',
+      estimate: (ctx, p) => 2 * (memberColors(ctx, p).length + (hasGrey(ctx, p) ? 1 : 0)),
+      resolve(ctx, p) {
+        const cs = memberRes(ctx, p).filter(c => colors(ctx).includes(c)), grey = hasGrey(ctx, p);
+        const n = cs.length + (grey ? 1 : 0);
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        if (n) p.bonus += n;
+        ctx.log(n ? `${p.name}'s Melting Pot: ${n} member color${n > 1 ? 's' : ''}, +${n} follower${n > 1 ? 's' : ''}${cs.length ? `, +1 ${cs.join(', +1 ')}` : ''}${grey ? ', and 1 of any color for grey' : ''}.` : `${p.name}'s Melting Pot: no members yet, nothing.`);
+        if (grey) pickColors(ctx, p, 1, 'Melting Pot', true);
+      },
+    }, GRAND_TOUR), OPEN_HOUSE),
+    {
+      // Cory, Nov 11 4:16pm: "plus four, plus five yellow, and then every other player like discards two colors for each
+      // type of member that you have, basically. And gray just doesn't count". 2 of each of your member colors from each
+      // rival (all they have of it when short); Dabblers counts as every table color, as Melting Pot reads it.
+      // Name: Claude's fill-in (the pitch's "Tithe" is already Gold's round II space, Cory's Oct naming pick)
+      key: 'offering', ring: 3, name: 'Offering', copyDoesIt: true, text: '+5 yellow. Each rival discards 2 of each color among your members.', // Cory, Nov 11: "you dont need to say 'grey doesnt count' for now"
+      estimate: (ctx, p) => 5 + 0.4 * ctx.rivals(p).reduce((n, o) => n + offeringColors(ctx, p).reduce((m, c) => m + Math.min(2, o.res[c] || 0), 0), 0),
+      resolve(ctx, p) {
+        ctx.gain(p, Y, 5, { fromAction: true });
+        const cs = offeringColors(ctx, p);
+        if (!cs.length) { ctx.log(`${p.name}'s Offering: no colored members yet, so rivals discard nothing.`); return; }
+        for (const o of ctx.rivals(p)) {
+          const lost = cs.map(c => [c, Math.min(2, o.res[c] || 0)]).filter(([, k]) => k > 0);
+          for (const [c, k] of lost) o.res[c] -= k;
+          ctx.log(lost.length ? `${p.name}'s Offering: ${o.name} discards ${lost.map(([c, k]) => `${k} ${c}`).join(', ')}.` : `${p.name}'s Offering: ${o.name} has none of ${cs.join(', ')} to discard.`);
+        }
+      },
+    },
+  ],
+
+  handlers: {
+    poolFree: freeTake,
+    exchange(ctx, p, value) {
+      if (!Array.isArray(value)) { ctx.log(`${p.name}'s Exchange Students: no swap.`); return; }
+      const [a, b] = value;
+      if (!exchangePairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
+      const names = [ctx.card(a).def.name, `${ctx.ownerOf(b).name}'s ${ctx.card(b).def.name}`];
+      // said before the swap, so the log reads cause first: what the swap sets off (Matchmaker, the incoming member's On
+      // Recruit, Deprogrammers) follows it (combo tester, Nov 12). The pair was checked swappable just above.
+      ctx.log(`${p.name}'s Exchange Students: swaps ${names[0]} for ${names[1]}.`);
+      ctx.swapMembers(p, a, b);
+    },
+    fair(ctx, p, k, data) {
+      const c = data.left[0], n = Math.max(0, Math.min(3, k || 0, p.res[c] || 0));
+      if (n) { p.res[c] -= n; p.bonus += n; ctx.log(`${p.name}'s World's Fair: ${n} ${c} into ${n} follower${n > 1 ? 's' : ''}.`); }
+      fairStep(ctx, p, { left: data.left.slice(1), n: data.n + n });
+    },
+    // Swap Meet / Small Change (pool 3)
+    moneyWith(ctx, p, oid, data) { if (ctx.player(oid)) moneyAsk(ctx, p, { ...data, o: oid, n: 0 }); },
+    moneyStep(ctx, p, value, data) {
+      if (value === 'done') { moneyDone(ctx, p, data); return; }
+      const [c, t] = String(value).split(':'), o = ctx.player(data.o);
+      if (!(p.res[c] > 0) || !(o.res[t] > 0)) { moneyAsk(ctx, p, data); return; }
+      p.res[c] -= 1; o.res[c] = (o.res[c] || 0) + 1;
+      o.res[t] -= 1; p.res[t] = (p.res[t] || 0) + 1;
+      ctx.log(`${p.name}'s ${data.name}: gives ${o.name} 1 ${c} for 1 ${t}.`);
+      moneyAsk(ctx, p, { ...data, n: data.n + 1 });
+    },
+    ...handlers14({
+      openHouse(ctx, p, uid) {
+        const c = ctx.card(uid);
+        if (!c || !ctx.state.shop.includes(uid)) return;
+        ctx.log(`${p.name}'s Open House: recruits ${c.def.name} for free.`);
+        ctx.recruit(p, uid, { free: true });
+      },
+      grandTour(ctx, p, oid) {
+        const o = ctx.player(oid);
+        if (!o) return;
+        const cs = memberRes(ctx, o);
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.log(`${p.name}'s Grand Tour: ${o.name}'s members: +1 ${cs.join(', +1 ')}.`);
+      },
+    }),
+    housewarming(ctx, p, uid) {
+      const c = ctx.card(uid);
+      if (!c || !ctx.state.shop.includes(uid)) return;
+      ctx.log(`${p.name}'s Housewarming: recruits ${c.def.name} for free.`);
+      ctx.recruit(p, uid, { free: true });
+    },
+    ...handlers9({
+      // Sign Painters (REPLACE9): the member picked, then its color
+      signpick(ctx, p, uid) {
+        const card = ctx.card(uid), o = ctx.state.players.find(x => x.members.includes(uid));
+        if (!card || !o) return;
+        const cur = card.asColor || ctx.defOf(card).quadrant;
+        ctx.choose(p, `Sign Painters: ${ctx.defOf(card).name} becomes which color?`, ctx.state.quadrants.filter(q => q !== cur).map(q => ({
+          id: `color:${q}`, label: ctx.quadrant(q).name, kind: 'color', value: q,
+          hint: o === p ? ctx.countMembersOfColor(p, q) : -ctx.countMembersOfColor(o, q),
+        })), 'yellow.signcolor', { uid });
+      },
+      signcolor(ctx, p, q, data) {
+        const card = ctx.card(data.uid), o = ctx.state.players.find(x => x.members.includes(data.uid));
+        if (!card || !o) return;
+        card.asColor = q;
+        ctx.log(`${p.name}'s Sign Painters: ${o.name}'s ${ctx.defOf(card).name} counts as a ${ctx.quadrant(q).name} member.`);
+      },
+      toll(ctx, o, color, data) {
+        const host = ctx.player(data.host);
+        if (!host || !(o.res[color] > 0)) return;
+        o.res[color] -= 1; ctx.gain(host, color, 1);
+        ctx.log(`${o.name} gave ${host.name} 1 ${color} (${host.name}'s Toll Keeper).`);
+        if (data.left > 1) askToll(ctx, host, o, data.left - 1, data.key);
+      },
+    }),
+    ...handlers12({
+      tagAlong(ctx, p, oid) {
+        const o = ctx.player(oid);
+        const cs = o ? colorsWith(ctx, o) : [];
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.log(`${p.name}'s Tag Along: follows ${o ? o.name : 'nobody'}, +1 of each color they have a minion on (${cs.length ? cs.join(', ') : 'none yet'}).`);
+        ctx.gain(p, Y, 1, { fromAction: true });
+      },
+    }),
+    ...handlers1({
+      barterWith(ctx, p, oid) {
+        if (oid == null) { ctx.log(`${p.name}'s Barterers: swapped nothing.`); return; }
+        barterStep(ctx, p, { oid, left: 3, done: 0, instance: newChange(ctx) });
+      },
+      barter(ctx, p, value, data) {
+        const o = ctx.player(data.oid);
+        if (value === 'done') { if (data.done) tastemaker(ctx, p); else ctx.log(`${p.name}'s Barterers: swapped nothing.`); return; }
+        const [a, b] = value;
+        if (!((p.res[a] || 0) > 0 && (o.res[b] || 0) > 0 && ctx.canSteal(p, o, 'change'))) { if (data.done) tastemaker(ctx, p); return; }
+        p.res[a] -= 1; o.res[a] = (o.res[a] || 0) + 1;
+        o.res[b] -= 1; p.res[b] = (p.res[b] || 0) + 1;
+        ctx.log(`${p.name}'s Barterers: ${p.name} gives ${o.name} 1 ${a} for 1 ${b}.`);
+        // a change of the rival's resources: Customs Officer pays once per Barterers use
+        for (const card of ctx.membersOf(o)) for (const def of ctx.defsOf(card)) if (def.onChanged) def.onChanged(ctx, o, card, p, data.instance);
+        const next = { ...data, left: data.left - 1, done: data.done + 1 };
+        if (next.left > 0) barterStep(ctx, p, next); else tastemaker(ctx, p);
+      },
+    }),
+    swap(ctx, p, value, data) {
+      if (value === 'done') { finishTransmute(ctx, p, data); return; }
+      const [from, to] = value;
+      // a choice asked before a spend that ran first (Last-Minute Shopper's recruit at Round End): ask again from what is held now
+      if (!(p.res[from] > 0)) { transmuteStep(ctx, p, data); return; }
+      p.res[from] -= 1; p.res[to] += 1;
+      // each swap said as it happens, so the log never lags the coins (Cory, 2026-10-22: every change and why)
+      ctx.log(`${p.name}'s ${data.who || 'Trade Seeds'}: swapped 1 ${from} for 1 ${to}.`);
+      const tally = { ...(data.tally || {}) };
+      tally[`${from}>${to}`] = (tally[`${from}>${to}`] || 0) + 1;
+      transmuteStep(ctx, p, { ...data, left: data.left - 1, done: data.done + 1, tally });
+    },
+    wild(ctx, p, c, data) {
+      ctx.gain(p, c, 1, { fromAction: !!data.fromAction });
+      ctx.log(`${p.name}'s ${data.who}: +1 ${c}.`);
+      if (data.left > 1) pickColors(ctx, p, data.left - 1, data.who, data.fromAction, data.got + 1);
+    },
+    changeFrom(ctx, p, value, data) {
+      if (value === 'done') { if (!data.done) ctx.log(`${p.name}'s ${data.who}: changed nothing.`); else tastemaker(ctx, p); return; }
+      const [oid, a] = value, o = ctx.state.players[oid];
+      ctx.choose(p, `${data.who}: change ${o.name}'s 1 ${a} into which color?`, colors(ctx).filter(b => b !== a).map(b => ({
+        id: `color:${b}`, label: `1 ${b}`, kind: 'color', value: b, hint: -(o.res[b] || 0) + (b === Y ? -1 : 0) - ((data.took || []).includes(`${oid}:${b}`) ? 50 : 0),
+      })), 'yellow.changeTo', { ...data, pick: [oid, a] });
+    },
+    changeTo(ctx, p, b, data) {
+      const [oid, a] = data.pick, o = ctx.state.players[oid];
+      if ((o.res[a] || 0) > 0) changeOne(ctx, p, o, a, b, data.who, data.instance);
+      if (data.follower) { p.bonus += 1; ctx.log(`${p.name}'s ${data.who}: +1 follower.`); }
+      const next = { ...data, pick: null, left: data.left - 1, done: data.done + 1, used: [...(data.used || []), oid], made: [...(data.made || []), `${oid}:${b}`], took: [...(data.took || []), `${oid}:${data.pick[1]}`] };
+      if (next.left > 0) changeStep(ctx, p, next); else tastemaker(ctx, p);
+    },
+    gobetween(ctx, p, value) {
+      if (!value) return;
+      const [a, b] = value;
+      if (!(p.res[a] > 0)) return;
+      p.res[a] -= 1; p.res[b] += 1;
+      ctx.log(`${p.name}'s Go-Between: 1 ${a} becomes 1 ${b}.`);
+    },
+    sow(ctx, p, x, data) {
+      // what was asked may have changed since (Puppeteers at the same Round Start): plant only what's still held
+      x = Math.min(x, p.res[Y] || 0);
+      if (!x) return;
+      const card = ctx.card(data.uid);
+      p.res[Y] -= x; card.sown = (card.sown || 0) + x;
+      ctx.log(`${p.name}'s Sower plants ${x} yellow.`);
+    },
+    drift(ctx, p, q, data) {
+      const card = ctx.card(data.uid);
+      card.asColor = q;
+      ctx.log(`${p.name}'s Drifters count as a ${ctx.quadrant(q).name} member.`);
+      // cards that read a recruit's color hear Drifters once its color is chosen (Cory's playtest, Nov 1: recruiting
+      // Drifters never paid Guest Book): Guest Book, Matchmaker, Connoisseurs
+      for (const c of ctx.abilitiesOf(p)) for (const d of ctx.defsOf(c)) {
+        if (d.onColorChosen && c.uid !== card.uid) ctx.asMember(p, d.name, () => d.onColorChosen(ctx, p, c, card), p.members.includes(c.uid) ? c.uid : null);
+      }
+    },
+    // Dye Job (Cory, Nov 5): a rival, then the color all of theirs becomes
+    dyeRival(ctx, p, oid) {
+      const o = ctx.state.players[oid];
+      ctx.choose(p, `Counterfeiters: turn all of ${o.name}'s resources into which color?`, colors(ctx).map(b => ({
+        id: `color:${b}`, label: b, kind: 'color', value: b, hint: -(o.res[b] || 0),
+      })), 'yellow.dyeColor', { o: oid });
+    },
+    dyeColor(ctx, p, b, data) {
+      const o = ctx.state.players[data.o];
+      const instance = newChange(ctx);
+      let n = 0;
+      for (const c of colors(ctx)) while (c !== b && (o.res[c] || 0) > 0) { changeOne(ctx, p, o, c, b, 'Counterfeiters', instance); n++; }
+      ctx.log(`${p.name}'s Counterfeiters: all of ${o.name}'s resources are ${b} now (${n} changed).`);
+      if (n) tastemaker(ctx, p);
+    },
+    level(ctx, p, b) {
+      let any = false;
+      const instance = newChange(ctx);
+      for (const o of touchable(ctx, p)) {
+        const pool = colors(ctx).filter(c => c !== b && (o.res[c] || 0) > 0);
+        if (!pool.length) continue;
+        const top = Math.max(...pool.map(c => o.res[c]));
+        changeOne(ctx, p, o, pool.find(c => o.res[c] === top), b, 'Leveler', instance);
+        any = true;
+      }
+      if (any) tastemaker(ctx, p);
+    },
+  },
+
+  members: [
+    // idea pipeline pool 8 (Nov 7, writer round 1; prices are fill-ins). A member's color is its own (grey counts as one),
+    // Drifters' the one it picked; "none of your members have" is read without the member just recruited.
+    pool(m('sightseers', 'Sightseers', 3, 2, 'Whenever you recruit a member of a color none of your members have, recruit an extra time this turn.', {
+      onAnyRecruit(ctx, owner, card, by, rec) {
+        if (by !== owner || !freshColor(ctx, owner, rec)) return;
+        extraRecruit(ctx, owner);
+        ctx.log(`${owner.name}'s Sightseers: ${rec.def.name} is a new color, recruit an extra time this turn.`);
+      },
+      ...see(info => 3 * endsAhead(info).length),
+    }), 'pool8'),
+    pool(m('souvenirhunters', 'Souvenir Hunters', 2, 2, 'Whenever you recruit a member of a color none of your members have, +1 follower per color among your members.', {
+      onAnyRecruit(ctx, owner, card, by, rec) {
+        if (by !== owner || !freshColor(ctx, owner, rec)) return;
+        const n = new Set(ctx.membersOf(owner).map(tint)).size;
+        owner.bonus += n;
+        ctx.log(`${owner.name}'s Souvenir Hunters: ${rec.def.name} is a new color, +${n} follower${n === 1 ? '' : 's'} (${n} color${n === 1 ? '' : 's'}).`);
+      },
+      ...see(info => 3 * endsAhead(info).length),
+    }), 'pool8'),
+    // idea pipeline pool 5 (Nov 7): Round End before contests; "a color none of your members have" as Housewarming reads
+    // it. "costing up to 6" as printed (was 4; nothing cost that little, judge games Nov 7) (Housewarming's prints 4 + MORE; this one doesn't move). Price a fill-in.
+    // idea pipeline pool 11 (Nov 7). Prices are fill-ins (the writer's). Pilgrims: Round End before contests, the colors
+    // whose spaces hold your minions (joined spots count), as Tag Along counts them. Joneses: each table color you hold
+    // less of than the rival who holds the most of it, raised to match. Painted Faces: every color count reads your
+    // members as yellow too (core countMembersOfColor, flag allAlsoYellow); "a yellow member" triggers read printed colors.
+    pool(m('pilgrims', 'Pilgrims', 2, 2, 'Round End: +1 follower per color among the spaces your minions are on.', {
+      onAllPlaced(ctx, owner) {
+        const cs = colorsWith(ctx, owner);
+        if (!cs.length) return;
+        ctx.asMember(owner, 'Pilgrims', () => { owner.bonus += cs.length; ctx.log(`${owner.name}'s Pilgrims: minions on ${cs.join(', ')}, +${cs.length} follower${cs.length > 1 ? 's' : ''}.`); });
+      },
+      ...see(info => 3 * endsAhead(info).length), // BOTSEE: about 3 colors at each round end still ahead
+    }), 'pool11'),
+    pool(m('joneses', 'Joneses', 5, 2, 'On Use, once per game: raise each of your colors to match the rival who holds the most of it.', {
+      activate: 'game',
+      onActivate(ctx, owner) {
+        const ups = jonesUps(ctx, owner);
+        for (const [c, n] of ups) ctx.gain(owner, c, n);
+        ctx.log(ups.length ? `${owner.name}'s Joneses: ${ups.map(([c, n]) => `+${n} ${c}`).join(', ')}.` : `${owner.name}'s Joneses: no rival holds more of any color.`);
+      },
+      botActivate: (ctx, owner) => { const n = jonesUps(ctx, owner).reduce((a, [, k]) => a + k, 0); return n >= 10 || (ctx.state.round === 3 && n >= 5); },
+    }), 'pool11'),
+    pool(m('paintedfaces', 'Painted Faces', 2, 1, 'Each of your members is also yellow.', { allAlsoYellow: true,
+      ...see(() => 1.5), // BOTSEE: a color count's worth here and there
+    }), 'pool11'),
+    pool(m('globetrotters', 'Globetrotters', 2, 2, 'Round End: recruit a shop member of a color none of your members have, costing up to 6, for free.', {
+      onAllPlaced(ctx, owner) {
+        ctx.asMember(owner, 'Globetrotters', () => freeAsk(ctx, owner, 'Globetrotters', ctx.shopCards().filter(c => hwCost(c) <= 6 + richUp(ctx.state) && newColor(ctx, owner, c, { grey: true })),
+          'yellow.poolFree', `no shop member of a new color costs ${6 + richUp(ctx.state)} or less`));
+      },
+      ...see(info => 1.5 * endsAhead(info).length * 0.4), // BOTSEE: a cheap new-color member now and then
+    }), 'pool5'),
+    m('gardener', 'Gardeners', 2, 0, 'On Recruit: +1 of each color you have none of. Round Start: +1 of each color you have none of.', { f: 2, now: true,
+      onRoundStart(ctx, owner) { for (const c of missing(ctx, owner)) ctx.gain(owner, c, 1); },
+    }),
+    // Cory, 2026-10-31: "maybe just +1 yellow when any of your resources are stolen or moved"
+    // Duty Collector takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
+    m('customs', 'Customs Officer', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, retired: true, // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
+      // a member taken (Poach, Shake Down) is a steal for Lie Low and Bodyguards, but not a resource (Nov 4); nor are
+      // followers taken (Heist, Nov 4): it pays only when the steal took resources
+      onSteal(ctx, owner, card, info) {
+        const res = info.n - (info.followers || 0) - (info.uid !== undefined ? 1 : 0);
+        if (info.victim === owner && info.thief !== owner && res > 0) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs Officer: +1 yellow.`); }
+      },
+      // once per change, however many of your resources it changes (Cory, Nov 1: "Yes"), as once per steal
+      onChanged(ctx, owner, card, by, instance) {
+        if (by === owner || (instance != null && card.changed === instance)) return;
+        if (instance != null) card.changed = instance;
+        ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs Officer: +1 yellow.`);
+      },
+    }),
+    // REPLACE9 bot test (Members C, Nov 4): Customs Officer's place. 3 yellow + 3 any as a player sees it. Acts after the
+    // round's last placement, before contests (onAllPlaced, as Second-Story Man). Each rival with no full set gives 2 of
+    // their choice (all they have, if less), answering together as Potluck's rivals do. A gift, not a steal: Bodyguards
+    // doesn't stop it.
+    ...add9(m('tollkeeper', 'Toll Keeper', 2, 3, "Round End: each rival who doesn't hold a full set gives you 2 resources of their choice.", { round: 1,
+      ...see(i => endsAhead(i).reduce((a, r) => a + 3 * resAt(r) * (1 + SEE_SPITE), 0)), // BOTSEE: about 3 a round end, and the rivals' loss
+      onAllPlaced(ctx, owner) {
+        const payers = ctx.rivals(owner).filter(o => setsOf(ctx, o) < 1 && total(ctx, o) > 0);
+        if (!payers.length) { ctx.log(`${owner.name}'s Toll Keeper: nobody pays: each rival holds a full set or has no resources.`); return; }
+        const key = `toll:${ctx.state.moves}:${owner.id}`;
+        for (const o of payers.sort((a, b) => (a.kind === 'bot' ? 0 : 1) - (b.kind === 'bot' ? 0 : 1))) askToll(ctx, owner, o, 2, key);
+      },
+    })),
+    // Claude's fill-in (Cory, 2026-10-31: "whenever you recruit, +1 of its color" may become Red's artifact)
+    // Quality loop (Members C, Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Customs Officer's place,
+    // round I (paper 16 vs 10, Yellow's set 9 -> 16; blind play +0.34; trial on tables with Yellow: taken 28% vs 27%, owners
+    // won 40% vs 35%). 3 yellow + 3 any as a player sees it. The recruited member's color, if you have a member of it
+    // (Dabblers and Drifters count, as everywhere); automatic, on the rival's recruit.
+    m('dutycollector', 'Duty Collector', 2, 2, /* costs 7, was 8; stays in round III (Cory, Nov 12 7:05pm Eastern: "duty collector probably too expensive") */ 'Whenever a rival recruits a member in one of your members’ colors, +1 of that color.', { f: 3, round: 3, // worth 3 (Cory, Nov 12 10:31am Eastern)
+      onAnyRecruit(ctx, owner, card, by, recruited) {
+        const c = colorOf(ctx, recruited);
+        if (!c || by === owner || !(ctx.countMembersOfColor(owner, ctx.defOf(recruited).quadrant) > 0)) return;
+        ctx.gain(owner, c, 1);
+        ctx.log(`${owner.name}'s Duty Collector: ${by.name} recruited ${ctx.defOf(recruited).name}, +1 ${c}.`);
+      },
+    }),
+    m('gobetween', 'Go-Between', 2, 1, 'Whenever a space gives you resources, you may change 1 of them to any color.', {
+      afterGain(ctx, owner, card, g) {
+        if (!g.fromAction || !(g.n > 0) || card.gbTurn === ctx.turnKey()) return;
+        card.gbTurn = ctx.turnKey();
+        const a = g.color;
+        ctx.choose(owner, `Go-Between: change 1 ${a} to another color?`, [
+          { id: 'keep', label: `Keep the ${a}`, kind: 'pass', value: null, hint: 0 },
+          ...colors(ctx).filter(b => b !== a).map(b => ({ id: `color:${b}`, label: `1 ${a} → 1 ${b}`, kind: 'swap', value: [a, b], hint: (owner.res[a] || 0) - (owner.res[b] || 0) - 1.5 })),
+        ], 'yellow.gobetween');
+      },
+    }),
+    // Cory, Nov 1 3:14pm: "I like tourists. maybe on recruit and round start?" Replaces Go-Between in the 10-card deck.
+    // Price 3 yellow + 4 any and worth 1 are the design thread's fill-ins
+    // REPLACE11 bot test (Actions lane, Nov 4; C's Duty Free from C-tourist3, requalified under "paper filters, play ranks"):
+    // Tourist's place. The price rule is core.js priceParts (flag dutyFree, read with isNewColor, grey a color).
+    ...add11(m('dutyfree', 'Duty Free', 3, 3, 'Members of a color none of your members have cost you 3 less.', { round: 1, dutyFree: true,
+      ...see(i => endsAhead(i).length * 3.5) })), // BOTSEE: about one new-color recruit a round, 3 off, plus the member it makes room for (0 of 9 bought at 2 a round)
+    m('tourists', 'Tourist', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { ...old11('dutyfree'), now: true, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
+      onRoundStart(ctx, owner) {
+        const k = held(ctx, owner).length;
+        if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Tourist: +${k} follower${k === 1 ? '' : 's'}.`); }
+      },
+    }),
+    // Cory, 2026-10-31: "make it 3 and add on recruit as well"
+    m('tinker', 'Tinker', 3, 2, 'On Recruit: swap up to 3 of your resources one for one. Round Start: swap up to 3 of your resources one for one.', { now: true,
+      onRoundStart(ctx, owner) { transmuteStep(ctx, owner, { who: 'Tinker', left: Math.min(3, total(ctx, owner)), done: 0 }); },
+    }),
+    // Cory, 2026-10-31: "needs to be more expensive" (was 4)
+    // Seamstress takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
+    m('harmonist', 'Harmonist', 4, 2, 'Game End: +1 follower per full set you hold.', { retired: true,
+      onGameEnd: (ctx, owner) => setsOf(ctx, owner),
+    }),
+    // Quality loop (Members C, Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Harmonist's place (paper
+    // 18 vs 9; blind play +0.58; trial taken 68%, owners won 18%, weak side of fair; fired in every owner game).
+    // 4 yellow + 2 any as a player sees it (was 6 + 3: A/B judges, its price ate the sets it doubled). "Double": +1 of each
+    // color on the table per full set held (setsOf, so Jack-of-All-Trades' yellow sets count). No set: the use comes back.
+    m('seamstress', 'Seamstress', 3, 2, 'On Use, once per game: double your full sets.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const k = setsOf(ctx, owner);
+        if (k < 1) { card.used = false; ctx.log(`${owner.name}'s Seamstress: no full set to double.`); return; }
+        for (const c of colors(ctx)) ctx.gain(owner, c, k);
+        ctx.log(`${owner.name}'s Seamstress: doubles ${k === 1 ? 'a full set' : `${k} full sets`}: +${k} of each color.`);
+      },
+      // bots wait for 3 sets, or take 2 in round III, or any set on their last turn (A/B, Nov 4: early on 2 sets it paid back 8 for 9)
+      botActivate: (ctx, owner) => { const k = setsOf(ctx, owner), r3 = ctx.state.round === 3; return k >= 3 || (r3 && k >= 2) || (k >= 1 && r3 && (owner.left || 0) <= 1); },
+    }),
+    // Cory, 2026-10-31: "also give followers… like side quests"; Nov 6: "any yellow member and should be 3 wild"
+    m('matchmaker', 'Matchmaker', 3, 2, 'Whenever you recruit a yellow member, +2 wild, +3 followers.', { // +2 wild, +3 followers (Cory, Nov 11 3:45pm: "yes to both")
+      onAnyRecruit(ctx, owner, card, by, recruited) {
+        if (by !== owner || recruited.uid === card.uid || unpickedDrifters(ctx, recruited)) return;
+        const d = ctx.defOf(recruited);
+        if (d.quadrant === 'yellow' || d.everyColor) matchmaker(ctx, owner);
+      },
+      onColorChosen(ctx, owner, card, member) { if (member.asColor === 'yellow') matchmaker(ctx, owner); },
+    }),
+    // Cory, 2026-10-31: "i dont like round end. i like on recruit and round start"
+    m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1, ...old5, ...old9('yellow.dyer'),
+      onRoundStart(ctx, owner) { ctx.gain(owner, Y, held(ctx, owner).length); },
+    }),
+    // REPLACE9 bot test (Members C, Nov 4, batch bC2: paper 14 vs Dyer's 11, Yellow's set 14 -> 15): Dyer's place. 5 yellow
+    // + 2 any as a player sees it. Counts full sets as its Round Start comes up (setsOf: Jack-of-All-Trades' yellow fills
+    // gaps); keeps nothing, pays nothing.
+    ...add9(m('tailor', 'Tailor', 4, 2, 'Round Start: +1 follower per full set you hold.', {
+      onRoundStart(ctx, owner) {
+        const k = setsOf(ctx, owner);
+        if (!k) return;
+        owner.bonus += k;
+        ctx.log(`${owner.name}'s Tailor: ${k} full ${k === 1 ? 'set' : 'sets'}, +${k} ${k === 1 ? 'follower' : 'followers'}.`);
+      },
+      ...see(i => endsAhead(i).filter(r => r > i.round).length * 1.5), // BOTSEE: about 1 or 2 sets at each later round start
+    })),
+    // REPLACE9 bot test (Members C, Nov 4): Dyer's place. 5 yellow + 2 any as a player sees it. A full set is 1 of each
+    // color on the table (setsOf). Once per game (Cory, Nov 4 12:35am: "Once per round is really strong"): up to 3 full
+    // sets become 6 followers each, paying 1 of each color per set (uncapped, a bot turned 6 sets into 36). No full set: nothing happens and the use comes back.
+    ...add9(m('quilter', 'Quilter', 4, 2, 'On Use, once per game: turn up to 3 full sets into 6 followers each.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const k = Math.min(QUILT_MAX, setsOf(ctx, owner));
+        if (k < 1) { card.used = false; ctx.log(`${owner.name}'s Quilter: no full set to turn in.`); return; }
+        paySets(ctx, owner, k);
+        owner.bonus += QUILT * k;
+        ctx.log(`${owner.name}'s Quilter: turns ${k === 1 ? 'a full set' : `${k} full sets`} (${k} of each color) into ${QUILT * k} followers.`);
+      },
+      // bots quilt at the cap (3 sets) from round II, or in round III once they hold 2 sets, or on their last turn with any (play judges, Nov 4: one fired a turn late, 3 sets to 2)
+      botActivate: (ctx, owner) => { const k = setsOf(ctx, owner); return k >= 3 && ctx.state.round >= 2 || ctx.state.round === 3 && k >= 1 && (k >= 2 || (owner.left || 0) <= 1); },
+    })),
+    // REPLACE1 bot test (Nov 3, replacement batch 1): Dyer's place. 4 yellow + 2 any as a player sees it. Pick a rival
+    // (Bodyguards blocks, as it blocks Dilute), then up to 3 swaps of 1 of yours for 1 of theirs. Customs Officer and Tastemaker
+    // read it as changing a rival's resources.
+    ...add1(m('barterers', 'Barterers', 3, 2, "On Recruit and Round Start: swap up to 3 of your resources with one rival's, one for one.", { now: true, ...old5,
+      onRoundStart(ctx, owner) {
+        const list = touchable(ctx, owner).filter(o => total(ctx, o) > 0);
+        if (!list.length || !total(ctx, owner)) { ctx.log(`${owner.name}'s Barterers: nothing to swap.`); return; }
+        ctx.choose(owner, 'Barterers: swap with which rival?', list.map(o => ({
+          id: `player:${o.id}`, label: o.name, kind: 'player', value: o.id, hint: total(ctx, o) * 0.1,
+        })).concat({ id: 'none', label: 'Swap with nobody', kind: 'pass', value: null, hint: -5 }), 'yellow.barterWith');
+      },
+    })),
+    // REPLACE5 bot test (Nov 3, replacement batch 5): the Dyer slot (Barterers' under REPLACE1). 5 yellow + 3 any as a
+    // player sees it. Core runs it after the contests are scored (afterContests): second is the biggest count below the
+    // winners' (below the top count in a contest nobody wins); ties for second each pay; at least 1 of what's counted.
+    ...add5(m('secondfiddles', 'Second Fiddles', 4, 3, 'Round End: +2 followers per contest you come second in.', {
+      afterContests(ctx, owner, card, table) {
+        const seconds = table.filter(c => secondIn(c, owner.id)).map(c => c.label);
+        if (!seconds.length) return;
+        owner.bonus += 2 * seconds.length;
+        ctx.log(`${owner.name}'s Second Fiddles: second in ${seconds.join(', ')}: +${2 * seconds.length} followers.`);
+      },
+    })),
+    // Cory, 2026-10-31: "definitely too expensive" (was 4 + 4); 3 + 1 read strong in both bot runs, so 3 + 2 (Claude, Oct 31 balance run)
+    m('explorer', 'Explorer', 3, 2, 'Whenever you take a space outside Yellow, +1 yellow.', {
+      afterAction(ctx, owner, card, qid) { if (qid !== 'yellow') ctx.gain(owner, Y, 1); },
+    }),
+    // Cory, 2026-10-31: "there should be an On Recruit rearrange opponents resources"
+    m('agitator', 'Agitator', 3, 2, "On Recruit: change up to 4 of rivals' resources one for one.", {
+      onRecruited(ctx, owner) { startChange(ctx, owner, { who: 'Agitator', left: 4 }); },
+    }),
+    // Claude's fill-in (Cory, 2026-10-31: "just come up with whatever's remaining quick")
+    m('ringleader', 'Meddler', 3, 2, "On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.", { ...old2, ...old9('yellow.ringleader'),
+      onRecruited(ctx, owner) { startChange(ctx, owner, { who: 'Meddler', left: touchable(ctx, owner).length, perRival: true, follower: true }); },
+    }),
+    // REPLACE9 (Members C, bC8: paper 17 vs 11; Cory's "paper filters, play ranks", Nov 4): Meddler as once per round.
+    ...add9(m('meddler9', 'Meddler', 3, 2, "On Use, once per round: change 1 of each rival's resources one for one. +1 follower per rival changed.", {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const n = touchable(ctx, owner).filter(o => total(ctx, o) > 0).length;
+        if (!n) { card.used = false; ctx.log(`${owner.name}'s Meddler: no rival resources to change.`); return; }
+        startChange(ctx, owner, { who: 'Meddler', left: touchable(ctx, owner).length, perRival: true, follower: true });
+      },
+      botActivate: (ctx, owner) => touchable(ctx, owner).some(o => total(ctx, o) > 0),
+    })),
+    // REPLACE2 bot test (Nov 3, replacement batch 2): Meddler's place. 4 yellow + 2 any as a player sees it. Trade
+    // Seeds' own swaps, asked after the round's last placement and before anything is scored (core's allPlaced step).
+    // In the deck for Meddler's slot, 3 yellow + 1 any as a player sees it (Cory, Nov 5: "yes to night market. should be relatively cheap")
+    // Cory, 2026-11-11 2:31pm Eastern: "night traders can go, should be more like early traders… swap around your
+    // resources at the beginning of the round, like up to four of them": Early Traders, Night Traders' card and price
+    // Cory, 2026-11-12 6:58pm Eastern: "early traders should give a couple yellow or something": +2 yellow first, so
+    // the swap can move it too
+    m('nightmarket', 'Early Traders', 2, 0, 'Round Start: +2 yellow. Swap up to 4 of your resources for other colors, one for one.', {
+      // BOTSEE: each round start still ahead, 2 yellow plus a few resources moved where the round's plan needs them
+      ...see(i => [2, 3].filter(r => r > i.round).length * 3.5),
+      // late (combo tester, Nov 12): it swaps what the round's other Round Start income gave (Caravan earlier in the row
+      // left it "nothing to swap" with 4 resources in hand)
+      onRoundStartLate(ctx, owner) {
+        ctx.gain(owner, 'yellow', 2);
+        ctx.log(`${owner.name}'s Early Traders: +2 yellow.`);
+        const k = Math.min(4, total(ctx, owner));
+        if (!k) { ctx.log(`${owner.name}'s Early Traders: nothing to swap.`); return; }
+        transmuteStep(ctx, owner, { who: 'Early Traders', left: k, done: 0 });
+      },
+    }),
+    // Cory, 2026-10-31 ("Drifters is good"; worth 2)
+    m('drifters', 'Drifters', 2, 0, 'On Recruit: choose a color; these count as a member of that color.', { f: 2,
+      onRecruited(ctx, owner, card) {
+        ctx.choose(owner, 'Drifters: count as a member of which color?', ctx.state.quadrants.map(q => ({
+          id: `color:${q}`, label: ctx.quadrant(q).name, kind: 'color', value: q, hint: ctx.countMembersOfColor(owner, q) ? -1 : 1,
+        })), 'yellow.drift', { uid: card.uid });
+      },
+    }),
+    // Cory, 2026-10-31: "Make this Use Once Per Round"
+    m('leveler', 'Leveler', 4, 3, "On Use, once per round: choose a color; 1 of each rival's biggest color becomes it.", {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner) {
+        ctx.choose(owner, 'Leveler: change 1 of each rival\'s biggest color into which color?', colors(ctx).map(b => ({
+          id: `color:${b}`, label: b, kind: 'color', value: b, hint: -Math.max(0, ...ctx.rivals(owner).map(o => o.res[b] || 0)),
+        })), 'yellow.level');
+      },
+      botActivate: (ctx, owner) => touchable(ctx, owner).some(o => total(ctx, o) > 0),
+    }),
+    // Cory, Nov 5 ("something aggressive, like once per round turn all of a rivals resources into one color"), in
+    // Drifters' slot; name Claude's (Cory: yes); 3 yellow + 2 any as a player sees it (Cory: "i like somebody being able to get it round 1")
+    m('dyejob', 'Counterfeiters', 2, 1, "On Use, once per round: turn all of a rival's resources into one color you choose.", {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = touchable(ctx, owner).filter(o => total(ctx, o) > 0);
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Counterfeiters: no rival has resources to change.`); return; }
+        ctx.log(`${owner.name} uses Counterfeiters.`);
+        ctx.choose(owner, 'Counterfeiters: whose resources?', list.map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${total(ctx, o)})`, kind: 'player', value: o.id, hint: total(ctx, o),
+        })), 'yellow.dyeRival');
+      },
+      botActivate: (ctx, owner) => touchable(ctx, owner).some(o => total(ctx, o) > 2),
+    }),
+    // Cory, 2026-10-31 (in place of HR's "+3 per color you have 3 members of")
+    // Cory, Nov 5: "1 to 3 members of" (was "exactly one member of"; most members count as 2 or more)
+    m('bigtent', 'Big Tent', 3, 3, 'Game End: +2 followers per color you have 1 to 3 members of.', {
+      // Dabblers never pushes a color past 3 (Cory, Nov 1: Dabblers and Drifters always work in the owner's favor)
+      onGameEnd: (ctx, owner) => 2 * ctx.memberColorsWithGrey(owner, { wild: false }).filter(q => ctx.countMembersOfColor(owner, q, { wild: false }) <= 3).length, // grey is a color (Cory, Nov 13)
+    }),
+    // Cory, 2026-10-31: named Book Cookers; "agree this gives multiple followers"
+    m('bookcooker', 'Book Cookers', 5, 4, 'On Use, once per game: rearrange your resources into any mix of colors.', { f: 3, keepCount: true, /* given back: costs 10+ */
+      activate: 'game',
+      onActivate(ctx, owner) { startLaunder(ctx, owner, 'Book Cookers'); },
+      botActivate: (ctx, owner) => ctx.state.round === 3 && owner.left === 0,
+    }),
+    // Claude's fill-in, the second big card
+    m('puppeteer', 'Puppeteers', 5, 4, "Worth 3 followers. Round Start: change up to 3 of rivals' resources one for one.", { f: 3,
+      onRoundStart(ctx, owner) { startChange(ctx, owner, { who: 'Puppeteers', left: 3 }); },
+    }),
+    // Cory, Nov 1 (in place of Puppeteers): "Make it 'On Recruit' as well"
+    // REPLACE9 (Members C, Caravan batch: paper 15 vs 12; Cory's "paper filters, play ranks", Nov 4): Caravan's place,
+    // same price. The member keeps the new color (as Drifters keeps its own) until painted again.
+    ...add9(m('signpainters', 'Sign Painters', 4, 2, /* Caravan's price, 9 since Nov 12 */ 'On Use, once per round: a member in any cult becomes a member of a color you choose.', { f: 3,
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const lead = Math.max(...ctx.rivals(owner).map(o => ctx.followers(o)));
+        const opts = ctx.state.players.flatMap(o => ctx.membersOf(o).filter(c => !ctx.defOf(c).everyColor).map(c => ({
+          id: `card:${c.uid}`, label: `${o.name}'s ${ctx.defOf(c).name}`, kind: 'card', value: c.uid,
+          hint: o === owner ? 0 : (ctx.followers(o) === lead ? 2 : 1),
+        })));
+        if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Sign Painters: no member to paint.`); return; }
+        ctx.choose(owner, 'Sign Painters: which member changes color?', opts, 'yellow.signpick');
+      },
+      botActivate: (ctx, owner) => ctx.rivals(owner).some(o => ctx.membersOf(o).length > 0),
+    })),
+    m('caravan', 'Caravan', 4, 2, /* costs 9, was 11 (Cory, Nov 12 7:02pm Eastern: "caravan is crazy expensive esp in 2 player") */ 'On Recruit: +1 of each color. Round Start: +1 of each color.', { f: 3, now: true, ...old9('yellow.caravan'), // every color, not only held (Cory, Nov 5 backlog yes)
+      onRoundStart(ctx, owner) { for (const c of colors(ctx)) ctx.gain(owner, c, 1); },
+    }),
+    // REPLACE9 bot test (Members C, Nov 4): Caravan's place, reworded (plural, as it counts as 3). Same price. "Each color
+    // you have a member of": the table's colors with a member of yours (memberColors; Drifters counts as its chosen color).
+    ...add9(m('ambassadors', 'Ambassadors', 4, 4, 'On Recruit: +1 of each color you have a member of. Round Start: +1 of each color you have a member of.', { f: 3, n: 3, now: true,
+      onRoundStart(ctx, owner) {
+        for (const q of memberColors(ctx, owner)) { const c = ctx.quadrant(q).resource; if (colors(ctx).includes(c)) ctx.gain(owner, c, 1); }
+      },
+    })),
+    // Cory, Nov 1 (in place of Explorer): a payoff for changing rivals' resources
+    // Jack-of-All-Trades takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
+    m('tastemaker', 'Tastemaker', 3, 2, "Whenever you change rivals' resources, +1 follower.", { retired: true }),
+    // Quality loop (Members C, Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Tastemaker's place (paper
+    // and set check passed; trial taken 58%, owners won 27%; 1.6 fires per owner game; blind play 1.08 vs 0.33). 3 yellow +
+    // 1 any as a player sees it. Every full-set count (Most full sets, Harmonist, Toll Keeper, Quilter) reads setsOf, which
+    // lets the owner's yellow fill any color's gap.
+    m('jack', 'Jack-of-All-Trades', 2, 1, 'When counting your full sets (1 of each color), your yellow can stand in for any missing color.', { round: 1,
+      // a log line only (the rule is in setsOf): says what the yellow is doing as contests come up
+      onAllPlaced(ctx, owner) {
+        const k = setsOf(ctx, owner), plain = plainSets(ctx, owner);
+        if (k > plain) ctx.log(`${owner.name}'s Jack-of-All-Trades: yellow fills the gaps, so ${owner.name} holds ${k} full ${k === 1 ? 'set' : 'sets'} (${plain} without it).`);
+      },
+    }),
+    // Cory, Nov 1 (in place of Agitator, 15-card deck only)
+    m('spiceroute', 'Spice Route', 3, 2, 'Game End: +1 follower per color you hold 3 or more of.', {
+      onGameEnd: (ctx, owner) => colors(ctx).filter(c => (owner.res[c] || 0) >= 3).length,
+    }),
+    // Yellow's artifact (Cory, 2026-10-31: "I think C is probably best"; replaces Farmer). Name: Claude's fill-in.
+    // Cory, 2026-11-11 8:21pm Eastern: "You buy it, swap your members for arrivals that cost the same… mixing and matching
+    // colors around… Costing the same might be a little restrictive, but that might keep it power balanced." A swap as
+    // Body Snatchers' (Loyalists stop it; Bodyguards don't, Cory Nov 1: "blocks steals, not swaps"). Price is Claude's fill-in.
+    m('exchangestudents', 'Exchange Students', 2, 2, 'On Recruit: swap one of your members for a rival\u2019s member that costs the same.', {
+      onRecruited(ctx, owner) {
+        const pairs = exchangePairs(ctx, owner);
+        if (!pairs.length) {
+          // a same-cost pair that Loyalists shields is not "no member costs the same" (combo tester, Nov 12)
+          const same = ctx.membersOf(owner).some(a => ctx.rivals(owner).some(o => ctx.membersOf(o).some(b => hwCost(a) === hwCost(b))));
+          ctx.log(same ? `${owner.name}'s Exchange Students: no rival's member that costs the same as one of yours can be swapped.`
+            : `${owner.name}'s Exchange Students: no rival's member costs the same as one of yours.`);
+          return;
+        }
+        ctx.choose(owner, 'Exchange Students: swap one of your members for a rival’s that costs the same?', pairs.map(([a, b]) => ({
+          id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} ↔ ${ctx.ownerOf(b.uid).name}: ${b.def.name} (${hwCost(b)})`, kind: 'trade', value: [a.uid, b.uid],
+          // bots take a member that adds a color they have none of, or is worth more
+          hint: (b.def.f - a.def.f) + (ctx.countMembersOfColor(owner, ctx.defOf(b).quadrant) ? 0 : 1) - (a.uid === b.uid ? 9 : 0),
+        })).concat({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: 0 }), 'yellow.exchange');
+      },
+    }),
+    // Cory, 2026-11-11 8:21pm Eastern: "On use once per game, recruiting a member costing up to 6 for free. That's pretty
+    // good, actually." From the shop. Price is Claude's fill-in.
+    m('headhunters', 'Talent Scouts', 3, 2, /* Headhunters until Nov 11: Red has a Headhunter (Claude's stand-in name; Cory renames members later) */ 'On Use, once per game: recruit a member costing up to 7 for free.', { // up to 7 (Cory, Nov 12 7:07pm Eastern: "talent scouts should maybe be up to 7")
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const cap = 7 + richUp(ctx.state);
+        if (!freeAsk(ctx, owner, 'Talent Scouts', ctx.shopCards().filter(c => hwCost(c) <= cap), 'yellow.poolFree', `no shop member costs ${cap} or less`, cap)) card.used = false;
+      },
+      botActivate: (ctx, owner) => ctx.shopCards().some(c => hwCost(c) >= 5 && hwCost(c) <= 7 + richUp(ctx.state)),
+    }),
+    // Cory, 2026-11-11 8:31pm Eastern, his card: "Round end plus 1 follower for each color you have"; "do mine… It's good
+    // for anybody". Grey is a color (Cory, Nov 13: "it should count for everything as a color"). Name and price are Claude's fill-ins.
+    m('cosmopolitans', 'Cosmopolitans', 2, 2, 'Round End: +1 follower per color among your members.', {
+      onAllPlaced(ctx, owner) {
+        const n = ctx.memberColorsWithGrey(owner).length; // grey is a color (Cory, Nov 13)
+        if (!n) { ctx.log(`${owner.name}'s Cosmopolitans: no colors among their members.`); return; }
+        owner.bonus += n;
+        ctx.log(`${owner.name}'s Cosmopolitans: ${n} color${n === 1 ? '' : 's'} among their members, +${n} follower${n === 1 ? '' : 's'}.`);
+      },
+      ...see(info => 2.5 * endsAhead(info).length),
+    }),
+    m('guestbook', 'Guest Book', 0, 0, 'Whenever you recruit a member of a color none of your members have, +2 yellow.', { artifact: true,
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what.member || what.member.uid === card.uid) return;
+        // Drifters has no color until its On Recruit pick lands: the pick checks Guest Book itself (drift)
+        if (unpickedDrifters(ctx, what.member)) return;
+        guestBook(ctx, owner, what.member, card);
+      },
+      onColorChosen(ctx, owner, card, member) { guestBook(ctx, owner, member, card); },
+    }),
+    // ---- out of the deck since Yellow 2.0 (cull.js); kept so old records still read ----
+    // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 4 → 8
+    m('peddler', 'Peddler', 4, 4, 'On Recruit: +1 of each color. Round Start: +1 of each color.', { now: true,
+      onRoundStart(ctx, owner) { for (const c of colors(ctx)) ctx.gain(owner, c, 1); },
+    }),
+    m('gleaner', 'Gleaner', 6, 4, 'Whenever an action gains you 2 or more of another color at once, +1 yellow.', {
+      afterGain(ctx, owner, card, g) { if (g.fromAction && g.color !== Y && g.n >= 2) owner.res[Y] += 1; },
+    }),
+    m('admirer', 'Admirer', 3, 1, 'Whenever a rival recruits a member of a color you have none of, +1 of that color.', {
+      onAnyRecruit(ctx, owner, card, by, recruited) {
+        const c = colorOf(ctx, recruited);
+        if (c && by !== owner && !(owner.res[c] > 0)) ctx.gain(owner, c, 1);
+      },
+    }),
+    m('latebloomer', 'Late Bloomers', 2, 2, 'Worth 2 followers. On Recruit: if no rival has fewer followers than you (not counting this card), +1 of each color. Round Start: if no rival has fewer followers than you (not counting this card), +1 of each color.', { now: true, f: 2,
+      onRoundStart(ctx, owner, card) {
+        // Exclude this physical card, including its value when a Doppelganger copies it.
+        const mine = ctx.followers(owner) - Math.max(2, card.def.f);
+        if (ctx.rivals(owner).every(o => ctx.followers(o) >= mine)) eachColor(ctx, owner, 1);
+      },
+    }),
+    m('sower', 'Sower', 1, 1, 'Round Start: plant any of your yellow. Round End: gain that many of each other color.', {
+      onRoundStartLate(ctx, owner, card) {
+        const y = owner.res[Y];
+        if (!y) return;
+        const amounts = [...new Set([0, Math.floor(y / 4), Math.floor(y / 2), Math.floor((3 * y) / 4), y])];
+        ctx.choose(owner, `Sower: plant how much yellow? (you have ${y})`, amounts.map(x => ({
+          id: `amount:${x}`, label: x === 0 ? 'None' : x === y ? `All ${x}` : `${x}`, kind: 'amount', value: x, ...(x ? { spend: { yellow: x } } : {}), hint: x === Math.floor(y / 2) ? 1 : 0,
+        })), 'yellow.sow', { uid: card.uid });
+      },
+      onRoundEnd(ctx, owner, card) {
+        const x = card.sown || 0;
+        if (!x) return;
+        card.sown = 0;
+        for (const c of others(ctx)) owner.res[c] += x;
+        ctx.log(`${owner.name}'s Sower harvests +${x} of each other color.`);
+      },
+      // leaving mid-round (released, stolen, swapped): the planted yellow comes back, unharvested (as Investor's gold does)
+      onLeave(ctx, owner, card) {
+        const x = card.sown || 0;
+        if (x) { owner.res[Y] += x; card.sown = 0; ctx.log(`${owner.name}'s Sower leaves: ${x} planted yellow comes back.`); }
+      },
+    }),
+    m('rainmaker', 'Rainmaker', 3, 1, 'On Use, once per game: raise each of your colors to match your yellow.', {
+      activate: 'game',
+      onActivate(ctx, owner) {
+        const top = owner.res[Y];
+        let got = 0;
+        for (const c of others(ctx)) { const d = Math.max(0, top - owner.res[c]); got += d; ctx.gain(owner, c, d); }
+        ctx.log(`${owner.name} used Rainmaker: every color up to ${top} (+${got}).`);
+      },
+      // bots: a big catch-up in round III, or anything at all on their last buy of the game (they left it unused
+      // in 4 of 6 holdings, dead-window audit 2026-10-14)
+      botActivate: (ctx, owner) => {
+        const gain = others(ctx).reduce((s, c) => s + Math.max(0, owner.res[Y] - owner.res[c]), 0);
+        const last = ctx.state.round === 3 && owner.left === 0;
+        return (ctx.state.round === 3 && gain >= 6) || (last && gain > 0);
+      },
+    }),
+    m('pilgrim', 'Pilgrim', 2, 2, 'On Recruit: +1 of each color.', {
+      onRecruited(ctx, owner) { eachColor(ctx, owner, 1); },
+    }),
+    m('farmer', 'Farmer', 4, 2, 'Whenever an action gains you yellow, +1 yellow.', {
+      afterGain(ctx, owner, card, g) { if (g.fromAction && g.color === Y && g.n > 0) owner.res[Y] += 1; },
+    }),
+    m('weaver', 'Weaver', 4, 2, 'Whenever you buy 5 or more followers, +1 of each color.', {
+      onBuyFollowers(ctx, owner, card, buyer, tier) {
+        if (buyer === owner && tier?.get >= 5) eachColor(ctx, owner, 1);
+      },
+    }),
+    // was Feastmaker 6+4 (Cory, 2026-10-18): Chefs, a little cheaper, counts as 2 members (worth 2 followers, as Twins)
+    m('chefs', 'Chefs', 6, 3, 'Worth 2 followers. On Use, once per game: +1 of each color in round I, +2 in round II, +3 in round III.', {
+      f: 2,
+      byRound: { lead: 'Worth 2 followers. Once per game:', lines: ['+1 of each color', '+2 of each color', '+3 of each color'] },
+      activate: 'game',
+      onActivate(ctx, owner) {
+        const r = ctx.state.round;
+        eachColor(ctx, owner, r);
+        ctx.log(`${owner.name} used Chefs: +${r} of each color.`);
+      },
+      botActivate: ctx => ctx.state.round === 3,
+    }),
+  ],
+};
+
+/** Barterers (REPLACE1 bot test): one swap at a time with rival data.oid, 1 of yours for 1 of theirs, Done at any time. */
+function barterStep(ctx, p, data) {
+  const o = ctx.player(data.oid), cs = colors(ctx), opts = [];
+  if (ctx.canSteal(p, o, 'change')) for (const a of cs) if ((p.res[a] || 0) > 0) for (const b of cs) if (b !== a && (o.res[b] || 0) > 0) opts.push({
+    id: `barter:${a}:${b}`, label: `Give 1 ${a}, take 1 ${b}`, kind: 'swap', value: [a, b], spend: { [a]: 1, [b]: -1 },
+    // bots take what the rival holds most of and hand back what they hold most of
+    hint: (o.res[b] - p.res[b]) + (p.res[a] - o.res[a]) - 1,
+  });
+  if (!opts.length) { if (data.done) tastemaker(ctx, p); return; }
+  opts.push({ id: 'done', label: data.done ? 'Done' : 'Swap nothing', kind: 'done', value: 'done', hint: 0.5 });
+  ctx.choose(p, `Barterers: swap with ${o.name} one for one, or stop (${data.done} swapped so far)`, opts, 'yellow.barter', data);
+}
+// Trade Seeds (and Tinker): up to 3 one-for-one swaps of your own, with Done at any time.
+/** Tag Along (REPLACE12): the colors whose spaces hold at least one of o's minions (joined spots count). */
+/** World's Fair (pool 11): the next color held, 0 to 3 of it into followers. */
+function fairStep(ctx, p, data) {
+  let left = data.left.filter(c => (p.res[c] || 0) > 0);
+  if (!left.length) {
+    ctx.log(`${p.name}'s World's Fair: ${data.n ? `+${data.n} follower${data.n > 1 ? 's' : ''}` : 'nothing turned'}.`);
+    ctx.gain(p, Y, 1, { fromAction: true });
+    return;
+  }
+  const c = left[0], most = Math.min(3, p.res[c]);
+  ctx.choose(p, `World's Fair: turn how many ${c} into followers?`, Array.from({ length: most + 1 }, (_, k) => most - k).map(k => ({
+    id: `n:${k}`, label: k ? `${k} ${c} → ${k} follower${k > 1 ? 's' : ''}` : `Keep your ${c}`, kind: k ? 'choice' : 'pass', value: k, hint: k,
+  })), 'yellow.fair', { ...data, left });
+}
+/** Joneses (pool 11): [color, how much to raise it] for each color a rival holds more of. */
+function jonesUps(ctx, p) {
+  return colors(ctx).map(c => [c, Math.max(0, ...ctx.rivals(p).map(o => o.res[c] || 0)) - (p.res[c] || 0)]).filter(([, n]) => n > 0);
+}
+function colorsWith(ctx, o) {
+  const st = ctx.state, qs = new Set();
+  for (const [key, pid] of Object.entries(st.slots || {})) if (pid === o.id) qs.add(Number(key.split('-')[0]));
+  for (const [key, list] of Object.entries(st.squats || {})) if (list.includes(o.id)) qs.add(Number(key.split('-')[0]));
+  return [...qs].sort((a, b) => a - b).map(qi => st.resources[qi]);
+}
+/** Minions on the qi-th color's spaces, anyone's (joined spots count). */
+function minionsOn(ctx, qi) {
+  const st = ctx.state; let n = 0;
+  for (const key of Object.keys(st.slots || {})) if (key.startsWith(`${qi}-`)) n++;
+  for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) n += list.length;
+  return n;
+}
+/** Survey: the busiest color (most minions on its spaces) and its count; tied colors are all named. */
+function busiest(ctx) {
+  const counts = ctx.state.resources.map((c, qi) => ({ c, n: minionsOn(ctx, qi) }));
+  const n = Math.max(0, ...counts.map(x => x.n));
+  return { n, colors: counts.filter(x => x.n === n).map(x => x.c) };
+}
+/** Common Ground: colors where you and at least one rival both have a minion. */
+function commonColors(ctx, p) {
+  const mine = colorsWith(ctx, p), theirs = new Set(ctx.rivals(p).flatMap(o => colorsWith(ctx, o)));
+  return mine.filter(c => theirs.has(c));
+}
+function bandwagon(ctx, p) {
+  const { n, colors: cs } = busiest(ctx);
+  if (n) ctx.gain(p, Y, n, { fromAction: true });
+  ctx.log(`${p.name}'s Survey: +${n} yellow (${n} minion${n === 1 ? '' : 's'} on ${cs.join(' and ')}, the busiest).`);
+  ctx.gain(p, Y, 1, { fromAction: true });
+}
+function transmuteStep(ctx, p, data) {
+  const cs = colors(ctx);
+  const opts = [];
+  if (data.left > 0) {
+    for (const a of cs) if (p.res[a] > 0) for (const b of cs) if (b !== a) {
+      opts.push({
+        id: `swap:${a}:${b}`, label: `1 ${a} → 1 ${b}`, kind: 'swap', value: [a, b], spend: { [a]: 1, [b]: -1 },
+        // bots even out their colors: a swap helps when it moves from a pile 2+ bigger
+        hint: p.res[a] - p.res[b] - 1,
+      });
+    }
+  }
+  if (!opts.length) { finishTransmute(ctx, p, data); return; }
+  opts.push({ id: 'done', label: data.done ? 'Done' : 'Swap nothing', kind: 'done', value: 'done', hint: 0.5 });
+  ctx.choose(p, `${data.who || 'Trade Seeds'}: swap one for one, or stop (${data.done} swapped so far)`, opts, 'yellow.swap', data);
+}
+function finishTransmute(ctx, p, data) {
+  // named either way, so the log says the card acted (fire audit, Nov 5)
+  if (!data.done) ctx.log(`${p.name}'s ${data.who || 'Trade Seeds'}: swapped nothing.`);
+}
+
+// "+N in colors you choose": one color at a time (bots lean to their fewest)
+export function pickColors(ctx, p, n, who, fromAction = false, got = 0) {
+  ctx.choose(p, `${who}: +1 of which color? (${n} to pick)`, colors(ctx).map(c => ({
+    id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0),
+  })), 'yellow.wild', { left: n, who, fromAction, got });
+}
+
+// Changing rivals' resources one for one (Dilute, Big Dilute, Agitator, Meddler, Puppeteers): pick a rival's
+// resource, then the color it becomes. A rival who can't be stolen from can't be changed either (Bodyguards).
+function startChange(ctx, p, data) {
+  if (!(data.left > 0)) return;
+  changeStep(ctx, p, { done: 0, used: [], instance: newChange(ctx), ...data });
+}
+function changeStep(ctx, p, data) {
+  const opts = [];
+  for (const o of touchable(ctx, p)) {
+    if (data.perRival && data.used.includes(o.id)) continue;
+    for (const a of colors(ctx)) if ((o.res[a] || 0) > 0) opts.push({
+      id: `res:${o.id}:${a}`, label: `${o.name}'s ${a}`, kind: 'choice', value: [o.id, a],
+      // bots knock down the rival's biggest piles, most of all where that rival out-holds them; never one this same
+      // change just made, which only undoes it (bug bash, Nov 1: a bot turned a rival's green to blue, then back)
+      hint: (o.res[a] || 0) - (p.res[a] || 0) * 0.5 - ((data.made || []).includes(`${o.id}:${a}`) ? 100 : 0),
+    });
+  }
+  if (!opts.length) { if (!data.done) ctx.log(`${p.name}'s ${data.who}: no rival resources to change.`); else tastemaker(ctx, p); return; }
+  opts.push({ id: 'done', label: data.done ? 'Done' : 'Change nothing', kind: 'done', value: 'done', hint: -5 });
+  // "(N left)" would read as a counted steal on screen (Take all buttons), so the count is said another way
+  ctx.choose(p, `${data.who}: change a rival's resource, ${data.left} more at most`, opts, 'yellow.changeFrom', data);
+}
+// Tastemaker: +1 follower each time you change rivals' resources (once per space or card, however many it changed;
+// Claude, under Cory's go-with-your-gut, Nov 1)
+function tastemaker(ctx, p) {
+  // a Doppelganger copying it counts too (bug bash, Nov 1)
+  for (const card of ctx.membersOf(p)) {
+    if (ctx.defOf(card).key !== 'tastemaker' && card.copy !== 'yellow.tastemaker') continue;
+    p.bonus += 1;
+    ctx.log(`${p.name}'s Tastemaker: +1 follower.`);
+  }
+}
+/** One change of rivals' resources (a space or card, however many it changes): Customs Officer pays once per change. */
+const newChange = ctx => (ctx.state.changeSeq = (ctx.state.changeSeq || 0) + 1);
+function changeOne(ctx, p, o, a, b, who, instance = newChange(ctx)) {
+  o.res[a] -= 1; o.res[b] = (o.res[b] || 0) + 1;
+  ctx.log(`${p.name}'s ${who}: ${o.name}'s 1 ${a} becomes 1 ${b}.`);
+  for (const card of ctx.membersOf(o)) {
+    const def = ctx.defOf(card);
+    if (def.onChanged) def.onChanged(ctx, o, card, p, instance);
+  }
+}
+
+/** Second Fiddles (REPLACE5): is player `id` second in scored contest c (contestTable's row)? */
+function secondIn(c, id) {
+  const score = pid => c.rows.find(r => r.player === pid)?.score ?? 0;
+  const top = c.winners.length ? Math.min(...c.winners.map(score)) : Math.max(0, ...c.rows.map(r => r.score));
+  const below = c.rows.filter(r => r.score > 0 && r.score < top && !c.winners.includes(r.player));
+  if (!below.length) return false;
+  const second = Math.max(...below.map(r => r.score));
+  return below.some(r => r.player === id && r.score === second);
+}

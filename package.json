@@ -10,15 +10,21 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "type-check": "tsc --noEmit",
-    "balance": "node src/engine/v3/balance-test.mjs",
-    "test:mp": "node .claude/mp-e2e.mjs"
+    "check:v4": "node scripts/v4-check.mjs",
+    "check:v4:quick": "node scripts/v4-check.mjs --quick",
+    "check:v4:full": "node scripts/v4-check.mjs --full",
+    "test:v4:related": "V4_GAMES=fast vitest related --run",
+    "retro:v4": "node scripts/v4-retro.mjs",
+    "records:refresh": "node scripts/v4-records-refresh.mjs",
+    "sim:v4": "node scripts/v4-sim.mjs",
+    "version:v4": "node scripts/v4-version.mjs"
   },
   "dependencies": {
     "firebase": "^12.6.0",
     "lucide-react": "^0.575.0",
     "motion": "^12.34.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^19.2.9",
+    "react-dom": "^19.2.9"
   },
   "devDependencies": {
     "@babel/standalone": "^7.28.5",
@@ -27,8 +33,8 @@
     "@testing-library/react": "^16.3.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.22",
+    "babel-plugin-react-compiler": "^1.0.0",
     "jsdom": "^27.2.0",
-    "netlify-cli": "^24.0.1",
     "playwright": "^1.58.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17",
@@ -37,13 +43,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://cojamz@github.com/cojamz/patrons.git"
+    "url": "git+https://cojamz@github.com/cojamz/cults.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cojamz/patrons/issues"
+    "url": "https://github.com/cojamz/cults/issues"
   },
-  "homepage": "https://github.com/cojamz/patrons#readme"
+  "homepage": "https://github.com/cojamz/cults#readme"
 }

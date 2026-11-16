@@ -1,0 +1,52 @@
+{
+ "deal1": {
+  "first": "n12 today",
+  "second": "n12 c1a3",
+  "persona": "cory"
+ },
+ "deal2": {
+  "first": "n12 c1a3",
+  "second": "n12 today",
+  "persona": "veteran"
+ },
+ "deal3": {
+  "first": "n12 today",
+  "second": "n12 c1a3",
+  "persona": "casual"
+ },
+ "deal4": {
+  "first": "n12 c1a3",
+  "second": "n12 today",
+  "persona": "cory"
+ },
+ "deal5": {
+  "first": "n12 today",
+  "second": "n12 c1a3",
+  "persona": "veteran"
+ },
+ "deal6": {
+  "first": "n12 c1a3",
+  "second": "n12 today",
+  "persona": "casual"
+ },
+ "deal7": {
+  "first": "n12 today",
+  "second": "n12 c1a3",
+  "persona": "cory"
+ },
+ "deal8": {
+  "first": "n12 c1a3",
+  "second": "n12 today",
+  "persona": "veteran"
+ },
+ "deal9": {
+  "first": "n12 today",
+  "second": "n12 c1a3",
+  "persona": "casual"
+ },
+ "deal10": {
+  "first": "n12 c1a3",
+  "second": "n12 today",
+  "persona": "cory"
+ }
+}

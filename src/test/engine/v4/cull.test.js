@@ -1,0 +1,69 @@
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { createGame, DEFAULT_RULES, ARTIFACTS } from '../../../engine/v4/core.js';
+import { CUT, FULL_DECK } from '../../../engine/v4/content/cull.js';
+import { allQuadrantIds, quadrant, guestMembers, defById } from '../../../engine/v4/content/index.js';
+import { applyMove } from '../../../engine/v4/core.js';
+import { chooseBotMove } from '../../../engine/v4/bots.js';
+import { seededRandom } from '../../../engine/v4/rng.js';
+import { checkInvariants } from './fuzz-runner.js';
+
+const SPHERES = allQuadrantIds().filter(q => !['blue', 'green'].includes(q));
+const seats = n => Array.from({ length: n }, () => ({ kind: 'bot' }));
+
+describe('the curated member decks', () => {
+  // setup.js deals the full deck for the card tests; these play the deck the game ships with
+  beforeAll(() => { FULL_DECK.tests = false; });
+  afterAll(() => { FULL_DECK.tests = true; });
+
+  it('real games cull by default', () => {
+    expect(DEFAULT_RULES.cull).toBe(true);
+    expect(createGame({ seats: seats(2) }).rules.cull).toBe(true);
+  });
+
+  // Purple's set of 12 (Cory, 2026-10-22). Blue is 12 (Cory, 2026-10-21).
+  // Magenta deals 13 (Cory, 2026-10-21: 12 per color, Magenta stays at 13 for now, a cut is on the backlog)
+  // Member structure (Cory, 2026-10-24): a once per game for Red, Magenta and Blue, Blue's round start, a go-deep for
+  // Purple and White; Bulk Buyer, Appraiser and Makeover cut
+  // Oct 25: Recluse moves to White, Stylist cut
+  // Green grows to 16 (Cory, 2026-10-29: Understudy, Wallflower, Fan Club, Roadie), then 15 (Connector cut)
+  // Silver deals 10 besides Caterer, its artifact (Cory, Nov 1: "on silver - it should be 10"; Gift Wrapper)
+  // Yellow 16 on the 15-card deck: Tourist joined (Cory, Nov 1); it replaces Go-Between only in the 10-card deck
+  // Nov 5 cuts (Cory): Magenta −2 then +1 (Big Score in; Snitch back in the 10 deck), Purple −1, Blue −1, White −1, Yellow −2, Silver −3; Seat Filler in for Volunteer
+  const DEALT = { echo: 15, /* Nov 11: Tribute Band, Impersonator and Buskers out; Mimics, Regulars, Die-Hards in */ red: 13, /* Mob and Proselytizers out, Brethren and Purists in (Nov 11); Assimilators in for Deprogrammers (Nov 12) */ thieves: 14, purple: 13, /* Place Keepers in for Gossip (Nov 12) */ market: 12, yellow: 15, silver: 11, trading: 11 }; // Nov 11 (Cory): Silver's 8 of 10 plus Bookies and Caterer; Guest of Honor and Patrons to White; White 11 with Leavetakers and Minimalists in, Undertaker, Barker, Old Money, Cashier and Heiresses out // purple 13: Night Watch and Night Owls out, Sleepyheads and Lookouts in (Nov 6)
+  it('Green deals 15, Blue 12, Red and Purple 13, Magenta 15, White 12, Yellow 15, other spheres 10, guests 20; no cut card is dealt', () => {
+    for (const q of SPHERES) {
+      const s = createGame({ seats: seats(4), quadrants: [q, ...SPHERES.filter(x => x !== q).slice(0, 3)] });
+      // artifacts are picked, never dealt (Cory, 2026-10-24): their cards don't count here
+      const arts = new Set(Object.values(s.artifacts || {}));
+      const dealt = Object.values(s.cards).filter(c => !arts.has(c.uid)).map(c => c.def);
+      // a color whose artifact is one of its dealt members deals one fewer (that member is the artifact now)
+      const fromDeck = ARTIFACTS[q] && !CUT.has(ARTIFACTS[q]) && !defById(ARTIFACTS[q]).artifact ? 1 : 0;
+      expect(dealt.filter(d => d.startsWith(`${q}.`)).length, q).toBe((DEALT[q] ?? 10) - fromDeck);
+      expect(dealt.filter(d => CUT.has(d))).toEqual([]);
+      expect(dealt.filter(d => d.startsWith('benders.')).length).toBe(20); // Cory's 15 guests (Oct 28), plus Cheerleaders (Nov 4; Victors out Nov 6), plus the Test version's Protesters, Gift Swappers and Purifiers (the game since Nov 11), plus Mutineers (Nov 12)
+    }
+  });
+
+  it('Overseer and Social Climber are cut (Cory, 2026-10-18)', () => {
+    expect(CUT.has('purple.overseer')).toBe(true);
+    expect(CUT.has('market.climber')).toBe(true);
+  });
+
+  it('every cut id names a real card', () => {
+    const all = new Set([...SPHERES.flatMap(q => quadrant(q).members.map(d => d.id)), ...guestMembers().map(d => d.id)]);
+    for (const id of CUT) expect(all.has(id), id).toBe(true);
+  });
+
+  it('bot games finish cleanly on culled tables', () => {
+    for (let seed = 1; seed <= 6; seed++) {
+      const qs = SPHERES.slice(seed % 6, seed % 6 + 4).concat(SPHERES).slice(0, 4);
+      const rand = seededRandom(seed);
+      let s = createGame({ seats: seats(4), seed, quadrants: qs });
+      for (let n = 0; s.pending && n < 5000; n++) { s = applyMove(s, chooseBotMove(s, rand)); checkInvariants(s, `cull seed=${seed}`); }
+      expect(s.over, qs.join(',')).toBe(true);
+      // an artifact may be a cut card (Silver's Caterer): it's never dealt, only picked
+      const arts = new Set(Object.values(s.artifacts || {}));
+      expect(Object.values(s.cards).some(c => CUT.has(c.def) && !arts.has(c.uid))).toBe(false);
+    }
+  });
+});

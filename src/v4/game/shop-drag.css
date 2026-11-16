@@ -1,0 +1,5 @@
+/* dragging a card to reorder your own shop (shopDrag.js, Cory Nov 9): it rides the pointer above the rest; the place it
+   would take shows a warm outline */
+.lt-cards .lt-card.dragging{z-index:5;position:relative;cursor:grabbing;transition:none !important;box-shadow:0 10px 24px rgba(0,0,0,.55);pointer-events:none}
+.lt-cards .lt-card.drop-here{outline:2px dashed rgba(255,222,160,.9);outline-offset:2px}
+.lt-cards[data-dragging] .lt-card{cursor:grabbing}

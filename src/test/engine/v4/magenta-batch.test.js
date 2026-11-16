@@ -1,0 +1,56 @@
+// @vitest-environment node
+import { describe, it, expect } from 'vitest';
+import { table, uidIn } from './cards-helpers-b.js';
+import { take, move, ids } from './helpers.js';
+import { useRetired } from './helpers.js';
+import { placed } from './placed-helpers.js';
+useRetired(['thieves.hideout']);
+const Q = ['gold', 'red', 'thieves', 'market'];
+const shop = ['red.volunteer', 'red.intern'];
+describe('Magenta corrections retained through the redesign', () => {
+  it('Help Yourself can take from poorer and tied rivals', () => {
+    let s = table(Q, { n: 3, res: [{ gold: 6 }, { gold: 1 }, { red: 6 }], shop });
+    s = take(placed(s, 0, 2), 'thieves.pickpocket'); // the third minion this round: steal 3
+    expect(ids(s)).toContain('take:1:gold');
+    expect(ids(s)).toContain('take:2:red');
+    s = move(move(move(s, 'take:2:red'), 'take:2:red'), 'take:2:red');
+    expect(s.players[0].res).toMatchObject({ gold: 6, red: 3, magenta: 1 });
+  });
+  it('Lie Low prevents member and resource theft', () => {
+    let s = table(Q, { round: 3, left: 5, res: [{ gold: 4 }, { red: 3 }], members: [['red.intern']], shop, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
+    s = take(s, 'thieves.hideout');
+    while (s.pending?.kind === 'choose') s = move(s, 'take:1:red');
+    s = move(s, 'pass');
+    s = take(s, 'thieves.heist');
+    expect(s.log).toContain('P2 found nothing worth a heist.');
+    expect(s.players[0].members).toHaveLength(1);
+  });
+  it('adds Desperado and Sticky Fingers once to one theft', () => {
+    let s = table(Q, { n: 3, res: [{}, { gold: 9 }, { red: 9 }], members: [['thieves.sticky', 'thieves.desperado']], bonus: [0, 5, 5], shop });
+    s = take(placed(s, 0, 2), 'thieves.pickpocket');
+    expect(s.pending.count.left).toBe(6); // 3+2+1 (Desperado +2, Cory, Nov 1, 2:27pm)
+    s = move(s, 'take:2:red');
+    expect(s.pending.count.left).toBe(5);
+    for (let k = 0; k < 5; k++) s = move(s, 'take:2:red');
+    expect(s.players[0].res).toMatchObject({ magenta: 1, red: 6 });
+    expect(s.players[1].res.gold).toBe(9);
+    expect(s.players[2].res.red).toBe(3);
+  });
+  it('Collect Debts takes Desperado\'s 2 more from a selected rival', () => {
+    let s = table(Q, { round: 2, left: 4, res: [{}, { gold: 9 }], members: [['thieves.desperado']], bonus: [0, 5], shop });
+    s = move(take(s, 'gold.steal'), 'player:1');
+    expect(s.pending.count.left).toBe(4);
+    while (s.pending?.kind === 'choose' && s.pending.options.some(o => o.id === 'player:1')) s = move(s, 'player:1');
+    expect(s.players[0].res.gold).toBe(5);
+  });
+  it('Grifter offers color choices and logs the colors actually transferred', () => {
+    let s = table(Q, { res: [{ magenta: 10 }, { gold: 3, red: 3 }], members: [['red.intern']], shop: ['thieves.grifter', ...shop] });
+    s = take(s, 'thieves.tipoff'); // Stash: +3 magenta, no steal
+    s = move(s, `card:${uidIn(s, 'thieves.grifter', 'shop')}`);
+    expect(s.pending.prompt).toMatch(/Grifter/);
+    expect(ids(s)).toEqual(['take:1:gold', 'take:1:red']);
+    s = move(s, 'take:1:red');
+    expect(s.log).toContain("P1's Grifter stole 1 (1 red from P2).");
+    expect(s.players[0].res.red).toBe(1);
+  });
+});

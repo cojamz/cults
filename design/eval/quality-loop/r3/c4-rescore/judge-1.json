@@ -1,0 +1,382 @@
+[
+ {
+  "name": "Big Tent",
+  "C4": 2,
+  "why": "Building one of each color toward a big game-end payout is a satisfying collector's goal."
+ },
+ {
+  "name": "Sweet Nothings",
+  "C4": 2,
+  "why": "A gift: rivals get silver, you get 2 of any color for each, everyone is happy."
+ },
+ {
+  "name": "Promote",
+  "C4": 1,
+  "why": "A trade, not a theft: the rival loses a member but gets one back, so it stings only a little."
+ },
+ {
+  "name": "Hoarder",
+  "C4": 1,
+  "why": "A once-per-game resource conversion; useful, no real moment."
+ },
+ {
+  "name": "Regular",
+  "C4": 1,
+  "why": "A quiet +1 blue when you buy followers; fine."
+ },
+ {
+  "name": "Stash",
+  "C4": 1,
+  "why": "Resources plus a follower if you recruit; a plain, fine turn."
+ },
+ {
+  "name": "Gather",
+  "C4": 1,
+  "why": "Red that grows by round plus a follower on a recruit; fine."
+ },
+ {
+  "name": "Money Changers",
+  "C4": 1,
+  "why": "Trickle of white from anyone buying followers; fine."
+ },
+ {
+  "name": "Build Up",
+  "C4": 1,
+  "why": "Plain green that grows by round; fine but flat."
+ },
+ {
+  "name": "Kidnapper",
+  "C4": 0,
+  "why": "Takes the leader's member on recruit and again every round start, before round III, with no answer: the victim feels robbed."
+ },
+ {
+  "name": "Tourist",
+  "C4": 2,
+  "why": "Holding many colors then cashing in followers each round start is a fun payoff for the owner."
+ },
+ {
+  "name": "Shopaholics",
+  "C4": 2,
+  "why": "Recruiting twice every turn feels powerful and opens big turns."
+ },
+ {
+  "name": "Sleep In",
+  "C4": 1,
+  "why": "Big purple for going last; a fine timing trade."
+ },
+ {
+  "name": "Polish",
+  "C4": 1,
+  "why": "Turns 2 silver into 4 of any colors; useful fixer, no moment."
+ },
+ {
+  "name": "Splurge",
+  "C4": 2,
+  "why": "A big recruit that also pours in followers is a satisfying spike."
+ },
+ {
+  "name": "Timekeeper",
+  "C4": 1,
+  "why": "Game-end follower per purple member; fine."
+ },
+ {
+  "name": "Recluse",
+  "C4": 1,
+  "why": "Game-end followers for staying small; fine."
+ },
+ {
+  "name": "Gardeners",
+  "C4": 1,
+  "why": "Fills colors you lack; helpful, quiet."
+ },
+ {
+  "name": "Encore",
+  "C4": 2,
+  "why": "Doubling a strong On Recruit is a fun combo moment."
+ },
+ {
+  "name": "Anarchist",
+  "C4": 0,
+  "why": "Every round it can swap a rival's key member for a worse one, before round III, with no block: the victim feels robbed."
+ },
+ {
+  "name": "Allowance",
+  "C4": 1,
+  "why": "White plus a follower on a recruit; fine."
+ },
+ {
+  "name": "Caravan",
+  "C4": 1,
+  "why": "Steady income of each color you hold; fine engine, no spike."
+ },
+ {
+  "name": "Volunteer",
+  "C4": 1,
+  "why": "Cheap vanilla follower; fine filler."
+ },
+ {
+  "name": "Foster Parents",
+  "C4": 2,
+  "why": "Pairs with swaps and steals for a fun payoff when members come over."
+ },
+ {
+  "name": "Recruit Twice",
+  "C4": 2,
+  "why": "Two recruits in one turn is a big, fun turn."
+ },
+ {
+  "name": "Cover",
+  "C4": 1,
+  "why": "Copy an empty action; flexible, fine."
+ },
+ {
+  "name": "Harvest",
+  "C4": 1,
+  "why": "Choose your colors; plain and fine."
+ },
+ {
+  "name": "Cash In",
+  "C4": 2,
+  "why": "Turning a pile of white into followers in round III is a satisfying cash-out."
+ },
+ {
+  "name": "Wallflower",
+  "C4": 1,
+  "why": "Doubles copied resources; fine, needs setup."
+ },
+ {
+  "name": "Roadie",
+  "C4": 1,
+  "why": "Green income scaling with green members; fine."
+ },
+ {
+  "name": "Gossip",
+  "C4": 1,
+  "why": "Followers whenever a turn is skipped; fine."
+ },
+ {
+  "name": "Smooth Talkers",
+  "C4": 2,
+  "why": "Silver paying for any color feels freeing and powerful."
+ },
+ {
+  "name": "Peek",
+  "C4": 2,
+  "why": "Stacking the pile and picking from the top 4 is a clever, fun planning turn."
+ },
+ {
+  "name": "Makeover",
+  "C4": 1,
+  "why": "Yellow and a rearrange; useful, quiet."
+ },
+ {
+  "name": "Toastmaster",
+  "C4": 1,
+  "why": "A follower each Silver space; fine."
+ },
+ {
+  "name": "Alchemists",
+  "C4": 2,
+  "why": "All resources count as any when recruiting: a freeing, powerful feel."
+ },
+ {
+  "name": "Shift Crew",
+  "C4": 1,
+  "why": "Vanilla 4 followers; fine."
+ },
+ {
+  "name": "Desperado",
+  "C4": 1,
+  "why": "Catch-up steals that hit resources, not members; fine and visible."
+ },
+ {
+  "name": "Recruiter",
+  "C4": 1,
+  "why": "+1 red per recruit; fine."
+ },
+ {
+  "name": "Snobs",
+  "C4": 1,
+  "why": "Game-end follower per blue member; fine."
+ },
+ {
+  "name": "Heiresses",
+  "C4": 1,
+  "why": "Once-per-game white per member; fine."
+ },
+ {
+  "name": "Patroness",
+  "C4": 1,
+  "why": "Followers when shop members are sent down; fine."
+ },
+ {
+  "name": "Caterer",
+  "C4": 1,
+  "why": "Silver when silver is gifted; fine."
+ },
+ {
+  "name": "Critic",
+  "C4": 1,
+  "why": "Follower when a rival recruits blue; fine."
+ },
+ {
+  "name": "Impressionist",
+  "C4": 1,
+  "why": "Small resource whenever anyone copies; fine."
+ },
+ {
+  "name": "Extra Hand",
+  "C4": 2,
+  "why": "An extra minion for a round is a strong, fun turn."
+ },
+ {
+  "name": "Patriarch",
+  "C4": 1,
+  "why": "Game-end follower per 2 members; fine."
+ },
+ {
+  "name": "Envy",
+  "C4": 2,
+  "why": "Catching up to the richest rival's silver every round start is a fun, victimless catch-up."
+ },
+ {
+  "name": "Misers",
+  "C4": 1,
+  "why": "Game-end followers for hoarded white; fine."
+ },
+ {
+  "name": "Brokers",
+  "C4": 1,
+  "why": "+1 on White follower gains; fine."
+ },
+ {
+  "name": "Exchange",
+  "C4": 1,
+  "why": "Resources into followers; fine."
+ },
+ {
+  "name": "Out of Style",
+  "C4": 1,
+  "why": "Clears a color from the shop; a visible, mild sting."
+ },
+ {
+  "name": "New Blood",
+  "C4": 1,
+  "why": "Followers for a new color recruit; fine."
+ },
+ {
+  "name": "Drifters",
+  "C4": 1,
+  "why": "Flexible color count; fine."
+ },
+ {
+  "name": "Dyer",
+  "C4": 1,
+  "why": "Yellow income per color held; fine."
+ },
+ {
+  "name": "Cashier",
+  "C4": 2,
+  "why": "Cashing all your white into followers on recruit is a satisfying payoff."
+ },
+ {
+  "name": "Clerk",
+  "C4": 1,
+  "why": "+1 red each round; plain but fine."
+ },
+ {
+  "name": "Doppelganger",
+  "C4": 2,
+  "why": "Copying your best member is a fun combo moment."
+ },
+ {
+  "name": "Stunt Double",
+  "C4": 1,
+  "why": "Repeat the action you just took; fine."
+ },
+ {
+  "name": "Dabblers",
+  "C4": 1,
+  "why": "Counts as 2 wild members; fine."
+ },
+ {
+  "name": "Reprise",
+  "C4": 1,
+  "why": "Copy an action you're on; fine."
+ },
+ {
+  "name": "Old Money",
+  "C4": 1,
+  "why": "Game-end follower per white member; fine."
+ },
+ {
+  "name": "Shake Down",
+  "C4": 0,
+  "why": "The victim chooses their own punishment, pay or lose a member: feels too bad."
+ },
+ {
+  "name": "Bell Ringer",
+  "C4": 0,
+  "why": "A trigger so tangled the owner can't plan for it or notice it firing: no fun to play."
+ },
+ {
+  "name": "Greatest Hits",
+  "C4": 2,
+  "why": "Re-firing every On Recruit at once is a big, fun round III moment."
+ },
+ {
+  "name": "Jack-of-All-Trades",
+  "C4": 1,
+  "why": "Yellow as wild in sets; fine."
+ },
+ {
+  "name": "Courier",
+  "C4": 1,
+  "why": "Resources on consecutive turns; fine."
+ },
+ {
+  "name": "Estate Sale",
+  "C4": 1,
+  "why": "Cast out your own member for white; fine."
+ },
+ {
+  "name": "Landlord",
+  "C4": 1,
+  "why": "White income; fine."
+ },
+ {
+  "name": "Proselytizers",
+  "C4": 1,
+  "why": "A follower per recruit; fine."
+ },
+ {
+  "name": "Hold Up",
+  "C4": 1,
+  "why": "Skips the next turn, a sting but tied to seat order players can see coming."
+ },
+ {
+  "name": "Party Gifts",
+  "C4": 2,
+  "why": "A gift to rivals that pays you followers; everyone gains."
+ },
+ {
+  "name": "Harmonist",
+  "C4": 1,
+  "why": "Game-end follower per full set; fine."
+ },
+ {
+  "name": "Busker",
+  "C4": 1,
+  "why": "Green income; fine."
+ },
+ {
+  "name": "Melting Pot",
+  "C4": 1,
+  "why": "Resources per member color; fine."
+ },
+ {
+  "name": "Hawker",
+  "C4": 2,
+  "why": "Rivals choose to pay you extra or you get it free: a fun, fair tension."
+ }
+]

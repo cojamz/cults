@@ -1,0 +1,4256 @@
+{
+ "label": "r3",
+ "judges": [
+  "judge-1.json",
+  "judge-2.json",
+  "judge-3.json"
+ ],
+ "members": [
+  {
+   "rank": 1,
+   "name": "Hawker",
+   "color": "blue",
+   "median": 15,
+   "totals": [
+    15,
+    17,
+    10
+   ],
+   "q": [
+    1,
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [
+    "turn flow: each rival chooses whether to recruit during the owner's turn",
+    "Turn flow: rivals each choose to buy during your turn."
+   ],
+   "why": "Every rival gets a priced shot at a member before you take it free; a table moment, but many words and rivals choose on your turn."
+  },
+  {
+   "rank": 2,
+   "name": "Shift Crew",
+   "color": "purple",
+   "median": 8,
+   "totals": [
+    8,
+    7,
+    8
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Four followers for four resources and nothing else: dead weight in a color about timing."
+  },
+  {
+   "rank": 3,
+   "name": "Recruiter",
+   "color": "red",
+   "median": 9,
+   "totals": [
+    9,
+    8,
+    10
+   ],
+   "q": [
+    2,
+    2,
+    0,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "+1 red per recruit for six resources is a slow trickle that rarely pays back."
+  },
+  {
+   "rank": 4,
+   "name": "Regular",
+   "color": "blue",
+   "median": 9,
+   "totals": [
+    9,
+    7,
+    10
+   ],
+   "q": [
+    2,
+    2,
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "+1 blue on follower buys has nothing to do with the shop."
+  },
+  {
+   "rank": 5,
+   "name": "Volunteer",
+   "color": "red",
+   "median": 10,
+   "totals": [
+    10,
+    8,
+    11
+   ],
+   "q": [
+    2,
+    2,
+    0,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pure filler: a cheap body for recruit triggers and the red count, but nothing happens when it lands."
+  },
+  {
+   "rank": 6,
+   "name": "Customs Officer",
+   "color": "yellow",
+   "median": 10,
+   "totals": [
+    9,
+    10,
+    10
+   ],
+   "q": [
+    2,
+    2,
+    0,
+    1,
+    2,
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "+1 yellow when stolen from or meddled; reactive, small, rarely fires."
+  },
+  {
+   "rank": 7,
+   "name": "Critic",
+   "color": "blue",
+   "median": 10,
+   "totals": [
+    10,
+    16,
+    9
+   ],
+   "q": [
+    2,
+    2,
+    0,
+    1,
+    1,
+    1,
+    0,
+    0,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "+1 when a rival buys blue: rare and small."
+  },
+  {
+   "rank": 8,
+   "name": "Heiresses",
+   "color": "white",
+   "median": 10,
+   "totals": [
+    9,
+    11,
+    10
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Once-per-game white per member at 9; weak and leader-leaning."
+  },
+  {
+   "rank": 9,
+   "name": "Old Money",
+   "color": "white",
+   "median": 10,
+   "totals": [
+    12,
+    10,
+    10
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Cost 6 for a Game End per white member count; poor value."
+  },
+  {
+   "rank": 10,
+   "name": "Timekeeper",
+   "color": "purple",
+   "median": 11,
+   "totals": [
+    12,
+    11,
+    11
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Game End per-purple-member count; quiet and rewards whoever went deepest."
+  },
+  {
+   "rank": 11,
+   "name": "Dyer",
+   "color": "yellow",
+   "median": 11,
+   "totals": [
+    11,
+    10,
+    11
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Tourist's text paying yellow instead of followers: a weaker sibling."
+  },
+  {
+   "rank": 12,
+   "name": "Busker",
+   "color": "green",
+   "median": 11,
+   "totals": [
+    11,
+    10,
+    11
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    0,
+    1,
+    1,
+    0,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Steady green income: filler."
+  },
+  {
+   "rank": 13,
+   "name": "Grifter",
+   "color": "magenta",
+   "median": 11,
+   "totals": [
+    11,
+    11,
+    11
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Eight resources for a one-off steal sized by your own cult size; overpriced and rewards the big cult."
+  },
+  {
+   "rank": 14,
+   "name": "Toastmaster",
+   "color": "silver",
+   "median": 12,
+   "totals": [
+    11,
+    14,
+    12
+   ],
+   "q": [
+    2,
+    2,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "+1 follower per Silver space; plain and forgettable."
+  },
+  {
+   "rank": 15,
+   "name": "Patriarch",
+   "color": "red",
+   "median": 12,
+   "totals": [
+    12,
+    12,
+    12
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    2,
+    1,
+    0,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A generic member-count scorer, the same shape as Timekeeper and Snobs, rewarding the big cult."
+  },
+  {
+   "rank": 16,
+   "name": "Snobs",
+   "color": "blue",
+   "median": 12,
+   "totals": [
+    12,
+    11,
+    12
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "The same own-color game-end scorer as Timekeeper and Old Money."
+  },
+  {
+   "rank": 17,
+   "name": "Landlord",
+   "color": "white",
+   "median": 12,
+   "totals": [
+    12,
+    11,
+    13
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Steady white income: fine filler, nobody notices."
+  },
+  {
+   "rank": 18,
+   "name": "Caterer",
+   "color": "silver",
+   "median": 13,
+   "totals": [
+    9,
+    13,
+    14
+   ],
+   "q": [
+    1,
+    2,
+    0,
+    0,
+    2,
+    2,
+    2,
+    0,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pays when silver is \"gifted\", a word the table has to define across Toast, Potluck and Party Gifts; passive."
+  },
+  {
+   "rank": 19,
+   "name": "Harmonist",
+   "color": "yellow",
+   "median": 13,
+   "totals": [
+    13,
+    13,
+    9
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    2,
+    1,
+    1,
+    0,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A game-end full-set scorer: clear, but solo and quiet."
+  },
+  {
+   "rank": 20,
+   "name": "Roadie",
+   "color": "green",
+   "median": 13,
+   "totals": [
+    14,
+    12,
+    13
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Income per green member; a small engine."
+  },
+  {
+   "rank": 21,
+   "name": "Dabblers",
+   "color": "guests",
+   "median": 13,
+   "totals": [
+    15,
+    12,
+    13
+   ],
+   "q": [
+    1,
+    2,
+    1,
+    0,
+    2,
+    1,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Two wild bodies; strong but what wild counts for takes rulings."
+  },
+  {
+   "rank": 22,
+   "name": "Philanthropist",
+   "color": "silver",
+   "median": 13,
+   "totals": [
+    12,
+    15,
+    13
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    0,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A smaller Largesse on arrival; repeats the spaces."
+  },
+  {
+   "rank": 23,
+   "name": "Caravan",
+   "color": "yellow",
+   "median": 13,
+   "totals": [
+    13,
+    13,
+    14
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    1,
+    1,
+    2,
+    1,
+    0,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A bigger Dyer that pays the already-broad pile more each round; rich-get-richer."
+  },
+  {
+   "rank": 24,
+   "name": "Agents",
+   "color": "green",
+   "median": 13,
+   "totals": [
+    13,
+    13,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    0,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": true,
+   "round": null,
+   "hardFails": [],
+   "why": "An anti-copy shield, a cheap answer to rival greens more than a green engine."
+  },
+  {
+   "rank": 25,
+   "name": "Impressionist",
+   "color": "green",
+   "median": 14,
+   "totals": [
+    11,
+    15,
+    14
+   ],
+   "q": [
+    2,
+    2,
+    0,
+    0,
+    2,
+    2,
+    1,
+    0,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": true,
+   "round": null,
+   "hardFails": [],
+   "why": "+1 per copy anyone makes; small."
+  },
+  {
+   "rank": 26,
+   "name": "Jack-of-All-Trades",
+   "color": "yellow",
+   "median": 14,
+   "totals": [
+    14,
+    15,
+    14
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Makes full sets easier, which matters only for yellow's contest; quiet."
+  },
+  {
+   "rank": 27,
+   "name": "Misers",
+   "color": "white",
+   "median": 14,
+   "totals": [
+    14,
+    14,
+    13
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pays for holding white at the end against cashing it in: a real hold-or-spend call."
+  },
+  {
+   "rank": 28,
+   "name": "Money Changers",
+   "color": "white",
+   "median": 14,
+   "totals": [
+    14,
+    16,
+    14
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    2,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pays on every follower buy at the table; steady and quiet."
+  },
+  {
+   "rank": 29,
+   "name": "Night Watch",
+   "color": "purple",
+   "median": 14,
+   "totals": [
+    13,
+    14,
+    14
+   ],
+   "q": [
+    1,
+    2,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Punishes rivals for Sleep In and Last Call, but \"per minion on it\" is unclear: minions on the token or still to place?"
+  },
+  {
+   "rank": 30,
+   "name": "Accomplice",
+   "color": "magenta",
+   "median": 14,
+   "totals": [
+    15,
+    13,
+    14
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A one-shot steal 3; a Help Yourself repeat on a card."
+  },
+  {
+   "rank": 31,
+   "name": "Doormen",
+   "color": "blue",
+   "median": 14,
+   "totals": [
+    14,
+    15,
+    13
+   ],
+   "q": [
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Forcing a swap on a rival every round is Red's job, and the cost rule is long."
+  },
+  {
+   "rank": 32,
+   "name": "Line Cutters",
+   "color": "guests",
+   "median": 14,
+   "totals": [
+    14,
+    16,
+    13
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1,
+    1,
+    0,
+    0
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Going first every round for 2 resources and 3 followers overrides the catch-up order; a must-buy for the leader."
+  },
+  {
+   "rank": 33,
+   "name": "Con Men",
+   "color": "guests",
+   "median": 14,
+   "totals": [
+    13,
+    14,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": true,
+   "round": null,
+   "hardFails": [],
+   "why": "Big one-time steal; plain."
+  },
+  {
+   "rank": 34,
+   "name": "Patroness",
+   "color": "blue",
+   "median": 15,
+   "totals": [
+    15,
+    17,
+    15
+   ],
+   "q": [
+    1,
+    2,
+    1,
+    0,
+    2,
+    2,
+    2,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pays on every bury, which blue does constantly; \"per member or per event\" needs a ruling."
+  },
+  {
+   "rank": 35,
+   "name": "Brokers",
+   "color": "white",
+   "median": 15,
+   "totals": [
+    17,
+    13,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    2,
+    2,
+    1,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "+1 on White follower gains; cheap three bodies."
+  },
+  {
+   "rank": 36,
+   "name": "Deprogrammers",
+   "color": "red",
+   "median": 15,
+   "totals": [
+    15,
+    16,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    0
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Good link to the swap cards, but a cost of 3 for 4 followers and 4 red members is an always-buy."
+  },
+  {
+   "rank": 37,
+   "name": "Smooth Talkers",
+   "color": "silver",
+   "median": 15,
+   "totals": [
+    16,
+    15,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    2,
+    1,
+    2,
+    1,
+    0,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Silver becomes any color; a strong engine for the silver leader, nobody else feels it."
+  },
+  {
+   "rank": 38,
+   "name": "Meddler",
+   "color": "yellow",
+   "median": 15,
+   "totals": [
+    15,
+    15,
+    15
+   ],
+   "q": [
+    1,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Changing one of each rival's resources can cost them a contest; aim is real, the wording is loose."
+  },
+  {
+   "rank": 39,
+   "name": "Window Dressers",
+   "color": "blue",
+   "median": 15,
+   "totals": [
+    15,
+    17,
+    11
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Cheap 3-member body with a shop wipe on recruit; a second Out of Style."
+  },
+  {
+   "rank": 40,
+   "name": "Fence",
+   "color": "magenta",
+   "median": 15,
+   "totals": [
+    10,
+    15,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    0,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Paid when robbed; a soft answer to magenta, little to decide."
+  },
+  {
+   "rank": 41,
+   "name": "Cashier",
+   "color": "white",
+   "median": 15,
+   "totals": [
+    16,
+    14,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": true,
+   "round": null,
+   "hardFails": [],
+   "why": "Cash In on a card; strong, repeats the space."
+  },
+  {
+   "rank": 42,
+   "name": "Extra Hand",
+   "color": "guests",
+   "median": 15,
+   "totals": [
+    11,
+    15,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Once-per-game extra minion at cost 9; fine, pricey."
+  },
+  {
+   "rank": 43,
+   "name": "Extortionist",
+   "color": "magenta",
+   "median": 15,
+   "totals": [
+    14,
+    16,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    0,
+    2,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Cutpurse doubled at 8; a sibling repeat."
+  },
+  {
+   "rank": 44,
+   "name": "Proselytizers",
+   "color": "red",
+   "median": 16,
+   "totals": [
+    16,
+    14,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    2,
+    2,
+    2,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A clean engine that pays every recruit, including red's free ones; nobody else at the table feels it."
+  },
+  {
+   "rank": 45,
+   "name": "Hostesses",
+   "color": "silver",
+   "median": 16,
+   "totals": [
+    17,
+    14,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Silver to every rival each round for followers; a steady gift engine."
+  },
+  {
+   "rank": 46,
+   "name": "Debt Collectors",
+   "color": "silver",
+   "median": 16,
+   "totals": [
+    17,
+    16,
+    13
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Once-per-game 2 silver from each rival; a contest timing swing."
+  },
+  {
+   "rank": 47,
+   "name": "High Society",
+   "color": "silver",
+   "median": 16,
+   "totals": [
+    15,
+    16,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Paid when rivals take Silver spaces; makes the gifts that pull rivals into silver pay you."
+  },
+  {
+   "rank": 48,
+   "name": "Window Shopper",
+   "color": "blue",
+   "median": 16,
+   "totals": [
+    16,
+    16,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Buries two members each round for their colors; clean denial, but who picks the two must be read."
+  },
+  {
+   "rank": 49,
+   "name": "Cutpurse",
+   "color": "magenta",
+   "median": 16,
+   "totals": [
+    15,
+    16,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    0,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Small steady steal from the richest; cheap catch-up."
+  },
+  {
+   "rank": 50,
+   "name": "Kidnapper",
+   "color": "magenta",
+   "median": 16,
+   "totals": [
+    16,
+    16,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    2,
+    2,
+    1,
+    0,
+    2,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Takes a member from the same rival every round from round I; the victim loses a member early with no answer."
+  },
+  {
+   "rank": 51,
+   "name": "Shoplifter",
+   "color": "magenta",
+   "median": 16,
+   "totals": [
+    17,
+    15,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A steal on every recruit; a quiet engine."
+  },
+  {
+   "rank": 52,
+   "name": "Wallflower",
+   "color": "green",
+   "median": 16,
+   "totals": [
+    17,
+    15,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    2,
+    2,
+    2,
+    1,
+    0,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Doubles copied gains at 10; strong for the copier, leader-leaning."
+  },
+  {
+   "rank": 53,
+   "name": "Alchemists",
+   "color": "guests",
+   "median": 16,
+   "totals": [
+    16,
+    15,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    2,
+    1,
+    2,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pay any color for members: a strong unlock for 5, worth 3."
+  },
+  {
+   "rank": 54,
+   "name": "Mob",
+   "color": "red",
+   "median": 16,
+   "totals": [
+    16,
+    16,
+    17
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    1,
+    0,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Up to +6 a round for the red leader; rivals can race the red count, but it pays the player already ahead."
+  },
+  {
+   "rank": 55,
+   "name": "Night Owls",
+   "color": "purple",
+   "median": 16,
+   "totals": [
+    16,
+    15,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "An extra minion every round from round II is a real rule bend; eight resources is a lot."
+  },
+  {
+   "rank": 56,
+   "name": "Gardeners",
+   "color": "yellow",
+   "median": 17,
+   "totals": [
+    17,
+    14,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    2,
+    2,
+    1,
+    1,
+    2,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Fills in the colors you lack, so it helps a thin pile most and feeds full sets."
+  },
+  {
+   "rank": 57,
+   "name": "Drifters",
+   "color": "yellow",
+   "median": 17,
+   "totals": [
+    18,
+    16,
+    17
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pick a color to count as; feeds red and blue contests and variety cards, needs a marker."
+  },
+  {
+   "rank": 58,
+   "name": "Gossip",
+   "color": "purple",
+   "median": 17,
+   "totals": [
+    17,
+    17,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    2,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pays on every skipped turn, anyone's, so Hold Up and Bouncers build into it."
+  },
+  {
+   "rank": 59,
+   "name": "Closer",
+   "color": "purple",
+   "median": 17,
+   "totals": [
+    17,
+    17,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pays for going last, which purple already chases; a race for the last minion the table can see."
+  },
+  {
+   "rank": 60,
+   "name": "Big Tent",
+   "color": "yellow",
+   "median": 17,
+   "totals": [
+    18,
+    17,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    2,
+    2,
+    2,
+    2,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Rewards exactly one member per color; a real shaping goal at game end."
+  },
+  {
+   "rank": 61,
+   "name": "Trendsetters",
+   "color": "blue",
+   "median": 17,
+   "totals": [
+    17,
+    17,
+    17
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Each recruit churns one shop card, feeding Patroness; a cheap 3-member body."
+  },
+  {
+   "rank": 62,
+   "name": "Hoarder",
+   "color": "white",
+   "median": 17,
+   "totals": [
+    18,
+    17,
+    13
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    1,
+    2,
+    2,
+    2,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Once-per-game turn everything white, then Cash In; a clear setup play."
+  },
+  {
+   "rank": 63,
+   "name": "Courier",
+   "color": "purple",
+   "median": 17,
+   "totals": [
+    16,
+    17,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pays on consecutive turns, which purple's spaces make; combos Right Away and Crunch Time."
+  },
+  {
+   "rank": 64,
+   "name": "Early Birds",
+   "color": "purple",
+   "median": 17,
+   "totals": [
+    17,
+    17,
+    17
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A cheap answer to Hold Up and Bouncers that a first-timer gets at once."
+  },
+  {
+   "rank": 65,
+   "name": "Hot Streak",
+   "color": "purple",
+   "median": 17,
+   "totals": [
+    17,
+    16,
+    17
+   ],
+   "q": [
+    1,
+    1,
+    2,
+    1,
+    2,
+    2,
+    2,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": true,
+   "round": null,
+   "hardFails": [],
+   "why": "A once-a-game cash-in after a chain of turns; big when set up with Crunch Time, but counting turns in a row takes care."
+  },
+  {
+   "rank": 66,
+   "name": "Shopaholics",
+   "color": "blue",
+   "median": 17,
+   "totals": [
+    17,
+    16,
+    17
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    1,
+    0,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Two buys every turn is a huge rule bend; strong enough to be the first buy whenever it shows."
+  },
+  {
+   "rank": 67,
+   "name": "Desperado",
+   "color": "magenta",
+   "median": 17,
+   "totals": [
+    17,
+    17,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    1,
+    2,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Bigger steals while you trail: built-in catch-up."
+  },
+  {
+   "rank": 68,
+   "name": "Raiders",
+   "color": "white",
+   "median": 17,
+   "totals": [
+    15,
+    17,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Once-per-game follower steal with a payment; a swing aimed at the leader."
+  },
+  {
+   "rank": 69,
+   "name": "Impersonator",
+   "color": "green",
+   "median": 17,
+   "totals": [
+    18,
+    14,
+    17
+   ],
+   "q": [
+    1,
+    1,
+    2,
+    1,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Borrow a rival's ability each round; deep, needs a marker."
+  },
+  {
+   "rank": 70,
+   "name": "Anarchist",
+   "color": "guests",
+   "median": 17,
+   "totals": [
+    19,
+    16,
+    17
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Swap any two members every round; fun for its owner, rough on victims."
+  },
+  {
+   "rank": 71,
+   "name": "Foster Parents",
+   "color": "red",
+   "median": 18,
+   "totals": [
+    18,
+    20,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    2,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Rides on every swap red already does (Promote, Demote, Body Snatchers, Poach) and makes rivals think twice before trading with you."
+  },
+  {
+   "rank": 72,
+   "name": "Creditor",
+   "color": "silver",
+   "median": 18,
+   "totals": [
+    18,
+    18,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Take two followers from the rival you pick and leave them three silver: a fair aimed trade you can point at the leader."
+  },
+  {
+   "rank": 73,
+   "name": "Tourist",
+   "color": "yellow",
+   "median": 18,
+   "totals": [
+    18,
+    16,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    2,
+    2,
+    2,
+    1,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Followers for holding a spread of colors, every round; a steady scorer that pushes you wide."
+  },
+  {
+   "rank": 74,
+   "name": "Stunt Double",
+   "color": "green",
+   "median": 18,
+   "totals": [
+    18,
+    18,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": true,
+   "round": null,
+   "hardFails": [],
+   "why": "Doing your action twice on recruit makes you time your best space with the buy."
+  },
+  {
+   "rank": 75,
+   "name": "Mentor & Protégés",
+   "color": "red",
+   "median": 18,
+   "totals": [
+    18,
+    17,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Two recruits for one buy, chains into Proselytizers and Recruiter; nine resources for a 3 is steep."
+  },
+  {
+   "rank": 76,
+   "name": "Loyalists",
+   "color": "red",
+   "median": 18,
+   "totals": [
+    18,
+    18,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A clear block against red's swaps and Body Snatchers; rivals see it and aim elsewhere."
+  },
+  {
+   "rank": 77,
+   "name": "Debutantes",
+   "color": "silver",
+   "median": 18,
+   "totals": [
+    17,
+    18,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Once-per-game double silver with a gift attached; a timing call around the contest."
+  },
+  {
+   "rank": 78,
+   "name": "Guest of Honor",
+   "color": "silver",
+   "median": 18,
+   "totals": [
+    18,
+    17,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Every Silver space can turn a cheap member into +4 followers, linking to Godparent, Old Maid and Foster Parents; strong for a cost of 3."
+  },
+  {
+   "rank": 79,
+   "name": "Bodyguards",
+   "color": "magenta",
+   "median": 18,
+   "totals": [
+    15,
+    18,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Rivals can't steal from you; a clean wall, but it turns magenta off against you."
+  },
+  {
+   "rank": 80,
+   "name": "Double Agent",
+   "color": "magenta",
+   "median": 18,
+   "totals": [
+    17,
+    19,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Pay 8 to trade itself for any rival's member; a clever swap."
+  },
+  {
+   "rank": 81,
+   "name": "Recluse",
+   "color": "white",
+   "median": 18,
+   "totals": [
+    20,
+    18,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1
+   ],
+   "overBar": true,
+   "protected": true,
+   "round": null,
+   "hardFails": [],
+   "why": "Game End per wider rival; catch-up for a small cult."
+  },
+  {
+   "rank": 82,
+   "name": "Tribute Band",
+   "color": "green",
+   "median": 18,
+   "totals": [
+    18,
+    16,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Do everything a rival did this round once: a huge moment, with fourteen resources the barrier."
+  },
+  {
+   "rank": 83,
+   "name": "Old Maid",
+   "color": "guests",
+   "median": 18,
+   "totals": [
+    18,
+    18,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A hot potato for Godparent, Guest of Honor and Double Agent; the table laughs when it moves."
+  },
+  {
+   "rank": 84,
+   "name": "Sore Loser",
+   "color": "guests",
+   "median": 18,
+   "totals": [
+    19,
+    17,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1,
+    1,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Steal from the top contest winner when you win none; real catch-up."
+  },
+  {
+   "rank": 85,
+   "name": "Doppelganger",
+   "color": "green",
+   "median": 19,
+   "totals": [
+    19,
+    16,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": true,
+   "round": null,
+   "hardFails": [],
+   "why": "Becomes your best member: clear, and better with the cards around it."
+  },
+  {
+   "rank": 86,
+   "name": "Encore",
+   "color": "green",
+   "median": 19,
+   "totals": [
+    19,
+    16,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Doubles one On Recruit; timing the big one is a real choice."
+  },
+  {
+   "rank": 87,
+   "name": "Panel",
+   "color": "red",
+   "median": 19,
+   "totals": [
+    19,
+    16,
+    19
+   ],
+   "q": [
+    1,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A swap on recruit that combos with Foster Parents and Deprogrammers; \"promote or demote\" asks a new player to know two spaces."
+  },
+  {
+   "rank": 88,
+   "name": "Bouncers",
+   "color": "purple",
+   "median": 19,
+   "totals": [
+    19,
+    19,
+    20
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Skipping the next two rivals on recruit is a table moment with timing to choose, and feeds Gossip."
+  },
+  {
+   "rank": 89,
+   "name": "Godparent",
+   "color": "silver",
+   "median": 19,
+   "totals": [
+    19,
+    18,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Give a member away for its cost in followers; pairs with Old Maid, Martyrs and Foster Parents across colors."
+  },
+  {
+   "rank": 90,
+   "name": "Fan Club",
+   "color": "green",
+   "median": 19,
+   "totals": [
+    19,
+    15,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    1,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Copies what the leader took: a clean catch-up hook."
+  },
+  {
+   "rank": 91,
+   "name": "Spoilsport",
+   "color": "guests",
+   "median": 19,
+   "totals": [
+    20,
+    19,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Cancels a contest you can't win; a block aimed at the leader."
+  },
+  {
+   "rank": 92,
+   "name": "Body Snatchers",
+   "color": "red",
+   "median": 20,
+   "totals": [
+    20,
+    18,
+    20
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Every round you pick a rival member of the same cost to trade for; clear, aimed, feeds Foster Parents and Deprogrammers, and Loyalists answer it."
+  },
+  {
+   "rank": 93,
+   "name": "Second-Story Man",
+   "color": "magenta",
+   "median": 20,
+   "totals": [
+    20,
+    20,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "A steal right before contests are scored can flip one; a timed, aimed sting you can see coming."
+  },
+  {
+   "rank": 94,
+   "name": "Party Crasher",
+   "color": "guests",
+   "median": 20,
+   "totals": [
+    20,
+    18,
+    21
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": true,
+   "round": null,
+   "hardFails": [],
+   "why": "Once a game you get into the space that was already taken; a rule bend everyone feels."
+  },
+  {
+   "rank": 95,
+   "name": "Martyrs",
+   "color": "white",
+   "median": 21,
+   "totals": [
+    21,
+    21,
+    21
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": null,
+   "hardFails": [],
+   "why": "Leaving pays you its cost, so a rival's Poach or swap backfires and your own Farewell pays twice; plays off many colors."
+  }
+ ],
+ "spaces": [
+  {
+   "rank": 1,
+   "name": "Shake Down",
+   "color": "magenta",
+   "median": 11,
+   "totals": [
+    11,
+    11,
+    12
+   ],
+   "q": [
+    1,
+    2,
+    1,
+    0,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "II",
+   "hardFails": [
+    "turn flow: the rival chooses a member and a payment during the owner's turn",
+    "Turn flow: the victim chooses their member during your turn."
+   ],
+   "why": "The victim chooses their own punishment, which feels bad, and the wording is long."
+  },
+  {
+   "rank": 2,
+   "name": "Potluck",
+   "color": "silver",
+   "median": 14,
+   "totals": [
+    14,
+    14,
+    11
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": true,
+   "round": "II",
+   "hardFails": [
+    "turn flow: each rival chooses a resource to give during the owner's turn",
+    "Turn flow: each rival chooses what to give during your turn."
+   ],
+   "why": "Every rival pays one resource and gets two silver: a fair trade but small, and each rival has to choose on your turn."
+  },
+  {
+   "rank": 3,
+   "name": "Stash",
+   "color": "magenta",
+   "median": 10,
+   "totals": [
+    11,
+    10,
+    10
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "The shared fuel-plus-recruit-bonus template again; nothing magenta."
+  },
+  {
+   "rank": 4,
+   "name": "Allowance",
+   "color": "white",
+   "median": 10,
+   "totals": [
+    11,
+    10,
+    10
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "The shared fuel-plus-recruit-bonus template; nothing white."
+  },
+  {
+   "rank": 5,
+   "name": "Polish",
+   "color": "silver",
+   "median": 12,
+   "totals": [
+    11,
+    12,
+    13
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Converter; useful glue, no moment."
+  },
+  {
+   "rank": 6,
+   "name": "Gather",
+   "color": "red",
+   "median": 13,
+   "totals": [
+    13,
+    10,
+    14
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Clear plain anchor with a recruit kicker; nobody else notices, and it is the same text as Stash and Allowance."
+  },
+  {
+   "rank": 7,
+   "name": "Exchange",
+   "color": "white",
+   "median": 13,
+   "totals": [
+    14,
+    13,
+    12
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Resources into followers on a sliding cap; fine, a bit fiddly."
+  },
+  {
+   "rank": 8,
+   "name": "Build Up",
+   "color": "green",
+   "median": 13,
+   "totals": [
+    13,
+    10,
+    13
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "The plain fuel anchor."
+  },
+  {
+   "rank": 9,
+   "name": "Estate Sale",
+   "color": "white",
+   "median": 14,
+   "totals": [
+    14,
+    12,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "Farewell paying white instead of followers: a weaker sibling."
+  },
+  {
+   "rank": 10,
+   "name": "Bury",
+   "color": "blue",
+   "median": 14,
+   "totals": [
+    14,
+    16,
+    14
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "A smaller Savings; the half-cost blue payout is a sum to work out."
+  },
+  {
+   "rank": 11,
+   "name": "Harvest",
+   "color": "yellow",
+   "median": 15,
+   "totals": [
+    15,
+    12,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    1,
+    2,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "The plain fuel anchor, in any colors, which fits a color about going broad."
+  },
+  {
+   "rank": 12,
+   "name": "New Blood",
+   "color": "yellow",
+   "median": 15,
+   "totals": [
+    17,
+    15,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Recruit-bonus template with a yellow twist (a new color); fine."
+  },
+  {
+   "rank": 13,
+   "name": "Melting Pot",
+   "color": "yellow",
+   "median": 15,
+   "totals": [
+    15,
+    14,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    0,
+    2,
+    2,
+    2,
+    1,
+    0,
+    1
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "Pays for how broad you already are, which rewards the wide cult more than the one behind."
+  },
+  {
+   "rank": 14,
+   "name": "Demote",
+   "color": "red",
+   "median": 15,
+   "totals": [
+    15,
+    15,
+    14
+   ],
+   "q": [
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "Mirror of Promote that trades down; the downgrade is rarely what you want, so it mostly lives as a weaker sibling or a Foster Parents trigger."
+  },
+  {
+   "rank": 15,
+   "name": "Right Away",
+   "color": "purple",
+   "median": 15,
+   "totals": [
+    17,
+    15,
+    15
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "A small double turn; clean, mostly a tempo tool."
+  },
+  {
+   "rank": 16,
+   "name": "Tryout",
+   "color": "red",
+   "median": 16,
+   "totals": [
+    14,
+    16,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Borrows any shop card's On Recruit without buying it; reads clean, links every color, and keeps the card for someone else."
+  },
+  {
+   "rank": 17,
+   "name": "Leaders' Tax",
+   "color": "yellow",
+   "median": 16,
+   "totals": [
+    14,
+    17,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Pays by where rivals sit; reads the board but small."
+  },
+  {
+   "rank": 18,
+   "name": "Savings",
+   "color": "blue",
+   "median": 16,
+   "totals": [
+    17,
+    14,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Fuel plus a bury before buying; a small deny."
+  },
+  {
+   "rank": 19,
+   "name": "Splurge",
+   "color": "white",
+   "median": 16,
+   "totals": [
+    16,
+    17,
+    14
+   ],
+   "q": [
+    1,
+    2,
+    2,
+    0,
+    1,
+    1,
+    2,
+    2,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Big followers on a pricey recruit, but the per-2 then per-1 math is a sum to work out."
+  },
+  {
+   "rank": 20,
+   "name": "Peek",
+   "color": "blue",
+   "median": 16,
+   "totals": [
+    16,
+    15,
+    16
+   ],
+   "q": [
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "A good scaling gain and your pick of the pile; private, so nobody else reacts."
+  },
+  {
+   "rank": 21,
+   "name": "Walk-In",
+   "color": "red",
+   "median": 17,
+   "totals": [
+    17,
+    14,
+    17
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "A free member in round I is a big moment, and the +1 red to each rival is a small gift the table sees."
+  },
+  {
+   "rank": 22,
+   "name": "Sleep In",
+   "color": "purple",
+   "median": 17,
+   "totals": [
+    16,
+    18,
+    17
+   ],
+   "q": [
+    1,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Big purple plus a claim on Went Last that rivals can take back; the token takes a read."
+  },
+  {
+   "rank": 23,
+   "name": "Last Call",
+   "color": "purple",
+   "median": 17,
+   "totals": [
+    17,
+    16,
+    17
+   ],
+   "q": [
+    1,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "A big payoff for holding minions back, at the cost of going last; the token rules make it a read."
+  },
+  {
+   "rank": 24,
+   "name": "Toast",
+   "color": "silver",
+   "median": 17,
+   "totals": [
+    17,
+    17,
+    16
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "A big silver gain with a visible gift to everyone; a clean anchor for the giving color."
+  },
+  {
+   "rank": 25,
+   "name": "Lie Low",
+   "color": "magenta",
+   "median": 17,
+   "totals": [
+    16,
+    18,
+    17
+   ],
+   "q": [
+    2,
+    1,
+    1,
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Small steal plus a round of safety; a block players see."
+  },
+  {
+   "rank": 26,
+   "name": "Sample",
+   "color": "green",
+   "median": 17,
+   "totals": [
+    19,
+    17,
+    16
+   ],
+   "q": [
+    1,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "Borrow a rival's On Recruit; a clever link, needs a scan of rivals' cards."
+  },
+  {
+   "rank": 27,
+   "name": "Initiation",
+   "color": "red",
+   "median": 18,
+   "totals": [
+    18,
+    20,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "III",
+   "hardFails": [],
+   "why": "Round III burst anyone can grab: a free member up to 8, plain and powerful."
+  },
+  {
+   "rank": 28,
+   "name": "Hold Up",
+   "color": "purple",
+   "median": 18,
+   "totals": [
+    18,
+    19,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    1,
+    2,
+    1,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "The skip lands on whoever is next, even you, so timing is a real call and the victim can see it coming."
+  },
+  {
+   "rank": 29,
+   "name": "Overtime",
+   "color": "purple",
+   "median": 18,
+   "totals": [
+    18,
+    18,
+    17
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "III",
+   "hardFails": [],
+   "why": "A round III extra minion: plain, and a burst any player can use."
+  },
+  {
+   "rank": 30,
+   "name": "Heist",
+   "color": "magenta",
+   "median": 18,
+   "totals": [
+    18,
+    16,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "Three followers off the leader: plain, felt, a catch-up tool."
+  },
+  {
+   "rank": 31,
+   "name": "Farewell",
+   "color": "white",
+   "median": 18,
+   "totals": [
+    17,
+    18,
+    18
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "Cast out a member for its cost in followers; a clean white trade that combos Martyrs."
+  },
+  {
+   "rank": 32,
+   "name": "Sweet Nothings",
+   "color": "silver",
+   "median": 18,
+   "totals": [
+    18,
+    16,
+    18
+   ],
+   "q": [
+    1,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "You give your own silver to get two of any color back each: a real hold-versus-give call on the silver contest."
+  },
+  {
+   "rank": 33,
+   "name": "Cash In",
+   "color": "white",
+   "median": 19,
+   "totals": [
+    19,
+    19,
+    17
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    0,
+    1,
+    2,
+    2,
+    2,
+    1,
+    2
+   ],
+   "overBar": false,
+   "protected": false,
+   "round": "III",
+   "hardFails": [],
+   "why": "The round III cash-out the white pile builds toward."
+  },
+  {
+   "rank": 34,
+   "name": "Promote",
+   "color": "red",
+   "median": 19,
+   "totals": [
+    19,
+    20,
+    18
+   ],
+   "q": [
+    1,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "The signature red swap: you trade up out of a rival's cult; strong aim choice, the victim still gets a member back."
+  },
+  {
+   "rank": 35,
+   "name": "Housewarming",
+   "color": "yellow",
+   "median": 19,
+   "totals": [
+    19,
+    20,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "A free member in a new color: the yellow idea in one line."
+  },
+  {
+   "rank": 36,
+   "name": "Makeover",
+   "color": "yellow",
+   "median": 19,
+   "totals": [
+    20,
+    16,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": true,
+   "round": "III",
+   "hardFails": [],
+   "why": "Rearrange everything in round III to finish sets and swing held-color contests."
+  },
+  {
+   "rank": 37,
+   "name": "Recruit Twice",
+   "color": "blue",
+   "median": 19,
+   "totals": [
+    17,
+    19,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "Two recruits in one turn; plain and big."
+  },
+  {
+   "rank": 38,
+   "name": "Reprise",
+   "color": "green",
+   "median": 19,
+   "totals": [
+    19,
+    15,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Copy your own best action again: clean and grows through the game."
+  },
+  {
+   "rank": 39,
+   "name": "Cover",
+   "color": "green",
+   "median": 19,
+   "totals": [
+    18,
+    19,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "II",
+   "hardFails": [],
+   "why": "Copy an open space; a way around blocks, clean."
+  },
+  {
+   "rank": 40,
+   "name": "Greatest Hits",
+   "color": "green",
+   "median": 19,
+   "totals": [
+    18,
+    19,
+    20
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    1,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "III",
+   "hardFails": [],
+   "why": "Replay every On Recruit you own; the round III payoff for building them."
+  },
+  {
+   "rank": 41,
+   "name": "Party Gifts",
+   "color": "silver",
+   "median": 19,
+   "totals": [
+    19,
+    19,
+    20
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Six followers for gifting three silver, with a real call about who you feed in the silver contest; strong for round I."
+  },
+  {
+   "rank": 42,
+   "name": "Out of Style",
+   "color": "blue",
+   "median": 19,
+   "totals": [
+    19,
+    19,
+    19
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    1
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "Clears a whole color out of the shop: denial the table sees, and it feeds Patroness."
+  },
+  {
+   "rank": 43,
+   "name": "Crunch Time",
+   "color": "purple",
+   "median": 20,
+   "totals": [
+    20,
+    20,
+    20
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": true,
+   "round": "II",
+   "hardFails": [],
+   "why": "Three turns in a row: a big change to the snake in few words, and it sets up Courier and Hot Streak."
+  },
+  {
+   "rank": 44,
+   "name": "Spree",
+   "color": "blue",
+   "median": 20,
+   "totals": [
+    20,
+    20,
+    20
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    1,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "III",
+   "hardFails": [],
+   "why": "Three recruits in round III is the burst a trailing player can grab."
+  },
+  {
+   "rank": 45,
+   "name": "Help Yourself",
+   "color": "magenta",
+   "median": 20,
+   "totals": [
+    20,
+    19,
+    20
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "I",
+   "hardFails": [],
+   "why": "The core steal, scaling by round, aimed where it hurts the leader."
+  },
+  {
+   "rank": 46,
+   "name": "Poach",
+   "color": "magenta",
+   "median": 20,
+   "totals": [
+    20,
+    21,
+    20
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "III",
+   "hardFails": [],
+   "why": "The round III member grab; clear, felt, and Martyrs and Loyalists-style answers exist."
+  },
+  {
+   "rank": 47,
+   "name": "Echo",
+   "color": "green",
+   "median": 20,
+   "totals": [
+    20,
+    20,
+    20
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2
+   ],
+   "overBar": true,
+   "protected": true,
+   "round": "I",
+   "hardFails": [],
+   "why": "Copy the previous action: scales with the board, few words."
+  },
+  {
+   "rank": 48,
+   "name": "Largesse",
+   "color": "silver",
+   "median": 21,
+   "totals": [
+    19,
+    21,
+    21
+   ],
+   "q": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    2,
+    2,
+    2
+   ],
+   "overBar": true,
+   "protected": false,
+   "round": "III",
+   "hardFails": [],
+   "why": "Round III big gift-for-followers that also hands rivals contest silver; clear and dramatic."
+  }
+ ],
+ "checks": {
+  "agreement": {
+   "member": [
+    {
+     "a": "judge-1.json",
+     "b": "judge-2.json",
+     "rho": 0.760886184232779
+    },
+    {
+     "a": "judge-1.json",
+     "b": "judge-3.json",
+     "rho": 0.8242359421870562
+    },
+    {
+     "a": "judge-2.json",
+     "b": "judge-3.json",
+     "rho": 0.7248376184653225
+    }
+   ],
+   "space": [
+    {
+     "a": "judge-1.json",
+     "b": "judge-2.json",
+     "rho": 0.7996174637846885
+    },
+    {
+     "a": "judge-1.json",
+     "b": "judge-3.json",
+     "rho": 0.8809473427421606
+    },
+    {
+     "a": "judge-2.json",
+     "b": "judge-3.json",
+     "rho": 0.8286908324905258
+    }
+   ]
+  },
+  "plants": [
+   {
+    "name": "Bell Ringer",
+    "good": false,
+    "per": [
+     {
+      "at": 1,
+      "of": 96
+     },
+     {
+      "at": 1,
+      "of": 96
+     },
+     {
+      "at": 1,
+      "of": 96
+     }
+    ],
+    "med": {
+     "at": 1,
+     "of": 96
+    },
+    "pass": true
+   },
+   {
+    "name": "Envy",
+    "good": false,
+    "per": [
+     {
+      "at": 1,
+      "of": 96
+     },
+     {
+      "at": 1,
+      "of": 96
+     },
+     {
+      "at": 2,
+      "of": 96
+     }
+    ],
+    "med": {
+     "at": 1,
+     "of": 96
+    },
+    "pass": true
+   },
+   {
+    "name": "Clerk",
+    "good": false,
+    "per": [
+     {
+      "at": 1,
+      "of": 96
+     },
+     {
+      "at": 2,
+      "of": 96
+     },
+     {
+      "at": 2,
+      "of": 96
+     }
+    ],
+    "med": {
+     "at": 2,
+     "of": 96
+    },
+    "pass": true
+   },
+   {
+    "name": "Scavenger",
+    "good": true,
+    "per": [
+     {
+      "at": 1,
+      "of": 96
+     },
+     {
+      "at": 2,
+      "of": 96
+     },
+     {
+      "at": 2,
+      "of": 96
+     }
+    ],
+    "med": {
+     "at": 2,
+     "of": 96
+    },
+    "pass": false
+   }
+  ],
+  "taste": {
+   "all": {
+    "dislikedLow": 11,
+    "disliked": 24,
+    "likedHigh": 13,
+    "liked": 24,
+    "misses": [
+     "Fan Club (disliked, 88/95 from worst)",
+     "Heist (disliked, 31/48 from worst)",
+     "Loyalists (disliked, 73/95 from worst)",
+     "Lie Low (disliked, 25/48 from worst)",
+     "Cash In (disliked, 39/48 from worst)",
+     "Sample (disliked, 26/48 from worst)",
+     "Encore (disliked, 90/95 from worst)",
+     "Greatest Hits (disliked, 42/48 from worst)",
+     "Largesse (disliked, 48/48 from worst)",
+     "Party Gifts (disliked, 34/48 from worst)",
+     "Big Tent (disliked, 63/95 from worst)",
+     "Overtime (disliked, 29/48 from worst)",
+     "Old Maid (disliked, 83/95 from worst)",
+     "Impressionist (liked, 31/95 from worst)",
+     "Last Call (liked, 23/48 from worst)",
+     "Potluck (liked, 2/48 from worst)",
+     "Splurge (liked, 20/48 from worst)",
+     "Exchange (liked, 7/48 from worst)",
+     "Estate Sale (liked, 10/48 from worst)",
+     "Cashier (liked, 42/95 from worst)",
+     "Estate Sale (liked, 10/48 from worst)",
+     "Con Men (liked, 33/95 from worst)",
+     "Agents (liked, 23/95 from worst)",
+     "Fence (liked, 40/95 from worst)"
+    ],
+    "share": 0.5
+   },
+   "notStale": {
+    "dislikedLow": 9,
+    "disliked": 17,
+    "likedHigh": 13,
+    "liked": 24,
+    "misses": [
+     "Loyalists (disliked, 73/95 from worst)",
+     "Lie Low (disliked, 25/48 from worst)",
+     "Cash In (disliked, 39/48 from worst)",
+     "Sample (disliked, 26/48 from worst)",
+     "Encore (disliked, 90/95 from worst)",
+     "Largesse (disliked, 48/48 from worst)",
+     "Big Tent (disliked, 63/95 from worst)",
+     "Old Maid (disliked, 83/95 from worst)",
+     "Impressionist (liked, 31/95 from worst)",
+     "Last Call (liked, 23/48 from worst)",
+     "Potluck (liked, 2/48 from worst)",
+     "Splurge (liked, 20/48 from worst)",
+     "Exchange (liked, 7/48 from worst)",
+     "Estate Sale (liked, 10/48 from worst)",
+     "Cashier (liked, 42/95 from worst)",
+     "Estate Sale (liked, 10/48 from worst)",
+     "Con Men (liked, 33/95 from worst)",
+     "Agents (liked, 23/95 from worst)",
+     "Fence (liked, 40/95 from worst)"
+    ],
+    "share": 0.5365853658536586
+   },
+   "A": {
+    "dislikedLow": 6,
+    "disliked": 10,
+    "likedHigh": 5,
+    "liked": 13,
+    "misses": [
+     "Loyalists (disliked, 73/95 from worst)",
+     "Lie Low (disliked, 25/48 from worst)",
+     "Sample (disliked, 26/48 from worst)",
+     "Largesse (disliked, 48/48 from worst)",
+     "Impressionist (liked, 31/95 from worst)",
+     "Last Call (liked, 23/48 from worst)",
+     "Potluck (liked, 2/48 from worst)",
+     "Splurge (liked, 20/48 from worst)",
+     "Exchange (liked, 7/48 from worst)",
+     "Estate Sale (liked, 10/48 from worst)",
+     "Estate Sale (liked, 10/48 from worst)",
+     "Con Men (liked, 33/95 from worst)"
+    ],
+    "share": 0.4782608695652174
+   },
+   "B": {
+    "dislikedLow": 3,
+    "disliked": 6,
+    "likedHigh": 8,
+    "liked": 11,
+    "misses": [
+     "Cash In (disliked, 39/48 from worst)",
+     "Big Tent (disliked, 63/95 from worst)",
+     "Old Maid (disliked, 83/95 from worst)",
+     "Cashier (liked, 42/95 from worst)",
+     "Agents (liked, 23/95 from worst)",
+     "Fence (liked, 40/95 from worst)"
+    ],
+    "share": 0.6470588235294118
+   }
+  }
+ }
+}

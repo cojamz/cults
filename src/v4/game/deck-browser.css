@@ -1,0 +1,126 @@
+.deck-browser-overlay{z-index:80}
+.dialog.deck-browser{width:min(1240px,96vw);max-width:none;height:min(840px,94dvh);padding:16px;gap:12px;background:var(--walnut-2,#241b15);color:var(--cream,#f3e6c8);border-color:var(--rim);box-shadow:0 20px 65px #0009}
+.deck-browser-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none}
+.deck-browser-head h2{margin:0;font-family:var(--serif);font-size:36px}
+.deck-browser-head p{margin:3px 0 0;font-size:15px;color:var(--cream-2)}
+.deck-browser-scroll{min-height:0;overflow:auto;overscroll-behavior:contain;border-radius:9px;border:1px solid var(--rim)}
+.deck-browser-grid{display:grid;align-items:stretch;gap:0;isolation:isolate}
+.db-head{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;position:sticky;top:0;z-index:3}
+.db-corner,.db-price{background:var(--walnut-2,#241b15);padding:12px;text-align:center;font-weight:800;border-bottom:1px solid var(--rim)}
+.db-corner{position:sticky;left:0;z-index:2}
+.db-color{position:sticky;left:0;z-index:2;margin:0;padding:14px 9px;background:var(--walnut-2,#241b15);color:var(--cream);font-size:15px;border-top:3px solid var(--row-color);border-right:1px solid var(--rim);overflow-wrap:anywhere}
+.db-color::before{content:"";display:block;width:12px;height:12px;border-radius:50%;background:var(--row-color);margin-bottom:8px}
+.db-cell{padding:8px;display:flex;flex-direction:column;gap:8px;border-top:3px solid color-mix(in srgb,var(--rim) 70%,transparent);border-right:1px solid var(--rim);min-width:0}
+.db-card{margin:0;padding:0 7px 0 0;min-height:52px;width:100%;display:flex;align-items:center;gap:6px;border:2px solid transparent;border-radius:7px;background:#fff3da;color:var(--pl-ink,#2b2018);box-shadow:0 1px 4px #0006;text-align:left;cursor:pointer;font:inherit}
+.db-art{display:flex;align-items:center;justify-content:center;align-self:stretch;flex:0 0 46px;background:color-mix(in srgb,var(--q) 18%,#fff8eb);border-radius:5px 0 0 5px}
+.db-card-name{font-family:var(--sans);font-weight:800;font-size:15px;line-height:16px;overflow-wrap:anywhere}
+.db-card[aria-pressed="true"]{border-color:#e9ba66;box-shadow:0 0 0 1px #fbe0a5}
+.db-card:hover,.db-card:focus-visible{background:#fffaf0;outline:2px solid #e9ba66;outline-offset:1px}
+.db-selected{display:flex;align-items:center;gap:12px;flex:none;min-height:92px;padding:10px 12px;border-radius:8px;background:#fff3da;color:var(--pl-ink,#2b2018);border-left:4px solid var(--q)}
+.db-selected-art{display:flex;align-items:center;justify-content:center;flex:0 0 52px}
+.db-selected-words{min-width:0;flex:1}
+.db-selected h3{margin:0;font-family:var(--sans);font-size:18px;font-weight:800}
+.db-selected p{margin:4px 0 6px;font-size:15px;line-height:19px}
+.db-selected footer{display:flex;align-items:center;gap:6px}
+.db-worth{display:inline-flex;align-items:center;gap:2px;margin-left:10px}
+.db-selected small{margin-left:auto;font-size:12px;color:var(--pl-ink-2)}
+.lt-shop-cards button.lt-deck{border:0;background:transparent;padding:0;font:inherit;color:inherit;cursor:pointer}
+.lt-shop-cards button.lt-deck:hover .pile,.lt-shop-cards button.lt-deck:focus-visible .pile{filter:brightness(1.18)}
+.lt-sort{gap:0!important;border:1px solid var(--rim);border-radius:20px;padding:2px}
+.lt-sort .lt-sort-btn{border-radius:20px}
+@media(max-width:600px){.dialog.deck-browser{height:96dvh;width:100%;padding:12px}.deck-browser-head{align-items:flex-start}.deck-browser-head p{max-width:220px}.db-color{padding-left:6px;padding-right:6px}.db-selected{gap:8px;padding:9px 8px}.db-selected-art{flex-basis:40px}.db-selected p{font-size:15px;line-height:18px}.deck-browser-overlay{padding:6px}}
+.db-divider{padding:14px 12px 6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-2);border-top:1px solid var(--rim);background:var(--walnut-2,#241b15)}
+/* dimmed rows: a veil of the sheet's own walnut over each, the same look as opacity .45 on the sheet, without the
+   ~80 separate see-through groups the browser had to redraw on every scroll step (Cory, Nov 5: "deck scrollin gis super laggy") */
+.db-cell.out{position:relative}
+.db-color.out::after,.db-cell.out::after{content:"";position:absolute;inset:-3px -1px 0 0;background:color-mix(in srgb,var(--walnut-2,#241b15) 55%,transparent);pointer-events:none}
+.db-selected.out{opacity:.8}
+.db-out-note{font-weight:600;font-size:15px;color:var(--pl-ink-2)}
+.db-card.later{filter:grayscale(1);opacity:.5}
+.db-card.later:hover,.db-card.later:focus-visible{opacity:.85}
+.db-selected.later .db-selected-art{filter:grayscale(1);opacity:.6}
+/* The browser shows the game's own cards (Cory, Oct 29: "why are the member cards in mixed style"): the chosen member's
+   full card on the left, the small shop cards in the grid */
+.dialog.deck-browser{display:grid;grid-template-columns:216px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:16px}
+.dialog.deck-browser > .deck-browser-head{grid-column:1 / -1}
+.dialog.deck-browser > .db-selected{grid-column:1;grid-row:2;align-self:start;display:block;min-height:0;padding:0;background:none;border:0;border-radius:0}
+.dialog.deck-browser > .db-selected .card-face.mc{width:200px;min-height:300px;display:flex;flex-direction:column}
+.dialog.deck-browser > .db-selected .card-face.mc .mc-cost{margin-top:auto}
+.dialog.deck-browser > .db-selected .db-out-note{margin:8px 0 0;font-size:13px;color:var(--cream-2,#b9a98c)}
+.dialog.deck-browser > .deck-browser-scroll{grid-column:2;grid-row:2}
+.db-cell .db-card.card.lt-card{display:flex;flex-direction:column;align-items:stretch;gap:0;width:98px;height:150px;min-height:0;padding:0;border:0;text-align:left}
+.db-cell .db-card.card.lt-card .art{display:grid;place-items:center}
+.db-cell .db-card.card.lt-card[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--q),0 0 0 3px #e9ba66}
+.db-cell .db-card.card.lt-card:hover,.db-cell .db-card.card.lt-card:focus-visible{background:#f4ebd7;outline:2px solid #e9ba66;outline-offset:2px}
+.db-cell:has(.db-card.lt-card){display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
+/* bought members (Cory, Nov 6: "deck isnt showing was has already been bought"): faded, with a tag and a dot per owner */
+.db-cell .db-card.card.lt-card{position:relative}
+.db-cell .db-card.card.lt-card.bought{background:#cfc4ad}
+.db-card.bought > :not(.db-bought){opacity:.4;filter:saturate(.3)}
+.db-card.bought:hover > :not(.db-bought),.db-card.bought:focus-visible > :not(.db-bought),.db-card.bought[aria-pressed="true"] > :not(.db-bought){opacity:.75}
+.db-bought{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%) rotate(-8deg);display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:4px;background:#2b2018;color:#fff3da;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;box-shadow:0 1px 3px #0008}
+.db-bought i{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid #fff3da}
+.db-bought-note{color:var(--cream,#f3e6c8)!important}
+/* the discard pile beside the deck (Cory, Nov 6): face up, its top member's picture on its color, the count under it */
+.lt-shop-cards button.lt-discard .back.face{background:color-mix(in srgb,var(--q,#8a7a66) 30%,#f3e6c8);box-shadow:0 0 0 1px #120c0a,inset 0 0 0 2px var(--q,#8a7a66),0 6px 12px -6px rgba(0,0,0,.7);gap:3px}
+.lt-shop-cards button.lt-discard .back.face .n{color:var(--pl-ink,#2b2018);text-shadow:none;font-size:16px}
+.lt-shop-cards button.lt-discard.empty{cursor:default}
+.lt-shop-cards button.lt-discard.empty .back.face{background:none;box-shadow:none;border:1.5px dashed rgba(243,230,200,.32);box-sizing:border-box}
+.lt-shop-cards button.lt-discard.empty .back.face .n{color:var(--cream-3);font-size:13px;font-weight:500;font-style:italic}
+.discard-grid{list-style:none;margin:0;padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.discard-grid li{min-width:0}
+/* the slot holding both piles takes the deck's old place in every layout (it carries .lt-deck for that); the two piles
+   inside stand side by side, each with its caption under it */
+.app.game.lt .lt-shop-cards .lt-cards .lt-deck.lt-deck-slot,.lt-shop-cards .lt-deck.lt-deck-slot{flex-direction:row;align-items:center;justify-content:center;gap:6px;flex-basis:auto;cursor:default}
+.app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot > button.lt-deck,.lt-shop-cards .lt-deck.lt-deck-slot > button.lt-deck{flex:0 0 auto;flex-direction:column;gap:3px;height:auto;min-height:0;grid-column:auto;grid-row:auto;order:0;opacity:1}
+/* laptop grid: the slot is a quarter of the short top row, so both piles shrink to fit it whole */
+@media (min-width:1200px) and (min-height:500px){
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot{gap:4px;padding:0;min-width:0}
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .pile{width:34px;height:48px}
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .cap{font-size:9px;line-height:11px;letter-spacing:.04em}
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .n{font-size:13px}
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .cult-mark{width:20px;height:20px}
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .lt-discard .sprite,.app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .lt-discard svg,.app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .lt-discard canvas,.app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .lt-discard img{width:24px;height:24px}
+}
+.dialog.deck-browser.discard-browser{display:flex;flex-direction:column;height:auto;max-height:min(840px,94dvh)}
+.dialog.discard-browser .deck-browser-scroll{flex:1 1 auto}
+.discard-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+/* Compact rows (Cory, Nov 6: "The deck UI should be way cleaner/easy to see. You shouldnt have to scroll so much"):
+   one row per color, its members as small chips cheapest first; a check for bought, a cross for the discard pile */
+.deck-browser-head h2{font-size:30px}
+.db-legend{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px}
+.db-legend > span{display:inline-flex;align-items:center;gap:6px}
+.db-rows{display:flex;flex-direction:column}
+.db-row{display:grid;grid-template-columns:76px minmax(0,1fr);border-top:1px solid var(--rim)}
+.db-row:first-child{border-top:0}
+.db-row > .db-color{position:static;padding:10px 8px;border-top:0;border-right:0;border-left:4px solid var(--row-color);font-size:14px;line-height:17px;background:none}
+.db-row > .db-color::before{display:none}
+.db-chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:6px;padding:7px 8px}
+.db-row.out{opacity:.5}
+.db-divider{border-top:1px solid var(--rim);padding:10px 12px 4px;background:none}
+.db-chip{position:relative;display:flex;align-items:center;gap:6px;min-width:0;height:44px;margin:0;padding:0 6px 0 0;border:0;border-radius:6px;background:#fff3da;color:var(--pl-ink,#2b2018);box-shadow:inset 4px 0 0 var(--q),0 1px 3px #0006;text-align:left;font:inherit;cursor:pointer;overflow:hidden}
+.db-chip:hover,.db-chip:focus-visible{background:#fffaf0;outline:2px solid #e9ba66;outline-offset:1px}
+.db-chip[aria-pressed="true"]{box-shadow:inset 4px 0 0 var(--q),0 0 0 2px #e9ba66}
+.db-chip-cost{flex:none;display:grid;place-items:center;width:22px;height:22px;margin-left:9px;border-radius:50%;background:#2b2018;color:#fff3da;font-size:12px;font-weight:800}
+.db-chip-art{flex:none;display:grid;place-items:center;width:30px;height:36px;border-radius:4px;background:color-mix(in srgb,var(--q) 18%,#fff8eb)}
+.db-chip-words{display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0;flex:1}
+.db-chip-name{min-width:0;font-weight:800;font-size:13px;line-height:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-chip-line{display:flex;align-items:center;gap:6px;min-width:0;font-size:12px;line-height:15px}
+.db-chip-line .lt-cost{display:inline-flex;gap:4px;flex:none}
+.db-chip-line .lt-res{display:inline-flex;align-items:center;gap:1px}
+.db-chip-line .val{flex:none;display:inline-flex;align-items:center;gap:1px;margin-left:auto;font-size:12px}
+.db-chip-line .val .worth-more{margin-left:3px}
+.db-marks{display:flex;gap:3px;margin-left:auto;flex:none}
+.db-mark,.db-copies{display:inline-flex;align-items:center;gap:2px;height:16px;padding:0 4px;border-radius:8px;font-size:11px;font-weight:800;line-height:16px}
+.db-copies{background:#e6d8b8;color:#2b2018}
+.db-mark.bought{background:#2b2018;color:#fff3da}
+.db-mark.discarded{background:#8f2a22;color:#fff3da}
+.db-mark i{display:inline-block;width:8px;height:8px;border-radius:50%;border:1px solid #fff3da}
+.db-mark b{font-weight:800}
+.db-chip.gone{background:#cfc4ad}
+.db-chip.gone :is(.db-chip-cost,.db-chip-art,.db-chip-name,.val,.lt-cost){opacity:.42;filter:saturate(.3)}
+.db-chip.gone:is(:hover,:focus-visible,[aria-pressed="true"]) :is(.db-chip-cost,.db-chip-art,.db-chip-name,.val,.lt-cost){opacity:.8}
+.db-chip.later{filter:grayscale(1);opacity:.55}
+.db-chip.later:hover,.db-chip.later:focus-visible{opacity:.85}
+@media(max-width:600px){.db-row{grid-template-columns:1fr}.db-row > .db-color{padding:8px 8px 0}.db-chips{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+.db-legend .db-mark{box-shadow:0 0 0 1px #fff3da88}

@@ -1,0 +1,84 @@
+<title>Cards That Move Members</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap">
+<style>
+/* Layout: one phone column; a block per color, one numbered row per card */
+:root{
+  --bg:#f5f3f8; --card:#fff; --fg:#1c1722; --muted:#6b6276; --line:#e2dbe9; --accent:#6b3fa0; --quote:#efe9f6;
+  --red:#c0392b; --magenta:#b0307a; --white:#8a8494; --silver:#6f8396; --yellow:#b58a00; --blue:#2c64b8; --grey:#7a7a7a;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15121a; --card:#201b27; --fg:#eee9f3; --muted:#a49bb0; --line:#332c3c; --accent:#b68de8; --quote:#2a2333;
+  --red:#ef6b5e; --magenta:#e46bb0; --white:#cfc9d8; --silver:#a9bccd; --yellow:#e8c14d; --blue:#6fa2ee; --grey:#b0b0b0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15121a; --card:#201b27; --fg:#eee9f3; --muted:#a49bb0; --line:#332c3c; --accent:#b68de8; --quote:#2a2333;
+  --red:#ef6b5e; --magenta:#e46bb0; --white:#cfc9d8; --silver:#a9bccd; --yellow:#e8c14d; --blue:#6fa2ee; --grey:#b0b0b0; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.45 var(--body)}
+.wrap{max-width:560px;margin:0 auto;padding-block:18px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:12px}
+h1{font:700 24px/1.15 var(--display);margin:0}
+q{display:block;background:var(--quote);border-radius:8px;padding:6px 9px;font-style:italic;font-size:14px;quotes:none}
+.sub{color:var(--muted);margin:0;font-size:14px}
+.color{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:10px;padding:8px 12px}
+.color h2{font:700 15px/1.2 var(--display);margin:2px 0 4px;color:var(--c)}
+.row{display:grid;grid-template-columns:1.6em 1fr;gap:2px 8px;padding:6px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.n{font:700 15px/1.4 var(--display);color:var(--accent)}
+.row b{font-weight:700}
+.tag{font-size:12px;color:var(--muted);white-space:nowrap}
+.ctx{font-size:13px;color:var(--muted);margin:0}
+.ask{border:2px solid var(--accent);border-radius:12px;padding:10px 14px;font-weight:700;background:var(--card)}
+</style>
+
+<div class="wrap">
+<header style="display:flex;flex-direction:column;gap:8px">
+  <h1>Cards that move members</h1>
+  <q>"you want to buy members and build an engine, but the game is fun when you can move members around. so it sometimes feels not worth it to go for the things you want." (Nov 12)</q>
+  <p class="sub">18 cards in today's game take, swap, give or discard another player's member: 6 spaces and 12 members. Purple and Green have none. Mark each keep, weaken or cut by number.</p>
+</header>
+
+<div class="color" style="--c:var(--red)"><h2>Red</h2>
+<div class="row"><span class="n">1</span><span><b>Promote</b> (round II space): +3 red. Swap any member for one costing up to 3 more, from another cult or the shop.</span></div>
+<div class="row"><span class="n">2</span><span><b>Demote</b> (round II space): +3 red. Swap any member for one costing up to 3 less, from another cult or the shop.</span></div>
+<div class="row"><span class="n">3</span><span><b>Body Snatchers</b>: Round Start: swap one of your members with any rival's member. <span class="tag">every round</span></span></div>
+<div class="row"><span class="n">4</span><span><b>Panel</b>: On Use, once per round: promote or demote another of your members. <span class="tag">every round</span></span></div>
+</div>
+
+<div class="color" style="--c:var(--magenta)"><h2>Magenta</h2>
+<div class="row"><span class="n">5</span><span><b>Swindle</b> (round II space): Steal a rival's member costing up to 7; give them a shop member of your choice in its place. +1 magenta.</span></div>
+<div class="row"><span class="n">6</span><span><b>Poach</b> (round III space): Recruit a rival's member you choose, for free. +1 magenta.</span></div>
+<div class="row"><span class="n">7</span><span><b>Double Agent</b>: On Recruit: swap this member for a rival's member costing up to 8. <span class="tag">once</span></span></div>
+<div class="row"><span class="n">8</span><span><b>Kidnappers</b>: Round End: a rival you choose gives you one of their members. <span class="tag">every round</span></span></div>
+</div>
+
+<div class="color" style="--c:var(--white)"><h2>White</h2>
+<div class="row"><span class="n">9</span><span><b>Write-Off</b> (round II space): Give a member to a rival for its cost in white. +1 white.</span></div>
+<div class="row"><span class="n">10</span><span><b>Guest of Honor</b>: On Use, once per round: give a rival one of your members. +4 followers. <span class="tag">every round</span></span></div>
+<div class="row"><span class="n">11</span><span><b>Patrons</b>: On Use, once per game: give one of your members to a rival. Gain its cost in followers. <span class="tag">once</span></span></div>
+</div>
+
+<div class="color" style="--c:var(--silver)"><h2>Silver</h2>
+<div class="row"><span class="n">12</span><span><b>Buyout</b> (round II space): Recruit a rival's member, paying them its cost in silver. +1 silver.</span></div>
+</div>
+
+<div class="color" style="--c:var(--yellow)"><h2>Yellow</h2>
+<div class="row"><span class="n">13</span><span><b>Exchange Students</b>: On Recruit: swap one of your members for a rival's member that costs the same. <span class="tag">once</span></span></div>
+</div>
+
+<div class="color" style="--c:var(--blue)"><h2>Blue</h2>
+<div class="row"><span class="n">14</span><span><b>Repossessors</b>: On Use, once per game: discard a rival's member costing up to 8. <span class="tag">once</span></span></div>
+</div>
+
+<div class="color" style="--c:var(--grey)"><h2>Grey</h2>
+<div class="row"><span class="n">15</span><span><b>Anarchist</b>: On Use, once per round: swap any 2 members that cost the same, in any cult or the shop. <span class="tag">every round</span></span></div>
+<div class="row"><span class="n">16</span><span><b>Mutineers</b>: On Use, once per game: take a member from a rival with more members than you. <span class="tag">once</span></span></div>
+<div class="row"><span class="n">17</span><span><b>Gift Swappers</b>: On Use, once per game: every player, you too, gives one member they choose to the player on their left. <span class="tag">once</span></span></div>
+<div class="row"><span class="n">18</span><span><b>Purifiers</b>: On Use, once per game: discard one of your members. Each rival with more members than you discards one too. <span class="tag">once</span></span></div>
+</div>
+
+<p class="ctx">For reference, cards that pay for or block it: <b>Foster Parents</b> (Red): Whenever a member joins your cult from a rival's, +2 followers. · <b>Leavetakers</b> (White): Whenever one of your members leaves your cult, +2 white. · <b>Loyalists</b> (Red): Your other members can't be swapped.</p>
+
+<div class="ask">Reply with numbers, e.g. "weaken 3, cut 8". Unmarked ones stay.</div>
+</div>
