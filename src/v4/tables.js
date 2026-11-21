@@ -24,18 +24,18 @@ export const sphereName = id => `${quadrant(id).name}${quadrant(id).standIn ? ' 
  * steals). From each sphere's own design note (src/engine/v4/content/*.js).
  */
 const LINES = {
-  gold: 'Piles up gold, and saves on your next member.',
-  // plain verb-first lines (Cory, Nov 8: "update these descriptions for easier reading/intuitive understanding")
-  red: 'Get members: recruit off the pile, use shop members’ powers, swap members up or down.',
-  purple: 'Bend turn order: go again, make the next player skip, place last.',
-  silver: 'Give rivals silver, and get followers and other colors back.',
-  yellow: 'Collect members of many colors, and pick which colors you gain.',
-  market: 'Work the shop: clear out members, look at the pile, recruit extra times.',
-  thieves: 'Steal resources, followers and members from rivals.',
+  gold: 'Pile up gold and save on your next member.',
+  // plain verb-first lines (Cory, Nov 8: "update these descriptions for easier reading/intuitive understanding"; Nov 21: "all the descriptions could be shorter")
+  red: 'Recruit, borrow and swap members.',
+  purple: 'Go again, skip the next player, place last.',
+  silver: 'Give rivals silver, get followers back.',
+  yellow: 'Collect members of many colors.',
+  market: 'Work the shop and recruit extra times.',
+  thieves: 'Steal from rivals.',
   trading: 'Turn resources and members into followers.',
-  echo: 'Copy spaces and members’ powers, yours or a rival’s.',
-  blue: 'Plain gains: blue, with a little of another color.',
-  green: 'Plain gains: green, with a little of another color.',
+  echo: 'Copy spaces and members, even a rival’s.',
+  blue: 'Plain blue, plus a little of another color.',
+  green: 'Plain green, plus a little of another color.',
 };
 export const sphereLine = id => LINES[id] || '';
 /** The contest a color runs in the games we play (By color, App.jsx and online.js), not its printed "Most red": the
