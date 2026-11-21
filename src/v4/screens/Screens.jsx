@@ -286,7 +286,6 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
           {/* Reroll first, so it stays under the pointer while the names after it change width (w2b #33) */}
           {mode === 'random' && !readOnly && <button type="button" className="btn ghost" data-reroll onClick={() => { let t; do { t = randomTable(); } while (sameTable(t.slice(0, n), quadrants)); onChange({ mode, quadrants: t }); }}>Reroll</button>}
           {quadrants.map(id => <TableChip key={id} id={id} />)}
-          {mode === 'random' && !readOnly && <small className="set-hint" data-set-hint="random">{n} colors drawn at random.</small>}
         </div>
       ) : (
         <>
@@ -348,8 +347,8 @@ function TableChip({ id }) {
       <i className="dot" />{sphereName(id)}<small className="chip-line">{sphereLine(id)}</small>
       {/* the legend under each color (Cory, 2026-10-27, from Mike: "maybe this spot can have an overall legend of all
           the colors"): what its spaces do, its contest, then its cloak, in the room's empty column */}
-      <small className="chip-line chip-legend" data-chip-contest={id}>Contest: {sphereContest(id).label}</small>
-      {art && <small className="chip-line chip-legend" data-chip-artifact={id}>{cloakName(id)}: {art.text}</small>}</Tip>
+      <small className="chip-line chip-legend" data-chip-contest={id}><b className="chip-tag">Contest</b> {sphereContest(id).label}</small>
+      {art && <small className="chip-line chip-legend" data-chip-artifact={id}><b className="chip-tag">Cloak</b> {art.text}</small>}</Tip>
   );
 }
 
