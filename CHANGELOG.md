@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.777 — 2026-11-21
+
+- Setup screen: each color's Contest and Cloak read as labeled lines; the 'drawn at random' line is gone
+
 ## v0.99.776 — 2026-11-14
 
 - Clan's text says grey is its own color (grey members are not added to your biggest color)
