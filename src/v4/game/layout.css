@@ -202,10 +202,11 @@
   .app.narrow > .dialog.page > .table-pick.editable .table-chips > .btn{align-self:flex-start}
   /* Cory, Nov 21 ("this could use better formatting"): the blurb reads first, then Contest and Cloak as labeled rows
      so each line scans by its label on a phone */
-  .app.narrow > .dialog.page > .table-pick.editable .table-chips{gap:18px}
+  .app.narrow > .dialog.page > .table-pick.editable .table-chips{gap:24px}
+  .app.narrow > .dialog.page > .table-pick.editable .table-chip{row-gap:4px}
   .app.narrow > .dialog.page > .table-pick.editable .table-chip .chip-line:not(.chip-legend){color:var(--ink);opacity:.9;margin-bottom:4px}
-  .app.narrow > .dialog.page > .table-pick.editable .table-chip .chip-legend{display:grid;grid-template-columns:4.4em minmax(0,1fr);column-gap:6px;align-items:baseline;}
-  .app.narrow > .dialog.page > .table-pick.editable .table-chip .chip-tag{font-weight:700;font-size:.78em;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+  .app.narrow > .dialog.page > .table-pick.editable .table-chip .chip-legend{display:grid;grid-template-columns:4.2em minmax(0,1fr);column-gap:8px;align-items:baseline;text-wrap:pretty}
+  .app.narrow > .dialog.page > .table-pick.editable .table-chip .chip-tag{font-weight:700;font-size:inherit;color:var(--muted);opacity:.75}
 }
 /* Three columns on a wide enough screen (Cory, Nov 4: "settings could be brought over to a third column here"): who
    plays, then the settings, then the table; Back and Start under all three. Narrower, the settings stack under the seats

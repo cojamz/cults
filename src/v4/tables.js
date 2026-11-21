@@ -27,13 +27,13 @@ const LINES = {
   gold: 'Pile up gold and save on your next member.',
   // plain verb-first lines (Cory, Nov 8: "update these descriptions for easier reading/intuitive understanding"; Nov 21: "all the descriptions could be shorter")
   red: 'Recruit, borrow and swap members.',
-  purple: 'Go again, skip the next player, place last.',
+  purple: 'Go again, skip the next turn, place last.',
   silver: 'Give rivals silver, get followers back.',
   yellow: 'Collect members of many colors.',
-  market: 'Work the shop and recruit extra times.',
+  market: 'Recruit from the discard pile, clear the shop.',
   thieves: 'Steal from rivals.',
   trading: 'Turn resources and members into followers.',
-  echo: 'Copy spaces and members, even a rival’s.',
+  echo: 'Copy actions and members, even a rival’s.',
   blue: 'Plain blue, plus a little of another color.',
   green: 'Plain green, plus a little of another color.',
 };
