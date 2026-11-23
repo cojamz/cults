@@ -642,7 +642,7 @@ export default {
     // 4 red + 2 any as a player sees it. Its swap is a choice with "Don't swap" (Red's swaps can be skipped: Cory,
     // 2026-10-22, "You shouldnt HAVE to swap"); a rival's member it can take is one that may be swapped (Loyalists,
     // Bodyguards). The member you get is your recruit (its On Recruit fires), as with Promote.
-    m('bodysnatchers', 'Body Snatchers', 2, 2, /* any rival's member (Cory, Nov 8: "swapped for any… make it mid priced… let's try it this way"); already 6, mid priced */ "Round Start: swap one of your members with any rival's member.", { f: 2,
+    m('bodysnatchers', 'Body Snatchers', 2, 2, /* any rival's member (Cory, Nov 8: "swapped for any… make it mid priced… let's try it this way"); already 6, mid priced */ "Round Start: swap one of your members with a rival's member costing up to 3 more.", { f: 2,
       onRoundStart(ctx, owner, card) {
         const pairs = snatchPairs(ctx, owner);
         if (!pairs.length) { ctx.log(`${owner.name}'s Body Snatchers: no rival member to swap with.`); return; }
@@ -1046,7 +1046,8 @@ function snatchPairs(ctx, p) {
   const mine = ctx.membersOf(p).filter(c => ctx.canSwapMember(c.uid));
   const theirs = ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'swap')).flatMap(o => ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid)));
   const out = [];
-  for (const a of mine) for (const b of theirs) if (a.def.id !== b.def.id) out.push([a, b]); // any cost since Nov 8 (Cory)
+  // up to 3 more than the member you give, Promote's reach (Claude, under Cory's go-with-your-gut and his over-2-days rule, Nov 23; Cory, Nov 12: Body Snatchers "just seems too good")
+  for (const a of mine) for (const b of theirs) if (a.def.id !== b.def.id && cost(b) <= cost(a) + 3) out.push([a, b]);
   return out;
 }
 // Tryout's shop members: an On Recruit or round-start effect that doesn't act on the card itself ("swap it",

@@ -37,7 +37,7 @@ describe('REPLACE2: the switch', () => {
 });
 
 describe('REPLACE2: each card fires', () => {
-  it('Body Snatchers: at round start, swap one of your members with any rival’s (or not; any cost since Cory, Nov 8)', () => {
+  it('Body Snatchers: at round start, swap one of your members with a rival’s (or not)', () => {
     let s = table(['red', 'thieves', 'market', 'yellow'], { round: 1, members: [['red.bodysnatchers', 'red.recruitbonus'], ['red.movementpenalty']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.prompt).toMatch(/^Body Snatchers: swap one of your members/);
     expect(s.pending.options.map(o => o.id)).toContain('none');
@@ -47,6 +47,16 @@ describe('REPLACE2: each card fires', () => {
     expect(owns(s, 1, 'red.recruitbonus')).toBe(true);
     expect(s.log).toContain("P1 swapped P1's Greeters and P2's Deprogrammers.");
     expect(named(s, 'Body Snatchers')).toContain("P1's Body Snatchers: a swap at round start.");
+  });
+
+  it('Body Snatchers reaches only a rival member costing up to 3 more than yours (Claude, under Cory\'s go-with-your-gut, Nov 23)', () => {
+    const s = table(['red', 'thieves', 'market', 'yellow'], { round: 1, members: [['red.bodysnatchers', 'red.recruitbonus'], ['red.movementpenalty', 'thieves.doubleagent']], queue: [{ t: 'round', r: 2 }] });
+    const price = uid => { const d = s.cards[uid] && defById(s.cards[uid].def); return d.s + d.w; };
+    const trades = s.pending.options.filter(o => o.kind === 'trade');
+    for (const o of trades) expect(price(o.value[1])).toBeLessThanOrEqual(price(o.value[0]) + 3);
+    const mine = uidIn(s, 'red.recruitbonus', 0), mentor = uidIn(s, 'thieves.doubleagent', 1);
+    if (price(mentor) > price(mine) + 3) expect(trades.map(o => o.id)).not.toContain(`trade:${mine}:${mentor}`);
+    expect(price(mentor)).toBeGreaterThan(price(mine) + 3); // the test holds a member out of reach
   });
 
   it('Mirror Image: once per game, gain a color until you hold as much as a rival', () => {
