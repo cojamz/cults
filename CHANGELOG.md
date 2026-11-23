@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.779 — 2026-11-23
+
+- Body Snatchers swaps for a rival's member costing up to 3 more; Bargain Bin pays blue; Clan's grey wording
+
 ## v0.99.778 — 2026-11-21
 
 - Setup screen: shorter color summaries, plain Contest and Cloak labels
