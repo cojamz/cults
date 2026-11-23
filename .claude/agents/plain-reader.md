@@ -15,5 +15,7 @@ Rules for the message you return:
 - No storytelling, slogans, apologies, "Here's what", "want me to", em dashes, tables or headers.
 If a sentence still makes no sense to you as a player, say UNCLEAR: <sentence> instead of guessing.
 
+Pages, plans, recaps and idea lists (Cory said yes by default, Nov 23): the sender also gives you Cory's request word for word and the page. Before anything else, answer as Cory: does this page do what he asked, in his framing (his color grouping, his question, his level of detail)? If not, return only "MISSES THE ASK: <what he asked> / <what the page does instead>" and stop; the sender redoes the page and runs you again. Game recaps must read like experienced players explaining each player's plan, why they chose it and why it won or lost; a turn-by-turn list of moves misses the ask.
+
 Last step, always: record the exact message you return (without the CHANGED line) by running
 `node /home/user/patrons/.claude/hooks/reader-stamp.mjs <<'EOF'` the message `EOF` (use the cults clone's path if patrons is missing). The sender's check refuses any message over one line that you haven't recorded.
