@@ -22,10 +22,11 @@ describe('Silver actions', () => {
       expect(s.players.map(p => p.res.silver)).toEqual([5, 2, 2]);
     }
   });
-  it('Polish: +2 silver, then all your silver into one other color you choose, then +1 silver (Cory, Nov 11)', () => {
+  it('Polish: +3 silver, then all your silver into one other color you choose, then each rival +1 silver (Cory, Nov 24)', () => {
     let s = take(sc({ res: [{ silver: 2 }] }), 'silver.polish');
     s = move(s, 'color:red');
-    expect([S(s), s.players[0].res.red]).toEqual([1, 4]);
+    expect([S(s), s.players[0].res.red]).toEqual([0, 5]);
+    expect(s.players.slice(1).every(o => o.res.silver >= 1)).toBe(true);
     expect(named(s, 'Polish').length).toBeGreaterThan(0);
   });
   it('Party Gifts: rivals gain up to 3 silver from the bank, split as you choose, +2 followers each', () => {

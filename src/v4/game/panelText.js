@@ -121,7 +121,7 @@ const P = {
     // "each rival", the card's words; its trailing +1 is the first taker's, on the hover's badge (wording pass, Nov 12)
     toast: { main: '+4 silver', second: 'each rival +2 silver' }, // Cory, Nov 11
     // words for the arrow: a panel's only marks are the dot and the follower mark (picky bot, Nov 11)
-    polish: { main: '+2 silver', second: 'then turn all your silver into one color' }, // Cory, Nov 11
+    polish: { main: '+3 silver', second: 'turn all your silver into one color, each rival +1 silver' }, // Cory, Nov 24
     // "+2 per silver" read as per silver you hold (Cory, Nov 1: "VERY misleading"): the giving leads
     // "+2 @f each" read as each rival (picky bot, Nov 4): per silver given, never "per silver" alone (Cory, Nov 1)
     // the followers in line 1 too: line 2 drops on a tight ring and left only the giving (picky bot, Nov 11)

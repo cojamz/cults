@@ -2262,7 +2262,8 @@ const PLUS1_SIZE = Number(globalThis.process?.env?.PLUS1_SIZE) || 0;
 const PLUS1_CLAIM = -1.5; // plus1Delta's answer for a claimed +1 under the setting: cut it from the space like a later taker, pay it apart
 export const plus1Mode = state => state?.rules?.plus1 || PLUS1 || '';
 /** Whether a space prints the "+1 <its color>." a first taker gets. */
-export const printsPlus1 = (a, qid) => !!a && new RegExp(`\\+1 ${quadrant(qid).resource}\\.\\s*$`, 'i').test(a.text || '');
+// noPlus1: a space whose text ends in another player's +1 (Polish, Nov 24: "Each rival +1 silver.") prints none of its own
+export const printsPlus1 = (a, qid) => !!a && !a.noPlus1 && new RegExp(`\\+1 ${quadrant(qid).resource}\\.\\s*$`, 'i').test(a.text || '');
 /** Whether space q-i still holds its unclaimed +1 (the dot on the wheel). */
 export function plus1Open(state, q, i) {
   if (plus1Mode(state) !== 'game') return false;

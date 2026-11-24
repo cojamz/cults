@@ -180,6 +180,11 @@ function charmPick(ctx, p, left) {
     id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0) + (c === S ? 0.5 : 0),
   })), 'silver.charm', { left });
 }
+/** Polish (Nov 24): after the turn, each rival +1 silver from the bank (a gift, so Silver Cloak hears it). */
+function polishGift(ctx, p) {
+  giveAll(ctx, p, S, 1);
+  ctx.log(`${p.name}'s Polish: +1 silver to everyone else.`);
+}
 function polishPick(ctx, p, left, who = 'Polish') {
   // any color, silver included (Cory, Nov 4 1:14pm: "yeah allow silver i guess"; the words already said "any colors")
   ctx.choose(p, `${who}: +1 of which color? (${left} to pick)`, ctx.state.resources.map(c => ({
@@ -411,13 +416,14 @@ export const silverActions = [
   swap11(swap11({
     // Cory, Nov 11 12:24-12:29am: "+3 silver, turn your silver into other colors… maybe make it all one other color",
     // "would be pretty good as a round I even", then "yeah 1. simpler also" (all of it, not "any of it"). Name kept.
-    key: 'polish', copyDoesIt: true, ring: 1, name: 'Polish', text: '+2 silver. Turn all your silver into one other color. +1 silver.',
-    // Cory, Nov 11 10:23am: "Polish should be +2 silver, then the +1": the space's +1 comes after the turn, so it stays silver
-    estimate: () => 3.5,
+    key: 'polish', copyDoesIt: true, noPlus1: true, ring: 1, name: 'Polish', text: '+3 silver. Turn all your silver into one other color. Each rival +1 silver.',
+    // Cory, Nov 24 4:13pm: "lets do #2 but make it +3" "instead of +2": each rival +1 silver in place of the trailing
+    // +1 silver, so you end at 0 silver and every rival holds some (Fewest silver). No printed +1 of its own now.
+    estimate: ctx => 3.5 - spillCost(ctx, 1),
     resolve(ctx, p) {
-      (ctx.beforeTrailingPlus1 || (f => f()))(() => hostGain(ctx, p, 2)); // a later taker's +1 cut comes off the last +1, after the turn
+      hostGain(ctx, p, 3);
       const n = p.res[S] || 0, opts = otherColors(ctx);
-      if (!n || !opts.length) { hostGain(ctx, p, 1); return; }
+      if (!n || !opts.length) { polishGift(ctx, p); return; }
       ctx.choose(p, n === 1 ? `Polish: turn your 1 silver into which color?` : `Polish: turn all ${n} of your silver into which color?`, opts.map(c => ({
         id: `color:${c}`, label: `${n} silver → ${n} ${c}`, kind: 'color', value: c, spend: { silver: n, [c]: -n },
         hint: 1 - 0.3 * (p.res[c] || 0),
@@ -673,7 +679,7 @@ const silver = {
         p.res[S] = 0; ctx.gain(p, c, n, { unscaled: true }); // a copy's Wallflower doubles the silver gained, not the turn (Cory, Nov 11)
         ctx.log(`${p.name}'s Polish: ${n} silver into ${n} ${c}.`);
       }
-      hostGain(ctx, p, 1);
+      polishGift(ctx, p);
     },
     buyout(ctx, p, uid) {
       if (uid == null) { ctx.log(`${p.name}'s Buyout: recruits nothing.`); return; }
