@@ -614,7 +614,7 @@ const thieves = {
       const list = ctx.rivals(owner).filter(o => ctx.membersOf(o).length);
       if (!list.length) { ctx.log(`${owner.name}'s Kidnappers: no rival has a member.`); return; }
       if (list.length === 1) { kidnapAsk(ctx, owner, list[0]); return; }
-      ctx.choose(owner, 'Kidnappers: which rival gives you one of their members?', list.map(o => ({
+      ctx.choose(owner, 'Kidnappers: which rival gives you a member of their choice?', list.map(o => ({
         id: `player:${o.id}`, label: `${o.name} (${ctx.membersOf(o).length} member${ctx.membersOf(o).length === 1 ? '' : 's'})`, kind: 'player', value: o.id,
         hint: Math.min(...ctx.membersOf(o).map(memberHint)),
       })), 'thieves.kidnapRival');
@@ -1102,7 +1102,7 @@ const thieves = {
     // placement, before contests (as Talent Agents' Round End): the owner picks a rival with a member, that rival
     // picks which one. A gift, as Tithe Takers' is: not a steal or a swap (Bodyguards, Lie Low and Loyalists don't stop
     // it), an arrival for the owner, not their recruit.
-    m('kidnappers', 'Kidnappers', 5, 2, 'Round End: a rival you choose gives you one of their members.', { f: 2, keepCount: true, /* given back: costs 10+ */ ...old10('poacher'), ...old10('poacher5'),
+    m('kidnappers', 'Kidnappers', 5, 2, 'Round End: a rival you choose gives you a member of their choice.', { f: 2, keepCount: true, /* given back: costs 10+ */ ...old10('poacher'), ...old10('poacher5'),
       // queued, as Cat Burglars': in turn order, and only if the owner still holds it then (Cory, Nov 4)
       onAllPlaced(ctx, owner, card) { roundEndTurn(ctx, owner, card, 'thieves.kidnapNow'); },
       // BOTSEE: each round end still ahead, a rival's least wanted member, about 3 followers' worth

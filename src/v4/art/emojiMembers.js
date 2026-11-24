@@ -52,7 +52,7 @@ const M = {
   'robin-hood': ['🏹', '♾️ Steal from the follower leader: +1 follower'],
   snitch: ['🐀', '♾️ A rival steals from you: they −1 follower'],
   'sticky-fingers': ['🍯', '♾️ Your steals take 1 more'],
-  kidnappers: ['🧳', '🌙 A rival you choose gives you one of their members'],
+  kidnappers: ['🧳', '🌙 A rival you choose gives you a member of their choice'],
   desperado: ['🌵', '♾️ Fewest followers: your steals take 2 more'],
   fixer: ['💼', '☝️ Pay magenta equal to a rival member’s cost to steal it'],
   shoplifter: ['🛍️', '♾️ You recruit: steal 1'],

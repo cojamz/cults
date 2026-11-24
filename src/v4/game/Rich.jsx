@@ -45,7 +45,9 @@ const MEMBER = new RegExp(`(?:(\\d+) )?(other )?(non-)?\\b(${[...COLORS, 'wild']
 function MemberAmount({ m }) {
   const n = m[1] || m[5], other = m[2] || m[6] || '', non = m[3] || '', named = m[4] || null;
   const counts = !named && /^Counts as/i.test(m.input.slice(Math.max(0, m.index - 10), m.index) + m[0]) ;
-  const color = named === 'wild' ? null : named || (counts ? 'colorless' : null);
+  // "Counts as 2 members of every color" (Dabblers, Nov 24) is the wild bust, like the old "2 wild members"
+  const every = /^ of every color/.test(m.input.slice(m.index + m[0].length));
+  const color = named === 'wild' || every ? null : named || (counts ? 'colorless' : null);
   const words = m[0].slice(n ? n.length : 0);
   return (
     <span className="amt mem" data-member-amount={color || 'any'} title={m[0]}>

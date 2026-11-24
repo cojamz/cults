@@ -81,7 +81,7 @@ describe('REPLACE3: each card fires', () => {
   it('Kidnappers: at round end the owner picks a rival, and that rival picks which member to give', () => {
     let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['red.recruitbonus', 'trading.martyr'], ['market.snob']], queue: [{ t: 'allPlaced' }] });
     expect(s.pending.player).toBe(0);
-    expect(s.pending.prompt).toBe('Kidnappers: which rival gives you one of their members?');
+    expect(s.pending.prompt).toBe('Kidnappers: which rival gives you a member of their choice?');
     expect(s.pending.options.map(o => o.id)).toEqual(['player:1', 'player:2']);
     s = answer(s, 'player:1');
     expect(s.pending.player).toBe(1);

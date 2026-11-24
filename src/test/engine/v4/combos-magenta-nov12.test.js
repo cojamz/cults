@@ -229,7 +229,7 @@ describe('Kidnappers: "Round End: a rival you choose gives you one of their memb
   it('4 players: the owner picks among rivals with members (counts named), the picked rival chooses; followers move with the member', () => {
     const sc = { quads: Q, n: 4, round: 1, queue: END, members: [['thieves.kidnappers'], ['red.intern'], ['red.twins', 'silver.dowager'], []] };
     const first = go('kid-4p-ask', sc, []).s;
-    expect(first.pending.prompt).toBe('Kidnappers: which rival gives you one of their members?');
+    expect(first.pending.prompt).toBe('Kidnappers: which rival gives you a member of their choice?');
     expect(first.pending.options.map(o => o.label)).toEqual(['P2 (1 member)', 'P3 (2 members)']);
     const { s } = go('kid-4p', sc, [/player:2/, /Triplets/]);
     expect(names(s, 0)).toEqual(['Kidnappers', 'Triplets']);
