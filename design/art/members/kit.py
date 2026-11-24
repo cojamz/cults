@@ -22,7 +22,7 @@ class V:
     def __init__(s): s.g=[[None]*N for _ in range(N)]; s.flat=set()
     def px(s,x,y,c):
         x=int(x);y=int(y)
-        if 0<=x<N and 0<=y<N: s.g[y][x]=c if isinstance(c,tuple) else hx(c)
+        if 0<=x<N and 0<=y<N: s.g[y][x]=c if (c is None or isinstance(c,tuple)) else hx(c)
     def tone(s,ramp,t):  # t: -1 dark .. 1 light
         r=RAMP[ramp]; i=0 if t>.8 else 1 if t>-.3 else 2 if t>-1.1 else 3
         return hx(r[i])
