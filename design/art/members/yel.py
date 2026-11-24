@@ -18,14 +18,17 @@ def armL(v,hx_,hy,ramp='yel'): v.poly([(13,20),(9,21),(hx_,hy-1),(hx_+3,hy-2)],r
 def armR(v,hx_,hy,ramp='yel'): v.poly([(27,20),(31,21),(hx_,hy-1),(hx_-3,hy-2)],ramp); v.ell(hx_-1,hy,2,2,'skin')
 def tithe():
     v=V(); legs(v); body(v)
-    v.poly([(15,19),(25,19),(24,40),(16,40)],'white',flat=True)
-    armL(v,8,30); armR(v,31,27)
-    # collection plate on a long handle held out
-    v.line(31,27,41,22,v.col('brown',1),w=2); v.ell(42,21,4,2,'brown'); v.ell(42,20.5,2.6,1.2,'gold',flat=True); v.px(41,20,v.col('gold',0)); v.px(43,20,v.col('red',1))
-    v.rect(5,31,10,37,'dark'); v.rect(6,32,9,36,'cloth',flat=True)
-    head(v); v.ell(20,5,7,3,'hair',clip=lambda x,y:y<=6)
-    v.ell(20,3.5,3,1.6,'yel')
-    v.inner('yel','white'); v.inner('yel','skin')
+    # big tithe box held in both arms, coins of every color in it
+    v.poly([(13,20),(9,24),(11,28),(14,25)],'yel'); v.poly([(27,20),(31,24),(29,28),(26,25)],'yel')
+    v.rect(10,24,30,34,'brown'); v.rect(10,24,30,25,'brown',flat=True); v.line(10,29,30,29,v.col('brown',2))
+    for i,c in enumerate(['red','blue','green','mag','purple','gold']):
+        v.ell(12.5+i*3,22.5,1.6,1.6,c); 
+    v.ell(10,27,2,2,'skin'); v.ell(30,27,2,2,'skin')
+    v.px(32,20,v.col('gold',0)); v.px(34,22,v.col('blue',0))
+    head(v)
+    # tall collector's hat
+    v.rect(14,-1,26,5,'dark'); v.rect(12,5,28,6,'dark'); v.rect(14,3,26,4,'yel',flat=True)
+    v.inner('yel','skin'); v.inner('yel','brown')
     return v.thick()
 def barterer():
     v=V(); legs(v); body(v)
@@ -52,18 +55,18 @@ def pilgrim():
     v.inner('yel','skin')
     return v.thick()
 def haggler():
-    v=V()
-    v.poly([(13,20),(27,20),(31,46),(9,46)],'yel')
-    v.poly([(15,26),(25,26),(26,46),(14,46)],'white',flat=True)
-    # one hand up with 3 fingers, other on hip
-    v.poly([(27,21),(31,19),(33,12),(30,12)],'yel'); v.ell(31.5,10,2.4,2.2,'skin')
-    for x in (30,32,34): v.line(x,8,x,6,v.col('skin',1))
-    v.poly([(13,21),(8,26),(11,30),(14,27)],'yel'); v.ell(9,28,2,2,'skin')
+    v=V(); legs(v,x1=13,x2=23); body(v)
+    # both arms out wide: a red gem in one hand, a blue in the other, swapping
+    v.poly([(13,20),(5,15),(4,18),(12,24)],'yel'); v.ell(4,15,2.2,2.2,'skin')
+    v.poly([(27,20),(35,15),(36,18),(28,24)],'yel'); v.ell(36,15,2.2,2.2,'skin')
+    v.rect(2,9,6,13,'red'); v.px(3,10,hx('#ffffff')); v.rect(34,9,38,13,'blue'); v.px(35,10,hx('#ffffff'))
     head(v,mouth=False)
-    v.ell(20,14,2,1.2,'dark',flat=True)
-    for x in (16,17,22,23): v.px(x,9,v.col('hair',2))
-    v.ell(20,5.5,7.5,3.5,'red',clip=lambda x,y:y<=7); v.ell(13,8,1.6,2,'red'); v.ell(27,8,1.6,2,'red')
-    v.inner('yel','white'); v.inner('yel','skin')
+    for x in range(17,24): v.px(x,14,v.col('skin',3))
+    v.px(16,13,v.col('skin',3)); v.px(24,13,v.col('skin',3))
+    v.px(17,10,v.col('skin',2)); v.px(23,9,INK)
+    v.ell(20,5,7,3,'hair',clip=lambda x,y:y<=6)
+    for x in range(16,25): v.px(x,16,v.col('hair',1))
+    v.inner('yel','skin')
     return v.thick()
 def herald():
     v=V(); legs(v,ramp='white')
@@ -209,15 +212,20 @@ def benefactor():
     v=V(); legs(v,x1=13,x2=23,ramp='dark')
     v.ell(20,30,11,10,'yel'); v.ell(20,20,10,3,'fur') if 'fur' in RAMP else None
     v.rect(9,34,31,35,'dark',flat=True)
-    # generous arm offering a bulging purse
+    # gold chain of office
+    for (x,y) in [(14,22),(15,24),(16,26),(18,27),(20,28),(22,27),(24,26),(25,24),(26,22)]: v.px(x,y,v.col('brown',2))
+    v.ell(20,29.5,1.6,1.6,'gold')
+    # one arm out holding a big open bag of gold
     v.poly([(28,23),(35,24),(35,28),(28,28)],'yel'); v.ell(36,26,2.2,2.2,'skin')
-    v.ell(40,26,4,4,'gold'); v.rect(38,21,42,23,'gold'); v.px(40,26,v.col('gold',3)); v.px(41,22,v.col('red',1))
-    v.poly([(12,23),(8,27),(10,30),(13,27)],'yel'); v.ell(9,30,2,2,'skin')
+    v.ell(41,31,5,5,'cloth'); v.rect(37,25,45,27,'cloth')
+    v.ell(41,25,3.4,1.6,'gold'); v.px(40,24,hx('#ffffff')); v.px(42,22,v.col('gold',0)); v.px(44,20,v.col('gold',0))
+    # other arm open wide in welcome
+    v.poly([(12,23),(4,20),(4,23),(12,27)],'yel'); v.ell(3,21,2.2,2.2,'skin')
     head(v); v.ell(20,4,7,2.6,'grhair',clip=lambda x,y:y<=5)
     for x in range(17,24): v.px(x,14,v.col('grhair',1))
     v.px(14,7,v.col('grhair',1)); v.px(26,7,v.col('grhair',1))
     v.rect(13,1,27,3,'purple'); v.px(20,0,v.col('gold',0))
-    v.inner('yel','skin')
+    v.inner('yel','skin'); v.inner('cloth','gold')
     return v.thick()
 def harlequin():
     v=V()
