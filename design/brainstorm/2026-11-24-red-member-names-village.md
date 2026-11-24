@@ -108,7 +108,7 @@ Verdict: send
 6. Judged: recruit test: "You recruited a Town Crier, and of course word spreads: the cheapest member in the shop joins too." It reads in one pass, belongs to the old village, playful with a slight dark edge.
 7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
 8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
-9. Biggest case: unchanged rule; once, when it joins: one free member costing about 3 to 5, the same as Mentor today.
+9. Biggest case: unchanged rule; once, when it joins: one free member costing about 3 to 5 resources and worth 1 follower, the same as Mentor today, against a winner's 70 to 110 followers.
 Verdict: send
 
 ## Idea: Apprentice
@@ -121,5 +121,5 @@ Verdict: send
 6. Judged: recruit test: "You recruited an Apprentice, and of course they move on, and a master costing up to 3 more takes their place for free." It reads in one pass, belongs to the old village, playful with a slight dark edge.
 7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
 8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
-9. Biggest case: unchanged rule; up to twice a game, each a member up to 3 dearer for free, the same as Seat Filler today.
+9. Biggest case: unchanged rule; up to 3 round starts a game, each trading up to a member costing up to 3 more for free (about 3 to 9 resources in all), the same as Seat Filler today, against a winner's 70 to 110 followers.
 Verdict: send
