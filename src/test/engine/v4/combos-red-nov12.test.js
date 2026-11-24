@@ -292,6 +292,16 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
     cleanLog(a);
   });
 
+  // Claude, under Cory's go-with-your-gut, Nov 24 (Cory, Nov 13: "test drive is probably a bit too good"): Test Drive
+  // ("Discard a shop member. Use its effect now, unless it is once per game. +1 blue.") sends a once per game member
+  // to the discard pile without using it; Talent Scouts ("On Use, once per game: recruit a member costing up to 7 for free.")
+  it('Test Drive on Talent Scouts (once per game): discarded, effect not used', () => {
+    const { s } = go('td-opg', { quads: QR, round: 1, turns: [0], shop: ['yellow.headhunters', 'red.purists'] }, [/Test Drive/, /Talent Scouts/]);
+    expect(s.log).toContain("P1's Test Drive: sends Talent Scouts to the discard pile.");
+    expect(s.discard.map(u => defById(s.cards[u].def).name)).toContain('Talent Scouts');
+    expect(s.players[0].members.length).toBe(0);
+  });
+
   // OPEN QUESTION: with no members at all, "your members have 2 or fewer colors" is true (0 colors); only reachable by
   // Test Drive (Purists itself is red). Asserts what the code does now: +3.
   it('Test Drive on Purists with no members: 0 colors, +3 today (open question)', () => {

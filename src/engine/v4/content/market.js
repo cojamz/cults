@@ -218,6 +218,9 @@ function windowPick(ctx, owner, left, sent = [], who = 'Window Shopper', row = n
 /** Test Drive (Nov 10): the hook that plays a member's effect now, by its printed timing; null when its timing doesn't count. */
 export function driveHook(def) {
   const t = def.text || '';
+  // Claude, under Cory's go-with-your-gut, Nov 24 (Cory, Nov 13: "test drive is probably a bit too good"; Nov 10 2:49pm
+  // he had kept once per game in "for now, watched in play"): a once per game effect no longer plays through Test Drive
+  if (/once per game/i.test(t)) return null;
   if (/^On Use\b/.test(t)) return def.onActivate ? 'onActivate' : null;
   if (/^On Recruit\b/.test(t)) return def.onRecruited ? 'onRecruited' : null;
   if (/^Round Start\b/.test(t)) return def.onRoundStart ? 'onRoundStart' : def.onRoundStartLate ? 'onRoundStartLate' : null;
@@ -387,7 +390,7 @@ const market = {
       // per game, once per round, Round End, Round start, On recruit" (2:49pm: once per game included for now, watched in
       // play); 2:51pm: named Test Drive. Any shop member may go; a member whose timing isn't one of those (Whenever, Game
       // End, none) only goes to the discard pile. The shop refills.
-      key: 'testdrive', ring: 1, name: 'Test Drive', copyDoesIt: true, text: 'Discard a shop member. Use its effect now. +1 blue.',
+      key: 'testdrive', ring: 1, name: 'Test Drive', copyDoesIt: true, text: 'Discard a shop member. Use its effect now, unless it is once per game. +1 blue.',
       estimate: ctx => 1 + (ctx.shopCards().some(c => driveHook(c.def)) ? 2.5 : 0.3),
       resolve(ctx, p) {
         ctx.gain(p, B, 1, { fromAction: true });
