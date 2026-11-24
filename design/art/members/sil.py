@@ -99,7 +99,7 @@ def wastrels():
 def campfollowers():
     v=V(); legs(v); p.body(v)
     # big pack piled with pots, pans and a bedroll; a ladle in hand
-    v.rect(26,10,38,30,'brown'); v.ell(32,9,6,2.6,'cloth')
+    v.rect(26,10,38,30,'brown'); v.ell(32,9,6,2.6,'cloth'); v.rect(37,0,37,10,'dark',flat=True); v.poly([(38,0),(45,2),(38,4)],'red')
     v.ell(38,18,3,3,'grey'); v.rect(40,17,44,18,'grey'); v.ell(36,26,2.6,2.6,'dark'); v.rect(28,30,30,33,'grey')
     p.armR(v,29,28)
     p.armL(v,8,30); v.line(9,30,6,20,v.col('grey',1),w=1); v.ell(6,19,2,1.6,'grey')
@@ -122,27 +122,29 @@ def pawnbrokers():
     return v.thick()
 def indulgence():
     v=V(); legs(v,ramp='brown',boot='brown'); p.body(v,belt=False,bot=42)
-    v.line(13,20,13,30,v.col('cloth',1)); v.line(27,20,27,30,v.col('cloth',1))
-    # hawker's tray hung round the neck, full of sealed papers
-    v.rect(8,30,32,34,'brown'); v.rect(8,30,32,30,'brown',flat=True)
-    for x in range(10,31,5): v.rect(x,25,x+3,30,'white'); v.ell(x+1.5,29,1.2,1,'red')
-    p.armL(v,7,27); p.armR(v,33,27)
-    head(v,mouth=False)
-    v.ell(20,14,2,1.4,'dark',flat=True)
+    v.rect(13,31,28,32,'cloth',flat=True)
+    # holding up one big pardon with a red seal, palm out for silver
+    p.armR(v,31,12); v.rect(28,2,42,16,'white'); v.rect(27,2,43,3,'cloth'); v.rect(27,15,43,16,'cloth')
+    for y in (5,7,9,11): v.rect(30,y,40,y,'grey',flat=True)
+    v.ell(39,14,2.4,2.4,'red'); v.rect(38,16,38,19,'red',flat=True); v.rect(40,16,40,18,'red',flat=True)
+    p.armL(v,6,28); scoin(v,5,25,1.6)
+    head(v,mouth=False); smile(v)
     v.ell(20,6,7.6,4,'hair',clip=lambda x,y:y>=6 and y<=8); v.ell(13,9,1.4,2.6,'hair'); v.ell(27,9,1.4,2.6,'hair')
     v.inner(C,'skin')
     return v.thick()
 def purseswitchers():
     v=V(); legs(v); p.body(v)
-    # arms crossed in front, swapping two purses hand to hand, sly grin
-    v.poly([(13,21),(26,27),(25,30),(12,24)],C); v.poly([(27,21),(14,27),(15,30),(28,24)],C)
-    v.ell(28,30,1.8,1.8,'skin'); v.ell(12,30,1.8,1.8,'skin')
-    v.ell(31,34,3,3,'brown'); v.rect(30,30,32,31,'brown'); v.ell(9,34,3,3,'grey'); v.rect(8,30,10,31,'grey')
-    for (x,y) in [(14,36),(17,38),(20,39),(23,38),(26,36)]: v.px(x,y,v.col('white',1))
-    head(v,mouth=False)
-    for x in range(18,24): v.px(x,14,v.col('skin',3))
-    v.px(24,13,v.col('skin',3)); v.px(16,10,v.col('skin',3)); v.px(17,10,v.col('skin',3))
-    hat(v,C,band='dark')
+    # a brown purse in one hand, a silver one in the other, swap arrows between them over the head
+    p.armL(v,6,26); p.armR(v,34,26)
+    v.ell(5,31,3.6,3.6,'brown'); v.rect(4,26,6,27,'brown'); v.ell(35,31,3.6,3.6,'grey'); v.rect(34,26,36,27,'grey'); v.px(34,30,hx('#ffffff'))
+    for (x0,x1,y,d) in [(9,15,22,1),(25,31,22,-1)]:
+        for x in range(x0,x1+1): v.px(x,y,v.col('white',0))
+    v.px(14,21,v.col('white',0)); v.px(14,23,v.col('white',0)); v.px(26,21,v.col('white',0)); v.px(26,23,v.col('white',0))
+    v.line(6,4,6,20,v.col('white',2)) if False else None
+    head(v,top=5,mouth=False)
+    for x in range(18,24): v.px(x,15,v.col('skin',3))
+    v.px(24,14,v.col('skin',3)); v.px(16,11,v.col('skin',3)); v.px(17,11,v.col('skin',3))
+    v.ell(20,6,7,3,'hair',clip=lambda x,y:y<=7)
     v.inner(C,'skin')
     return v.thick()
 def patronsaints():

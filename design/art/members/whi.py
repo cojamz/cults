@@ -32,11 +32,11 @@ def preachers():
     v.rect(15,33,18,37,'dark'); v.rect(22,33,25,37,'dark')
     v.poly([(13,14),(27,14),(28,33),(12,33)],C); v.rect(19,14,21,33,'dark',flat=True)
     v.poly([(27,15),(32,10),(33,3),(30,3),(29,9),(26,13)],C); v.ell(31.5,3,2,2,'skin')
-    v.rect(27,-1,36,4,'dark'); v.rect(31,-1,32,4,'red',flat=True)
+    v.rect(27,0,36,5,'red'); 
     v.poly([(13,15),(7,20),(5,24),(8,25),(12,20)],C); v.ell(6,25,2,2,'skin')
     v.rect(17,11,23,14,'skin')
     v.face(20,0,13,12,ey=5,mouth=False)
-    v.ell(20,8.5,2,1.6,'dark',flat=True)
+    v.ell(20,8.5,1.4,1.2,'dark',flat=True)
     for x in (16,17,22,23): v.px(x,3,v.col('hair',2))
     v.ell(20,0.5,6,1.6,'grhair',clip=lambda x,y:y<=1)
     v.inner(C,'skin'); v.inner(C,'dark')
@@ -70,7 +70,7 @@ def mourners():
     return v.thick()
 def connoisseurs():
     v=V(); legs(v,ramp='dark'); p.body(v,belt=False)
-    v.poly([(17,19),(23,19),(21,30),(19,30)],'mag',flat=True)
+    v.poly([(17,19),(23,19),(21,30),(19,30)],'gold',flat=True)
     v.rect(13,31,28,32,'dark',flat=True)
     # nose in the air, peering at a jewel through a big magnifying glass
     p.armR(v,30,14); v.line(30,14,33,10,v.col('brown',1),w=2); v.ell(36,7,4,4,'gold'); v.ell(36,7,2.8,2.8,'blue',flat=True); v.px(35,6,hx('#ffffff'))
@@ -79,13 +79,13 @@ def connoisseurs():
     for x in range(18,22): v.px(x,14,v.col('skin',3))
     v.px(16,10,v.col('skin',3)); v.px(17,10,v.col('skin',3))
     v.ell(20,4.5,7,2.6,'hair',clip=lambda x,y:y<=5); v.rect(13,3,27,3,'hair',flat=True); v.px(27,5,v.col('hair',1)); v.px(28,4,v.col('hair',1))
-    v.inner(C,'skin'); v.inner(C,'mag')
+    v.inner(C,'skin'); v.inner(C,'gold')
     return v.thick()
 def matchmaker():
     v=V(); legs(v,ramp='brown',boot='brown'); p.body(v,belt=False,bot=44,w=8)
     v.poly([(15,25),(25,25),(27,44),(13,44)],'white',flat=True)
     # old village matchmaker in a shawl, holding up a ring, two little portraits
-    v.poly([(11,19),(29,19),(26,27),(20,30),(14,27)],'mag')
+    v.poly([(11,19),(29,19),(26,24),(20,26),(14,24)],'blue')
     p.armR(v,32,12); v.ell(33,8,2.4,2.4,'gold'); v.ell(33,8,1.2,1.2,'gold',flat=True); v.px(33,8,None); v.px(33,6,hx('#ffffff')); v.px(33,5,v.col('blue',0))
     p.armL(v,6,30)
     for (x,y) in [(1,32),(7,34)]:
@@ -93,7 +93,7 @@ def matchmaker():
     head(v,mouth=False); smile(v)
     v.px(23,10,v.col('skin',3)); v.px(24,10,v.col('skin',3))
     v.ell(20,5,7,3,'grhair',clip=lambda x,y:y<=6); v.ell(20,2,3,2,'grhair')
-    v.inner(C,'skin'); v.inner(C,'mag')
+    v.inner(C,'skin'); v.inner(C,'wh')
     return v.thick()
 def dowry():
     v=V(); legs(v); p.body(v)
@@ -126,17 +126,18 @@ def martyrs():
     v.rect(13,31,28,32,'cloth',flat=True)
     # cheerful, arms spread, three arrows stuck harmlessly in the hat and sleeve
     v.poly([(13,20),(5,22),(5,25),(13,24)],C); v.ell(4,23.5,2,2,'skin'); v.poly([(27,20),(35,22),(35,25),(27,24)],C); v.ell(36,23.5,2,2,'skin')
-    for (x0,y0,x1,y1) in [(13,5,6,1),(27,5,34,1),(31,22,38,17)]:
-        v.line(x0,y0,x1,y1,v.col('dark',1),w=2); v.ell(x1,y1,1.6,1.6,'red'); v.px(x0,y0,v.col('grey',1))
+    for (x0,y0,x1,y1) in [(23,29,36,38),(17,33,5,41)]:
+        v.line(x0,y0,x1,y1,v.col('brown',3),w=2); d=1 if x1>x0 else -1
+        for (dx,dy) in [(0,0),(d,0),(0,1),(d,1),(-d,-1),(2*d,1)]: v.px(x1+dx,y1+dy,v.col('red',1))
     head(v,mouth=False); smile(v)
-    v.ell(20,4.5,8,3.5,C,clip=lambda x,y:y<=6); v.rect(10,6,30,7,C)
+    hair(v,'hair')
     v.inner(C,'skin')
     return v.thick()
 def washerwoman():
     v=V()
     # sleeves up, scrubbing at a board in a sudsy tub
     v.rect(15,30,18,38,'brown'); v.rect(22,30,25,38,'brown')
-    v.poly([(13,17),(27,17),(29,34),(11,34)],C); v.poly([(15,22),(25,22),(26,34),(14,34)],'blue',flat=True)
+    v.poly([(13,17),(27,17),(29,34),(11,34)],C); v.poly([(15,22),(25,22),(26,34),(14,34)],'white',flat=True)
     v.poly([(6,34),(34,34),(32,46),(8,46)],'brown'); v.rect(6,34,34,35,'brown',flat=True); v.line(7,40,33,40,v.col('brown',2))
     for (x,y,r) in [(10,32,2.4),(15,31,2),(27,32,2.6),(31,31,1.8),(22,30,1.6)]: v.ell(x,y,r,r,'white')
     v.rect(30,24,36,34,'grey'); 
@@ -146,7 +147,7 @@ def washerwoman():
     for (x,y) in [(38,22),(40,19),(36,19)]: v.ell(x,y,1,1,'white')
     head(v,top=2,mouth=False); smile(v,y=12)
     v.ell(20,3,8,3,'red',clip=lambda x,y:y<=4); v.rect(12,4,28,4,'red'); v.poly([(27,3),(31,1),(30,5)],'red')
-    v.inner(C,'skin'); v.inner(C,'blue')
+    v.inner(C,'skin'); v.inner(C,'white')
     return v.thick()
 ALL=lambda:[('Hermit',hermit()),('Executioner',executioner()),('Preachers',preachers()),('Misers',misers()),('Mourners',mourners()),('Connoisseurs',connoisseurs()),('Matchmaker',matchmaker()),('Dowry-Givers',dowry()),('Penitents',penitents()),('Martyrs',martyrs()),('Washerwoman',washerwoman())]
 if __name__=='__main__': sheet(ALL(),'whi-all.png',sc=6,cols=6)

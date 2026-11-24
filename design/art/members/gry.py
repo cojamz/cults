@@ -26,12 +26,14 @@ def squanderer():
     v=V(); legs(v); p.body(v,belt=False)
     v.poly([(17,19),(23,19),(21,30),(19,30)],'red',flat=True)
     v.rect(13,31,28,32,'dark',flat=True)
-    # flinging coins over the shoulder with both hands, grinning
-    v.poly([(13,20),(8,14),(7,8),(10,8),(12,14)],C); v.ell(8,7,2.2,2.2,'skin')
-    v.poly([(27,20),(32,14),(33,8),(30,8),(28,14)],C); v.ell(32,7,2.2,2.2,'skin')
-    for (x,y) in [(4,3),(12,1),(28,2),(37,4),(40,10),(2,10)]: coin(v,x,y,1.4)
+    # a purse in each hand, both turned upside down, coins pouring out of both
+    v.poly([(13,20),(6,16),(5,13),(8,12),(12,16)],C); v.ell(6,12,2,2,'skin')
+    v.poly([(27,20),(34,16),(35,13),(32,12),(28,16)],C); v.ell(34,12,2,2,'skin')
+    for bx in (6,34):
+        v.ell(bx,8,3.4,3,'brown'); v.rect(bx-1,11,bx+1,11,'brown')
+        for (dx,dy) in [(-2,15),(1,18),(-1,21),(2,24)]: coin(v,bx+dx,dy,1.3)
     head(v,mouth=False); smile(v)
-    v.ell(20,4,7,2.6,'ginger',clip=lambda x,y:y<=5); v.px(14,3,v.col('ginger',1)); v.px(26,3,v.col('ginger',1))
+    v.ell(20,4,7,2.6,'ginger',clip=lambda x,y:y<=5)
     v.inner(C,'skin'); v.inner(C,'red')
     return v.thick()
 def conjurer():
@@ -54,27 +56,27 @@ def seer():
     head(v,mouth=False)
     for (x,y) in [(16,10),(17,10),(23,10),(24,10)]: v.px(x,y,v.col('skin',3))
     smile(v)
-    v.ell(20,5,9,4,'purple',clip=lambda x,y:y<=7); v.rect(11,6,29,7,'purple'); v.ell(29,9,2,3,'purple')
+    v.ell(20,5,9,4,C,clip=lambda x,y:y<=7); v.rect(11,6,29,7,C); v.ell(29,9,2,3,C)
     for x in range(12,29,3): coin(v,x,7.5,1)
     v.ell(12,12,1,1,'gold')
     v.inner(C,'skin')
     return v.thick()
 def extrahand():
     v=V(); legs(v,ramp='brown'); p.body(v)
-    # a farmhand with a cheerful third arm: one waves, one holds a pitchfork, one a pail
-    p.armL(v,6,28); v.rect(2,29,9,35,'grey'); v.rect(2,29,9,29,'grey',flat=True)
-    p.armR(v,32,26); v.line(33,2,33,44,v.col('brown',1)); 
-    for x in (31,33,35): v.rect(x,0,x,4,'grey',flat=True)
-    v.rect(31,4,35,4,'grey',flat=True)
-    v.poly([(14,22),(8,16),(6,10),(9,9),(12,16)],C); v.ell(7,8,2.2,2.2,'skin')
-    for x in (5,7,9): v.px(x,5,v.col('skin',1))
+    # a helper with three arms: two on the hips, a third waving from the middle of the chest
+    v.poly([(13,20),(9,24),(13,30),(14,27),(11,24),(14,22)],C); v.ell(13,30,2,2,'skin')
+    v.poly([(27,20),(31,24),(27,30),(26,27),(29,24),(26,22)],C); v.ell(27,30,2,2,'skin')
+    v.poly([(19,24),(23,24),(33,12),(30,10)],C); v.ell(32,9,3,3,'white'); 
+    for x in (30,32,34): v.px(x,5,v.col('white',1)); v.px(x,6,v.col('white',1))
+    v.px(36,8,v.col('white',1)); v.px(36,9,v.col('white',1))
+    for (x,y) in [(37,4),(38,7),(28,4)]: v.px(x,y,v.col('white',0))
     head(v,mouth=False); smile(v)
-    v.ell(20,4,11,3,'cloth'); v.ell(20,2.5,6,3,'cloth')
-    v.inner(C,'skin')
+    hair(v,'hair'); v.px(14,3,v.col('hair',1)); v.px(26,3,v.col('hair',1))
+    v.inner(C,'skin'); v.inner(C,'white')
     return v.thick()
 def lordmanor():
     v=V(); legs(v,ramp='white',boot='dark'); p.body(v,belt=False)
-    v.poly([(9,19),(31,19),(35,42),(5,42)],'red'); p.body(v,belt=False)
+    v.poly([(9,19),(31,19),(35,42),(5,42)],'dark'); p.body(v,belt=False)
     for y in (23,27,31,35): v.px(20,y,v.col('gold',0))
     v.ell(20,20,8,2.4,'white')
     # striding first through the door: cane forward, plumed hat, nose up
@@ -85,7 +87,7 @@ def lordmanor():
     for x in range(17,23): v.px(x,13,v.col('hair',1))
     v.px(16,10,v.col('skin',3)); v.px(17,10,v.col('skin',3)); v.px(23,10,v.col('skin',3)); v.px(24,10,v.col('skin',3))
     v.ell(20,4.5,9,3.5,'dark',clip=lambda x,y:y<=6); v.rect(9,6,31,7,'dark'); v.line(24,3,34,-1,v.col('white',0),w=2); v.line(24,4,33,2,v.col('red',1))
-    v.inner(C,'skin'); v.inner('red',C)
+    v.inner(C,'skin')
     return v.thick()
 def moneychangers():
     v=V()
@@ -151,16 +153,15 @@ def trumpeter1():
 def meddler():
     v=V(); legs(v); p.body(v,belt=False)
     v.rect(13,31,28,32,'brown',flat=True)
-    # a busybody holding a little doll in each hand, about to swap them
-    p.armL(v,7,22); p.armR(v,33,22)
-    for (x,c) in [(5,'red'),(35,'blue')]:
-        v.rect(x-2,13,x+2,20,c); v.ell(x,11,2,2,'skin'); v.px(x-1,11,INK); v.px(x+1,11,INK)
-    for x in range(12,29,3): v.px(x,5,v.col('white',1))
-    v.line(11,4,14,2,v.col('white',2)); v.line(26,2,29,4,v.col('white',2))
+    # a busybody with arms crossed over, swapping a red doll and a blue doll between hands
+    v.poly([(13,21),(28,14),(30,16),(14,25)],C); v.poly([(27,21),(12,14),(10,16),(26,25)],C)
+    v.ell(30,14,2,2,'skin'); v.ell(10,14,2,2,'skin')
+    for (x,c) in [(33,'red'),(7,'blue')]:
+        v.rect(x-2,8,x+2,14,c); v.ell(x,6,2,2,'skin'); v.px(x-1,6,INK); v.px(x+1,6,INK)
     head(v,mouth=False)
     for x in range(18,23): v.px(x,14,v.col('skin',3))
-    v.px(17,13,v.col('skin',3)); v.px(16,10,v.col('skin',3)); v.px(17,9,v.col('skin',3)); v.px(23,9,v.col('skin',3)); v.px(24,10,v.col('skin',3))
-    v.ell(20,5,7,3,'grhair',clip=lambda x,y:y<=6); v.ell(20,2,3,2,'grhair')
+    v.px(17,13,v.col('skin',3)); v.px(16,10,v.col('skin',3)); v.px(23,9,v.col('skin',3))
+    v.ell(20,4,7,2.6,'hair',clip=lambda x,y:y<=5); v.ell(20,2.5,8,2,C); v.ell(20,1,3,1.4,C)
     v.inner(C,'skin')
     return v.thick()
 def weeders():
@@ -230,10 +231,13 @@ def crookedjudge():
     return v.thick()
 def spoilsport():
     v=V(); legs(v); p.body(v)
-    # sour face, arms folded, a bucket tipped to douse the fun
-    v.poly([(12,22),(28,24),(28,28),(12,26)],C); v.ell(28,26,2,2,'skin'); v.ell(12,24,2,2,'skin')
-    v.poly([(31,30),(41,26),(44,34),(34,38)],'grey'); v.ell(42.5,30,2,4,'grey',flat=True)
-    for (x,y) in [(44,36),(46,40),(43,42),(45,45)]: v.px(x,y,v.col('blue',0)); v.px(x,y+1,v.col('blue',1))
+    # sour face, tearing a winner's rosette in half
+    p.armL(v,8,24); p.armR(v,32,24)
+    for (x,dy) in [(5,0),(35,0)]:
+        v.ell(x,20,3.4,3.4,'blue'); v.ell(x,20,1.4,1.4,'gold',flat=True)
+    v.rect(4,23,6,29,'blue'); v.rect(34,23,36,29,'blue')
+    v.rect(8,17,8,23,'dark',flat=True) if False else None
+    for y in range(16,25): v.px(9 if y%2 else 8,y,None); v.px(31 if y%2 else 32,y,None)
     head(v,mouth=False)
     for x in (15,16,17): v.px(x,8,v.col('hair',2))
     for x in (23,24,25): v.px(x,8,v.col('hair',2))

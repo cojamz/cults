@@ -77,27 +77,25 @@ def forger():
     for (x,arm) in [(2,lambda: p.armL(v,8,24)),(33,lambda: p.armR(v,33,24))]:
         arm(); v.rect(x,14,x+8,24,'white'); 
         for y in (16,18,20): v.rect(x+1,y,x+7,y,'grey',flat=True)
-        v.ell(x+6,22,1.6,1.6,'red')
+        v.ell(x+5,21.5,2.2,2.2,'red'); v.px(x+5,21,v.col('red',3))
     head(v,mouth=False)
     for x in range(18,24): v.px(x,14,v.col('skin',3))
     v.px(24,13,v.col('skin',3))
     v.px(15,10,v.col('skin',3)); v.px(15,11,INK); v.px(16,11,INK)
-    v.rect(13,3,27,5,C); v.ell(20,3,6,2,C); v.px(13,6,v.col('hair',1)); v.px(27,6,v.col('hair',1))
-    v.line(27,4,31,0,v.col('white',1)); v.px(31,0,v.col('white',0))
+    v.ell(20,6,9,8,C,clip=lambda x,y:y<=5 or x<13 or x>26)
     v.inner(C,'skin')
     return v.thick()
 def talltale():
     v=V(); legs(v); p.body(v)
-    # arms wide apart: "the fish was THIS big", with the tiny real fish dangling
-    v.poly([(13,20),(3,18),(2,21),(13,24)],C); v.ell(2,19,2,2,'skin')
-    v.poly([(27,20),(37,18),(38,21),(27,24)],C); v.ell(38,19,2,2,'skin')
-    for (x,y) in [(5,12),(8,10),(32,10),(35,12)]: v.px(x,y,v.col('white',1))
-    v.line(38,21,38,26,v.col('white',2)); v.ell(38,28,2.4,1.4,'blue'); v.poly([(40,28),(42,26),(42,30)],'blue'); v.px(37,27,INK)
-    head(v,mouth=False)
-    v.ell(20,14,2,1.6,'dark',flat=True)
-    v.px(16,9,v.col('hair',2)); v.px(17,8,v.col('hair',2)); v.px(23,8,v.col('hair',2)); v.px(24,9,v.col('hair',2))
-    hat(v,'cloth',band=C)
-    v.inner(C,'skin')
+    # arms flung wide, holding up a fish far bigger than any fish could be
+    v.poly([(13,20),(4,14),(3,17),(12,24)],C); v.ell(4,14,2,2,'skin')
+    v.poly([(27,20),(36,14),(37,17),(28,24)],C); v.ell(36,14,2,2,'skin')
+    v.ell(20,7,15,4.4,'blue'); v.poly([(34,7),(41,2),(41,12)],'blue'); v.px(8,6,INK); v.px(7,6,hx('#ffffff'))
+    for x in range(10,32,3): v.px(x,5,v.col('blue',0)); v.px(x+1,9,v.col('blue',2))
+    v.rect(5,8,6,10,'blue',flat=True)
+    v.rect(17,16,23,19,'skin'); v.face(20,10,11,9,ey=13,mouth=False)
+    v.ell(20,17,1.6,1,'dark',flat=True)
+    v.inner(C,'skin'); v.inner('blue','skin')
     return v.thick()
 def admirers():
     v=V(); legs(v,ramp='dark'); p.body(v,belt=False,bot=42)
@@ -148,15 +146,16 @@ def secretkeepers():
 def trapper():
     v=V(); legs(v,ramp='brown'); p.body(v)
     v.rect(13,19,27,21,'fur')
-    # fur hat, a sprung jaw trap held up by its chain
-    p.armR(v,31,18); v.line(31,18,33,24,v.col('grey',1))
-    v.ell(35,29,6,4,'grey',clip=lambda x,y:abs((x+.5-35)**2/36+(y+.5-29)**2/16-1)<.5)
-    for x in range(30,41,2): v.px(x,26,v.col('grey',0)); v.px(x,32,v.col('grey',0))
-    v.rect(34,28,36,30,'grey')
+    # fur hat, pointing proudly at a big sprung jaw trap at the feet
+    # a rabbit dangling by its hind legs from one hand, a rope snare loop in the other
+    v.ell(35,33,3.4,5.6,'grhair'); v.ell(35,40,2.4,2.2,'grhair'); v.rect(33,26,34,29,'grhair'); v.rect(36,26,37,29,'grhair')
+    v.rect(34,42,34,45,'grhair'); v.rect(36,42,36,45,'grhair'); v.px(34,40,INK); v.px(35,32,v.col('grhair',2))
+    v.ell(5,32,3.4,3.4,'cloth',clip=lambda x,y:abs((x+.5-5)**2+(y+.5-32)**2-10)<4); v.line(7,29,8,27,v.col('cloth',1))
+    v.poly([(27,20),(34,22),(34,25),(27,24)],C); v.ell(35,24,2,2,'skin')
     p.armL(v,8,30)
     head(v,mouth=False); smile(v)
     for (dx,dy) in [(-4,13),(-2,15),(2,15),(4,13),(0,16)]: v.px(20+dx,dy,v.col('hair',1))
-    v.ell(20,4,8,4,'brown'); v.rect(12,6,28,7,'fur'); v.ell(28,8,2,3,'brown'); v.poly([(27,10),(30,13),(28,14)],'fur')
+    v.ell(20,4,8,4.4,'fur'); v.rect(12,5,28,7,'brown'); v.poly([(26,3),(33,8),(31,10),(26,6)],'fur'); v.px(32,9,v.col('dark',1))
     v.inner(C,'skin'); v.inner(C,'fur')
     return v.thick()
 def minstrel():

@@ -63,28 +63,31 @@ def oldclothes():
     v.inner(C,'skin'); v.inner(C,'green')
     return v.thick()
 def scavengers():
-    v=V(); legs(v,ramp='brown'); body(v)
-    for (x,y) in [(14,36),(25,25)]: v.rect(x,y,x+2,y+2,'cloth',flat=True)
-    # basket of junk on back, holding up a found boot
-    v.rect(26,12,36,26,'brown'); v.line(26,16,36,16,v.col('brown',2)); v.line(26,21,36,21,v.col('brown',2))
-    v.rect(28,8,30,12,'grey'); v.ell(33,10,2,2,'red'); v.rect(35,9,37,12,'white')
-    armL(v,6,18); v.poly([(2,10),(6,10),(6,16),(9,17),(9,19),(2,19)],'hair')
-    armR(v,30,30)
-    head(v,mouth=False); for_ = [v.px(x,14,v.col('skin',3)) for x in range(17,23)]
-    v.ell(20,5,7.5,3.4,'cloth',clip=lambda x,y:y<=6); v.rect(12,6,28,7,'cloth')
-    v.inner(C,'skin'); v.inner(C,'brown')
+    v=V()
+    # bent over, rummaging in a junk heap, holding up one find: an old kettle
+    v.ell(36,42,11,6,'brown',clip=lambda x,y:y<=47); 
+    for (x,y,c) in [(30,39,'grey'),(36,38,'red'),(41,40,'white'),(33,42,'cloth'),(39,43,'green')]: v.rect(x,y,x+2,y+1,c)
+    v.poly([(12,38),(15,38),(15,44),(11,44)],'brown'); v.poly([(18,38),(21,38),(23,44),(19,44)],'brown'); v.rect(10,45,15,46,'hair'); v.rect(19,45,24,46,'hair')
+    v.poly([(10,22),(24,18),(27,38),(10,38)],C); v.rect(14,26,16,28,'cloth',flat=True)
+    v.poly([(24,20),(30,28),(28,30),(22,24)],C); v.ell(29,31,2,2,'skin')
+    v.poly([(11,22),(6,16),(4,11),(7,10),(10,16)],C); v.ell(5,9,2.2,2.2,'skin')
+    v.ell(5,4,3.4,2.6,'grey'); v.rect(3,1,7,1,'grey'); v.line(8,3,11,1,v.col('grey',1)); v.px(4,3,hx('#ffffff'))
+    head(v,cx=22,top=4,mouth=False)
+    for x in range(20,25): v.px(x,14,v.col('skin',3))
+    v.ell(22,5,7.5,3.4,'cloth',clip=lambda x,y:y<=6); v.rect(14,6,30,7,'cloth')
+    v.inner(C,'skin')
     return v.thick()
 def homecomers():
-    v=V(); legs(v); body(v)
-    # bindle on a stick over the shoulder, waving hello
-    v.line(26,22,38,6,v.col('brown',1),w=2); v.ell(39,7,4.5,4,'red'); v.px(38,6,v.col('white',1)); v.px(40,8,v.col('white',1)); v.px(41,6,v.col('white',1))
-    armR(v,28,22)
-    v.poly([(13,20),(8,16),(6,10),(9,9),(12,16)],C); v.ell(7,8,2.4,2.2,'skin')
-    for x in (5,7,9): v.px(x,5,v.col('skin',1)); v.px(x,6,v.col('skin',1))
-    head(v,mouth=False)
-    for x in range(17,24): v.px(x,14,v.col('skin',3))
-    v.px(16,13,v.col('skin',3)); v.px(24,13,v.col('skin',3))
-    v.ell(20,5,7,3,'ginger',clip=lambda x,y:y<=6)
+    v=V()
+    # home at last: a cottage door with a lit window behind, bindle dropped, arms up in joy
+    v.rect(28,8,46,46,'brown'); v.poly([(26,9),(37,0),(48,9)],'red'); v.rect(31,24,38,46,'hair'); v.px(36,35,v.col('gold',0))
+    v.rect(40,14,45,20,'gold',flat=True); v.rect(42,14,42,20,'brown',flat=True); v.rect(40,17,45,17,'brown',flat=True)
+    legs(v,x1=10,x2=17); v.poly([(8,19),(21,19),(22,40),(7,40)],C); v.rect(7,31,22,32,'brown',flat=True)
+    v.poly([(8,20),(4,14),(3,8),(6,8),(9,15)],C); v.ell(4,7,2.2,2.2,'skin')
+    v.poly([(21,20),(25,14),(26,8),(23,8),(20,15)],C); v.ell(25,7,2.2,2.2,'skin')
+    v.ell(26,44,3.4,2.6,'red'); v.line(22,46,28,40,v.col('brown',1))
+    head(v,cx=14,mouth=False); smile(v,cx=14) if 'smile' in globals() else [v.px(x,14,v.col('skin',3)) for x in range(11,18)]
+    v.ell(14,5,7,3,'ginger',clip=lambda x,y:y<=6)
     v.inner(C,'skin')
     return v.thick()
 def shopper():
@@ -130,16 +133,17 @@ def culler():
     v.inner(C,'skin'); v.inner(C,'brown')
     return v.thick()
 def restockers():
-    v=V(); legs(v); body(v)
-    # tall stack of crates carried in both arms, up past the head
-    for i,y in enumerate((26,18,10,2)):
-        x0=24+(i%2); v.rect(x0,y,x0+14,y+7,'brown'); v.line(x0,y+3,x0+14,y+3,v.col('brown',2)); v.px(x0+7,y+1,v.col([ 'red','green','gold','mag'][i],1)); v.px(x0+8,y+1,v.col(['red','green','gold','mag'][i],1))
-    armR(v,25,30); armL(v,22,26)
-    head(v,cx=17,mouth=False)
-    for x in range(14,19): v.px(x,14,v.col('skin',3))
-    v.ell(17,5,7,3,'hair',clip=lambda x,y:y<=6)
-    v.ell(10,9,1.4,1.4,hx('#bfe8ff') and 'bl')
-    v.inner(C,'skin'); v.inner(C,'brown')
+    v=V(); legs(v,x1=10,x2=17); v.poly([(8,19),(21,19),(22,40),(7,40)],C); v.rect(7,31,22,32,'brown',flat=True)
+    # filling an empty shelf from a full crate
+    v.rect(26,4,46,46,'brown'); v.rect(28,6,44,15,'dark',flat=True); v.rect(28,18,44,27,'dark',flat=True); v.rect(28,30,44,39,'dark',flat=True)
+    for i,c in enumerate(['red','gold','green','blue']): v.ell(30+i*4,13,1.6,1.8,c)
+    for i,c in enumerate(['mag','red']): v.ell(30+i*4,25,1.6,1.8,c)
+    v.poly([(21,20),(28,22),(28,25),(21,24)],C); v.ell(29,23,2,2,'skin'); v.ell(33,22,1.6,1.8,'gold')
+    v.poly([(8,20),(4,28),(7,30),(10,24)],C); v.rect(1,30,11,38,'cloth'); v.line(1,34,11,34,v.col('cloth',3)); v.ell(4,29,1.6,1.4,'green'); v.ell(8,29,1.6,1.4,'blue')
+    head(v,cx=14,mouth=False)
+    for x in range(12,17): v.px(x,14,v.col('skin',3))
+    v.ell(14,5,7,3,'hair',clip=lambda x,y:y<=6)
+    v.inner(C,'skin')
     return v.thick()
 def tagalongs():
     v=V()
@@ -176,8 +180,9 @@ def regular():
 def duskbuyer():
     v=V()
     # setting sun behind, lantern held up, coin purse at the belt
-    v.ell(37,12,8,8,'gold',flat=True,clip=lambda x,y:y<=12)
-    for y in (13,15): v.rect(28,y,46,y,'ginger',flat=True)
+    v.ell(38,16,7,7,'ginger',flat=True,clip=lambda x,y:y<=16)
+    v.rect(26,17,47,17,'ginger',flat=True)
+    for (x0,y0,x1,y1) in [(38,7,38,4),(31,10,29,8),(45,10,47,8)]: v.line(x0,y0,x1,y1,v.col('ginger',1))
     legs(v); body(v)
     v.ell(15,35,2.6,2.6,'brown'); v.px(15,33,v.col('gold',0))
     armR(v,32,18); v.line(32,18,32,20,INK); v.rect(30,21,34,27,'dark'); v.rect(31,22,33,26,'gold',flat=True); v.px(32,23,hx('#ffffff'))

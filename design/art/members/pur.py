@@ -50,20 +50,19 @@ def courier():
     v.inner(C,'skin')
     return v.thick()
 def latecomers():
-    v=V()
-    # bursting in, coat half on, hat flying off behind, one shoe untied
-    v.poly([(15,38),(19,38),(16,44),(12,44)],'dark'); v.rect(10,44,15,46,'hair')
-    v.poly([(21,38),(25,38),(29,43),(25,44)],'dark'); v.rect(25,43,30,45,'hair'); v.line(29,46,32,46,v.col('white',1))
-    v.poly([(15,19),(27,17),(29,38),(13,38)],C)
-    v.poly([(27,19),(36,22),(36,25),(27,24)],C); v.ell(37,23.5,2,2,'skin')
-    v.poly([(15,20),(10,27),(4,30),(6,33),(13,29)],C); v.rect(3,30,6,36,C)
-    v.ell(8,4,5,2,'dark'); v.ell(8,2.6,3,1.8,'dark'); v.rect(4,3,12,3,C,flat=True)
-    for (x,y) in [(13,6),(14,5),(15,7)]: v.px(x,y,v.col('white',2))
-    head(v,cx=22,top=4,mouth=False)
-    v.ell(22,14,1.8,1.4,'dark',flat=True)
-    v.ell(22,5,7,3,'hair',clip=lambda x,y:y<=6); v.px(16,3,v.col('hair',1)); v.px(28,4,v.col('hair',1))
-    v.px(29,8,v.col('bl' if 'bl' in RAMP else 'blue',0)); v.px(29,9,v.col('blue',1))
-    v.inner(C,'skin')
+    v=V(); legs(v,ramp=C); body(v)
+    # arrived late and sheepish: hat held to the chest, staring at a big pocket watch, sweat drop
+    v.poly([(13,20),(14,26),(18,27),(16,21)],C); v.ell(18,26,2,2,'skin'); v.ell(16,27,4.4,2,'dark'); v.ell(16,25.5,3,2,'dark',clip=lambda x,y:y<=26)
+    p_=None
+    v.poly([(27,20),(33,18),(34,21),(29,24)],C); v.ell(34,19,2,2,'skin'); v.line(34,20,34,23,v.col('gold',1))
+    v.ell(34,28,4.6,4.6,'gold'); v.ell(34,28,3.4,3.4,'white',flat=True); v.line(34,28,34,25,INK); v.line(34,28,36,29,INK)
+    head(v,mouth=False)
+    for x in range(18,23): v.px(x,14,v.col('skin',3))
+    v.px(17,15,v.col('skin',3)); v.px(23,15,v.col('skin',3))
+    v.px(16,9,v.col('hair',2)); v.px(17,8,v.col('hair',2)); v.px(23,8,v.col('hair',2)); v.px(24,9,v.col('hair',2))
+    v.ell(20,5,7,3,'hair',clip=lambda x,y:y<=6); v.px(15,3,v.col('hair',1)); v.px(25,3,v.col('hair',1))
+    v.ell(28,7,1,1.6,'white'); v.ell(29,11,0.8,1.2,'white')
+    v.inner(C,'skin'); v.inner(C,'dark')
     return v.thick()
 def sleepyhead():
     v=V(); legs(v,ramp=C,boot='mag' if 'mag' in RAMP else 'red'); body(v,belt=False,bot=40)
@@ -124,8 +123,8 @@ def timekeeper():
 def hurriers():
     v=V()
     # sprinting flat out, leaning hard forward, dust puffs behind
-    v.poly([(16,32),(20,33),(12,40),(8,39)],'dark'); v.rect(5,38,9,40,'hair')
-    v.poly([(22,32),(26,32),(32,40),(29,42)],'dark'); v.rect(29,41,34,43,'hair')
+    v.poly([(16,32),(20,33),(12,40),(8,39)],C); v.rect(5,38,9,40,'hair')
+    v.poly([(22,32),(26,32),(32,40),(29,42)],C); v.rect(29,41,34,43,'hair')
     v.poly([(18,16),(30,20),(26,34),(14,30)],C)
     v.poly([(28,19),(36,26),(34,28),(26,23)],C); v.ell(36,28,2,2,'skin')
     v.poly([(18,18),(10,14),(9,17),(17,23)],C); v.ell(9,14,2,2,'skin')
@@ -139,7 +138,6 @@ def hurriers():
     return v.thick()
 def lastcallers():
     v=V(); legs(v); body(v)
-    v.poly([(15,22),(25,22),(25,40),(15,40)],'white',flat=True)
     # ringing a hand bell overhead, shouting, empty tankard
     armR(v,31,9); v.poly([(29,1),(35,1),(37,8),(27,8)],'gold'); v.rect(31,-1,33,1,'brown'); v.ell(32,9,1.2,1.2,'gold')
     for (x,y) in [(25,1),(24,4),(39,1),(40,4)]: v.px(x,y,v.col('white',0))

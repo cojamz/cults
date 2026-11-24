@@ -58,10 +58,7 @@ def skinflint():
     v=V(); legs(v,x1=15,x2=21,ramp='dark'); p.body(v,w=5,belt=False)
     # thin, hunched, clutching a purse shut, a moth flying out of it
     v.poly([(15,20),(20,26),(25,20),(25,24),(20,29),(15,24)],C)
-    v.ell(20,29,3.6,3.2,'brown'); v.rect(18,25,22,26,'brown'); v.ell(17,28,1.8,1.8,'skin'); v.ell(23,28,1.8,1.8,'skin')
-    v.rect(19,24,21,24,'grey',flat=True)
-    v.ell(29,19,3,2.2,'white'); v.ell(34,19,3,2.2,'white'); v.rect(31,17,32,22,'grey',flat=True); v.px(30,15,v.col('grey',2)); v.px(33,15,v.col('grey',2))
-    for (x,y) in [(26,25),(27,24)]: v.px(x,y,v.col('white',2))
+    coin(v,20,27,3.2); v.ell(20,27,1.6,1.6,'gold',flat=True); v.ell(16.5,28,1.8,1.8,'skin'); v.ell(23.5,28,1.8,1.8,'skin')
     head(v,w=11,mouth=False)
     for x in range(16,19): v.px(x,10,v.col('skin',3))
     for x in range(22,25): v.px(x,10,v.col('skin',3))
@@ -75,7 +72,7 @@ def poorrelation():
     for (x,y) in [(14,24),(23,34),(25,26)]: v.rect(x,y,x+2,y+2,'cloth',flat=True); v.px(x,y,v.col('cloth',3))
     v.rect(13,31,28,31,'cloth',flat=True)
     # holding a battered hat out, hopeful eyes up
-    p.armR(v,31,27); v.ell(35,28,5,2,'dark'); v.ell(35,26,3,2.6,'dark',clip=lambda x,y:y<=27); v.px(34,25,v.col('dark',3))
+    p.armR(v,31,27); v.ell(35,26,5,3,'brown',clip=lambda x,y:y>=26); v.rect(30,25,40,25,'brown',flat=True); coin(v,35,24,1.4)
     p.armL(v,8,30)
     head(v,mouth=False)
     v.px(16,10,hx('#ffffff')); v.px(23,10,hx('#ffffff'))
@@ -88,8 +85,8 @@ def alchemists():
     v=V(); legs(v,ramp='dark'); p.body(v,belt=False,bot=42)
     v.rect(13,31,28,32,'brown',flat=True)
     # flask held up, bubbling green, gold drop falling; goggles on forehead
-    p.armR(v,32,16); v.ell(33,13,3.4,3.4,'white'); v.ell(33,14,2.8,2.2,'green',flat=True); v.rect(32,6,34,10,'white')
-    for (x,y,r) in [(32,4,1),(35,2,1.4),(31,1,0.8)]: v.ell(x,y,r,r,'green')
+    p.armR(v,32,16); v.ell(33,13,3.4,3.4,'white'); v.ell(33,14,2.8,2.2,'gold',flat=True); v.rect(32,6,34,10,'white')
+    for (x,y,r) in [(32,4,1),(35,2,1.4),(31,1,0.8)]: v.ell(x,y,r,r,'gold')
     coin(v,36,20,1.2)
     p.armL(v,8,30); v.rect(5,32,10,37,'brown'); v.rect(6,31,9,31,'red',flat=True)
     head(v,mouth=False); smile(v)
@@ -99,7 +96,7 @@ def alchemists():
     return v.thick()
 def gambler():
     v=V(); legs(v,ramp='dark'); p.body(v,belt=False)
-    v.poly([(17,19),(23,19),(21,30),(19,30)],'red',flat=True)
+    v.poly([(17,19),(23,19),(21,30),(19,30)],'gold',flat=True)
     v.rect(13,31,28,32,'dark',flat=True)
     # rolling dice from a raised hand, a card tucked in the hatband
     p.armR(v,32,15)
@@ -111,7 +108,7 @@ def gambler():
     v.px(24,13,v.col('skin',3)); v.px(22,10,v.col('skin',3)); v.px(23,10,v.col('skin',3))
     v.rect(14,6,26,7,'dark'); v.rect(16,1,24,6,'dark'); v.rect(16,5,24,5,C,flat=True); v.rect(22,0,24,4,'white'); v.px(23,1,v.col('red',1))
     v.rect(9,7,31,7,'dark')
-    v.inner(C,'skin'); v.inner(C,'red')
+    v.inner(C,'skin'); v.inner(C,'gold')
     return v.thick()
 def baron():
     v=V(); legs(v,x1=13,x2=23,ramp='dark'); v.ell(20,30,11,10,C)
