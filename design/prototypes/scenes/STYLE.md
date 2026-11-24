@@ -1,3 +1,5 @@
+> **Superseded 2026-11-24.** Member pictures now follow the "Member and minion pictures" rules in design/taste.md (one pixel style grown from the leader and minions, readable at a distance at table size, dressed as who they are, no prop in a fixed spot). Kept for its kit and history only.
+
 # Style F: diorama, closer (the member portrait style)
 
 Cory picked this on Oct 29: "middle zoom is good, but the art looks rough still". These rules come from a pro pixel critique of the rough version. Every member redraw follows them. The code that enforces most of them is `kit.py`, and `art.py` holds the four reference scenes: Kingpin, Mob, Tiebreaker and Launderers.

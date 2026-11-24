@@ -1,3 +1,5 @@
+> **Superseded 2026-11-24.** Member pictures now follow the "Member and minion pictures" rules in design/taste.md (one pixel style grown from the leader and minions, readable at a distance at table size, dressed as who they are, no prop in a fixed spot). Kept for its kit and history only.
+
 # Redraw every member as a little scene (Oct 29)
 
 Cory picked style F, the "diorama, closer" look, and wants everything live for a playtest today. Each artist draws one batch.

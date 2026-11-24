@@ -14,3 +14,4 @@ You just opened screen code. Before changing anything Cory will see, read design
 - Snappy: clicks and hovers answer within 100 ms measured as "card complete"; the wheel lands in 400 ms; motion 150-350 ms per beat, never making him wait to act.
 - Done means you saw it yourself in a screenshot of a fresh frozen build at about 1270x700.
 - Lessons for screen work: design/lessons/screen.md.
+- Member and minion pictures: the "Member and minion pictures" block in design/taste.md (Cory, Nov 24) is the only art rule. The Oct 29 scene rules (design/prototypes/scenes/STYLE.md, BRIEF.md) are superseded: members are not all in cloaks, carry no prop in a fixed spot, and must read at a distance at table size.
