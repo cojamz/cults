@@ -55,7 +55,15 @@ for (const f of readdirSync(SRC).filter(x => /^icons-[\w-]+\.js$/.test(x)).sort(
   }
 }
 
-if (existsSync(`${SRC}/emojis.js`)) {
+// Minions on the 32 grid in the member style (Cory, Nov 24): design/art/minions/minions.py writes minions.json, which
+// replaces the 16-pixel emojis.js drawings (kept there as the originals).
+const DENSE = new URL('../design/art/minions/minions.json', import.meta.url);
+if (existsSync(DENSE)) {
+  const list = JSON.parse(readFileSync(DENSE, 'utf8'));
+  write('emojis', list, 'design/art/minions/minions.json');
+  names.push('emojis');
+  console.log(`minions.json → emojis (${list.length})`);
+} else if (existsSync(`${SRC}/emojis.js`)) {
   run('emojis.js');
   const M = box.CultMinions;
   const errs = M.validateAll ? M.validateAll() : [];

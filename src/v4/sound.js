@@ -391,20 +391,6 @@ const CALLS = {
     });
     return 0.25;
   },
-  // a spell cast: a rush of air rising, then a shimmering chord with falling twinkles (Cor, Nov 4: "needs something a
-  // little better"; picked by Claude while he was away; the other two tries are on the sounds page)
-  wizard(ctx, dest, t, r) {
-    const bp = hiss(ctx, dest, t, 0.18, r, { f: 700, q: 1.5, peak: 0.12, attack: 0.14 });
-    bp.frequency.setValueAtTime(700, t); bp.frequency.exponentialRampToValueAtTime(4000, t + 0.18);
-    const c = t + 0.15;
-    [1318.5, 1661.2, 1975.5].forEach((f, i) => {
-      const g = env(ctx, dest, c, 0.06, 0.005, 0.5); const trem = ctx.createGain(); trem.gain.value = 0.7; trem.connect(g);
-      wobble(ctx, trem.gain, c, 0.5, 9 + i * 1.3, 0.3);
-      [-7, 7].forEach(det => { const o = tone(ctx, 'sine', f, c, 0.5, trem); o.detune.value = det; });
-    });
-    [3520, 3136, 2637, 2349, 1976].forEach((f, i) => { const at = c + 0.05 + i * 0.045 + r() * 0.01; tone(ctx, 'sine', f, at, 0.16, env(ctx, dest, at, 0.045, 0.002, 0.15)); });
-    return 0.7;
-  },
   // a soft pop and a puff of spores (Cor's redo, Nov 4)
   mushroom(ctx, dest, t, r) {
     sweep(ctx, 'sine', 950, 320, t, 0.05, env(ctx, dest, t, 0.35, 0.002, 0.05));
@@ -526,41 +512,38 @@ const CALLS = {
     }
     return at - t + 0.02;
   },
-  // a moth at a lantern: a soft papery flutter of wings
-  moth(ctx, dest, t, r) {
-    const d = 0.36;
-    const g = held(ctx, dest, t, 0.4, 0.03, d);
-    const flap = ctx.createGain(); flap.gain.value = 0.5; flap.connect(g);
-    wobble(ctx, flap.gain, t, d, 22, 0.5, 'triangle');
-    hiss(ctx, flap, t, d, r, { f: 1100, q: 0.8, peak: 0.5, attack: 0.01 });
-    return d + 0.03;
+  // a gnome's little "hee-hee", high and quick
+  gnome(ctx, dest, t, r) {
+    const s = ['h', 'i'];
+    return follower(ctx, dest, t, r, { word: [s, s], pitch: 1.25 });
   },
-  // a scarecrow: straw rustling and its wooden post creaking
-  scarecrow(ctx, dest, t, r) {
-    for (let i = 0; i < 6; i++) { const at = t + r() * 0.3; hiss(ctx, dest, at, 0.04 + r() * 0.04, r, { f: 3500 + r() * 2000, q: 1.2, peak: 0.1, attack: 0.004 }); }
-    const d = 0.38, at = t + 0.06;
-    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 7; bp.connect(held(ctx, dest, at, 0.35, 0.05, d));
-    const c = ctx.createGain(); c.gain.value = 0.6; c.connect(bp);
-    wobble(ctx, c.gain, at, d, 32, 0.6, 'square');
-    const o = tone(ctx, 'sawtooth', 95, at, d, c); o.frequency.linearRampToValueAtTime(125, at + d);
-    return 0.46;
+  // a hare thumping its back foot: two soft low thuds and a quick sniff
+  hare(ctx, dest, t, r) {
+    [0, 0.13].forEach(at0 => {
+      const at = t + at0;
+      sweep(ctx, 'sine', 150, 60, at, 0.09, env(ctx, dest, at, 0.6, 0.003, 0.09));
+      hiss(ctx, dest, at, 0.02, r, { type: 'lowpass', f: 700, peak: 0.2, attack: 0.001 });
+    });
+    const bp = hiss(ctx, dest, t + 0.27, 0.05, r, { f: 2600, q: 4, peak: 0.18, attack: 0.006 });
+    bp.frequency.setValueAtTime(2200, t + 0.27); bp.frequency.exponentialRampToValueAtTime(3600, t + 0.32);
+    return 0.36;
   },
-  // a candle lit: a match's scratch, the flame catching with a soft whump, a crackle
-  candle(ctx, dest, t, r) {
-    const bp = hiss(ctx, dest, t, 0.09, r, { f: 2500, q: 1.2, peak: 0.22, attack: 0.004 });
-    bp.frequency.setValueAtTime(2500, t); bp.frequency.exponentialRampToValueAtTime(5000, t + 0.09);
-    const at = t + 0.1;
-    sweep(ctx, 'sine', 170, 70, at, 0.22, env(ctx, dest, at, 0.5, 0.02, 0.2));
-    const f = hiss(ctx, dest, at, 0.26, r, { type: 'lowpass', f: 900, peak: 0.16, attack: 0.03 });
-    f.frequency.setValueAtTime(500, at); f.frequency.linearRampToValueAtTime(1500, at + 0.08);
-    [0.3, 0.37].forEach(k => hiss(ctx, dest, t + k, 0.006, r, { f: 3500, q: 2, peak: 0.16, attack: 0.001 }));
-    return 0.42;
+  // a goose's "honk": a nasal blare, then a shorter second one
+  goose(ctx, dest, t) {
+    [[0, 0.16, 330], [0.2, 0.11, 360]].forEach(([at0, d, f]) => voiced(ctx, dest, t + at0, d, { f: [f, f * 1.12, f * 0.95], formants: [[[900, 1100, 950], 4, 1], [[2300, 2500, 2300], 6, 0.7]], peak: 0.4, attack: 0.01, rasp: [60, 0.35] }));
+    return 0.33;
+  },
+  // a badger's grumble: a low, rough snuffling growl
+  badger(ctx, dest, t, r) {
+    voiced(ctx, dest, t, 0.32, { f: [120, 135, 105], formants: [[[400, 520, 380], 5, 1], [[900, 1000, 850], 7, 0.5]], peak: 0.45, attack: 0.03, rasp: [24, 0.7] });
+    [0.05, 0.16].forEach(k => hiss(ctx, dest, t + k, 0.05, r, { f: 1600, q: 3, peak: 0.12, attack: 0.008 }));
+    return 0.34;
   },
 };
 /** The emoji ids that have a call. */
 export const CALL_IDS = Object.keys(CALLS);
 // each call's loudness against the others (set by peak and rms, scripts/v4-sounds.mjs); a call sits under the place knock
-const CALL_LEVEL = { bug: 0.64, ghost: 0.44, cat: 0.71, frog: 0.93, pumpkin: 0.22, skull: 1.41, wizard: 1.8, mushroom: 1.3, bee: 3.67, raven: 0.54, goat: 0.22, sheep: 0.4, rat: 0.58, owl: 0.25, pig: 0.66, rooster: 0.38, bat: 2.43, snail: 2.82, hedgehog: 5.82, fox: 0.58, spider: 2.09, moth: 14.96, scarecrow: 2.95, candle: 0.62 };
+const CALL_LEVEL = { bug: 0.64, ghost: 0.44, cat: 0.71, frog: 0.93, pumpkin: 0.22, skull: 1.41, mushroom: 1.3, bee: 3.67, raven: 0.54, goat: 0.22, sheep: 0.4, rat: 0.58, owl: 0.25, pig: 0.66, rooster: 0.38, bat: 2.43, snail: 2.82, hedgehog: 5.82, fox: 0.58, gnome: 0.17, hare: 0.52, goose: 0.46, badger: 0.62, spider: 2.09 };
 const CALL_MASTER = 0.6;
 /** Render emoji `id`'s call into ctx at time t. Returns its length in seconds (0 for an emoji with no call). */
 export function call(ctx, dest, id, t, seed = Math.floor(Math.random() * 1e9)) {

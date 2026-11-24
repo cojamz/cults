@@ -5,16 +5,16 @@ import { emojiIds, emojiInfo, minionArt, emojiArt, liveEmoji } from '../../../v4
 import { CALL_IDS } from '../../../v4/sound.js';
 import { seatEmoji } from '../../../v4/format.js';
 
-const RETIRED = ['santa', 'unicorn', 'surfer', 'alien', 'robot', 'octopus', 'cactus', 'pizza', 'dino', 'ninja', 'crab'];
+const RETIRED = ['wizard', 'candle', 'moth', 'scarecrow', 'santa', 'unicorn', 'surfer', 'alien', 'robot', 'octopus', 'cactus', 'pizza', 'dino', 'ninja', 'crab'];
 
 describe('village minions', () => {
   it('has 24 minions, none of them the retired ones', () => {
     expect(emojiIds()).toHaveLength(24);
     for (const id of RETIRED) expect(emojiIds()).not.toContain(id);
   });
-  it('every minion has a 16px picture, an 8px emblem and its own call', () => {
+  it('every minion has a 32px picture, an 8px emblem and its own call', () => {
     for (const id of emojiIds()) {
-      expect(minionArt(id).size).toBe(16);
+      expect(minionArt(id).size).toBe(32);
       expect(emojiArt(id).size).toBe(8);
       expect(CALL_IDS).toContain(id);
     }
@@ -28,7 +28,7 @@ describe('village minions', () => {
       expect(minionArt(id)).toBe(minionArt(now));
     }
     const state = { players: { 0: { emoji: 'santa' }, 1: {} } };
-    expect(seatEmoji(state, 0)).toBe('scarecrow');
+    expect(seatEmoji(state, 0)).toBe('badger');
     expect(emojiIds()).toContain(seatEmoji(state, 1));
   });
 });

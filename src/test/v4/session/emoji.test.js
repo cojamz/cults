@@ -34,14 +34,14 @@ describe('emoji picks (pure)', () => {
   it('settles a table: everyone gets one, none twice; people keep picks (lower seat wins a clash); bots yield', () => {
     for (let seed = 1; seed <= 200; seed++) {
       const seats = settleEmojis([
-        { kind: 'human', emoji: 'cat' }, { kind: 'bot', emoji: 'wizard' }, { kind: 'human', emoji: 'cat' }, { kind: 'human', emoji: 'wizard' },
+        { kind: 'human', emoji: 'cat' }, { kind: 'bot', emoji: 'gnome' }, { kind: 'human', emoji: 'cat' }, { kind: 'human', emoji: 'gnome' },
       ], seededRandom(seed));
       const got = seats.map(s => s.emoji);
       expect(distinct(got)).toBe(true);
       got.forEach(e => expect(IDS).toContain(e));
       expect(got[0]).toBe('cat'); // the lower seat keeps a clash
-      expect(got[3]).toBe('wizard'); // a person outranks the bot
-      expect(got[1]).not.toBe('wizard');
+      expect(got[3]).toBe('gnome'); // a person outranks the bot
+      expect(got[1]).not.toBe('gnome');
     }
     const empty = settleEmojis([{ kind: 'human' }, { kind: 'empty' }, { kind: 'bot' }]);
     expect(empty[1].emoji).toBeUndefined();
@@ -61,10 +61,10 @@ describe('emoji picks (local game)', () => {
   it('a new game keeps each person’s pick and gives bots and the undecided a random free one, none twice', () => {
     for (let seed = 1; seed <= 40; seed++) {
       const s = createLocalSession({ seed, botDelayMs: 1e9, seats: [
-        { name: 'Ann', kind: 'human', emoji: 'wizard' }, { name: 'B1', kind: 'bot' }, { name: 'Cy', kind: 'human' }, { name: 'B2', kind: 'bot', emoji: 'wizard' },
+        { name: 'Ann', kind: 'human', emoji: 'gnome' }, { name: 'B1', kind: 'bot' }, { name: 'Cy', kind: 'human' }, { name: 'B2', kind: 'bot', emoji: 'gnome' },
       ] });
       const got = s.getState().players.map(p => p.emoji);
-      expect(got[0]).toBe('wizard');
+      expect(got[0]).toBe('gnome');
       expect(distinct(got)).toBe(true);
       got.forEach(e => expect(IDS).toContain(e));
       s.destroy();
@@ -115,19 +115,19 @@ for (const [label, make] of backends) {
     it('one per table: a taken wish gets a random free one, a person’s pick is refused, a bot gives its up, a race has one winner', async () => {
       be = make();
       if (be.fake) vi.useFakeTimers();
-      const host = keep(await createRoom({ name: 'Hana', emoji: 'wizard', transport: be.client(), botDelayMs: 0 }));
-      const gus = keep(await joinRoom({ code: host.code, name: 'Gus', emoji: 'wizard', transport: be.client(), botDelayMs: 0 }));
+      const host = keep(await createRoom({ name: 'Hana', emoji: 'gnome', transport: be.client(), botDelayMs: 0 }));
+      const gus = keep(await joinRoom({ code: host.code, name: 'Gus', emoji: 'gnome', transport: be.client(), botDelayMs: 0 }));
       const pia = keep(await joinRoom({ code: host.code, name: 'Pia', transport: be.client(), botDelayMs: 0 }));
       await host.lobby.addBot(undefined, undefined, 'hard');
       await be.wait(() => host.lobby.getView().players.length === 4, 'four seats');
       let got = viewEmojis(host.lobby);
-      expect(got[0]).toBe('wizard');
+      expect(got[0]).toBe('gnome');
       expect(distinct(got)).toBe(true);
       got.forEach(e => expect(IDS).toContain(e));
       expect(host.lobby.getView().players.map(p => p.bot)).toEqual([undefined, undefined, undefined, 'hard']);
 
       // Gus can't take Hana's; he can take the bot's, and the bot picks another
-      await expect(gus.lobby.setEmoji('wizard')).rejects.toThrow(/Hana has that one/);
+      await expect(gus.lobby.setEmoji('gnome')).rejects.toThrow(/Hana has that one/);
       const botHad = got[3];
       await gus.lobby.setEmoji(botHad);
       await be.wait(() => viewEmojis(host.lobby)[1] === botHad && viewEmojis(host.lobby)[3] !== botHad, 'bot moved over');

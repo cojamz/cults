@@ -90,9 +90,9 @@ try {
   await page.click('[data-home="local"]');
   await page.waitForSelector('[data-start]');
   await shot('02-setup');
-  // Pick your emoji (Cory, 2026-10-14): seat 1's button opens a grid of all 24 pixel emojis; pick the Wizard. Every
-  // seat shows one, none twice; in the game the Wizard is on your leader's robe (checked below).
-  const PICK = 'wizard';
+  // Pick your emoji (Cory, 2026-10-14): seat 1's button opens a grid of all 24 pixel emojis; pick the Gnome. Every
+  // seat shows one, none twice; in the game the Gnome is on your leader's robe (checked below).
+  const PICK = 'gnome';
   {
     await page.click('[data-seat-row="0"] [data-emoji-btn]');
     await page.waitForSelector('[data-emoji-grid]');

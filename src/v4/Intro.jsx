@@ -60,7 +60,7 @@ const reducedMotion = () => typeof matchMedia === 'function' && matchMedia('(pre
 function cast() {
   const emo = emojiIds();
   const you = ['pig', 'pumpkin'].find(id => emo.includes(id)) || emo[0] || null;
-  const rest = ['frog', 'raven', 'goat', 'bee', 'rat', 'scarecrow'].filter(id => emo.includes(id) && id !== you);
+  const rest = ['frog', 'raven', 'goat', 'bee', 'rat', 'badger'].filter(id => emo.includes(id) && id !== you);
   const more = emo.filter(id => id !== you && !rest.includes(id));
   const [a, b, c] = [...rest, ...more];
   return { you, a: a || null, b: b || null, c: c || null };

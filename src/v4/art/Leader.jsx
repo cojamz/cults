@@ -114,7 +114,7 @@ export const Minion = memo(function Minion({ color, emoji = null, size = 16, tit
   const art = emoji ? minionArt(emoji) : null;
   const body = art ? art.rects : cached(`M|${color}`, () => runs(MINION, palette(color)));
   return (
-    <svg className={`minion${dim ? ' dim' : ''}`} viewBox="0 0 16 16" width={size} height={size} shapeRendering="crispEdges"
+    <svg className={`minion${dim ? ' dim' : ''}`} viewBox={`0 0 ${art ? art.size : 16} ${art ? art.size : 16}`} width={size} height={size} shapeRendering="crispEdges"
       role={title ? 'img' : undefined} aria-label={title || undefined} aria-hidden={title ? undefined : 'true'} data-emoji={art ? emoji : undefined}>
       {title ? <title>{title}</title> : null}
       {pixelPaths(body)}

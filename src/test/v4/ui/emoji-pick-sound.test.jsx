@@ -34,7 +34,7 @@ describe('emoji pick sounds', () => {
     expect(calls).toEqual([]);
     act(() => fn(view([{ ...base[0], emoji: 'skull' }, { ...base[1], emoji: 'bug' }, ana]))); // my pick, a bot's swap
     expect(calls).toEqual([]);
-    act(() => fn(view([{ ...base[0], emoji: 'skull' }, { ...base[1], emoji: 'bug' }, { ...ana, emoji: 'wizard' }])));
-    expect(calls).toEqual(['wizard']);
+    act(() => fn(view([{ ...base[0], emoji: 'skull' }, { ...base[1], emoji: 'bug' }, { ...ana, emoji: 'gnome' }])));
+    expect(calls).toEqual(['gnome']);
   });
 });

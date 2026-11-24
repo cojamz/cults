@@ -7,7 +7,7 @@ import { withOutline, NEUTRALS, pixelPaths } from './index.js';
 const EMOJIS = SETS.filter(i => i.kind === 'emoji');
 // The old village (Cory, 2026-11-24: "Stuff like Santa or Surfer etc dont make sense"): 11 minions left for village
 // ones. A saved game, room or picker choice that still names an old one wears its stand-in.
-const RETIRED = { santa: 'scarecrow', unicorn: 'goat', surfer: 'fox', alien: 'owl', robot: 'raven', octopus: 'spider', cactus: 'hedgehog', pizza: 'pig', dino: 'rooster', ninja: 'bat', crab: 'rat' };
+const RETIRED = { wizard: 'gnome', candle: 'hare', moth: 'goose', scarecrow: 'badger', santa: 'badger', unicorn: 'goat', surfer: 'fox', alien: 'owl', robot: 'raven', octopus: 'spider', cactus: 'hedgehog', pizza: 'pig', dino: 'rooster', ninja: 'bat', crab: 'rat' };
 const live = id => RETIRED[id] || id;
 /** An old minion's id → its village stand-in (any other id unchanged). */
 export const liveEmoji = live;
@@ -31,7 +31,9 @@ const art = (id, which) => {
   if (cache.has(k)) return cache.get(k);
   const e = EMOJIS.find(x => x.id === id);
   const grid = e && (which === 'em' ? e.em : e.px);
-  const rects = grid && runs(grid, { ...NEUTRALS, ...e.palette }, which !== 'em');
+  // the 32-grid minions carry their own thick outline (outlined) and a separate palette for the 8×8 emblem
+  const pal = which === 'em' && e.emPalette ? e.emPalette : e.palette;
+  const rects = grid && runs(grid, { ...NEUTRALS, ...pal }, which !== 'em' && !e.outlined);
   // paths: the runs as cached <path> elements, one per colour (pixelPaths): what every drawing of it renders
   const out = grid ? { size: grid.length, rects, paths: pixelPaths(rects) } : null;
   cache.set(k, out);
@@ -39,5 +41,5 @@ const art = (id, which) => {
 };
 /** The 8×8 emblem for a leader's medallion: { size, rects, paths } or null. */
 export const emojiArt = id => (id ? art(id, 'em') : null);
-/** The 16×16 minion: { size, rects, paths } or null. */
+/** The minion (32×32 since Nov 24; size says): { size, rects, paths } or null. */
 export const minionArt = id => (id ? art(id, 'px') : null);
