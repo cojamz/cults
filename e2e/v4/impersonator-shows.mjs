@@ -1,6 +1,6 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: Impersonator shows what it copies (Cory's playtest, Nov 5: "impersonator doesnt show what it copied?"). Round II
-// at 1270×700; P1 recruits Impersonator, P2 holds Treasurer and Hustler, P3 Tycoon:
+// at 1270×700; P1 recruits Impersonator, P2 holds Treasurer and Hustler, P3 Baron:
 //  (i1) the choice lays the rivals' members out as whole cards to pick, rules showing (as Sample's does);
 //  (i2) once Treasurer is picked, Impersonator's seat row reads "Has Treasurer's ability: …";
 //  (i3) its hover card shows Treasurer's rule and "Has the ability of Treasurer".

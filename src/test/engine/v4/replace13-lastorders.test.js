@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Lane F (REPLACE13=lastorders, Nov 4; quality/pitches/F-batch2.md): Last Orders in Closer's place: "When you place the last minion of the round, recruit once more."
+// Lane F (REPLACE13=lastorders, Nov 4; quality/pitches/F-batch2.md): Last Orders in Gate-Shutter's place: "When you place the last minion of the round, recruit once more."
 // One test per sentence, plus the pitched turn.
 import { describe, it, expect } from 'vitest';
 
@@ -19,7 +19,7 @@ const owns = (s, i, key) => s.players[i].members.some(u => s.cards[u].def.endsWi
 const SHOP = ['red.volunteer', 'red.recruiter', 'market.regular', 'red.patriarch'];
 
 describe('REPLACE13=lastorders: Last Orders', () => {
-  it("is dealt in Closer's place", () => {
+  it("is dealt in Gate-Shutter's place", () => {
     const keys = quadrant('purple').members.filter(d => !d.retired).map(d => d.key);
     expect(keys).toContain('lastorders');
     expect(keys).not.toContain('closer');

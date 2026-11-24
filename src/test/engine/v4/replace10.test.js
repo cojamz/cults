@@ -198,6 +198,6 @@ describe('REPLACE10: Warm-Up Act copies Walk-In (Lab, game 84)', () => {
     expect(s.players.map(p => p.res.red)).toEqual([1, 1, 1, 1]); // P4's cloak pays only P4's own copies
     expect(s.log).toContain("P1 +1 red (P2's Warm-Up Act).");
     expect(s.log).toContain("P4 +1 red (P2's Warm-Up Act).");
-    expect(s.log.some(l => /Impressionist/.test(l))).toBe(false);
+    expect(s.log.some(l => /Forger/.test(l))).toBe(false);
   });
 });

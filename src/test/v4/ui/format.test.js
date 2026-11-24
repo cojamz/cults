@@ -74,7 +74,7 @@ describe('v4 format helpers', () => {
 
   it('the strip names what you got on a rival\'s turn and the members that paid it (wave-2 A#3, B#46)', () => {
     const s = createGame({ seats, seed: 1 });
-    // Bo's turn: the space gives Bo 3 silver and you (Ana) 1; your Silversmith and Cy's Caterer add 1 each
+    // Bo's turn: the space gives Bo 3 silver and you (Ana) 1; your Silversmith and Cy's Almsgiver add 1 each
     const fx = [
       { type: 'gain', to: { pid: 1 }, what: { r: 'silver', n: 3 }, cause: { kind: 'space' } },
       { type: 'gain', to: { pid: 0 }, what: { r: 'silver', n: 1 }, cause: { kind: 'space' } },
@@ -91,14 +91,14 @@ describe('v4 format helpers', () => {
     expect(effectStory(s, s, 0, 0, fx).gift).toBe('');
     // the log's story (an online guest's table, no effect stream) says it too
     const end = structuredClone(s);
-    end.log = [...s.log, 'Bo took Kickback (Gold).', "Ana's Tax Collector: +1 gold."];
+    end.log = [...s.log, 'Bo took Kickback (Gold).', "Ana's Pardoner: +1 gold."];
     end.players[1].res.gold = (end.players[1].res.gold || 0) + 3;
     end.players[0].res.gold = (end.players[0].res.gold || 0) + 2;
     const ts = turnStory(s, end, 1, 0);
-    expect(ts.gift).toBe('you +2 gold (Tax Collector)');
-    expect(ts.short.startsWith('you +2 gold (Tax Collector)')).toBe(true);
-    expect(ts.lines.slice(0, 2)).toEqual(['+3 gold', 'you +2 gold (Tax Collector)']);
-    expect(ts.lines.some(l => /^(Your )?Tax Collector:|^you \+\d gold$/.test(l))).toBe(false);
+    expect(ts.gift).toBe('you +2 gold (Pardoner)');
+    expect(ts.short.startsWith('you +2 gold (Pardoner)')).toBe(true);
+    expect(ts.lines.slice(0, 2)).toEqual(['+3 gold', 'you +2 gold (Pardoner)']);
+    expect(ts.lines.some(l => /^(Your )?Pardoner:|^you \+\d gold$/.test(l))).toBe(false);
   });
 
   it('a member used before placing leads the turn card\'s head, in order (w4 skeptic #6)', () => {
@@ -107,12 +107,12 @@ describe('v4 format helpers', () => {
       let s = createGame({ seats: [{ name: 'Ana', kind: 'bot' }, { name: 'Bo', kind: 'bot' }, { name: 'Cy', kind: 'bot' }, { name: 'Di', kind: 'bot' }], seed, quadrants: ['gold', 'red', 'echo', 'yellow'] });
       for (let k = 0; k < 1500 && !s.over && !found; k++) {
         const pend = s.pending;
-        // a use that would change nothing (Stunt Double with nothing to copy) is muted on screen, not a story
+        // a use that would change nothing (Shadow with nothing to copy) is muted on screen, not a story
         const use = pend && pend.kind === 'place' && pend.options.find(o => String(o.id).startsWith('use:') && !useIdle(s, s.players[pend.player], o.uid));
         if (use) {
           const start = s, pid = pend.player, name = s.players[pid].name;
           let t = applyMove(s, { player: pid, option: use.id });
-          // a copier with nothing to copy keeps its use and says so ("Bo's Stunt Double has nothing to copy."): no use
+          // a copier with nothing to copy keeps its use and says so ("Bo's Shadow has nothing to copy."): no use
           // happened, so the head rightly says only what was taken; this guard is about a use that went through
           if (!t.cards[use.uid]?.used) { s = applyMove(s, chooseBotMove(s, () => 0.4)); continue; }
           // only the Use so far: "Ana used X", never a bare "Ana"
@@ -173,7 +173,7 @@ describe('v4 format helpers', () => {
       while (!s.over) {
         const n = applyMove(s, chooseBotMove(s, () => 0.4), { effects: true });
         const line = n.log.slice(s.log.length).map(l => l.match(/^(\w+) swapped (\w+)'s (.+) and Shop's (.+)\.$/)).find(Boolean);
-        // the game's last move also tells the game-end scoring ("you +6 followers (Tycoon) · swapped …"): judge the rest
+        // the game's last move also tells the game-end scoring ("you +6 followers (Baron) · swapped …"): judge the rest
         // (Even Swap may also trade two shop members' places, 'swapped Shop's X and Shop's Y': no member left a cult, so
         // there's nothing to name here; bots pick it since their swaps are scored for real, 2026-10-21. todo.md tracks its story line.)
         if (line && !n.over && line[2] !== 'Shop') {
@@ -190,8 +190,8 @@ describe('v4 format helpers', () => {
             rival++;
             // a Deprogrammers hit may follow on the same line ("…, Deprogrammers took 1 of your followers"), never a repeat
             const short = effectStory(s, n, actor, owner, n.effects).short;
-            // another member's line may come first ("you +2 followers (Cheerleader) · swapped …"), or a Saboteur's loss
-            // in the same telling ("took 3 of your followers, swapped your Alchemists for the shop's Saboteur", Oct 29)
+            // another member's line may come first ("you +2 followers (Trumpeter) · swapped …"), or a Saboteur's loss
+            // in the same telling ("took 3 of your followers, swapped your Conjurer for the shop's Saboteur", Oct 29)
             expect(short.split(' · ').some(x => x.includes(`swapped your ${out} for the shop's ${inc}`))).toBe(true);
             expect(short.split(`swapped your ${out}`).length).toBe(2);
           } else expect(effectStory(s, n, actor, actor, n.effects).short).toBe(`gave ${out} to the shop, took the shop's ${inc}`);
@@ -305,7 +305,7 @@ describe('v4 format helpers', () => {
       if (!m || /^\d+ followers?$/.test(m[1])) continue; // followers recruited (said "bought" before Nov 11) aren't a member's recruit
       n++;
       // the paid amount is the price the engine logged, never a net of the turn's other gains
-      // (a recruit from the pile reads "recruited X from the pile with Insider (price)")
+      // (a recruit from the pile reads "recruited X from the pile with Seer (price)")
       expect([...allLogs].some(l => l.includes(`recruited ${m[1]} `) && l.slice(l.indexOf(' (') + 2).split(/[;)]/)[0] === m[2].split(';')[0]), `${l} :: ${JSON.stringify([...allLogs].filter(x => x.includes('recruited ')))}`).toBe(true);
     }
     expect(n).toBeGreaterThan(3);
@@ -341,13 +341,13 @@ describe('v4 format helpers', () => {
       if (x.actor === found.t.me) expect(x.hit).toBe('');
     }
   });
-  it('a member that fires gets its own line, and its amount comes off the gross (Tax Collector: P2 +1 gold)', () => {
+  it('a member that fires gets its own line, and its amount comes off the gross (Pardoner: P2 +1 gold)', () => {
     const s = createGame({ seats, seed: 3 });
     const P = s.players;
-    expect(traceLine("Bo's Tax Collector: +1 gold.", P, s.resources)).toMatchObject({ owner: 1, target: 1, card: 'Tax Collector', res: { gold: 1 } });
+    expect(traceLine("Bo's Pardoner: +1 gold.", P, s.resources)).toMatchObject({ owner: 1, target: 1, card: 'Pardoner', res: { gold: 1 } });
     expect(traceLine('Cy +1 silver (Ana\'s Retinue).', P, [...s.resources, 'silver'])).toMatchObject({ owner: 0, target: 2, card: 'Retinue', res: { silver: 1 } });
     expect(traceLine("Ana's next member costs 4 less.", P, s.resources)).toBeNull();
-    expect(traceLine("Ana's Underdog: gold gain 4 → 8.", P, s.resources)).toBeNull();
+    expect(traceLine("Ana's Poor Relation: gold gain 4 → 8.", P, s.resources)).toBeNull();
   });
   it('a Goody Bags line reads as two gains, never as a gift from "P4 took 2 magenta and"', () => {
     const s = createGame({ seats, seed: 3, quadrants: ['gold', 'red', 'silver', 'thieves'] });
@@ -407,7 +407,7 @@ describe('v4 format helpers', () => {
     let found = null;
     for (let seed = 1; seed < 40 && !found; seed++) {
       let s = createGame({ seats, seed, quadrants: ['gold', 'purple', 'echo', 'silver'] });
-      // seat 1 holds Go-Getter from the start: since Oct 25's +1 on Gather, Hold Up and Crunch Time, bots stopped buying it here
+      // seat 1 holds Errand Boy from the start: since Oct 25's +1 on Gather, Hold Up and Crunch Time, bots stopped buying it here
       // and Extra Hand (Once per game since Oct 28: the bot uses it in round III)
       for (const id of ['purple.secondwind', 'benders.extrahand']) {
         const gg = Object.keys(s.cards).find(u => s.cards[u].def === id);
@@ -452,14 +452,14 @@ describe('v4 format helpers', () => {
     // at the round's end (nobody's turn) it's your call too, never "Your turn"
     expect(promptFor(at('Spoilsport: choose a contest', null), true).lead).toBe('Your call — ');
     // on your own turn the headline keeps its usual lead
-    expect(promptFor(at('Window Shopper: send which member to the discard pile?', b.id), true).lead).toBeUndefined();
+    expect(promptFor(at('Culler: send which member to the discard pile?', b.id), true).lead).toBeUndefined();
   });
 
   it('who picks first says why: the member that makes them, else fewest followers; round I is drawn (w3a A2)', () => {
     const s = createGame({ seats, seed: 5 });
     const uid = Object.keys(s.cards).map(Number).find(u => s.cards[u].def === 'benders.frontrunner');
     const at = (round, members) => ({ ...s, round, players: s.players.map((p, i) => (i === 1 ? { ...p, members } : p)) });
-    if (uid != null) expect(firstPickWhy(at(2, [uid]), 1)).toBe('Line Cutters');
+    if (uid != null) expect(firstPickWhy(at(2, [uid]), 1)).toBe('Lord of the Manor');
     expect(firstPickWhy(at(2, []), 1)).toBe('fewest followers');
     expect(firstPickWhy(at(1, []), 1)).toBeNull();
   });

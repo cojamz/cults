@@ -79,7 +79,7 @@ describe('new Red member hooks', () => {
   });
 
   it('Fairy Godmother (On Use, once per round) promotes another member to Governess, who recruits the cheapest member, without inherent action red', () => {
-    // Merchant (6) promotes to Governess (8)
+    // Gold Merchant (6) promotes to Governess (8)
     let s = table(Q, { members: [['red.panel', 'gold.merchant']], shop: ['red.mentor', 'red.volunteer'] });
     const panel = uidIn(s, 'red.panel', 0), host = uidIn(s, 'gold.merchant', 0), mentor = uidIn(s, 'red.mentor', 'shop');
     s = move(s, `use:${panel}`);

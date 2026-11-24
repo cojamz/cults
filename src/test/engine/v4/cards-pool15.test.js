@@ -99,7 +99,7 @@ describe('Heirlooms and Swan Song (White, round II)', () => {
     expect(s.players[2].members).toContain(u);
     expect(s.players[0].bonus).toBe(c);
     expect(s.players[0].res.white).toBe(1);
-    expect(named(s, 'Heirlooms')).toEqual(["P1's Heirlooms: gives Go-Getter to P3.", `P1's Heirlooms: +${c} followers, +1 white.`]);
+    expect(named(s, 'Heirlooms')).toEqual(["P1's Heirlooms: gives Errand Boy to P3.", `P1's Heirlooms: +${c} followers, +1 white.`]);
   });
   it("Swan Song: discard one of your members, using its once-per-round On Use first, even if it's used up. +2 white.", () => {
     let s = still({ quadrants: Y, members: [['yellow.leveler']], res: [{ gold: 3 }, { gold: 2 }], round: 2 });
@@ -122,7 +122,7 @@ describe('Heirlooms and Swan Song (White, round II)', () => {
     s = move(s, `card:${spec}`);
     expect(s.players[0].res.gold).toBe(3);
     expect(s.discard).toContain(spec);
-    expect(named(s, 'Swan Song').filter(l => !/\+2 white/.test(l))).toEqual(["P1's Swan Song: discards Speculator."]);
+    expect(named(s, 'Swan Song').filter(l => !/\+2 white/.test(l))).toEqual(["P1's Swan Song: discards Gambler."]);
   });
 });
 

@@ -62,14 +62,14 @@ describe('White candidates', () => {
       expect(s.players[0].res.white).toBe(white);
     });
   }
-  it('Day Trippers: asks after the On Recruit (Con Men steals first, then the discard question)', () => {
+  it('Day Trippers: asks after the On Recruit (Robbers steals first, then the discard question)', () => {
     let s = go(still({ members: [['trading.daytrippers']], res: [RICH, { gold: 5 }], shop: ['benders.conmen'] }), turn(0, 1));
     s = take(s, 'echo.chant');
     s = move(s, `card:${uidOf(s, 'benders.conmen', 'shop')}`);
     // the steal's choices come before the discard question
     let guard = 0;
     while (!/^Day Trippers/.test(s.pending?.prompt || '') && guard++ < 10) s = move(s, s.pending.options[0].id);
-    expect(s.pending.prompt).toMatch(/^Day Trippers: discard Con Men/);
+    expect(s.pending.prompt).toMatch(/^Day Trippers: discard Robbers/);
     expect(s.log.findIndex(l => /stole|steals/.test(l))).toBeGreaterThanOrEqual(0);
   });
   it('Ascetics: your other members count as 0 members (contests and color counts)', () => {
@@ -87,10 +87,10 @@ describe('White candidates', () => {
     s = take(s, 'trading.lasthurrah');
     expect(s.players[0].res.white).toBe(2);
     s = move(s, `card:${spec}`);
-    expect(s.players[0].res.gold).toBe(6); // Speculator doubled 3, though used up
+    expect(s.players[0].res.gold).toBe(6); // Gambler doubled 3, though used up
     expect(s.players[0].members).not.toContain(spec);
     expect(s.discard).toContain(spec);
-    expect(named(s, 'Last Hurrah').some(l => /discards Speculator/.test(l))).toBe(true);
+    expect(named(s, 'Last Hurrah').some(l => /discards Gambler/.test(l))).toBe(true);
   });
   it('Last Hurrah: a member with no On Use is just discarded; no members still gives +2 white', () => {
     let s = go(still({ members: [['red.twins']], round: 2 }), turn(0, 1));

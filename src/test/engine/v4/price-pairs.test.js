@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import { defById } from '../../../engine/v4/content/index.js';
 
-const PAIRS = [['benders.saboteur', 'red.loyalists']]; // Ghost, Warden
+const PAIRS = [['benders.saboteur', 'red.loyalists']]; // Plague Bearer, Warden
 const price = id => { const d = defById(id); return d.s + d.w; };
 
 describe('members that always cost the same', () => {

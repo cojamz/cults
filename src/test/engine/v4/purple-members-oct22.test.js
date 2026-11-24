@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Cory's Purple members (2026-10-22), through real moves: Early Birds, Bouncers, Gossip, Extra Shift, Closer, Hot Streak.
+// Cory's Purple members (2026-10-22), through real moves: Early Birds, Bouncers, Gossip, Day Laborer, Gate-Shutter, Juggler.
 import { describe, it, expect } from 'vitest';
 import { followers } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
@@ -48,7 +48,7 @@ describe('Purple members, Oct 22', () => {
     expect(s.players[1].bonus).toBe(1);
     expect(linesNaming(s.log, 'Gossip')).toEqual(["P2's Gossip: +1 follower."]);
   });
-  it('Extra Shift: when recruited in round II, one more minion, placed after everyone else; none in round I', () => {
+  it('Day Laborer: when recruited in round II, one more minion, placed after everyone else; none in round I', () => {
     let s = sc({ round: 2, res: [rich], shop: ['purple.extrashift'], queue: [...turns(0, 1), { t: 'allPlaced' }] });
     const left = s.players[0].left;
     s = take(s, 'gold.rush'); s = buy(s, 'purple.extrashift');
@@ -57,19 +57,19 @@ describe('Purple members, Oct 22', () => {
     expect(upcoming(s)).toEqual([0]);
     let t = sc({ round: 1, res: [rich], shop: ['purple.extrashift'], queue: turns(0, 1) });
     t = take(t, 'gold.rush'); t = buy(t, 'purple.extrashift');
-    expect(t.log).toContain('No extra minions in round I: P1 gets no extra minion from Extra Shift.');
+    expect(t.log).toContain('No extra minions in round I: P1 gets no extra minion from Day Laborer.');
   });
-  it('Closer: +4 purple when you place the last minion of the round (Cory, Oct 23), not just your own last', () => {
+  it('Gate-Shutter: +4 purple when you place the last minion of the round (Cory, Oct 23), not just your own last', () => {
     const last = sc({ round: 2, left: 1, members: [['purple.closer']], queue: turns(0) });
     last.players.forEach((o, i) => { if (i) o.left = 0; });
     const s = take(last, 'gold.rush');
     expect(s.players[0].res.purple).toBe(4);
-    expect(linesNaming(s.log, 'Closer')).toHaveLength(1);
+    expect(linesNaming(s.log, 'Gate-Shutter')).toHaveLength(1);
     // your own last minion while a rival still has one to place: nothing
     const t = take(sc({ round: 2, left: 1, members: [['purple.closer']], queue: turns(0, 1) }), 'gold.rush');
     expect(t.players[0].res.purple || 0).toBe(0);
   });
-  it('Hot Streak: Once per game, +3 followers per turn in a row just before this one; nothing to use with none', () => {
+  it('Juggler: Once per game, +3 followers per turn in a row just before this one; nothing to use with none', () => {
     let s = sc({ round: 2, members: [['purple.streak']], queue: turns(0, 0, 0, 1) });
     s.turns = [0, 0];
     s.current = 0;
@@ -79,6 +79,6 @@ describe('Purple members, Oct 22', () => {
     let t = sc({ round: 2, members: [['purple.streak']], queue: turns(0, 1) });
     t = move(t, `use:${uidOf(t, 'purple.streak', 0)}`);
     expect(t.players[0].bonus).toBe(0);
-    expect(t.log).toContain("P1's Hot Streak: no turns in a row just before this one yet.");
+    expect(t.log).toContain("P1's Juggler: no turns in a row just before this one yet.");
   });
 });

@@ -9,7 +9,7 @@ const buyPhase = opts => scene({ quadrants: ['gold', 'red', 'blue', 'green'], ..
 
 describe('choosing how to pay', () => {
   it('offers every no-waste way to pay "any", default first, and charges exactly that', () => {
-    // Prospector (no recruit effect). Holding 3 gold, 1 red, 1 blue: any can be gold, red or blue.
+    // Gold Panner (no recruit effect). Holding 3 gold, 1 red, 1 blue: any can be gold, red or blue.
     let s = buyPhase({ res: [{ gold: 3, red: 1, blue: 1 }], shop: ['gold.prospector'] });
     const uid = uidOf(s, 'gold.prospector', 'shop');
     s = move(s, `card:${uid}`, { manualPay: true });

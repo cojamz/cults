@@ -1,9 +1,9 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: rule-bending members (and Release staying gone), played through the real UI at 1270×700.
-// From a saved round-I game where P1 (the only person) already holds Squatter, Insider, Straggler and a gold member:
+// From a saved round-I game where P1 (the only person) already holds Squatter, Seer, Straggler and a gold member:
 //  (b1) Squatter: every squat:<q>-<i> option the engine offers is a clickable, labelled space (wheel + panel), and
 //       clicking one places there;
-//  (b2) Insider: the top-of-pile cards the engine offers show in the shop, marked "From the pile", and can be recruited;
+//  (b2) Seer: the top-of-pile cards the engine offers show in the shop, marked "From the pile", and can be recruited;
 //  (b3) Release is gone (Cory, 2026-10-17): no release option in your buy step, no Release on a member's card;
 //  (b4) Straggler: it asks only where your last minion goes (Cory, 2026-10-15); the open spaces light on the wheel (every
 //       choice is picked on the board), "Stay put" stays a button, and picking a lit space works.
@@ -45,7 +45,7 @@ function benderSave(seed) {
   }
   if (!(s.round === 1 && s.pending && s.pending.player === 0 && s.pending.kind === 'place' && Object.keys(s.slots).length)) return null;
   const take = def => {
-    const uid = freeCard(s, def); // a member the cull leaves out of the deck (Insider) is minted (lib/deal.mjs)
+    const uid = freeCard(s, def); // a member the cull leaves out of the deck (Seer) is minted (lib/deal.mjs)
     s.pile = s.pile.filter(u => u !== uid);
     if (s.shop.includes(uid)) return false; // keep the shop at 6: only take cards still in the pile
     s.players[0].members.push(uid);
@@ -53,7 +53,7 @@ function benderSave(seed) {
   };
   for (const def of ['benders.squatter', 'benders.insider', 'benders.straggler']) if (!take(def)) return null;
   for (const r of s.resources) s.players[0].res[r] = 8;
-  s.players[0].crashNext = true; // Party Crasher's Once per game, as if used (Oct 28)
+  s.players[0].crashNext = true; // Trespasser's Once per game, as if used (Oct 28)
   return { config: { seats, speed: 'normal' }, state: s, undo: null, savedAt: Date.now() };
 }
 
@@ -115,7 +115,7 @@ try {
     }
 
     if (await page.$('.lt[data-phase="buy"][data-yours="1"]')) {
-      // (b2) Insider: pile cards beside the shop (their own "Top of the pile" row since Oct 28)
+      // (b2) Seer: pile cards beside the shop (their own "Top of the pile" row since Oct 28)
       if (!seen.has('pile')) {
         const pile = await page.$$('.lt-shop .lt-pile-row .card, .lt-shop .card .from-pile');
         if (pile.length) {

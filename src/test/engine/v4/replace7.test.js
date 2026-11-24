@@ -40,14 +40,14 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.sprinter')).toEqual(['Sprinter', 2, 3, 1, 1]);
     expect(card('purple.earlyrisers')).toEqual(['Early Risers', 2, 3, 1, 1]);
     expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 3, 1, 1]);
-    expect(card('purple.nightmanager')).toEqual(['Night Managers', 2, 3, 1, 1]);
+    expect(card('purple.nightmanager')).toEqual(['Curfew Ringers', 2, 3, 1, 1]);
     expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 3, 1, 1]);
     expect(card('purple.lifers')).toEqual(['Lifers', 3, 2, 1, 1]);
     expect(card('purple.floorcrew')).toEqual(['Floor Crew', 3, 2, 1, 1]);
-    expect(card('purple.picketline')).toEqual(['Picket Line', 3, 2, 1, 1]);
+    expect(card('purple.picketline')).toEqual(['Turnpike Keeper', 3, 2, 1, 1]);
     expect(card('purple.timekeeperlift')).toEqual(['Head Timekeeper', 2, 3, 1, 1]);
     expect(card('purple.oldtimer')).toEqual(['Old Timer', 2, 3, 1, 1]);
-    expect(card('purple.lookouts')).toEqual(['Lookouts', 3, 3, 1, 1]);
+    expect(card('purple.lookouts')).toEqual(['Hurriers', 3, 3, 1, 1]);
     expect(card('purple.errandboy')).toEqual(['Errand Boy', 2, 3, 1, 1]);
     expect(card('purple.moonlighters')).toEqual(['Moonlighters', 7, 2, 1, 1]);
     expect(card('purple.relayrunners')).toEqual(['Relay Runners', 2, 3, 1, 1]);
@@ -441,19 +441,19 @@ describe('Day Laborers: "Round Start: take your first two turns in a row."', () 
 
 describe('Night Manager: "Round End: if you placed the round’s last minion, +1 follower per purple member you have."', () => {
   const end = last => table(['red', 'purple', 'market', 'yellow'], { round: 2, members: [['purple.nightmanager', 'purple.earlybird']], queue: [{ t: 'endRound' }] });
-  it('the owner placed the last minion: +1 per purple member (Early Birds and Night Managers, worth 2 each, count 1: Cory, Nov 12)', () => {
+  it('the owner placed the last minion: +1 per purple member (Early Birds and Curfew Ringers, worth 2 each, count 1: Cory, Nov 12)', () => {
     let s = table(['red', 'purple', 'market', 'yellow'], { round: 2, members: [['purple.nightmanager', 'purple.earlybird']], queue: [] });
     s = { ...s, lastPlaced: { round: 2, pid: 0 }, queue: [{ t: 'endRound' }], pending: null };
     const before = s.players[0].bonus;
     s = resume(s);
     expect(s.players[0].bonus - before).toBe(2);
-    expect(named(s, 'Night Managers')).toContain("P1's Night Managers: P1 placed the round's last minion, +2 followers (2 purple members).");
+    expect(named(s, 'Curfew Ringers')).toContain("P1's Curfew Ringers: P1 placed the round's last minion, +2 followers (2 purple members).");
   });
   it('a rival placed it: nothing', () => {
     let s = table(['red', 'purple', 'market', 'yellow'], { round: 2, members: [['purple.nightmanager']], queue: [] });
     s = { ...s, lastPlaced: { round: 2, pid: 1 }, queue: [{ t: 'endRound' }], pending: null };
     s = resume(s);
-    expect(named(s, 'Night Managers')).toEqual([]);
+    expect(named(s, 'Curfew Ringers')).toEqual([]);
   });
 });
 
@@ -514,14 +514,14 @@ describe('Lifers and Floor Crew (Shift Crew\'s place, scale-up 3)', () => {
   });
 });
 
-describe('Picket Line: "Whenever a rival takes a Purple space, +1 purple."', () => {
+describe('Turnpike Keeper: "Whenever a rival takes a Purple space, +1 purple."', () => {
   it('a rival takes Sleep In: +1 purple; a rival takes a Red space: nothing', () => {
     const turns = [{ t: 'turn', p: 1 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }];
     let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 1, members: [['purple.picketline'], []], queue: turns });
     const had = s.players[0].res.purple || 0;
     s = take(s, 'purple.skip');
     expect(s.players[0].res.purple).toBe(had + 1);
-    expect(s.log.some(l => l === "P1's Picket Line: +1 purple.")).toBe(true);
+    expect(s.log.some(l => l === "P1's Turnpike Keeper: +1 purple.")).toBe(true);
   });
 });
 
@@ -534,7 +534,7 @@ describe('"Paper filters, play ranks" cards (Nov 4)', () => {
     expect(followers(s, p)).toBe(before + 1);
     expect(logs).toEqual(["P1's Old Timer: a time token (worth 2)."]);
   });
-  it('Lookouts: "Whenever you take a consecutive turn, +2 followers. (Cory, Nov 6)"', () => {
+  it('Hurriers: "Whenever you take a consecutive turn, +2 followers. (Cory, Nov 6)"', () => {
     const s = table(['purple', 'red', 'market', 'yellow'], { round: 1, members: [['purple.lookouts'], []] });
     const p = s.players[0], logs = [], b = p.bonus;
     defById('purple.lookouts').onTurnInRow(stub(s, logs), p);

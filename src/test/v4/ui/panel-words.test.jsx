@@ -186,7 +186,7 @@ describe('panel words (w3)', () => {
     // picks the member, so a lone rival's ransom reads as what they'd pay, in their colors
     // (the likely case can be the member itself, a card worth several members named first, as the best case is below)
     expect(seen.ransom.likely).toMatch(/^(?:(?:up to )?\+\d+ \w+|[A-Z][\w' -]* \((?:\+|counts as )\d+ members\))/);
-    // (a card worth several members is named first: "Alchemists (+3 members), +3 followers", picky bot Nov 4)
+    // (a card worth several members is named first: "Conjurer (+3 members), +3 followers", picky bot Nov 4)
     // since every member cost 4 more (Nov 5 evening) the best case can be the payment itself, in the rival's colors
     // ("+3 white, +4 purple"), when the member is worth less than its price
     expect(seen.ransom.best).toMatch(/^(?:\+\d+ (magenta|member|gold|red|purple|silver|yellow|blue|white|green)|[A-Z][\w' -]* \((?:\+|counts as )\d+ members\))/);

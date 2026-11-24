@@ -1,7 +1,7 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: a copy card's hover names what it could copy right now (Cory, Nov 4: "hovering over copy a rival members on
 // recruit should show you the available options in the hover over"). Round II at 1270×700, P1 to recruit; P2 holds
-// Treasurer and Hustler, P3 holds Busker and Tycoon. Sample (the space this gate was written for) left the wheel on
+// Treasurer and Hustler, P3 holds Busker and Baron. Sample (the space this gate was written for) left the wheel on
 // Nov 10, so the same checks run on Impersonator ("On Recruit: choose a rival's member. Do its On Recruit, and this
 // member gains its ability."), which picks from every rival member:
 //  (h1) Impersonator's shop hover lists exactly the rival members its choice would offer, each with its owner and text;
@@ -21,7 +21,7 @@ const QUADS = ['gold', 'red', 'purple', 'echo'];
 const key = (q, k) => `${QUADS.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.key === k)}`;
 let IMP = null;
 const HOLD = [[], ['gold.seed', 'gold.hustler'], ['echo.evergreen', 'gold.tycoon']];
-const WANT = ['Treasurer', 'Hustler', 'Busker', 'Tycoon'];
+const WANT = ['Treasurer', 'Hustler', 'Busker', 'Baron'];
 
 function save(stamp) {
   const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }];

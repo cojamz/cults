@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Hard combos played out in one exact scene each (Nov 5 stress test): copies inside copies, Encore doubling,
+// Hard combos played out in one exact scene each (Nov 5 stress test): copies inside copies, Minstrel doubling,
 // skips against Early Birds. Each checks the outcome against the printed text.
 import { describe, it, expect } from 'vitest';
 import { createGame, resume, followers, applyMove } from '../../../engine/v4/core.js';
@@ -53,44 +53,44 @@ describe('hard combos (Nov 5)', () => {
     expect(has(s, /Bouncers: P3 skips their next turn/)).toBe(true);
   });
 
-  it('Encore + Stunt Double: the copy of the action you just took happens twice', () => {
-    const s = run({ members: [['echo.encore']], shop: ['echo.hourglass'], res: [{ green: 20 }] }, [/Build Up/, /Encore/, /Stunt Double/]);
+  it('Minstrel + Shadow: the copy of the action you just took happens twice', () => {
+    const s = run({ members: [['echo.encore']], shop: ['echo.hourglass'], res: [{ green: 20 }] }, [/Build Up/, /Minstrel/, /Shadow/]);
     // Build Up alone: +1 for its minion, +1 (Cory, Nov 10)
-    expect(s.log.filter(l => /Stunt Double: P1 copied Build Up: \+2 green/.test(l))).toHaveLength(2);
-    expect(s.players[0].res.green).toBe(20 + 2 - 7 + 4); // Stunt Double costs 7 (Nov 5: every member +1)
+    expect(s.log.filter(l => /Shadow: P1 copied Build Up: \+2 green/.test(l))).toHaveLength(2);
+    expect(s.players[0].res.green).toBe(20 + 2 - 7 + 4); // Shadow costs 7 (Nov 5: every member +1)
   });
 
-  it('Encore + Extra Shift: two more minions this round', () => {
-    const s = run({ members: [['echo.encore']], shop: ['purple.extrashift'], res: [{ purple: 20 }] }, [/Build Up/, /Encore/, /Extra Shift/]);
+  it('Minstrel + Day Laborer: two more minions this round', () => {
+    const s = run({ members: [['echo.encore']], shop: ['purple.extrashift'], res: [{ purple: 20 }] }, [/Build Up/, /Minstrel/, /Day Laborer/]);
     expect(s.players[0].left).toBe(6); // 5, one placed, two more
   });
 
-  it('Stunt Double copied by Wallflower and Roadie: the copy is doubled, Roadie pays per green member', () => {
-    const s = run({ members: [['echo.wallflower', 'echo.roadie9']], shop: ['echo.hourglass'], res: [{ green: 20 }] }, [/Build Up/, /Stunt Double/]);
-    expect(has(s, /Stunt Double: P1 copied Build Up: \+2 green, doubled by P1's Wallflower/)).toBe(true);
-    expect(has(s, /P1's Roadie: \+3 green/)).toBe(true); // Wallflower, Roadie, Stunt Double
+  it('Shadow copied by Tall-Tale Teller and Roadie: the copy is doubled, Roadie pays per green member', () => {
+    const s = run({ members: [['echo.wallflower', 'echo.roadie9']], shop: ['echo.hourglass'], res: [{ green: 20 }] }, [/Build Up/, /Shadow/]);
+    expect(has(s, /Shadow: P1 copied Build Up: \+2 green, doubled by P1's Tall-Tale Teller/)).toBe(true);
+    expect(has(s, /P1's Roadie: \+3 green/)).toBe(true); // Tall-Tale Teller, Roadie, Shadow
   });
 
   // Greatest Hits is Medley's rule since Nov 10, on your own minions only since Nov 11 11:20pm: P1's own Gather on Red is
-  // copied, P2's Late Shift there is not; Stunt Double recruited after it copies Greatest Hits, which must not loop
-  it('Stunt Double copying Greatest Hits never loops back into Greatest Hits', () => {
-    const r = drive(scene({ quads: Q, turns: [0, 1, 0, 1], shop: ['echo.hourglass'], res: [{ green: 20 }] }), [/Gather/, /pass/, /Late Shift/, /pass/, /Greatest Hits/, /Red/, /Stunt Double/]);
+  // copied, P2's Late Shift there is not; Shadow recruited after it copies Greatest Hits, which must not loop
+  it('Shadow copying Greatest Hits never loops back into Greatest Hits', () => {
+    const r = drive(scene({ quads: Q, turns: [0, 1, 0, 1], shop: ['echo.hourglass'], res: [{ green: 20 }] }), [/Gather/, /pass/, /Late Shift/, /pass/, /Greatest Hits/, /Red/, /Shadow/]);
     const s = r.s;
     expect(s.log.filter(l => /^P1's Greatest Hits: \+1 green/.test(l))).toHaveLength(1);
-    expect(s.log).toContain("P1's Stunt Double: P1 copied Greatest Hits: +1 green, +4 red.");
+    expect(s.log).toContain("P1's Shadow: P1 copied Greatest Hits: +1 green, +4 red.");
     expect(s.log.some(l => /^P1 cop(ied|ies) Late Shift/.test(l))).toBe(false); // P2's minion: not copied
     expect(s.players[0].res.red).toBe(12); // own Gather +4, copied by Greatest Hits +4, then that chip again +4
     expect([s.pending.kind, s.pending.player]).toEqual(['place', 1]);
   });
 
   // Impersonator left the deck for Mimics (Nov 11 9:02pm); its rule stays and it is dealt here as a fixture, because this
-  // is the path (a choice made after Greatest Hits reaching a rival's Stunt Double) that looped forever on Nov 6
-  it("Impersonator doing a rival's Stunt Double after Greatest Hits never loops back into Greatest Hits", () => {
-    const r = drive(scene({ quads: Q, turns: [0, 1, 0, 1], members: [[], ['echo.hourglass']], shop: ['echo.impersonators'], res: [{ green: 30 }] }), [/Gather/, /pass/, /Late Shift/, /pass/, /Greatest Hits/, /Red/, /Impersonator/, /Stunt Double/]);
+  // is the path (a choice made after Greatest Hits reaching a rival's Shadow) that looped forever on Nov 6
+  it("Impersonator doing a rival's Shadow after Greatest Hits never loops back into Greatest Hits", () => {
+    const r = drive(scene({ quads: Q, turns: [0, 1, 0, 1], members: [[], ['echo.hourglass']], shop: ['echo.impersonators'], res: [{ green: 30 }] }), [/Gather/, /pass/, /Late Shift/, /pass/, /Greatest Hits/, /Red/, /Impersonator/, /Shadow/]);
     const s = r.s;
     expect(s.log.filter(l => /^P1's Greatest Hits: \+1 green/.test(l))).toHaveLength(1);
-    expect(s.log.filter(l => /Impersonator does Stunt Double's On Recruit/.test(l))).toHaveLength(1);
-    expect(s.log).toContain("P1's Stunt Double: P1 copied Greatest Hits: +1 green, +4 red.");
+    expect(s.log.filter(l => /Impersonator does Shadow's On Recruit/.test(l))).toHaveLength(1);
+    expect(s.log).toContain("P1's Shadow: P1 copied Greatest Hits: +1 green, +4 red.");
     expect(s.log.some(l => /^P1 cop(ied|ies) Late Shift/.test(l))).toBe(false); // P2's minion: not copied
     expect([s.pending.kind, s.pending.player]).toEqual(['place', 1]);
   });

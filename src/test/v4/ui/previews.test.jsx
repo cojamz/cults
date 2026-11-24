@@ -75,7 +75,7 @@ describe('previews reach the screen', () => {
   it('the Why line names each member once: a choice\'s branches repeated it (Snap Up: "Gardener … · Gardener … · Gardener …")', () => {
     expect(whyLine(['Gardener: +1 blue, +1 yellow', 'Gardener: +1 green, +1 yellow', 'Planner: next member costs 2 less']))
       .toBe('Gardener: depends on your pick · Planner: next member costs 2 less');
-    expect(whyLine(['Underdog: no ×2', 'Underdog: no ×2'])).toBe('Underdog: no ×2');
+    expect(whyLine(['Poor Relation: no ×2', 'Poor Relation: no ×2'])).toBe('Poor Relation: no ×2');
   });
 
   it('the rivals line prints only what is sure: no "−1 to 0" per color, even when no pick of yours decides it (w3b: Lie Low)', () => {
@@ -91,10 +91,10 @@ describe('previews reach the screen', () => {
     const z = [0, 0];
     const st = { resources: ['gold', 'purple'], players: [{ name: 'P1' }, { name: 'P2' }, { name: 'P3' }, { name: 'P4' }] };
     const row = g => ({ res: { gold: z, purple: g }, followers: z, members: z });
-    const pv = { you: { res: { gold: z, purple: [2, 2] }, followers: z, members: z, turns: z }, others: { res: { gold: z, purple: [1, 1] }, followers: z, members: z }, othersBy: { 1: row([1, 1]), 2: row(z), 3: row(z) }, theirReasons: ['P2’s Picket Line: +1 purple'], asks: [], theirAsks: [], exact: true, partial: false };
+    const pv = { you: { res: { gold: z, purple: [2, 2] }, followers: z, members: z, turns: z }, others: { res: { gold: z, purple: [1, 1] }, followers: z, members: z }, othersBy: { 1: row([1, 1]), 2: row(z), 3: row(z) }, theirReasons: ['P2’s Turnpike Keeper: +1 purple'], asks: [], theirAsks: [], exact: true, partial: false };
     const w = previewWords(pv, st);
-    expect(w.others).toBe('P2 +1 purple (Picket Line)');
-    expect(w.inlined).toEqual(['P2’s Picket Line: +1 purple']);
+    expect(w.others).toBe('P2 +1 purple (Turnpike Keeper)');
+    expect(w.inlined).toEqual(['P2’s Turnpike Keeper: +1 purple']);
     const toast = { ...pv, othersBy: { 1: row([2, 2]), 2: row([2, 2]), 3: row([2, 2]) }, theirReasons: [] };
     expect(previewWords(toast, st).others).toBe('each rival +2 purple');
   });

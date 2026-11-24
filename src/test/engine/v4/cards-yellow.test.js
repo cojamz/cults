@@ -311,7 +311,7 @@ describe('Yellow members', () => {
     s = take(s, 'gold.rush'); s = buy(s, 'gold.banker');
     expect(R(s).gold).toBe(1);
     expect(named(s, 'Admirer')).toHaveLength(1);
-    // neutral cards stay neutral (Cory, 2026-10-18): the rival recruits Big Spender, Admirer stays quiet
+    // neutral cards stay neutral (Cory, 2026-10-18): the rival recruits Squanderer, Admirer stays quiet
     s = sc({ res: [{}, rich], members: [['yellow.admirer']], shop: ['benders.bigspender'], queue: [{ t: 'turn', p: 1 }] });
     const u = uidOf(s, 'benders.bigspender', 'shop');
     s = take(s, 'gold.rush'); s = buy(s, 'benders.bigspender');
@@ -387,7 +387,7 @@ describe('Yellow members', () => {
     const t = sc({ round: 3, left: 2, res, members: [['yellow.rainmaker']], queue: [{ t: 'buy', p: 0 }] });
     expect(chooseEasyMove(t, () => 0.5).option).not.toMatch(/^use:/);
   });
-  it('Rainmaker × Underdog: the gold part is a gold gain, so it doubles past the match (see ledger question)', () => {
+  it('Rainmaker × Poor Relation: the gold part is a gold gain, so it doubles past the match (see ledger question)', () => {
     let s = sc({ res: [{ gold: 1, yellow: 5 }, { gold: 20 }], members: [['yellow.rainmaker', 'gold.underdog']] });
     s = take(s, 'yellow.dilute');
     const y = R(s).yellow;

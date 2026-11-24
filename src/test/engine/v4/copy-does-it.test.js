@@ -64,13 +64,13 @@ describe('Echo copying Sleep In (Cory’s playtest, Oct 23)', () => {
   });
 });
 
-describe('Stunt Double (Cory’s playtest, Oct 23)', () => {
+describe('Shadow (Cory’s playtest, Oct 23)', () => {
   it('recruited right after Lie Low and its steal picks, repeats Lie Low', () => {
     const rich = { magenta: 9, green: 9, gold: 9, red: 9 };
     let s = sceneQ({ quadrants: ['thieves', 'echo', 'purple', 'red'], n: 2, round: 3, res: [rich, { red: 1, purple: 1, magenta: 1, gold: 2 }], shop: ['echo.hourglass'], queue: [0, 1].map(p => ({ t: 'turn', p })) });
     s = settle(take(s, 'thieves.hideout'));
     s = settle(buy(s, 'echo.hourglass'));
-    expect(s.log).toContain("P1's Stunt Double: P1 copies Lie Low: doing it again.");
+    expect(s.log).toContain("P1's Shadow: P1 copies Lie Low: doing it again.");
   });
 });
 

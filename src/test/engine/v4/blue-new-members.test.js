@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Blue's Nov 11 member calls (Cory): Swap Shoppers, Repossessors to the discard pile, Power Shoppers +3.
+// Blue's Nov 11 member calls (Cory): Old-Clothes Dealers, Repossessors to the discard pile, Market-Day Shopper +3.
 import { describe, it, expect } from 'vitest';
 import { defById } from '../../../engine/v4/content/index.js';
 import { discardOf } from '../../../engine/v4/discard.js';
@@ -18,7 +18,7 @@ describe('Cory’s words', () => {
   });
 });
 
-describe('Swap Shoppers', () => {
+describe('Old-Clothes Dealers', () => {
   it('your member goes to the discard pile and the same-cost one joins your cult', () => {
     let s = table(Q, { n: 2, round: 2, members: [['market.swapshoppers', 'red.movementpenalty']], queue: [{ t: 'buy', p: 0 }] });
     // a same-cost member (5) and a dearer one in the discard pile
@@ -50,7 +50,7 @@ describe('Repossessors', () => {
   });
 });
 
-describe('Thrift Hunters: "Whenever you recruit from the discard pile, +2 followers." (Cory, Nov 11 8:42pm)', async () => {
+describe('Scavengers: "Whenever you recruit from the discard pile, +2 followers." (Cory, Nov 11 8:42pm)', async () => {
   const { spacesOf } = await import('../../../engine/v4/content/index.js');
   const { applyMove } = await import('../../../engine/v4/core.js');
   const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
@@ -68,12 +68,12 @@ describe('Thrift Hunters: "Whenever you recruit from the discard pile, +2 follow
       if (s.pending?.kind === 'buy') break;
     }
     expect(s.players[0].members).toContain(a);
-    expect(s.log.join('\n')).toContain("P1's Thrift Hunters: Journeyman from the discard pile, +2 followers.");
+    expect(s.log.join('\n')).toContain("P1's Scavengers: Journeyman from the discard pile, +2 followers.");
     expect(s.players[0].bonus - before).toBeGreaterThanOrEqual(2);
   });
 });
 
-describe('Repeat Customers: "On Recruit: +3 blue, then recruit from the discard pile." (Cory, Nov 11 8:49pm)', () => {
+describe('Homecomers: "On Recruit: +3 blue, then recruit from the discard pile." (Cory, Nov 11 8:49pm)', () => {
   it('prints his text', () => {
     expect(defById('market.repeatcustomers').text).toBe('On Recruit: +3 blue, then recruit from the discard pile.');
   });
@@ -85,7 +85,7 @@ describe('Repeat Customers: "On Recruit: +3 blue, then recruit from the discard 
     s = move(s, `card:${rc}`);
     while (s.pending && s.pending.kind !== 'choose' && !s.players[0].members.includes(rc)) s = move(s, s.pending.options[0].id);
     expect(s.players[0].members).toContain(rc);
-    expect(s.log.join('\n')).toMatch(/Repeat Customers/);
+    expect(s.log.join('\n')).toMatch(/Homecomers/);
     const ids = (s.pending?.options || []).map(o => o.id + ' ' + (o.value ?? ''));
     expect(ids.join('\n')).toContain(a);
   });

@@ -20,7 +20,7 @@ const log = s => s.log.join('\n');
 const payAll = s => { while (s.pending && s.pending.player === 0 && s.pending.prompt?.includes('pay')) s = answer(s, s.pending.options[0].id); return s; };
 
 describe('REPLACE14: Ragpicker ("You may recruit the top member of the discard pile as if it were in the shop.")', () => {
-  it("is dealt in Patroness' place", () => {
+  it("is dealt in Gravedigger' place", () => {
     expect(defById('market.ragpicker').name).toBe('Ragpicker');
     expect(defById('market.patroness').retired).toBe(true);
   });

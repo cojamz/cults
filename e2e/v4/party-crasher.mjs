@@ -1,4 +1,4 @@
-// Party Crasher's Use (Cory's playtest, Nov 1: "still cant play party crasher"): lit on your seat, and using it lets your
+// Trespasser's Use (Cory's playtest, Nov 1: "still cant play party crasher"): lit on your seat, and using it lets your
 // next minion onto a space a rival took.
 import { mkdirSync } from 'node:fs';
 import { browserPath, launchBrowser } from './lib/browser.mjs';
@@ -27,12 +27,12 @@ try {
   await page.locator('.app.game:not([data-animating])').waitFor();
   const fig = page.locator(`.cs-member[data-member="benders.squatter"]`).first();
   await fig.waitFor();
-  if ((await fig.getAttribute('data-state')) !== 'ready') throw Error(`Party Crasher reads "${await fig.getAttribute('data-state')}", not ready`);
+  if ((await fig.getAttribute('data-state')) !== 'ready') throw Error(`Trespasser reads "${await fig.getAttribute('data-state')}", not ready`);
   await page.screenshot({ path: `${out}/ready.png` });
-  // your own seat's hover is the rival format, with Party Crasher's Use in it (Cory's playtest, Nov 1)
+  // your own seat's hover is the rival format, with Trespasser's Use in it (Cory's playtest, Nov 1)
   await page.locator('[data-cult="0"] .cs-head').hover();
   const seatCard = page.locator('[data-hover-layer][data-open="1"] [data-seat-card="0"].rival'); await seatCard.waitFor();
-  if (!(await seatCard.locator(`[data-use="${uid}"]`).count())) throw Error('your seat card has no Use for Party Crasher');
+  if (!(await seatCard.locator(`[data-use="${uid}"]`).count())) throw Error('your seat card has no Use for Trespasser');
   await page.screenshot({ path: `${out}/seat-card.png` });
   await page.mouse.move(5, 690); await page.waitForTimeout(400);
   await fig.locator('.fig').hover();

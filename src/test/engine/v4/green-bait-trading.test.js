@@ -12,8 +12,8 @@ const Q = ['gold', 'red', 'trading', 'echo'];
 const pass = s => s.pending?.kind === 'buy' ? move(s, 'pass') : s;
 const copyGold = s => pass(move(s, s.pending.options.find(o => o.label.startsWith(`${actionName('gold.rush')} (`)).id));
 
-describe('Bait follower losses preserve White’s loose-follower limits', () => {
-  it('a Lender reduced to zero by Bait gains no followers at game end', () => {
+describe('Trapper follower losses preserve White’s loose-follower limits', () => {
+  it('a Lender reduced to zero by Trapper gains no followers at game end', () => {
     let s = table(Q, { round: 2, left: 5, members: [['echo.bait'], ['trading.lender']],
       queue: [0, 1, 0, 1].map(p => ({ t: 'turn', p })) });
     s = pass(take(s, 'gold.rush'));

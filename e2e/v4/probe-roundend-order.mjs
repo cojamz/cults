@@ -1,4 +1,4 @@
-// Probe (round-end order, Nov 6): seeds round I with Cheerleaders, Sore Loser, two Mobs and Victors in the cults, plays
+// Probe (round-end order, Nov 6): seeds round I with Trumpeters, Sore Loser, two Mobs and Victors in the cults, plays
 // to the round's end and screenshots each step the Reckoning heads, then the round's card. Server: $V4_URL; shots: $OUT.
 import { mkdirSync } from 'node:fs';
 import { browserPath, launchBrowser } from './lib/browser.mjs';

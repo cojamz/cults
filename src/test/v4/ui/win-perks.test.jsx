@@ -11,7 +11,7 @@ import { reckonSteps } from '../../../v4/game/Reckoning.jsx';
 afterEach(cleanup);
 
 describe('contest-win members on the round-end card', () => {
-  it('Cheerleaders and Victors pay after the contests, on the card and in the Reckoning', () => {
+  it('Trumpeters and Victors pay after the contests, on the card and in the Reckoning', () => {
     const rand = seededRandom(5);
     let s = createGame({ seats: ['Ana', 'Bo', 'Cy'].map(name => ({ name, kind: 'bot' })), seed: 5 });
     let prev = null, move = null;
@@ -32,7 +32,7 @@ describe('contest-win members on the round-end card', () => {
     const info = { result, start: before, after, board: after };
     const { container } = render(<RoundEnd info={info} onNext={() => {}} autoMs={0} />);
     const line = container.querySelector('[data-phase="after-contests"]');
-    expect(line && line.textContent).toMatch(/Cheerleaders: .*\+\d+ followers/);
+    expect(line && line.textContent).toMatch(/Trumpeters: .*\+\d+ followers/);
     expect(line.textContent).toMatch(/Victors: .*\+\d+ \w+/);
     // the card reads in the order it happens: contests, then the members that answer them
     const contests = container.querySelector('[data-phase="contests"]');

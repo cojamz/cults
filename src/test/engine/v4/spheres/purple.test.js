@@ -212,7 +212,7 @@ describe('Purple members', () => {
   // round II: no extra minions in round I (Cory, 2026-10-15); Roll Call gives +1 per minion on the board there
   const afterTake = (members, extra = {}) => take(scene({ round: 2, queue: turns(0, 1), members, ...extra }), 'purple.windup');
 
-  it('Go-Getter: once per game, an extra turn right after this one', () => {
+  it('Errand Boy: once per game, an extra turn right after this one', () => {
     let s = afterTake([['purple.secondwind']]);
     const u = uidOf(s, 'purple.secondwind', 0);
     s = move(s, `use:${u}`);
@@ -236,7 +236,7 @@ describe('Purple members', () => {
     t = move(t, `use:${u}`);
     expect(ids(t)).toContain(`use:${u}`); // not used up
   });
-  it('Late Risers: from round II, the trailing player takes an extra turn first', () => {
+  it('Early Riser: from round II, the trailing player takes an extra turn first', () => {
     const s = start([['purple.lateriser']], { bonus: [0, 3] });
     expect(s.pending.kind).toBe('place');
     expect(s.pending.player).toBe(0);
@@ -323,7 +323,7 @@ describe('Purple members', () => {
     const s = scene({ round: 3, members: [['purple.patience']], res: [{ purple: 10 }], queue: [{ t: 'finish' }] });
     expect(s.players[0].final.parts).toContain('Timekeeper +3');
   });
-  it('Picket Line (Shift Crew\'s place, Nov 4): worth 1 follower and 1 member, rebased (Cory, Nov 12; was 3)', () => {
+  it('Turnpike Keeper (Shift Crew\'s place, Nov 4): worth 1 follower and 1 member, rebased (Cory, Nov 12; was 3)', () => {
     const s = scene({ members: [['purple.picketline']] });
     expect(followers(s, s.players[0])).toBe(2);
     expect(memberCount(s, s.players[0])).toBe(1);

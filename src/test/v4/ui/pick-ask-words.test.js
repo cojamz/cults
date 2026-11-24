@@ -1,4 +1,4 @@
-// A member's pick says what it's for in the caption, from the question's own words (picky bot, Nov 4: "Window Shopper:
+// A member's pick says what it's for in the caption, from the question's own words (picky bot, Nov 4: "Culler:
 // pick a member", for what?).
 import { expect, it } from 'vitest';
 import { askWords } from '../../../v4/game/boardPick.js';

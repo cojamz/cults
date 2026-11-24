@@ -193,7 +193,7 @@ try {
       await page.evaluate(() => { window.__clicks = 0; addEventListener('click', () => { window.__clicks++; }, true); });
       await click(page, '.gift-card .gc-all');
       await page.waitForFunction(() => !document.querySelector('.gift-card'), null, { timeout: 10000 }).catch(() => errors.push('(s2) "Take all" never finished the steal'));
-      // P1's gold: 3 stolen, plus what the engine adds for the same picks (a member P1's bots recruited, like Prospector)
+      // P1's gold: 3 stolen, plus what the engine adds for the same picks (a member P1's bots recruited, like Gold Panner)
       const after = ['player:2', 'player:2', 'player:1'].reduce((st, option) => applyMove(st, { player: 0, option }), save.state);
       if (after.players[0].res.gold < save.state.players[0].res.gold + 3) errors.push('(s2) the engine stole less than 3 gold');
       await expectCounts(page, 's2', { '1:gold': 2, '2:gold': 3, '0:gold': after.players[0].res.gold });

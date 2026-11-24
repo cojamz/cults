@@ -10,7 +10,7 @@ const rich = { gold: 30, red: 30, purple: 30, green: 30 };
 const payDefault = s => (s.pending?.kind === 'pay' ? move(s, s.pending.options[0].id) : s);
 
 describe('On Use after the round’s last recruit', () => {
-  it('a follower recruit on your last minion still offers Hot Streak before the round ends', () => {
+  it('a follower recruit on your last minion still offers Juggler before the round ends', () => {
     let s = sceneQ({ quadrants: Q, round: 2, left: 1, res: [rich], members: [['purple.streak']], queue: [{ t: 'turn', p: 0 }, { t: 'allPlaced' }] });
     s = take(s, 'gold.rush');
     s.turns = [0, 0]; // this is the second of two turns in a row

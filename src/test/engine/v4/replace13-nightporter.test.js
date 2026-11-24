@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Lane F (REPLACE13=nightporter, Nov 4; quality/pitches/F-batch2.md): Night Porter in Closer's place: "Each minion you place once all rivals are out of minions: +2 followers."
+// Lane F (REPLACE13=nightporter, Nov 4; quality/pitches/F-batch2.md): Night Porter in Gate-Shutter's place: "Each minion you place once all rivals are out of minions: +2 followers."
 // One test per sentence, plus the pitched turn.
 import { describe, it, expect } from 'vitest';
 
@@ -19,7 +19,7 @@ const owns = (s, i, key) => s.players[i].members.some(u => s.cards[u].def.endsWi
 const SHOP = ['red.volunteer', 'red.recruiter', 'market.regular', 'red.patriarch'];
 
 describe('REPLACE13=nightporter: Night Porter', () => {
-  it("is dealt in Closer's place", () => {
+  it("is dealt in Gate-Shutter's place", () => {
     const keys = quadrant('purple').members.filter(d => !d.retired).map(d => d.key);
     expect(keys).toContain('nightporter');
     expect(keys).not.toContain('closer');

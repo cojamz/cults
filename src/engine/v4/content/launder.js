@@ -13,7 +13,7 @@ function payAfter(ctx, p, data) {
   ctx.log(`${p.name}'s ${data.who}: +${led.length} follower${led.length === 1 ? '' : 's'}, one per contest led.`);
 }
 
-export function startLaunder(ctx, owner, who = 'Launderers', extra = {}) {
+export function startLaunder(ctx, owner, who = 'Moneychangers', extra = {}) {
   const total = sum(owner);
   if (!total) { payAfter(ctx, owner, { who, ...extra }); return; }
   const opts = ctx.state.resources.map(c => {
@@ -26,7 +26,7 @@ export function startLaunder(ctx, owner, who = 'Launderers', extra = {}) {
 }
 
 export function launderPick(ctx, p, color, data) {
-  const who = data?.who || 'Launderers';
+  const who = data?.who || 'Moneychangers';
   if (!color) { payAfter(ctx, p, data); return; }
   const total = sum(p);
   if (color === 'split') { launderStep(ctx, p, { ...data, who, total, left: total, i: 0, set: {} }); return; }
@@ -43,7 +43,7 @@ export function launderAmount(ctx, p, n, data) {
 
 // the split: one color at a time, how many of what's left; the last color takes the rest
 function launderStep(ctx, p, data) {
-  const who = data.who || 'Launderers';
+  const who = data.who || 'Moneychangers';
   const colors = ctx.state.resources, c = colors[data.i];
   if (data.i >= colors.length - 1 || !data.left) {
     const set = Object.fromEntries(colors.map(x => [x, data.set[x] || 0]));

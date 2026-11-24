@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Cory's Nov 11 member calls for White and Purple (design/decisions.md, 9:10pm and 9:12pm Eastern):
-// Leavetakers replaces Undertaker, Minimalists fills White's last slot, Last Callers fills Purple's open slot.
+// Mourners replaces Undertaker, Connoisseurs fills White's last slot, Last Callers fills Purple's open slot.
 import { describe, it, expect } from 'vitest';
 import { contextFor } from '../../../engine/v4/core.js';
 import { defById } from '../../../engine/v4/content/index.js';
@@ -11,21 +11,21 @@ import { table, named, uidIn } from './cards-helpers-b.js';
 
 const turns = (...ps) => ps.map(p => ({ t: 'turn', p }));
 
-describe('White: Leavetakers and Minimalists', () => {
+describe('White: Mourners and Connoisseurs', () => {
   it('print his text; Undertaker and Barker leave the deck', () => {
     expect(defById('trading.leavetakers').text).toBe('Whenever one of your members leaves your cult, +2 white.');
     expect(defById('trading.minimalists').text).toBe('Game End: +2 followers per member you have costing 8 or more.');
     expect(CUT.has('trading.undertaker') && CUT.has('trading.barker')).toBe(true);
     expect(CUT.has('trading.leavetakers') || CUT.has('trading.minimalists')).toBe(false);
   });
-  it('Leavetakers: a member discarded on Downsizers pays +2 white (with Downsizers\' +4)', () => {
+  it('Mourners: a member discarded on Executioner pays +2 white (with Executioner\' +4)', () => {
     let s = table(['gold', 'red', 'trading', 'thieves'], { members: [['trading.moneylender', 'trading.leavetakers', 'red.twins']], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidIn(s, 'trading.moneylender', 0)}`);
     s = move(s, `card:${uidIn(s, 'red.twins', 0)}`);
     expect(s.players[0].res.white).toBe(6);
-    expect(named(s, 'Leavetakers')).toEqual(["P1's Leavetakers: Triplets left: +2 white."]);
+    expect(named(s, 'Mourners')).toEqual(["P1's Mourners: Triplets left: +2 white."]);
   });
-  it('Minimalists: +2 per member costing 8 or more at Game End', () => {
+  it('Connoisseurs: +2 per member costing 8 or more at Game End', () => {
     const s = table(['gold', 'red', 'trading', 'thieves'], { members: [['trading.minimalists', 'trading.heiress', 'gold.tycoon', 'red.twins']] });
     const ctx = contextFor(s), cost = d => d.s + d.w;
     const big = s.players[0].members.filter(u => cost(defById(s.cards[u].def)) >= 8).length;

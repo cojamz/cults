@@ -51,12 +51,12 @@ const WILD = /^color:red$/; // Herald's +2 wild: one color at a time
 describe('Hostages: "On Recruit: swap one of your members for a rival’s member that costs the same."', () => {
   it('a used once-per-game member stays used in its new cult', () => {
     const { s } = run('es-used-encore', { quads: Q, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents'], members: [['echo.encore'], ['silver.dowager']] },
-      [/Hostages/, /Encore/], st => { st.cards[uidOf(st, 'echo.encore')].used = true; });
+      [/Hostages/, /Minstrel/], st => { st.cards[uidOf(st, 'echo.encore')].used = true; });
     const enc = uidOf(s, 'echo.encore');
     expect(names(s, 0)).toEqual(['Hostages', 'Dowager']);
-    expect(names(s, 1)).toEqual(['Encore']);
+    expect(names(s, 1)).toEqual(['Minstrel']);
     expect(s.cards[enc].used).toBe(true);
-    expect(s.log).toContain("P1's Hostages: swaps Encore for P2's Dowager.");
+    expect(s.log).toContain("P1's Hostages: swaps Minstrel for P2's Dowager.");
   });
 
   it('swapping in a yellow member with an On Recruit: it is your recruit, so Herald pays again and its On Recruit happens', () => {
@@ -79,16 +79,16 @@ describe('Hostages: "On Recruit: swap one of your members for a rival’s member
   // Thief-Takers block steals, not swaps (Cory, 2026-11-01: "balance wise it works best if it blocks steals, not swaps")
   it('Thief-Takers do not stop the swap (3 players: both rivals offered)', () => {
     const { s } = run('es-bodyguards', { quads: SQ, n: 3, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents'],
-      members: [['echo.encore'], ['thieves.watchdog', 'silver.dowager'], ['silver.splurgers']] }, [/Hostages/, /Encore ↔ P2/]);
+      members: [['echo.encore'], ['thieves.watchdog', 'silver.dowager'], ['silver.splurgers']] }, [/Hostages/, /Minstrel ↔ P2/]);
     expect(names(s, 0)).toEqual(['Hostages', 'Dowager']);
-    expect(names(s, 1)).toEqual(['Thief-Takers', 'Encore']);
+    expect(names(s, 1)).toEqual(['Thief-Takers', 'Minstrel']);
   });
 
   it('Warden shield the only same-cost member: no swap, and the log does not claim nothing costs the same', () => {
     const { s } = run('es-loyalists-only', { quads: SQ, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents'],
       members: [['silver.dowager'], ['red.loyalists', 'echo.encore']] }, [/Hostages/]);
-    expect(names(s, 1)).toEqual(['Warden', 'Encore']);
-    // P2's Encore costs 7, as Dowager does: Warden stop the swap, not the cost
+    expect(names(s, 1)).toEqual(['Warden', 'Minstrel']);
+    // P2's Minstrel costs 7, as Dowager does: Warden stop the swap, not the cost
     expect(s.log).toContain("P1's Hostages: no rival's member that costs the same as one of yours can be swapped.");
   });
 
@@ -110,14 +110,14 @@ describe('Hostages: "On Recruit: swap one of your members for a rival’s member
       members: [['red.movementpenalty', 'red.seatfiller'], ['echo.agents']] }, [/Hostages/, /Journeyman ↔/]);
     expect(names(s, 1)).toEqual(['Journeyman']);
     expect(s.players[1].bonus).toBe(-1);
-    expect(s.log.filter(l => /Hostages:|Deprogrammers/.test(l))).toEqual(["P1's Hostages: swaps Journeyman for P2's Agents.", "P2 −1 follower (P1's Deprogrammers)."]);
+    expect(s.log.filter(l => /Hostages:|Deprogrammers/.test(l))).toEqual(["P1's Hostages: swaps Journeyman for P2's Secret-Keepers.", "P2 −1 follower (P1's Deprogrammers)."]);
   });
 
-  it('Agents swapped away: the rival now has it, and P1 no longer does', () => {
+  it('Secret-Keepers swapped away: the rival now has it, and P1 no longer does', () => {
     const { s } = run('es-agents', { quads: Q, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents'],
-      members: [['echo.agents'], ['red.seatfiller']] }, [/Hostages/, /Agents ↔/]);
+      members: [['echo.agents'], ['red.seatfiller']] }, [/Hostages/, /Secret-Keepers ↔/]);
     expect(names(s, 0)).toEqual(['Hostages', 'Journeyman']);
-    expect(names(s, 1)).toEqual(['Agents']);
+    expect(names(s, 1)).toEqual(['Secret-Keepers']);
   });
 
   it('Drifters swapped in: its On Recruit asks again for P1; picking Yellow pays Herald', () => {
@@ -165,25 +165,25 @@ describe('Hostages: "On Recruit: swap one of your members for a rival’s member
     const { s } = run('es-4p', { quads: SQ, n: 4, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents'],
       members: [['echo.encore'], ['silver.dowager'], ['silver.hustlers'], ['silver.revelers', 'red.panel']] }, [/Hostages/]);
     expect(s.pending.options.filter(o => o.kind === 'trade').map(o => o.label)).toEqual([
-      'Encore ↔ P2: Dowager (7)', 'Encore ↔ P3: Hustlers (7)', 'Encore ↔ P4: Revelers (7)',
+      'Minstrel ↔ P2: Dowager (7)', 'Minstrel ↔ P3: Purse-Switchers (7)', 'Minstrel ↔ P4: Revelers (7)',
       // Hostages itself costs 7 too
-      'Hostages ↔ P2: Dowager (7)', 'Hostages ↔ P3: Hustlers (7)', 'Hostages ↔ P4: Revelers (7)']);
-    const r = drive(s, [/Encore ↔ P4/]);
-    expect(names(r.s, 3)).toEqual(['Fairy Godmother', 'Encore']);
-    expect(r.s.log).toContain("P1's Hostages: swaps Encore for P4's Revelers.");
+      'Hostages ↔ P2: Dowager (7)', 'Hostages ↔ P3: Purse-Switchers (7)', 'Hostages ↔ P4: Revelers (7)']);
+    const r = drive(s, [/Minstrel ↔ P4/]);
+    expect(names(r.s, 3)).toEqual(['Fairy Godmother', 'Minstrel']);
+    expect(r.s.log).toContain("P1's Hostages: swaps Minstrel for P4's Revelers.");
   });
 
   it('Don\'t swap: nothing moves, and the log says so', () => {
     const { s } = run('es-none', { quads: Q, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents'],
       members: [['echo.encore'], ['silver.dowager']] }, [/Hostages/, /^none$/]);
-    expect(names(s, 0)).toEqual(['Encore', 'Hostages']);
+    expect(names(s, 0)).toEqual(['Minstrel', 'Hostages']);
     expect(s.log).toContain("P1's Hostages: no swap.");
   });
 
   it('Harlequin swapped to a rival: its Round End pays the rival, by the rival\'s colors', () => {
     const { s } = run('es-cosmo', { quads: Q, queue: [...BUY, { t: 'allPlaced' }], res: [{ yellow: 20 }], shop: ['yellow.exchangestudents'],
       members: [['yellow.cosmopolitans', 'red.clan'], ['silver.dowager', 'red.recruiter', 'echo.wallflower']] }, [/Hostages/, /Harlequin ↔/]);
-    expect(names(s, 1)).toEqual(['Ferryman', 'Wallflower', 'Harlequin']);
+    expect(names(s, 1)).toEqual(['Ferryman', 'Tall-Tale Teller', 'Harlequin']);
     expect(s.log).toContain("P2's Harlequin: 3 colors among their members, +3 followers.");
     expect(has(s, /^P1's Harlequin/)).toBe(false);
   });
@@ -200,11 +200,11 @@ describe('Benefactor: "On Use, once per game: recruit a member costing up to 7 f
     expect(s.cards[uidOf(s, 'yellow.headhunters')].used).toBe(true);
   });
 
-  // OPEN QUESTION, not fixed (core.js, silver.js): Splurgers rides Barker's extra followers buy, which only a recruit
+  // OPEN QUESTION, not fixed (core.js, silver.js): Wastrels rides Barker's extra followers buy, which only a recruit
   // step's member brings (decisions.md, Nov 4, Claude's reading for Barker: "Members recruited by a space... don't bring
-  // one"). Splurgers prints "Whenever you recruit a silver member", and a free recruit is a recruit (Cory, Oct 21), so
+  // one"). Wastrels prints "Whenever you recruit a silver member", and a free recruit is a recruit (Cory, Oct 21), so
   // Benefactor' free silver member brings no followers buy today. Flips to passing if Cory reads it the printed way.
-  it.fails('Splurgers: a silver member taken free after the turn\'s recruit still lets you buy followers', () => {
+  it.fails('Wastrels: a silver member taken free after the turn\'s recruit still lets you buy followers', () => {
     const sc = splurge => ({ quads: SQ, queue: BUY, res: [{ red: 3, silver: 6 }], shop: ['red.volunteer', 'silver.retinue'],
       members: [['yellow.headhunters', ...(splurge ? ['silver.splurgers'] : [])]] });
     const steps = () => [/Volunteer/, /^use:/, /Retinue/];
@@ -221,7 +221,7 @@ describe('Benefactor: "On Use, once per game: recruit a member costing up to 7 f
       members: [['yellow.headhunters']] }, [/^use:/]);
     const labels = s.pending.options.map(o => o.label);
     expect(s.pending.prompt).toBe('Benefactor: recruit which member costing 7 or less, for free?');
-    expect(labels).toEqual(['Martyrs (6)', 'Encore (7)']);
+    expect(labels).toEqual(['Martyrs (6)', 'Minstrel (7)']);
     const r = drive(s, [/Martyrs/]);
     expect(names(r.s, 0)).toEqual(['Benefactor', 'Martyrs']);
     expect(r.s.players[0].discount).toBe(3);
@@ -231,7 +231,7 @@ describe('Benefactor: "On Use, once per game: recruit a member costing up to 7 f
     const { s } = run('hh-rich', { quads: Q, queue: BUY, rules: { econ: 'rich' }, shop: ['trading.martyr', 'echo.encore'],
       members: [['yellow.headhunters']] }, [/^use:/]);
     expect(s.pending.prompt).toBe('Benefactor: recruit which member costing 9 or less, for free?');
-    expect(s.pending.options.map(o => o.label)).toEqual(['Martyrs (8)', 'Encore (9)']);
+    expect(s.pending.options.map(o => o.label)).toEqual(['Martyrs (8)', 'Minstrel (9)']);
   });
 
   it('no shop member costs 7 or less: it says so and stays unused', () => {

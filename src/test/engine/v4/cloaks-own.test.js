@@ -12,12 +12,12 @@ const withCloak = (s, def, i = 0) => {
   return s;
 };
 
-describe('Purple Cloak (Pocket Watch)', () => {
+describe('Purple Cloak (Sleepyhead)', () => {
   it('Sleep In: its holder takes the Goes Last token, +2 purple on top of the space (+3 until Nov 11)', () => {
     const base = take(sceneQ({ quadrants: Q }), 'purple.skip').players[0].res.purple;
     const s = take(withCloak(sceneQ({ quadrants: Q }), 'purple.pocketwatch'), 'purple.skip');
     expect(s.players[0].res.purple).toBe(base + 2);
-    expect(linesNaming(s.log, 'Pocket Watch').join(' ')).toMatch(/\+2 purple/);
+    expect(linesNaming(s.log, 'Sleepyhead').join(' ')).toMatch(/\+2 purple/);
   });
   it('a rival taking the token pays nothing', () => {
     const base = take(sceneQ({ quadrants: Q }), 'purple.skip').players[1].res.purple || 0;

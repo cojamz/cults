@@ -203,17 +203,17 @@ function sweepRow(ctx, actor = null) {
 /** k shop members just went to the bottom of the pile on someone's turn: Patroness pays once (Cory, Oct 21: "just one
  * follower each time it happens, not per card"), not for the round-start refresh. */
 // Window Shopper: one pick at a time, so the second choice sees the refilled shop
-function windowPick(ctx, owner, left, sent = [], who = 'Window Shopper', row = null) {
-  const all = ctx.shopCards(), first = who !== 'Window Shopper' && row == null;
+function windowPick(ctx, owner, left, sent = [], who = 'Culler', row = null) {
+  const all = ctx.shopCards(), first = who !== 'Culler' && row == null;
   const shop = row == null ? all : all.filter(c => row.includes(c.uid));
   if (first) row = all.map(c => c.uid);
   if (!shop.length) { scavenge(ctx, owner, sent); return; }
   // Out of Style (Nov 10) goes through the same steps, by its own name; a grey member gives 1 of any color there
-  const named = who === 'Window Shopper' ? {} : { who };
+  const named = who === 'Culler' ? {} : { who };
   // the count stays to the last pick ("(last one)"), so the question doesn't change shape under it (picky bot, Nov 11)
   ctx.choose(owner, left > 1 ? `${who}: send which member to the discard pile? (${left} to go)` : sent.length ? `${who}: send which member to the discard pile? (last one)` : `${who}: send which member to the discard pile?`, shop.map(c => ({
-    id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: who === 'Window Shopper' ? priceOf(c) : 1 + 0.1 * priceOf(c),
-  })), `${Q}.windowShop`, { left, ...named, ...(TRACK || who !== 'Window Shopper' ? { sent } : {}), ...(row ? { row } : {}) });
+    id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: who === 'Culler' ? priceOf(c) : 1 + 0.1 * priceOf(c),
+  })), `${Q}.windowShop`, { left, ...named, ...(TRACK || who !== 'Culler' ? { sent } : {}), ...(row ? { row } : {}) });
 }
 /** Test Drive (Nov 10): the hook that plays a member's effect now, by its printed timing; null when its timing doesn't count. */
 export function driveHook(def) {
@@ -322,7 +322,7 @@ function lmOffer(ctx, owner) {
 }
 /** The alternate's "+2 of any colors": one color at a time; bots take the color they hold least of. */
 function lmGainAsk(ctx, owner, left) {
-  ctx.choose(owner, `Last-Minute Shopper: +1 of which color${left > 1 ? ' (1 of 2)' : ' (2 of 2)'}?`, ctx.state.resources.map(c => ({
+  ctx.choose(owner, `Dusk Buyer: +1 of which color${left > 1 ? ' (1 of 2)' : ' (2 of 2)'}?`, ctx.state.resources.map(c => ({
     id: `color:${c}`, label: c, kind: 'color', value: c, hint: -(owner.res[c] || 0),
   })), `${Q}.lastMinuteGain`, { left });
 }
@@ -558,12 +558,12 @@ const market = {
       ctx.buryMember(o, uid, p, { shop: true });
     },
     swapShop(ctx, p, value) {
-      if (!Array.isArray(value)) { ctx.log(`${p.name}'s Swap Shoppers: no swap.`); return; }
+      if (!Array.isArray(value)) { ctx.log(`${p.name}'s Old-Clothes Dealers: no swap.`); return; }
       const [a, b] = value;
       if (!swapShopPairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
       const names = [ctx.card(a).def.name, ctx.card(b).def.name];
       if (!takeFromDiscard(ctx.state, b)) return; // marks it as off the discard pile this turn (Thrift Hunters)
-      ctx.log(`${p.name}'s Swap Shoppers: swaps ${names[0]} for ${names[1]} from the discard pile.`);
+      ctx.log(`${p.name}'s Old-Clothes Dealers: swaps ${names[0]} for ${names[1]} from the discard pile.`);
       // yours goes first, so a member swapped away never hears the one coming in
       ctx.buryMember(p, a, p);
       // the one taken is your recruit, free (Cory, Nov 1: "A member you get by your own swap is recruited (its On
@@ -640,7 +640,7 @@ const market = {
       snobReserve(ctx, p, uid) {
         if (!ctx.state.shop.includes(uid)) return;
         ctx.state.reserved = { uid, pid: p.id };
-        ctx.log(`${p.name}'s Snobs: a token on ${ctx.card(uid).def.name}; only ${p.name} may recruit it this round.`);
+        ctx.log(`${p.name}'s Blue Bloods: a token on ${ctx.card(uid).def.name}; only ${p.name} may recruit it this round.`);
       },
     }),
     doormen(ctx, p, value) {
@@ -657,7 +657,7 @@ const market = {
     },
     windowShop(ctx, p, uid, data) {
       if (!ctx.state.shop.includes(uid)) return;
-      const who = data?.who || 'Window Shopper', space = who !== 'Window Shopper';
+      const who = data?.who || 'Culler', space = who !== 'Culler';
       const c = ctx.card(uid), col = colorOf(ctx, c);
       ctx.state.shop.splice(ctx.state.shop.indexOf(uid), 1);
       toDiscard(ctx.state, uid);
@@ -796,9 +796,9 @@ const market = {
     },
     // Last-Minute Shopper is in the deck (Nov 5): its handler is always registered
     lastMinute(ctx, p, uid) {
-      if (uid == null) { ctx.log(`${p.name}'s Last-Minute Shopper: recruits nothing.`); return; }
+      if (uid == null) { ctx.log(`${p.name}'s Dusk Buyer: recruits nothing.`); return; }
       if (!ctx.state.shop.includes(uid) || !ctx.payChoices(p, uid, {}).length) return;
-      askPay(ctx, p, `Last-Minute Shopper: how do you pay for ${ctx.card(uid).def.name}?`, { uid, why: 'Last-Minute Shopper', fromPile: true, how: {} });
+      askPay(ctx, p, `Dusk Buyer: how do you pay for ${ctx.card(uid).def.name}?`, { uid, why: 'Dusk Buyer', fromPile: true, how: {} });
     },
     ...handlers9({
       stallhold(ctx, p, uid, data) {
@@ -811,7 +811,7 @@ const market = {
       },
       lastMinuteGain(ctx, p, color, data) {
         ctx.gain(p, color, 1);
-        ctx.log(`${p.name}'s Last-Minute Shopper: +1 ${color}.`);
+        ctx.log(`${p.name}'s Dusk Buyer: +1 ${color}.`);
         if (data.left > 1) lmGainAsk(ctx, p, data.left - 1); else lmOffer(ctx, p);
       },
     }),
@@ -1019,8 +1019,8 @@ const market = {
     // (Claude's fill-in: he called bottom-of-pile payouts "too strong between rounds" on Oct 20).
     // Blue's artifact only, never dealt (Cory, 2026-10-24: "whenever shop members go to the bottom of the pile, gain 1
     // blue… one per batch"). Name is Claude's fill-in.
-    m('bargainbin', 'Bargain Bin', 0, 0, 'Whenever you discard a member, +1 blue.', { artifact: true, bottomBlue: true }),
-    m('patroness', 'Patroness', 5, 2, 'Whenever shop members go to the discard pile, +1 follower.', { bottomFollowers: true, ...old3, ...old14('ragpicker') }),
+    m('bargainbin', 'Rag-and-Bone Man', 0, 0, 'Whenever you discard a member, +1 blue.', { artifact: true, bottomBlue: true }),
+    m('patroness', 'Gravedigger', 5, 2, 'Whenever shop members go to the discard pile, +1 follower.', { bottomFollowers: true, ...old3, ...old14('ragpicker') }),
     // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-redo1.md, paper 18 vs 16; a play A/B under "paper
     // filters, play ranks"): Patroness' place, same price. Core offers the pile's bottom card beside the shop (flag pileBottom).
     ...add14(m('ragpicker', 'Ragpicker', 5, 2, 'You may recruit the top member of the discard pile as if it were in the shop.', { pileBottom: true,
@@ -1055,25 +1055,25 @@ const market = {
     // round ends or the card leaves the shop.
     // On Recruit too (Nov 4, A/B: bought in round III after its Round Start, it never fired); now: true runs the Round
     // Start effect on recruit, once (a separate onRecruited fired it twice: play judge, seed 328)
-    ...add11(m('snob2', 'Snobs', 3, 2, 'On Recruit and Round Start: put a token on a shop member. Until the round ends, only you may recruit it.', { f: 2, round: 1, now: true,
+    ...add11(m('snob2', 'Blue Bloods', 3, 2, 'On Recruit and Round Start: put a token on a shop member. Until the round ends, only you may recruit it.', { f: 2, round: 1, now: true,
       onRoundStart(ctx, owner) {
         const shop = ctx.shopCards();
         if (!shop.length) return;
-        ctx.choose(owner, 'Snobs: reserve which shop member this round?', shop.map(c => ({
+        ctx.choose(owner, 'Blue Bloods: reserve which shop member this round?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: botWorth(c),
         })), `${Q}.snobReserve`);
       },
     })),
     // REPLACE11 bot test (Actions lane, Nov 4, requalified under "paper filters, play ranks"): Snobs' place, disdain.
     // A member's cost is its printed cost (colored + any).
-    ...add11(m('snobs3', 'Snobs', 3, 2, `Whenever a rival recruits a member costing ${4 + MORE} or less, +1 follower.`, { f: 2,
+    ...add11(m('snobs3', 'Blue Bloods', 3, 2, `Whenever a rival recruits a member costing ${4 + MORE} or less, +1 follower.`, { f: 2,
       ...see(i => endsAhead(i).length * 1.5),
       onAnyRecruit(ctx, owner, card, by, rec) {
         const d = ctx.defOf(rec);
-        if (by !== owner && d.s + d.w <= 4 + MORE + richUp(ctx.state)) { owner.bonus += 1; ctx.log(`${owner.name}'s Snobs: ${by.name} recruited ${d.name}, +1 follower.`); }
+        if (by !== owner && d.s + d.w <= 4 + MORE + richUp(ctx.state)) { owner.bonus += 1; ctx.log(`${owner.name}'s Blue Bloods: ${by.name} recruited ${d.name}, +1 follower.`); }
       },
     })),
-    m('snob', 'Snobs', 3, 2, SNOBS_TEXT, { f: 2, ...old11('snob2'), ...old11('snobs3'), ...old9('market.snob'),
+    m('snob', 'Blue Bloods', 3, 2, SNOBS_TEXT, { f: 2, ...old11('snob2'), ...old11('snobs3'), ...old9('market.snob'),
       // REPLACE12 rewords (lane D2, Nov 4, pitches/D2-batch2.md, passed paper): snobsup "trading up", snobsround the
       // same count at every Round End. Unset: the live Game End count.
       ...(on12('snobsup') ? {
@@ -1084,7 +1084,7 @@ const market = {
           const others = ctx.membersOf(owner).filter(x => x.uid !== c.uid);
           if (others.some(x => priceOf(x) >= priceOf(c))) return;
           owner.bonus += 2;
-          ctx.log(`${owner.name}'s Snobs: ${c.def.name} (${priceOf(c)}) costs more than each of their other members, +2 followers.`);
+          ctx.log(`${owner.name}'s Blue Bloods: ${c.def.name} (${priceOf(c)}) costs more than each of their other members, +2 followers.`);
         },
         ...see(i => endsAhead(i).length * 2),
       } : on12('snobsround') ? {
@@ -1092,7 +1092,7 @@ const market = {
           const n = ctx.countMembersOfColor(owner, Q);
           if (!n) return;
           owner.bonus += n;
-          ctx.log(`${owner.name}'s Snobs: ${n} blue member${n === 1 ? '' : 's'}, +${n} follower${n === 1 ? '' : 's'}.`);
+          ctx.log(`${owner.name}'s Blue Bloods: ${n} blue member${n === 1 ? '' : 's'}, +${n} follower${n === 1 ? '' : 's'}.`);
         },
         ...see(i => (endsAhead(i).length + 1) * 2),
       } : {
@@ -1106,13 +1106,13 @@ const market = {
     // Cory, 2026-11-11 8:34pm Eastern: "Swap shoppers is pretty good. Let's try it… Definitely number one." Your member goes
     // to the discard pile and the other joins your cult as your recruit (his Nov 1 and Nov 4 calls: a member you bring in
     // by your own swap is recruited, so its On Recruit and every "whenever you recruit" fire). Price is Claude's fill-in.
-    m('swapshoppers', 'Swap Shoppers', 2, 2, 'On Use, once per round: swap one of your members for a discard-pile member that costs the same.', {
+    m('swapshoppers', 'Old-Clothes Dealers', 2, 2, 'On Use, once per round: swap one of your members for a discard-pile member that costs the same.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         const pairs = swapShopPairs(ctx, owner);
-        if (!pairs.length) { card.used = false; ctx.log(`${owner.name}'s Swap Shoppers: no discard-pile member costs the same as one of yours.`); return; }
-        ctx.choose(owner, 'Swap Shoppers: swap which of your members for which discard-pile member?', pairs.map(([a, b]) => ({
+        if (!pairs.length) { card.used = false; ctx.log(`${owner.name}'s Old-Clothes Dealers: no discard-pile member costs the same as one of yours.`); return; }
+        ctx.choose(owner, 'Old-Clothes Dealers: swap which of your members for which discard-pile member?', pairs.map(([a, b]) => ({
           id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} ↔ ${b.def.name} (${priceOf(b)})`, kind: 'trade', value: [a.uid, b.uid],
           // bots trade a used-up or plain member for one still to use, or worth more
           hint: (b.def.f - a.def.f) + (a.used ? 1 : 0) + (b.def.activate || b.def.onAllPlaced || b.def.onGameEnd ? 0.5 : 0) - (a.uid === card.uid ? 3 : 0),
@@ -1123,25 +1123,25 @@ const market = {
     // Cory, 2026-11-11 8:42pm Eastern: "I do like Thrift Hunters" (8:42pm: "should maybe be 3 followers… but we can balance
     // test it": +2 built, +3 for the next balance test, THRIFT_N). Any recruit of a member off the discard pile (core
     // marks it: what.fromDiscard). Price is Claude's fill-in.
-    m('thrifthunters', 'Thrift Hunters', 2, 2, `Whenever you recruit from the discard pile, +${THRIFT_N} followers.`, {
+    m('thrifthunters', 'Scavengers', 2, 2, `Whenever you recruit from the discard pile, +${THRIFT_N} followers.`, {
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what?.member || !what.fromDiscard || what.member.uid === card.uid) return;
         owner.bonus += THRIFT_N;
-        ctx.log(`${owner.name}'s Thrift Hunters: ${what.member.def?.name || ctx.card(what.member.uid).def.name} from the discard pile, +${THRIFT_N} followers.`);
+        ctx.log(`${owner.name}'s Scavengers: ${what.member.def?.name || ctx.card(what.member.uid).def.name} from the discard pile, +${THRIFT_N} followers.`);
       },
       ...see(i => endsAhead(i).length * 2),
     }),
     // Cory, 2026-11-11 8:49pm Eastern, his idea ("Yeah, just put that in there"): Recruit Twice's discard-pile recruit,
     // paid as usual. Price is Claude's fill-in.
-    m('repeatcustomers', 'Repeat Customers', 3, 2, 'On Recruit: +3 blue, then recruit from the discard pile.', {
+    m('repeatcustomers', 'Homecomers', 3, 2, 'On Recruit: +3 blue, then recruit from the discard pile.', {
       onRecruited(ctx, owner) {
         // said here: with the pile empty, its "the discard pile is empty" line hid the +3 blue from the log
         const got = ctx.gain(owner, B, 3);
-        if (got) ctx.log(`${owner.name}'s Repeat Customers: +${got.n} ${got.color}.`);
-        discardOffer(ctx, owner, { why: 'Repeat Customers', how: {}, left: 1 });
+        if (got) ctx.log(`${owner.name}'s Homecomers: +${got.n} ${got.color}.`);
+        discardOffer(ctx, owner, { why: 'Homecomers', how: {}, left: 1 });
       },
     }),
-    m('powershoppers', 'Power Shoppers', 3, 2, 'Whenever you recruit your second member in a turn, +3 followers.', { f: 2, // +3 (Cory, Nov 11 3:41pm: "let's just put it down to 3. For right now")
+    m('powershoppers', 'Market-Day Shopper', 3, 2, 'Whenever you recruit your second member in a turn, +3 followers.', { f: 2, // +3 (Cory, Nov 11 3:41pm: "let's just put it down to 3. For right now")
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what?.member || what.member.uid === card.uid) return; // itself: onRecruited counts it
         const key = `${ctx.state.round}:${(ctx.state.turns || []).length}`;
@@ -1149,7 +1149,7 @@ const market = {
         card.shopN += 1;
         if (card.shopN !== 2) return;
         owner.bonus += 3;
-        ctx.log(`${owner.name}'s Power Shoppers: a second member this turn, +3 followers.`);
+        ctx.log(`${owner.name}'s Market-Day Shopper: a second member this turn, +3 followers.`);
       },
       // its place among this turn's members (core counts them in turnRecruits, itself included): recruited as the
       // second, the next one is the third and pays nothing (it paid the third: combos-blue-nov12)
@@ -1163,7 +1163,7 @@ const market = {
     // player sees it. The shop's blue members count toward the owner's members in every contest that counts them (core
     // contestMembers: Most members, and Fewest members against the owner). Rivals answer by sending blue members to the bottom.
     // Live since Nov 5 in Hawker's place: the one blue card on Cory's short list ("Pretty cool; short list for blue").
-    m('mannequin', 'Mannequin', 2, 2, 'Blue members in the shop count as your members when contests are scored.', {}), // joins by cost (round II), per Cory's round I cost cutoffs
+    m('mannequin', 'Stallholder', 2, 2, 'Blue members in the shop count as your members when contests are scored.', {}), // joins by cost (round II), per Cory's round I cost cutoffs
     // REPLACE9 bot test (Members C, Nov 4): Hawker's place, second try (Mannequin lost its blind A/B). 4 blue + 1 any as a
     // player sees it. The stall is the Peddlers list (state.stalls[uid], flag stall 'anyone'): core's recruit step offers it to
     // everyone; a rival pays its cost to the owner, the owner pays the bank. After contests an unsold member goes to the
@@ -1193,7 +1193,7 @@ const market = {
     // concepts, Oct 21, not approved (design/eval/member-concepts-2026-10-21.md): prices are sim starting points
     // Cory, 2026-10-24: Blue's round start ("Yeah I kinda like it") and Blue's once per game, the shop refresh that replaces
     // Makeover; names and prices Claude's fill-in
-    m('windowshopper', 'Window Shopper', 2, 2, /* 2 members (Cory, Nov 1, 2:20pm) */ 'On Recruit and Round Start: discard 2 shop members. +1 of each one’s color.', { now: true, ...old4,
+    m('windowshopper', 'Culler', 2, 2, /* 2 members (Cory, Nov 1, 2:20pm) */ 'On Recruit and Round Start: discard 2 shop members. +1 of each one’s color.', { now: true, ...old4,
       onRoundStart(ctx, owner) { windowPick(ctx, owner, 2); },
     }),
     // REPLACE4 bot test (Nov 3, replacement batch 4): Window Shopper's place. 5 blue + 3 any as a player sees it. Core runs
@@ -1242,8 +1242,8 @@ const market = {
         ctx.defer(owner, `${Q}.churnRefill`);
       },
     }),
-    m('plusone', 'Plus-Ones', 2, 1, 'On Recruit: recruit again this turn.', { f: 2,
-      onRecruited(ctx, owner) { extraBuys(ctx, owner, 1); ctx.log(`${owner.name}'s Plus-Ones: recruit again this turn.`); },
+    m('plusone', 'Tagalongs', 2, 1, 'On Recruit: recruit again this turn.', { f: 2,
+      onRecruited(ctx, owner) { extraBuys(ctx, owner, 1); ctx.log(`${owner.name}'s Tagalongs: recruit again this turn.`); },
     }),
     // Cory, Nov 1 3:21pm (picked 1): a rival's member to the bottom of the pile, and the owner hands them a shop member
     // costing up to 2 more. Given, not recruited, so its On Recruit doesn't fire. Price 2 blue + 5 any, worth and counts
@@ -1338,13 +1338,13 @@ const market = {
     // its own Round End that round (the round's round-end members have already been asked).
     // In the deck for Shopaholics' slot (Cory, Nov 5: "Last minute shopper is good. it should also give one or 2 blue at
     // round end"; +2 is Claude's pick). The blue comes before contests are scored, so it counts for Most blue.
-    m('lastminute', 'Last-Minute Shopper', 2, 0, /* +3 (Cory, Nov 6: "Give last minute shopper an extra blue") */ 'Round End: +3 blue, then you may recruit.', { round: 1,
+    m('lastminute', 'Dusk Buyer', 2, 0, /* +3 (Cory, Nov 6: "Give last minute shopper an extra blue") */ 'Round End: +3 blue, then you may recruit.', { round: 1,
       ...see(i => endsAhead(i).length * 3), // BOTSEE: 2 blue and an extra paid recruit each round end still ahead
-      onAllPlaced(ctx, owner) { const got = ctx.gain(owner, B, 3); if (got) ctx.log(`${owner.name}'s Last-Minute Shopper: +${got.n} ${got.color}.`); lmOffer(ctx, owner); },
+      onAllPlaced(ctx, owner) { const got = ctx.gain(owner, B, 3); if (got) ctx.log(`${owner.name}'s Dusk Buyer: +${got.n} ${got.color}.`); lmOffer(ctx, owner); },
     }),
     // Alternate (director, Nov 4: numbers for Cory on both): REPLACE9=lastminute2. The same card, first +2 resources of the
     // owner's choice (one color at a time), so the round-end recruit has something to pay with.
-    ...add9(m('lastminute2', 'Last-Minute Shopper', 2, 1, 'Round End: +2 of any colors, then you may recruit.', { round: 1,
+    ...add9(m('lastminute2', 'Dusk Buyer', 2, 1, 'Round End: +2 of any colors, then you may recruit.', { round: 1,
       ...see(i => endsAhead(i).length * 3), // BOTSEE: 2 resources and an extra paid recruit each round end still ahead
       onAllPlaced(ctx, owner) { lmGainAsk(ctx, owner, 2); },
     })),

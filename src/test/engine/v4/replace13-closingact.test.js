@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Lane F (REPLACE13=closingact, Nov 4; quality/pitches/F-batch2.md): Closing Act (Closer's lifted control) in Closer's place: "When you place the last minion of the round: +2 followers in round I, +4 in round II, +6 in round III."
+// Lane F (REPLACE13=closingact, Nov 4; quality/pitches/F-batch2.md): Closing Act (Gate-Shutter's lifted control) in Gate-Shutter's place: "When you place the last minion of the round: +2 followers in round I, +4 in round II, +6 in round III."
 // One test per sentence, plus the pitched turn.
 import { describe, it, expect } from 'vitest';
 
@@ -19,7 +19,7 @@ const owns = (s, i, key) => s.players[i].members.some(u => s.cards[u].def.endsWi
 const SHOP = ['red.volunteer', 'red.recruiter', 'market.regular', 'red.patriarch'];
 
 describe('REPLACE13=closingact: Closing Act', () => {
-  it("is dealt in Closer's place", () => {
+  it("is dealt in Gate-Shutter's place", () => {
     const keys = quadrant('purple').members.filter(d => !d.retired).map(d => d.key);
     expect(keys).toContain('closingact');
     expect(keys).not.toContain('closer');

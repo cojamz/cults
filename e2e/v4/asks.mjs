@@ -2,8 +2,8 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: a member asking you something shows itself on your seat (blind testers, 2026-10-15: "usable members don't show
 // themselves"; the house rule: a member you can act on now glows on your seat, and its card, right beside it, carries
 // the control). Saved hot-seat games (e2e/v4/lib/asks-save.mjs), P1 the only person, 1270×700. Build-failing:
-//  (a1) Big Spender's second buy: Big Spender is lit in your seat (warm ring, the only lit member on the table); its
-//       card says what's happening and offers "Skip"; pressing Skip passes, and Big Spender keeps its second buy;
+//  (a1) Squanderer's second buy: Squanderer is lit in your seat (warm ring, the only lit member on the table); its
+//       card says what's happening and offers "Skip"; pressing Skip passes, and Squanderer keeps its second buy;
 //  (a2) Straggler's move: Straggler is lit in your seat; its card says to pick a lit space and offers "Stay put";
 //       pressing it ends the question with the minion where it was, Straggler unspent;
 //  (a3) Translator's switch under its figure says what it is when pointed at (its name, on/off, its rule).
@@ -81,25 +81,25 @@ async function pressSkip(page, step) {
 }
 
 try {
-  // (a1) Big Spender's second buy, and (a3) Translator's switch, on the same table
+  // (a1) Squanderer's second buy, and (a3) Translator's switch, on the same table
   {
     const { ctx, page, uids } = await open('bigspender');
     const on = await lit(page);
     await page.screenshot({ path: `${SHOTS}/a1-big-spender-seat.png` });
     const big = on.find(x => x.id === 'benders.bigspender');
-    if (!big || big.seat !== '0' || big.state !== 'ready' || !big.ring) fail(`Big Spender isn't lit in your seat during its second buy: ${JSON.stringify(on)}`, 'a1');
+    if (!big || big.seat !== '0' || big.state !== 'ready' || !big.ring) fail(`Squanderer isn't lit in your seat during its second buy: ${JSON.stringify(on)}`, 'a1');
     if (on.some(x => x.id !== 'benders.bigspender')) fail(`other members are lit too: ${JSON.stringify(on)}`, 'a1');
     const card = await hoverFig(page, 'benders.bigspender');
     await page.screenshot({ path: `${SHOTS}/a1-big-spender-card.png` });
-    if (!card || !/recruiting again/i.test(card.ask) || !/^Skip/.test(card.skip) || card.skipOption !== 'pass') fail(`Big Spender's card during its second buy: ${JSON.stringify(card)}`, 'a1');
+    if (!card || !/recruiting again/i.test(card.ask) || !/^Skip/.test(card.skip) || card.skipOption !== 'pass') fail(`Squanderer's card during its second buy: ${JSON.stringify(card)}`, 'a1');
     else {
-      if (!(await pressSkip(page, 'a1'))) fail('pressing Skip on Big Spender\'s card did nothing', 'a1');
+      if (!(await pressSkip(page, 'a1'))) fail('pressing Skip on Squanderer\'s card did nothing', 'a1');
       const s = await saved(page);
       const c = s.cards[uids.big];
-      if (c.spent && c.spent.extraBuy === s.round) fail('Skip spent Big Spender\'s second buy (a pass keeps it for a later turn)', 'a1');
+      if (c.spent && c.spent.extraBuy === s.round) fail('Skip spent Squanderer\'s second buy (a pass keeps it for a later turn)', 'a1');
       if (s.pending && s.pending.player === 0 && s.pending.kind === 'buy' && s.pending.extra) fail('after Skip the second buy is still waiting', 'a1');
       const after = await lit(page);
-      if (after.some(x => x.id === 'benders.bigspender')) fail('Big Spender is still lit after Skip', 'a1');
+      if (after.some(x => x.id === 'benders.bigspender')) fail('Squanderer is still lit after Skip', 'a1');
     }
     await ctx.close();
   }

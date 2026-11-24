@@ -108,7 +108,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
   });
 
   it('Fairy Godmother save/load retains mode and exact swap targets without inherent action red', () => {
-    // Merchant (6) can promote to Governess (8) but not to Mob (10)
+    // Gold Merchant (6) can promote to Governess (8) but not to Mob (10)
     let s = table(Q, { round: 3, members: [['red.panel', 'gold.merchant']], shop: ['red.mentor', 'red.mob'], queue: turns(0, 0) });
     s = move(s, `use:${uidIn(s, 'red.panel', 0)}`); // On Use, once per round (Cory, Nov 5)
     expect(s.pending.prompt).toMatch(/Fairy Godmother/);

@@ -43,7 +43,7 @@ function scenario(name) {
   if (name === 'copy-promote') {
     s = move(s, `slot:${slot('red', 'hireup')}`);
     // P2's own Promote first (any pair it's offered that leaves Recruiter in the shop for P1's copy): costs move with
-    // the balance calls, so the pair is read off the offer rather than named (Prospector to Muse stopped being one, Nov 1)
+    // the balance calls, so the pair is read off the offer rather than named (Gold Panner to Muse stopped being one, Nov 1)
     const own = `trade:${uid(s, 'gold.prospector', 1)}:`, keep = `:${uid(s, 'red.recruiter', 'shop')}`;
     const pick = s.pending.options.find(o => o.id.startsWith(own) && !o.id.endsWith(keep) && s.shop.includes(Number(o.id.split(':')[2])));
     if (!pick) throw new Error(`${name}: P2 has no Promote pair; offered ${s.pending.options.map(o => o.id).join(' ')}`);

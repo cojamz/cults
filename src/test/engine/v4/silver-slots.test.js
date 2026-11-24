@@ -28,13 +28,13 @@ describe('Ballroom Dancers: "On Use, once per game: +2 followers per minion on S
   });
 });
 
-describe('Kingmakers: "Round End: give rivals up to 3 of your silver, split as you choose. +1 follower per silver given." (Cory, Nov 9)', () => {
+describe('Good Samaritans: "Round End: give rivals up to 3 of your silver, split as you choose. +1 follower per silver given." (Cory, Nov 9)', () => {
   const withSilver = (s, n) => ({ ...s, players: s.players.map((p, i) => (i === 0 ? { ...p, res: { ...p.res, silver: n } } : p)) });
   it('the owner gives their own silver one at a time, split as they choose; +1 follower each', () => {
     let s = withSilver(table(Q, { n: 3, round: 2, members: [['silver.kingmakers']], queue: [] }), 5);
     const before = s.players[0].bonus;
     s = atEnd(s);
-    expect(s.pending.prompt).toBe('Kingmakers: give 1 of your silver to which rival? +1 follower (3 more at most)');
+    expect(s.pending.prompt).toBe('Good Samaritans: give 1 of your silver to which rival? +1 follower (3 more at most)');
     s = move(s, 'player:2');
     s = move(s, 'player:1');
     s = move(s, 'player:2');

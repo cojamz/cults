@@ -267,7 +267,7 @@ for (const size of [{ width: 1270, height: 700 }, { width: 1100, height: 700 }])
     for (const x of seats) {
       const want = save.state.players[x.pid].members.length;
       if (!x.countRemoved) errors.push(`[${tag}] (l7) P${x.pid + 1}'s retired member-count label still occupies the crowd`);
-      // the count says members as the game counts them: a 2- or 3-member card (Shopaholics, Con Men) counts as that many
+      // the count says members as the game counts them: a 2- or 3-member card (Shopaholics, Robbers) counts as that many
       const said = memberCount(save.state, save.state.players[x.pid]);
       if (!x.accessible.includes(`${said} member`)) errors.push(`[${tag}] (l7) P${x.pid + 1}'s accessible count misses ${said} members`);
       if (x.n !== want) errors.push(`[${tag}] (l7) P${x.pid + 1}'s figures and "+N" add up to ${x.n}, not ${want}`);

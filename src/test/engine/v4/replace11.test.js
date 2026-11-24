@@ -381,7 +381,7 @@ describe("Blue contest setting 'recruits' (Most recruits this round)", () => {
   });
 });
 
-describe('REPLACE11: Snobs, the reserved token', () => {
+describe('REPLACE11: Blue Bloods, the reserved token', () => {
   const rich = { red: 30, blue: 30 };
   const gatherSlot = s => `${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather')}`;
   it('replaces the Game End Snobs', async () => {
@@ -392,12 +392,12 @@ describe('REPLACE11: Snobs, the reserved token', () => {
   // "Round Start: put a token on a shop member."
   it('asks its owner at Round Start, and the token sits on that card', () => {
     let s = table(['red', 'market'], { n: 2, round: 1, members: [['market.snob2'], []], shop: ['red.mob', 'red.volunteer'], queue: [{ t: 'round', r: 2 }] });
-    expect(s.pending.prompt).toBe('Snobs: reserve which shop member this round?');
+    expect(s.pending.prompt).toBe('Blue Bloods: reserve which shop member this round?');
     expect(s.pending.player).toBe(0);
     const pick = s.pending.options[0], name = s.cards[pick.value] && (pick.label.split(' (')[0]);
     s = answer(s, pick.id);
     expect(s.reserved).toEqual({ uid: pick.value, pid: 0 });
-    expect(s.log.join('\n')).toContain(`P1's Snobs: a token on ${name}; only P1 may recruit it this round.`);
+    expect(s.log.join('\n')).toContain(`P1's Blue Bloods: a token on ${name}; only P1 may recruit it this round.`);
   });
   // "Until the round ends, only you may recruit it."
   it("a rival can't recruit the reserved card; its owner can", () => {
@@ -420,13 +420,13 @@ describe('REPLACE11: Snobs, the reserved token', () => {
     s = answer(s, `slot:${gatherSlot(s)}`);
     while (s.pending && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
     s = answer(s, `card:${snob}`);
-    while (s.pending && !s.pending.prompt?.startsWith('Snobs:') && s.pending.kind !== 'place') s = answer(s, s.pending.options[0].id);
-    expect(s.pending.prompt).toBe('Snobs: reserve which shop member this round?');
+    while (s.pending && !s.pending.prompt?.startsWith('Blue Bloods:') && s.pending.kind !== 'place') s = answer(s, s.pending.options[0].id);
+    expect(s.pending.prompt).toBe('Blue Bloods: reserve which shop member this round?');
     s = answer(s, s.pending.options[0].id);
     expect(s.reserved.pid).toBe(0);
     // once, not twice (play judge, seed 328: the reserve was asked twice on the recruit turn)
-    expect(s.pending?.prompt).not.toBe('Snobs: reserve which shop member this round?');
-    expect(s.log.filter(l => l.includes("P1's Snobs: a token on")).length).toBe(1);
+    expect(s.pending?.prompt).not.toBe('Blue Bloods: reserve which shop member this round?');
+    expect(s.log.filter(l => l.includes("P1's Blue Bloods: a token on")).length).toBe(1);
   });
   it('the token comes off when the next round starts', async () => {
     const { resume } = await import('../../../engine/v4/core.js');

@@ -161,7 +161,7 @@ describe('v4 payment picker', () => {
   });
 
   it('names every rule-changer in one quiet line each, and the default pays exactly the price they make', () => {
-    // a member with a colored part, paid by someone holding Penny Pincher and a −4 discount
+    // a member with a colored part, paid by someone holding Skinflint and a −4 discount
     let state = structuredClone(findPayState());
     const me = state.pending.player;
     const p = state.players[me];

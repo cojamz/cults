@@ -18,7 +18,7 @@ it.each(['echo.impostor', 'echo.doppel'])('%s copies Fairy Godmother, whose abil
   expect(s.shop.map(u => s.cards[u].def)).toEqual(['red.mentor']);
 });
 
-it('Fairy Godmother cannot promote itself into Stunt Double and restart the current Promote', () => {
+it('Fairy Godmother cannot promote itself into Shadow and restart the current Promote', () => {
   let s = table(['red', 'echo', 'gold', 'thieves'], { round: 2, members: [['echo.hourglass']], shop: ['red.panel'] });
   s.pile = [];
   const stunt = uidIn(s, 'echo.hourglass', 0), panel = uidIn(s, 'red.panel', 'shop');

@@ -42,5 +42,93 @@
   "Talent Scouts": "Benefactor",
   "Cosmopolitans": "Harlequin",
   "Guest Book": "Hostess"
+ },
+ "market.js": {
+  "Bargain Bin": "Rag-and-Bone Man",
+  "Patroness": "Gravedigger",
+  "Snobs": "Blue Bloods",
+  "Swap Shoppers": "Old-Clothes Dealers",
+  "Thrift Hunters": "Scavengers",
+  "Repeat Customers": "Homecomers",
+  "Power Shoppers": "Market-Day Shopper",
+  "Mannequin": "Stallholder",
+  "Window Shopper": "Culler",
+  "Plus-Ones": "Tagalongs",
+  "Last-Minute Shopper": "Dusk Buyer"
+ },
+ "purple.js": {
+  "Go-Getter": "Errand Boy",
+  "Late Risers": "Early Riser",
+  "Pocket Watch": "Sleepyhead",
+  "Place Keepers": "Usher",
+  "Extra Shift": "Day Laborer",
+  "Lookouts": "Hurriers",
+  "Night Managers": "Curfew Ringers",
+  "Closer": "Gate-Shutter",
+  "Hot Streak": "Juggler",
+  "Picket Line": "Turnpike Keeper"
+ },
+ "gold.js": {
+  "Prospector": "Gold Panner",
+  "Tax Collector": "Pardoner",
+  "Merchant": "Gold Merchant",
+  "Penny Pincher": "Skinflint",
+  "Underdog": "Poor Relation",
+  "Speculator": "Gambler",
+  "Tycoon": "Baron"
+ },
+ "silver.js": {
+  "Caterer": "Almsgiver",
+  "Debutantes": "Bride and Groom",
+  "Smooth Talkers": "Silver Tongues",
+  "Kingmakers": "Good Samaritans",
+  "Splurgers": "Wastrels",
+  "Toll Collectors": "Camp Followers",
+  "Loan Officers": "Pawnbrokers",
+  "Bookies": "Indulgence Seller",
+  "Hustlers": "Purse-Switchers",
+  "Guest of Honor": "Matchmaker",
+  "Patrons": "Dowry-Givers"
+ },
+ "trading.js": {
+  "Recluse": "Hermit",
+  "Downsizers": "Executioner",
+  "Brokers": "Preachers",
+  "Leavetakers": "Mourners",
+  "Minimalists": "Connoisseurs",
+  "Money Changers": "Penitents",
+  "Magpie": "Washerwoman"
+ },
+ "echo.js": {
+  "Regulars": "Gardeners",
+  "Die-Hards": "Druids",
+  "Ensemble": "Chorus",
+  "Impressionist": "Forger",
+  "Wallflower": "Tall-Tale Teller",
+  "Fan Club": "Admirers",
+  "Stunt Double": "Shadow",
+  "Agents": "Secret-Keepers",
+  "Bait": "Trapper",
+  "Encore": "Minstrel"
+ },
+ "benders.js": {
+  "Party Crasher": "Trespasser",
+  "Alchemists": "Conjurer",
+  "Insider": "Seer",
+  "Line Cutters": "Lord of the Manor",
+  "Launderers": "Moneychangers",
+  "Ghost": "Plague Bearer",
+  "Cheerleader": "Trumpeter",
+  "Cheerleaders": "Trumpeters",
+  "Anarchist": "Meddler",
+  "Scouts": "Weeders",
+  "Con Men": "Robbers",
+  "Coach": "Taskmaster",
+  "Consolation Prize": "Comforter",
+  "Tiebreaker": "Crooked Judge",
+  "Big Spender": "Squanderer"
+ },
+ "launder.js": {
+  "Launderers": "Moneychangers"
  }
 }

@@ -20,7 +20,7 @@ describe('Blue concepts', () => {
     expect(def('market.connoisseur').text).toBe('Whenever you recruit a blue member, +1 blue.');
     expect([def('market.plusone').f, def('market.plusone').n]).toEqual([1, 1]); // printed 2, rebased to 1 (Cory, Nov 12)
   });
-  it('Makeover: the whole old shop goes to the discard pile, the row refills, Patroness pays once', () => {
+  it('Makeover: the whole old shop goes to the discard pile, the row refills, Gravedigger pays once', () => {
     let s = table(Q, { members: [[], ['market.patroness']], res: [{ blue: 9, gold: 9 }], shop: ['market.makeover', ...ROW.slice(1)] });
     const old = [...s.shop].filter(u => s.cards[u].def !== 'market.makeover');
     s = move(take(s, 'thieves.tipoff'), card(s, 'market.makeover'));
@@ -29,7 +29,7 @@ describe('Blue concepts', () => {
     expect(s.shop.some(u => old.includes(u))).toBe(false);
     expect(s.players[1].bonus).toBe(1);
   });
-  it('a Doppelganger copy and an Impersonator holding Patroness each pay too (Cory\'s playtest, Nov 5)', () => {
+  it('a Doppelganger copy and an Impersonator holding Gravedigger each pay too (Cory\'s playtest, Nov 5)', () => {
     let s = table(['red', 'market', 'thieves', 'echo'], { members: [[], ['echo.doppel', 'echo.impersonators']], res: [{ blue: 9, gold: 9 }], shop: ['market.makeover', 'red.twins', 'red.intern', 'red.volunteer'] });
     s.cards[uidIn(s, 'echo.doppel', 1)].copy = 'market.patroness';
     s.cards[uidIn(s, 'echo.impersonators', 1)].ability = 'market.patroness';
@@ -44,11 +44,11 @@ describe('Blue concepts', () => {
     expect(named(s, 'Critic').length).toBe(1);
   });
   // the fire audit deals members straight into hands, so these recruit-only cards are checked here (2026-10-22)
-  it('Plus-Ones and Window Dressers: recruited, they act and the log names them', () => {
+  it('Tagalongs and Window Dressers: recruited, they act and the log names them', () => {
     let s = table(Q, { res: [{ blue: 9, gold: 9 }], shop: ['market.plusone', ...ROW.slice(1)] });
     s = move(take(s, 'thieves.tipoff'), card(s, 'market.plusone'));
     expect(owns(s, 0, 'market.plusone')).toBe(true);
-    expect(named(s, 'Plus-Ones').length).toBeGreaterThan(0);
+    expect(named(s, 'Tagalongs').length).toBeGreaterThan(0);
     let t = table(Q, { res: [{ blue: 9, gold: 9 }], shop: ['market.windowdresser', ...ROW.slice(1)] });
     t = move(take(t, 'thieves.tipoff'), card(t, 'market.windowdresser'));
     while (t.pending?.kind === 'choose') t = move(t, t.pending.options[0].id);

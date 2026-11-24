@@ -163,7 +163,7 @@ describe('Green table action boundaries', () => {
 });
 
 describe('Green table member boundaries', () => {
-  it('Green contests count held green resources; Agents, rebased to 1 (Cory, Nov 12), counts as 1 member', () => {
+  it('Green contests count held green resources; Secret-Keepers, rebased to 1 (Cory, Nov 12), counts as 1 member', () => {
     const s = scene({ members: [['echo.agents']], res: [{}, { green: 40 }] });
     expect(memberCount(s, s.players[0])).toBe(1);
     expect(echo.scoring.score(contextFor(s), s.players[0])).toBe(0);
@@ -182,13 +182,13 @@ describe('Green table member boundaries', () => {
     s = go(s, 'gold.rush'); s = go(s, 'echo.echo', target('gold.rush'));
     expect(R(s).green).toBe(1);
   });
-  it('Stunt Double is a recruit trigger, never a reusable buy-phase option', () => {
+  it('Shadow is a recruit trigger, never a reusable buy-phase option', () => {
     let s = scene({ members: [['echo.hourglass']], turns: [0, 0] });
     s = take(s, 'gold.rush');
     expect(ids(s)).not.toContain('use:' + uidOf(s, 'echo.hourglass', 0));
     expect(R(s).gold).toBe(2);
   });
-  it('an Agents copy takes its worth: 1 follower and 1 member (Agents rebased to 1, Cory Nov 12)', () => {
+  it('an Secret-Keepers copy takes its worth: 1 follower and 1 member (Secret-Keepers rebased to 1, Cory Nov 12)', () => {
     const s = scene({ members: [['echo.doppel']] });
     s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'echo.agents';
     expect(memberCount(s, s.players[0])).toBe(1);
@@ -205,7 +205,7 @@ describe('Green table member boundaries', () => {
   });
   it('Chronicler counts itself and green members (1 each), ignoring non-green members', () => {
     const s = scene({ members: [['echo.chronicler', 'echo.agents', 'red.twins']], res: [{ green: 80 }], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.parts).toContain('Chronicler +2'); // Chronicler and Agents
+    expect(s.players[0].final.parts).toContain('Chronicler +2'); // Chronicler and Secret-Keepers
   });
 });
 

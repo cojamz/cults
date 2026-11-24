@@ -96,7 +96,7 @@ describe('Red members', () => {
     // Promote (round II) swaps your member with a shop member: a member you recruit
     let t = sceneQ({ round: 2, members: [['red.recruiter', 'red.intern']], shop: ['red.volunteer'] });
     t = take(t, 'red.hireup');
-    // a grey shop member (Line Cutters): no color of its own to pay, since the Nov 11 Red deck put Tavern Keeper first in this shop
+    // a grey shop member (Lord of the Manor): no color of its own to pay, since the Nov 11 Red deck put Tavern Keeper first in this shop
     const swap = t.pending.options.find(o => o.id.startsWith(`trade:${uidOf(t, 'red.intern', 0)}:`) && o.id.endsWith(`:${uidOf(t, 'benders.frontrunner', 'shop')}`));
     t = settle(move(t, swap.id));
     expect(R(t).red).toBe(4); // Promote's +3 and Ferryman's +1
@@ -112,7 +112,7 @@ describe('Red members', () => {
     expect(named(s, 'Ferryman')).toHaveLength(0);
   });
 
-  it('Pied Piper: the second recruit in one turn pays +2 red at once, named; Big Spender makes it two buys', () => {
+  it('Pied Piper: the second recruit in one turn pays +2 red at once, named; Squanderer makes it two buys', () => {
     const restore = pinCosts({ 'red.intern': [0, 0], 'red.volunteer': [0, 0] });
     let s = sceneQ({ res: [rich], members: [['red.drive', 'benders.bigspender1']], shop: ['red.intern', 'red.volunteer'] });
     s = take(s, 'gold.rush');
@@ -120,7 +120,7 @@ describe('Red members', () => {
     s = buy(s, 'red.volunteer'); // free
     s = buy(s, 'red.intern');
     expect(named(s, 'Pied Piper')).toHaveLength(1);
-    expect(named(s, 'Big Spender')).toHaveLength(1);
+    expect(named(s, 'Squanderer')).toHaveLength(1);
     expect(R(s).red).toBe(r0 + 2);
     restore();
   });
@@ -146,11 +146,11 @@ describe('Red members', () => {
     } finally { restore(); }
   });
 
-  it('Crowd-Pleaser: +1 red whenever you buy followers, named; a rival’s Tax Collector fires on the same buy', () => {
+  it('Crowd-Pleaser: +1 red whenever you buy followers, named; a rival’s Pardoner fires on the same buy', () => {
     let s = sceneQ({ res: [rich], members: [['red.crowd'], ['gold.taxman']] });
     s = take(s, 'gold.rush'); s = move(s, 'tier:small');
     expect(named(s, 'Crowd-Pleaser')).toHaveLength(1);
-    expect(named(s, 'Tax Collector')).toHaveLength(1);
+    expect(named(s, 'Pardoner')).toHaveLength(1);
   });
 
   it('Doppelganger: copies one of your members; the copy is named in the log', () => {

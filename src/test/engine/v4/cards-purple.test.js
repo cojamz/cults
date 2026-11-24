@@ -43,14 +43,14 @@ describe('Purple actions', () => {
 });
 
 describe('Purple members', () => {
-  it('Go-Getter: once per game, an extra turn right after this one; the log names Go-Getter', () => {
+  it('Errand Boy: once per game, an extra turn right after this one; the log names Errand Boy', () => {
     let s = sc({ round: 2, members: [['purple.secondwind']] }); // no extra minions in round I
     s = take(s, 'purple.windup');
     s = move(s, `use:${uidOf(s, 'purple.secondwind', 0)}`);
     expect(turnsQueued(s, 0)).toBe(1);
-    expect(named(s, 'Go-Getter')).toHaveLength(1);
+    expect(named(s, 'Errand Boy')).toHaveLength(1);
   });
-  it('Go-Getter × Foreman: the extra turn pays Foreman, named', () => {
+  it('Errand Boy × Foreman: the extra turn pays Foreman, named', () => {
     let s = sc({ round: 2, members: [['purple.secondwind', 'purple.foreman']] });
     s = take(s, 'purple.windup');
     s = move(s, `use:${uidOf(s, 'purple.secondwind', 0)}`);
@@ -88,11 +88,11 @@ describe('Purple members', () => {
     expect(named(s, 'Corner-Cutter')).toHaveLength(1);
   });
 
-  it('Late Risers: from round II, the trailing player (ties count) takes a turn before anyone, even Line Cutters', () => {
+  it('Early Riser: from round II, the trailing player (ties count) takes a turn before anyone, even Lord of the Manor', () => {
     const s = sc({ bonus: [0, 5], members: [['purple.lateriser'], ['benders.frontrunner']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.player).toBe(0);
-    expect(named(s, 'Late Risers')).toHaveLength(1);
-    expect(named(s, 'Line Cutters')).toHaveLength(1);
+    expect(named(s, 'Early Riser')).toHaveLength(1);
+    expect(named(s, 'Lord of the Manor')).toHaveLength(1);
     expect(s.players[0].left).toBe(5);
   });
 

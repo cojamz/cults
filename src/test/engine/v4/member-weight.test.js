@@ -8,7 +8,7 @@ const Q = ['gold', 'red', 'thieves', 'yellow'];
 // Member count and follower count stay equal (Cory, 2026-11-01: "member count = follower count, for members"). Every live
 // member was rebased to worth 1 follower and 1 member (Cory, 2026-11-12: "we should rebase all members to 1. and then give
 // some back where we obviously should"). Kept: a card whose own text gives the number (Big Family "Worth 4 followers.",
-// Twins, Dabblers, Revelers, Ghost) and the ones given back (keepCount). Retired cards keep their old numbers (Triplets 3).
+// Twins, Dabblers, Revelers, Plague Bearer) and the ones given back (keepCount). Retired cards keep their old numbers (Triplets 3).
 describe('A member counts as many members as its followers (Cory, 2026-11-01: "member count = follower count, for members")', () => {
   it('a live member is rebased to worth 1 follower and 1 member (Cory, Nov 12)', () => {
     for (const id of ['red.panel', 'red.mob', 'echo.agents', 'echo.mirror', 'market.snob', 'silver.highsociety']) {

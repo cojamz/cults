@@ -61,7 +61,7 @@ describe('Blue actions', () => {
   });
 
   it('Out of Style (Nov 10): discard 3 shop members you pick, one at a time with the row refilling; +1 of each one\'s color, plus the inherent +1', () => {
-    // ROW5: Tycoon, Big Family, Twins, Intern, Tax Man: 3 red, 2 gold
+    // ROW5: Baron, Big Family, Twins, Intern, Tax Man: 3 red, 2 gold
     let s = table(Q, { shop: ROW5 });
     s = take(s, 'market.restock');
     expect(R(s).blue).toBe(1);
@@ -73,7 +73,7 @@ describe('Blue actions', () => {
     expect(s.shop).toHaveLength(6); // round I shows 6, refilled
     expect(s.shop.filter(u => picks.includes(u))).toEqual([]);
     expect(s.discard.slice(-3)).toEqual(picks);
-    expect(s.log).toContain("P1's Out of Style sends Tycoon to the discard pile: +1 gold.");
+    expect(s.log).toContain("P1's Out of Style sends Baron to the discard pile: +1 gold.");
     expect(s.log).toContain("P1's Out of Style sends Big Family to the discard pile: +1 red.");
     expect(s.pending?.kind).toBe('buy');
   });
@@ -157,7 +157,7 @@ describe('Blue actions', () => {
     s = take(s, 'market.pricecheck');
     expect(R(s).blue).toBe(1);
     s = move(s, `card:${tycoon}`);
-    expect(R(s).blue).toBe(1 + 6); // Tycoon costs 12
+    expect(R(s).blue).toBe(1 + 6); // Baron costs 12
     expect(s.discard.at(-1)).toBe(tycoon);
     expect(s.shop).toContain(top);
     expect(s.shop).toHaveLength(7); // round II shows 7
@@ -181,7 +181,7 @@ describe('Blue actions', () => {
     expect(owns(s, 0, 'gold.banker') && owns(s, 0, 'market.planner')).toBe(true);
     expect(s.pending.kind).toBe('buy');
   });
-  it('× Big Spender: Spree plus Big Spender is two discard pile recruits, then two buys', () => {
+  it('× Squanderer: Spree plus Squanderer is two discard pile recruits, then two buys', () => {
     let s = table(Q, { round: 3, res: [{ red: 2, gold: 6 }], shop: ROW, left: 5, members: [['benders.bigspender1']] });
     const [twins, intern] = onDiscard(s, ['gold.banker', 'market.planner']);
     s = take(s, 'market.spree');
@@ -244,7 +244,7 @@ describe('Blue members', () => {
     s = pickPay(move(take(s, 'market.clearance'), `card:${recluse}`), 'blue');
     s = move(s, card(s, 'market.curator'));
     expect(owns(s, 0, 'market.recluse') && owns(s, 0, 'market.curator')).toBe(true);
-    // 8, Recruit Twice's 3 (Nov 24), two members at 4 blue each, Connoisseurs' 1 twice, Curator's own 3 (Connoisseurs, Recluse)
+    // 8, Recruit Twice's 3 (Nov 24), two members at 4 blue each, Connoisseurs' 1 twice, Curator's own 3 (Connoisseurs, Hermit)
     expect(R(s).blue).toBe(8 + 3 - 8 + 2 + 3); // Curator now counts Connoisseurs as 2 (worth 2 followers since Nov 1 balance; member count = follower count)
     expect(named(s, 'Connoisseurs').length).toBe(2);
   });
@@ -275,7 +275,7 @@ describe('Blue members', () => {
     const s0 = roundStart([['market.planner'], []]);
     expect(s0.players[0].discount).toBe(4);
     expect(named(s0, 'Planner')).toEqual(["P1's Planner: next member costs 4 less."]);
-    // at the doubled costs: Tycoon (8 gold + 4) for 8 gold, the 4 off the gold part first
+    // at the doubled costs: Baron (8 gold + 4) for 8 gold, the 4 off the gold part first
     let s = table(Q, { round: 2, members: [['market.planner']], res: [{ gold: 8 }], shop: ROW, discount: [4] });
     s = move(take(s, 'thieves.hideout'), card(s, 'gold.tycoon'));
     expect(owns(s, 0, 'gold.tycoon')).toBe(true);
@@ -367,12 +367,12 @@ describe('Blue members', () => {
     expect(owns(s, 0, 'market.recluse')).toBe(true);
     expect(s.players[0].discount).toBe(2);
   });
-  it('Patroness: +1 follower each time shop members go to the discard pile (once per Out of Style, not per card); not the round refresh', () => {
+  it('Gravedigger: +1 follower each time shop members go to the discard pile (once per Out of Style, not per card); not the round refresh', () => {
     let s = table(Q, { round: 2, members: [[], ['market.patroness']], shop: ROW });
     s = take(s, 'market.restock');
     for (let k = 0; k < 3; k++) s = move(s, card(s, ['red.bigfamily', 'red.twins', 'red.intern'][k]));
     expect(s.players[1].bonus).toBe(1);
-    expect(named(s, 'Patroness').length).toBe(1);
+    expect(named(s, 'Gravedigger').length).toBe(1);
     s = table(Q, { round: 2, members: [['market.patroness']], shop: ROW });
     s = take(s, 'market.pricecheck');
     s = move(s, s.pending.options[0].id);
@@ -407,9 +407,9 @@ describe('Blue members', () => {
   });
 
   const finish = members => table(Q, { members, shop: ROW, n: members.length, queue: [{ t: 'finish' }] });
-  it('Snobs: game end, +1 follower per blue member', () => {
+  it('Blue Bloods: game end, +1 follower per blue member', () => {
     const s = finish([['market.snob', 'market.stylist', 'gold.tycoon', 'red.twins'], []]);
-    expect(s.players[0].final.parts).toContain('Snobs +2'); // Snobs itself (rebased to worth 1, Cory Nov 12) and Stylist; not Tycoon or Twins
+    expect(s.players[0].final.parts).toContain('Blue Bloods +2'); // Blue Bloods itself (rebased to worth 1, Cory Nov 12) and Stylist; not Baron or Twins
   });
   it('Recluse: game end, +2 followers per rival with more members', () => {
     const s = finish([['market.recluse'], ['red.twins', 'red.intern'], ['red.volunteer', 'red.bigfamily'], ['echo.doppel']]);

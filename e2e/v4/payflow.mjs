@@ -91,7 +91,7 @@ try {
   // (f1) 5 for 5 with exactly 5 in two colors, the rivals holding more of both colors (no lead lost). Was 8 for 8 on the
   // retired 'big' tier; the buys are 1 for 1, 5 for 5 and 10 for 10 since 2026-10-16 (decisions.md).
   await receipt('f1', buySave({ def: null, res: { gold: 3, red: 0, blue: 2, green: 0 }, rivals: { gold: 6, blue: 6 } }).save, '.lt-rates [data-rate="mid"]');
-  // (f2) Prospector at exactly its cost (read from the card, so a price change doesn't break the gate)
+  // (f2) Gold Panner at exactly its cost (read from the card, so a price change doesn't break the gate)
   {
     const pd = defById('gold.prospector'), cost = pd.s + pd.w;
     const { save, uid } = buySave({ def: 'gold.prospector', res: { gold: cost, red: 0, blue: 0, green: 0 }, rivals: { gold: cost + 1 } });

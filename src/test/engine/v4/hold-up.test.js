@@ -27,7 +27,7 @@ function plain(s, rand) {
 
 describe('Hold Up', () => {
   it('round I, 4 players: B takes it first, so C is passed over once; C still places 3, the last one after everyone', () => {
-    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 5, quadrants: Q }); // seed 5 since Sleepyheads and Lookouts joined (Nov 6)
+    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 5, quadrants: Q }); // seed 5 since Sleepyheads and Hurriers joined (Nov 6)
     const rand = seededRandom(5);
     while (!(s.round === 1 && s.pending?.kind === 'place')) s = applyMove(s, chooseBotMove(s, rand));
     const base = s.order.slice(0, 4), [A, B, C] = base, q = s.quadrants.indexOf('purple');
@@ -49,7 +49,7 @@ describe('Hold Up', () => {
   });
 
   it('round I, 4 players: D takes it on their first turn, so D skips their own second turn', () => {
-    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 5, quadrants: Q }); // seed 5 since Sleepyheads and Lookouts joined (Nov 6)
+    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 5, quadrants: Q }); // seed 5 since Sleepyheads and Hurriers joined (Nov 6)
     const rand = seededRandom(5);
     while (!(s.round === 1 && s.pending?.kind === 'place')) s = applyMove(s, chooseBotMove(s, rand));
     const base = s.order.slice(0, 4), D = base[3], q = s.quadrants.indexOf('purple');

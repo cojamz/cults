@@ -30,7 +30,7 @@ describe('audit', () => {
   });
 
   it('Bury: half of a 3-cost member rounds down to 1, plus its own +1', () => {
-    // Picket Line (Shift Crew's place since Nov 4): pinned at printed 1 purple + 1 any, 3 with the extra wild every member pays
+    // Turnpike Keeper (Shift Crew's place since Nov 4): pinned at printed 1 purple + 1 any, 3 with the extra wild every member pays
     const restore = pinCosts({ 'purple.picketline': [1, 1] }); // it costs 4: pinned at 3, as Shift Crew was
     try {
       let s = take(sc(QM, { round: 2, shop: ['purple.picketline'] }), 'market.pricecheck');

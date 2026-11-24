@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Quality loop lane D (Nov 4, requalified paper candidates, quality/evals/gate/requalified/D.md): Night Watchman and
-// Hoard Breaker (Thief-Takers' place), Poacher (Kidnapper's place), Big Finish and Cover Band (Wallflower's place), under
+// Hoard Breaker (Thief-Takers' place), Poacher (Kidnapper's place), Big Finish and Cover Band (Tall-Tale Teller's place), under
 // REPLACE10. The switch is read when the engine loads, so it is set before the import.
 import { describe, it, expect } from 'vitest';
 
@@ -22,7 +22,7 @@ const Q = ['red', 'echo', 'thieves', 'trading'];
 const done = x => { while (x.pending && x.pending.kind !== 'place') x = move(x, (x.pending.options.find(o => o.kind === 'pass') || x.pending.options[0]).id); return x; };
 
 describe('REPLACE10: lane D requalified cards', () => {
-  it('prices as pitched; Thief-Takers, Kidnapper and Wallflower are retired', () => {
+  it('prices as pitched; Thief-Takers, Kidnapper and Tall-Tale Teller are retired', () => {
     const p = id => { const d = defById(id); return [d.s, d.w]; };
     expect(p('thieves.watchman')).toEqual([5, 3]);
     expect(p('thieves.hoardbreaker')).toEqual([6, 2]);
@@ -71,12 +71,12 @@ describe('REPLACE10: lane D requalified cards', () => {
     expect(s.pending.prompt).toBe('Poacher: recruit which rival member, paying its cost to them?');
     const agents = uidOf(s, 'echo.agents', 1);
     expect(s.pending.options.find(o => o.id === `card:${agents}`).hint).toBeGreaterThan(0);
-    expect(s.pending.options.map(o => o.id)).toEqual([`card:${agents}`, 'none']); // Ensemble costs 5
+    expect(s.pending.options.map(o => o.id)).toEqual([`card:${agents}`, 'none']); // Chorus costs 5
     s = answer(s, `card:${agents}`);
     expect(s.players[0].members).toContain(agents);
     expect(s.players[1].members).not.toContain(agents);
     const paid = Object.values(s.players[1].res).reduce((a, b) => a + b, 0);
-    expect(paid).toBe(4); // Agents costs 4 since every member +1 (Nov 5)
+    expect(paid).toBe(4); // Secret-Keepers costs 4 since every member +1 (Nov 5)
     expect(Object.values(s.players[0].res).reduce((a, b) => a + b, 0)).toBe(1);
   });
 

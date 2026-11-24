@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Members C, batches bC1 and bC2 (Nov 4 scale-up), under REPLACE9: Power Shoppers (Snobs' place), Stand-In (Extra
+// Members C, batches bC1 and bC2 (Nov 4 scale-up), under REPLACE9: Market-Day Shopper (Blue Bloods' place), Stand-In (Extra
 // Hand's place), Tailor (Gilder's place), Dabbler (Dabblers' place).
 import { describe, it, expect } from 'vitest';
 
@@ -18,8 +18,8 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 const pay = s => { while (s.pending?.kind === 'pay' || s.pending?.prompt?.includes('choose how to pay')) s = answer(s, s.pending.options[0].id); return s; };
 const Q4 = ['red', 'yellow', 'market', 'purple'];
 
-describe('Power Shoppers: "Whenever you recruit your second member in a turn, +3 followers." (Cory, Nov 11)', () => {
-  it('price, and Snobs retired', () => {
+describe('Market-Day Shopper: "Whenever you recruit your second member in a turn, +3 followers." (Cory, Nov 11)', () => {
+  it('price, and Blue Bloods retired', () => {
     const d = defById('market.powershoppers');
     expect([d.s, d.w]).toEqual([4, 3]);
     expect(defById('market.snob').retired).toBe(true);
@@ -33,7 +33,7 @@ describe('Power Shoppers: "Whenever you recruit your second member in a turn, +3
     expect(s.players[0].bonus).toBe(b0);
     s = pay(move(s, `card:${uidIn(s, 'yellow.gardener', 'shop')}`));
     expect(s.players[0].bonus).toBe(b0 + 3);
-    expect(named(s, 'Power Shoppers')).toContain("P1's Power Shoppers: a second member this turn, +3 followers.");
+    expect(named(s, 'Market-Day Shopper')).toContain("P1's Market-Day Shopper: a second member this turn, +3 followers.");
     if (s.pending?.options?.some(o => o.id === `card:${uidIn(s, 'purple.crew', 'shop')}`)) {
       s = pay(move(s, `card:${uidIn(s, 'purple.crew', 'shop')}`));
       expect(s.players[0].bonus).toBe(b0 + 3);
@@ -178,7 +178,7 @@ describe('Window Dressers (reworded): "On Recruit: discard any shop members and 
     const best = [...s.pending.options].sort((a, b) => b.hint - a.hint)[0];
     expect(best.id).toBe('done');
   });
-  it('the batch sent to the discard pile pays Patroness once, as Churn does', () => {
+  it('the batch sent to the discard pile pays Gravedigger once, as Churn does', () => {
     let s = table(Q4, { n: 2, res: [{ red: 20, yellow: 20, blue: 20, purple: 20 }], members: [['market.patroness']], shop: ['market.windowdressers9', 'red.volunteer', 'yellow.gardener', 'purple.crew'], queue: [{ t: 'buy', p: 0 }] });
     s = pay(move(s, `card:${uidIn(s, 'market.windowdressers9', 'shop')}`));
     const b0 = s.players[0].bonus;
@@ -189,7 +189,7 @@ describe('Window Dressers (reworded): "On Recruit: discard any shop members and 
   });
 });
 
-describe('Downsizers: "On Use, once per round: discard one of your members. +4 white."', () => {
+describe('Executioner: "On Use, once per round: discard one of your members. +4 white."', () => {
   const Q = ['red', 'trading', 'market', 'purple'];
   it('price, and Landlord retired', () => {
     const d = defById('trading.moneylender');
@@ -209,7 +209,7 @@ describe('Downsizers: "On Use, once per round: discard one of your members. +4 w
     expect(s.discard.at(-1)).toBe(vol);
     expect(s.players[0].res.white).toBe(4);
   });
-  it('discards itself: Downsizers to the discard pile, +4 white (Cory, Nov 13: "I think fine if Downsizers discards itself?", "yes.")', () => {
+  it('discards itself: Executioner to the discard pile, +4 white (Cory, Nov 13: "I think fine if Executioner discards itself?", "yes.")', () => {
     let s = table(Q, { n: 2, round: 2, members: [['trading.moneylender']] });
     const ml = uidIn(s, 'trading.moneylender', 0);
     s = move(s, `use:${ml}`);

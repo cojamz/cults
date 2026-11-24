@@ -306,7 +306,7 @@ describe('payment', () => {
     expect(paymentPlan(s, p, uidOf(s, 'red.intern', 'shop'))).toEqual({ gold: 0, red: 0, blue: 0, green: 0 });
   });
 
-  it('Penny Pincher halves the gold color part (rounded up) and gold pays 2 wild', () => {
+  it('Skinflint halves the gold color part (rounded up) and gold pays 2 wild', () => {
     const [s, p] = setup({ gold: 3 }, ['gold.thrift']);
     // Midas 3 gold + 2 wild: 2 gold for the color part, 1 gold for 2 wild
     expect(paymentPlan(s, p, uidOf(s, 'gold.midas', 'shop'))).toEqual({ gold: 3, red: 0, blue: 0, green: 0 });

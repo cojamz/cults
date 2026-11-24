@@ -225,9 +225,9 @@ export function giftPick(state, pend, first = null) {
   const swapCard = /swap card/i.test(question) || /swap card/i.test(title);
   // Swindler (was Body Snatchers) trades one of yours for a rival's, never two rivals' (playtest, Nov 3: the generic head read "any two")
   const snatch = /swindler/i.test(title) || /swindler/i.test(question);
-  // Hostages (was Exchange Students) and Swap Shoppers say their own rule (four-player review, Nov 12: both read Anarchist's "any two")
+  // Hostages (was Exchange Students) and Old-Clothes Dealers (was Swap Shoppers) say their own rule (four-player review, Nov 12: both read Anarchist's "any two")
   const exchange = /hostages/i.test(title) || /hostages/i.test(question);
-  const swapShop = /swap shoppers/i.test(title) || /swap shoppers/i.test(question);
+  const swapShop = /old-clothes dealers/i.test(title) || /old-clothes dealers/i.test(question);
   // the card's own rule, never its name again under its name (picky bot, Nov 11: "DEMOTE / Demote a member")
   const tradeHead = swapKind === 'Promote' ? 'Swap a member for one costing up to 3 more' : swapKind === 'Demote' ? 'Swap a member for one costing up to 3 less' : swapCard ? 'Swap card: a member within 2 cost' : snatch || exchange ? 'Swap one of yours for a rival’s of the same cost' : swapShop ? 'Swap one of yours for a discard-pile member of the same cost' : 'Swap any two equal-cost members';
   const head = { give: n ? `A rival you pick gets ${n}` : 'A rival you pick gets some', colors: 'Swap one for one', amount: 'Swap for another color', trade: tradeHead }[kind];

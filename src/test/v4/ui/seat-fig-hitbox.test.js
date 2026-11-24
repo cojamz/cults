@@ -1,6 +1,6 @@
 // Guard (Cory, Nov 12: "the hover is weird, im not on extra hand im on hot streak but its showing extra hand"): every
 // Tip gets a 44px touch box (.tip > .hitbox), but a seat's member figures are 24px wide and 25px apart, so that box
-// spilled ~10px onto each neighbour and the later figure (painted on top) took the pointer: the right half of Hot Streak
+// spilled ~10px onto each neighbour and the later figure (painted on top) took the pointer: the right half of Juggler
 // opened Extra Hand. A figure's target, a choice's member button and a switch's hover stay within their own figure.
 // The browser proof is e2e/v4/members.mjs (m15): every point inside a figure in your row belongs to that figure.
 import { describe, it, expect } from 'vitest';

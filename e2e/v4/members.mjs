@@ -6,7 +6,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //  (m1) your seat card is your members: one row each with its whole ability (every word of the card's text, never cut:
 //       no ellipsis, no clipping), no Followers / Has / Last moves rows, whole on screen (a long list scrolls inside);
 //  (m2) a member you can use now is lit in your seat (Lottery Winner, Heiresses); one already used reads
-//       "used" (Speculator); one the engine would refuse now stays unlit (Pawnbroker, nothing to sell); switches show
+//       "used" (Gambler); one the engine would refuse now stays unlit (Pawnbroker, nothing to sell); switches show
 //       their state (Midas on, Translator off) in the seat and in the seat card;
 //  (m3) the lit member's hover has a "Use: +7 ●" button that works: the pointer can move onto it, a click uses it (gold
 //       up by what it said, in the saved game), pieces fly, and it reads "used" in the seat, its hover and the seat card;
@@ -112,7 +112,7 @@ try {
   for (const id of ['gold.jackpot', 'trading.heiress']) if (fig[id] && (!fig[id].ring || !fig[id].tab || !/matrix\(1, 0, 0, 1, 0, -\d/.test(fig[id].lift))) fail(`${id} is lit without its warm glow, USE tab and lift: ${JSON.stringify(fig[id])}`, 'm2');
   for (const id of ['gold.jackpot', 'trading.heiress']) if (!fig[id] || !fig[id].lit || fig[id].state !== 'ready') fail(`${id} isn't lit in your seat though you can use it now: ${JSON.stringify(fig[id])}`, 'm2');
   // (the row shows as many figures as fit: a used member or a switch may be folded into "+N"; the seat card lists them)
-  if (fig['gold.speculator'] && (fig['gold.speculator'].state !== 'used' || fig['gold.speculator'].lit)) fail(`Speculator (used) doesn't read used in your seat: ${JSON.stringify(fig['gold.speculator'])}`, 'm2');
+  if (fig['gold.speculator'] && (fig['gold.speculator'].state !== 'used' || fig['gold.speculator'].lit)) fail(`Gambler (used) doesn't read used in your seat: ${JSON.stringify(fig['gold.speculator'])}`, 'm2');
   if (fig['trading.pawnbroker'] && fig['trading.pawnbroker'].lit) fail('Pawnbroker is lit, but using it now would do nothing (no loose followers)', 'm2');
   if (fig['thieves.bigscore'] && fig['thieves.bigscore'].lit) fail('Safecracker is lit, but using it now gives 0', 'm8');
   // (m9) a rival's loaded use, subdued; the seat that lies low says so
@@ -122,7 +122,7 @@ try {
     safe: [0, 1, 2, 3].map(id => !!document.querySelector(`[data-cult="${id}"] [data-safe]`) && /safe this round/i.test(document.querySelector(`[data-cult="${id}"] [data-safe]`).getAttribute('aria-label') + ' ' + document.querySelector(`[data-cult="${id}"] [data-safe]`).title)),
   }));
   if (!marks.stunt || !marks.stunt.loaded || marks.stunt.ready || !marks.stunt.dot) fail(`P2's Raider (a use in hand) isn't marked on P2's seat: ${JSON.stringify(marks.stunt)}`, 'm9');
-  if (marks.pincher) fail('P2\'s Penny Pincher (no use) is marked as a use in hand', 'm9');
+  if (marks.pincher) fail('P2\'s Skinflint (no use) is marked as a use in hand', 'm9');
   if (JSON.stringify(marks.safe) !== JSON.stringify([false, false, true, false])) fail(`"safe this round" on seats ${JSON.stringify(marks.safe)} (want only P3's)`, 'm9');
   if (fig['gold.midas'] && fig['gold.midas'].sw !== 'on') fail(`Midas's switch in your seat: ${JSON.stringify(fig['gold.midas'])}`, 'm2');
   if (fig['echo.translator'] && fig['echo.translator'].sw !== 'off') fail(`Translator's switch in your seat: ${JSON.stringify(fig['echo.translator'])}`, 'm2'); // it may be folded into "+N"
@@ -147,7 +147,7 @@ try {
 
   // (m5) the prompt
   const sub = await page.evaluate(() => document.querySelector('[data-prompt-sub]')?.textContent || '');
-  if (!/\buse\b/.test(sub) || /Pawnbroker|Speculator|Safecracker/.test(sub)) fail(`the prompt's use line: "${sub}"`, 'm5');
+  if (!/\buse\b/.test(sub) || /Pawnbroker|Gambler|Safecracker/.test(sub)) fail(`the prompt's use line: "${sub}"`, 'm5');
 
   // (m1) your seat card
   await pointAt('[data-cult="0"] .cs-head', 14);
@@ -166,7 +166,7 @@ try {
       if (r.cut) fail(`${id}'s ability is cut off`, 'm1');
     }
     const row = id => sc.rows.find(x => x.id === id) || {};
-    if (row('gold.speculator').state !== 'used' || row('gold.speculator').tag !== 'used') fail(`Speculator's row: ${JSON.stringify(row('gold.speculator'))}`, 'm1');
+    if (row('gold.speculator').state !== 'used' || row('gold.speculator').tag !== 'used') fail(`Gambler's row: ${JSON.stringify(row('gold.speculator'))}`, 'm1');
     if (!/^Use: \+7/.test(row('gold.jackpot').use)) fail(`Lottery Winner's row has no "Use: +7" button: ${JSON.stringify(row('gold.jackpot'))}`, 'm1');
     if (row('trading.pawnbroker').use) fail('Pawnbroker offers a Use button that would do nothing', 'm1');
     const zero = row('thieves.bigscore');
@@ -176,7 +176,7 @@ try {
     if (row('gold.midas').sw !== 'on' || row('echo.translator').sw !== 'off') fail(`switches in the seat card: Midas ${row('gold.midas').sw}, Translator ${row('echo.translator').sw}`, 'm1');
     // a game-end scorer carries no tag since faee2109 (the hover lists drop "scores at game end"/"pays at round start":
     // the ability says it); its whole ability names the game end instead
-    if (row('gold.tycoon').tag || !/game end/i.test(row('gold.tycoon').ability || '')) fail(`Tycoon's row: tag "${row('gold.tycoon').tag}", ability "${row('gold.tycoon').ability}"`, 'm1');
+    if (row('gold.tycoon').tag || !/game end/i.test(row('gold.tycoon').ability || '')) fail(`Baron's row: tag "${row('gold.tycoon').tag}", ability "${row('gold.tycoon').ability}"`, 'm1');
   }
   await away();
 

@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Combo tester (Nov 11, Cory: "combo tester"): the spaces and members changed Nov 11 (Late Shift, Offering, Write-Off,
-// Buyout, Modest Means, Agents' owner-included reading) played against the members that move, copy and count members.
+// Buyout, Modest Means, Secret-Keepers' owner-included reading) played against the members that move, copy and count members.
 // Each scene checks the outcome against the printed text.
 import { describe, it, expect } from 'vitest';
 import { createGame, resume, followers, applyMove } from '../../../engine/v4/core.js';
@@ -53,16 +53,16 @@ describe('combo tester (Nov 11 spaces and members)', () => {
     expect(s.players[2].res).toMatchObject({ red: 0, yellow: 1 });
   });
 
-  it('Agents stops its owner copying their own Late Shift with Reprise', () => {
+  it('Secret-Keepers stops its owner copying their own Late Shift with Reprise', () => {
     const { s } = go('agents-own', { quads: ['red', 'echo', 'yellow', 'trading'], turns: [0, 1, 0, 1], members: [['echo.agents']] },
       [/Late Shift/, /pass|nothing|Nothing/, /Gather/, /pass|nothing|Nothing/, /Reprise/]);
-    expect(s.log).toContain("P1 had nothing to copy (P1's Agents prevents copying Late Shift).");
+    expect(s.log).toContain("P1 had nothing to copy (P1's Secret-Keepers prevents copying Late Shift).");
   });
 
-  it('Write-Off gives Agents to a Green player: their own copies stop', () => {
+  it('Write-Off gives Secret-Keepers to a Green player: their own copies stop', () => {
     const { s } = go('writeoff-agents', { quads: ['red', 'echo', 'yellow', 'trading'], turns: [0, 1, 0, 1, 0, 1], members: [['echo.agents']] },
-      [/Write-Off/, /Agents/, /P2/, /pass|nothing|Nothing/, /Gather/, /pass|nothing|Nothing/]);
-    expect(names(s, 1)).toContain('Agents');
+      [/Write-Off/, /Secret-Keepers/, /P2/, /pass|nothing|Nothing/, /Gather/, /pass|nothing|Nothing/]);
+    expect(names(s, 1)).toContain('Secret-Keepers');
     expect(s.players[0].res.white).toBeGreaterThanOrEqual(5);
   });
 
@@ -115,11 +115,11 @@ describe('combo tester (Nov 11 spaces and members)', () => {
 
 describe('combo tester, copies and member movement (Nov 11)', () => {
   const Q = ['red', 'echo', 'yellow', 'trading'];
-  it('Cover copies Offering with Wallflower: copier +10 yellow, discards by the copier\'s member colors, the Offering player hit too', () => {
+  it('Cover copies Offering with Tall-Tale Teller: copier +10 yellow, discards by the copier\'s member colors, the Offering player hit too', () => {
     const { s } = go('cover-offering-wallflower', { quads: Q, turns: [0, 1], members: [['yellow.gardener'], ['red.clan', 'echo.wallflower']],
       res: [{ red: 4, green: 4, yellow: 4 }, {}] }, [/Offering/, /^pass$/, /Cover/, /Offering/]);
-    expect(s.players[1].res.yellow).toBe(10); // +5 doubled by Wallflower
-    expect(s.log).toContain("P2's Offering: P1 discards 2 red, 2 green."); // Clan Chief red, Wallflower green
+    expect(s.players[1].res.yellow).toBe(10); // +5 doubled by Tall-Tale Teller
+    expect(s.log).toContain("P2's Offering: P1 discards 2 red, 2 green."); // Clan Chief red, Tall-Tale Teller green
     expect(s.players[0].res).toMatchObject({ red: 2, green: 2, yellow: 9 });
   });
   // Greatest Hits copies only your own minions (Cory, Nov 11 11:20pm): P3's own Offering, never P1's Melting Pot
@@ -136,12 +136,12 @@ describe('combo tester, copies and member movement (Nov 11)', () => {
     expect(s.log.filter(l => l === "P3's Offering: P2 discards 2 green.")).toHaveLength(2);
     expect(s.players[0].res.green).toBe(0);
     expect(s.players[1].res.green).toBe(0);
-    expect(s.players[2].res.yellow).toBe(15); // +5 placed, +10 copied (Wallflower doubles the copy)
+    expect(s.players[2].res.yellow).toBe(15); // +5 placed, +10 copied (Tall-Tale Teller doubles the copy)
     expect(s.log.some(l => /copied Melting Pot|copies Melting Pot/.test(l))).toBe(false);
   });
-  it('Buskers against Agents: no copy of the Agents owner\'s action', () => {
+  it('Buskers against Secret-Keepers: no copy of the Secret-Keepers owner\'s action', () => {
     const { s } = go('buskers-agents', { quads: Q, turns: [0, 1], members: [['echo.agents'], ['echo.songrequest']] }, [/Gather/, /^pass$/, /Late Shift/, /use:/]);
-    expect(s.log).toContain("P2's Buskers: no rival action to copy (P1's Agents prevents copying Gather).");
+    expect(s.log).toContain("P2's Buskers: no rival action to copy (P1's Secret-Keepers prevents copying Gather).");
   });
   it('Buyout of Changeling: its On Recruit fires for the buyer', () => {
     const { s } = go('buyout-doubleagent', { quads: ['red', 'echo', 'silver', 'trading'], n: 3, turns: [0, 1, 2], members: [[], ['thieves.doubleagent', 'red.bigfamily'], ['echo.wallflower']], res: [{ silver: 10 }] },
@@ -150,17 +150,17 @@ describe('combo tester, copies and member movement (Nov 11)', () => {
     expect(names(s, 1)).toEqual(['Changeling']);
     expect(s.players[1].res.silver).toBe(10);
   });
-  it('Buyout of a used Encore stays used', () => {
+  it('Buyout of a used Minstrel stays used', () => {
     let st = scene({ quads: ['red', 'echo', 'silver', 'trading'], turns: [0, 1], members: [[], ['echo.encore']], res: [{ silver: 10 }] });
     st.players[1].members.forEach(u => { st.cards[u].used = true; });
-    const r = drive(st, [/Buyout/, /Encore/]);
+    const r = drive(st, [/Buyout/, /Minstrel/]);
     if (DUMP) dump('buyout-used-encore', r.s, r.trail);
     expect(r.s.pending.options.some(o => /use:/.test(o.id))).toBe(false);
   });
-  it('Cover copies Late Shift with Wallflower: still one free member', () => {
+  it('Cover copies Late Shift with Tall-Tale Teller: still one free member', () => {
     const { s } = go('cover-lateshift', { quads: Q, turns: [0, 1, 0, 1], members: [[], ['echo.wallflower']], shop: ['red.volunteer', 'red.intern', 'red.reserve'] },
       [/Gather/, /^pass$/, /Build Up/, /^pass$/, /Late Shift/, /Volunteer/, /^pass$/, /Cover/, /Late Shift/, /Intern/]);
-    expect(names(s, 1)).toEqual(['Wallflower', 'Intern']); // 2 minions placed: up to 4
+    expect(names(s, 1)).toEqual(['Tall-Tale Teller', 'Intern']); // 2 minions placed: up to 4
     expect(s.log).toContain("P2's Cover: +2 red.");
   });
   it('Write-Off to a rival, then that rival writes it back off: white each way', () => {

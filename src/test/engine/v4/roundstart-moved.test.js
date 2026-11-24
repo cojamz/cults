@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { applyMove } from '../../../engine/v4/core.js';
 import { table, named, owns } from './cards-helpers-b.js';
 
-// Lab bug (Tax Collector A/B game 1, round III start): Ava's Kidnapper took Cal's Cutpurse, and the Cutpurse stole for
+// Lab bug (Pardoner A/B game 1, round III start): Ava's Kidnapper took Cal's Cutpurse, and the Cutpurse stole for
 // Ava and again for Cal. A card's Round Start fires once a round, for whoever holds it (Cory, Nov 4: "Round Start /
 // Round End effects resolve in turn order"); a choice it queued before it changed cults does nothing.
 const steals = s => named(s, 'Cutpurse').filter(l => /Cutpurse.* stole/.test(l));

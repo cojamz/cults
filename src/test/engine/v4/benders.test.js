@@ -41,7 +41,7 @@ describe('guest members join the deck', () => {
     const has = s => Object.values(s.cards).some(c => c.def === 'benders.squatter');
     expect(has(on)).toBe(true);
     expect(has(off)).toBe(false);
-    expect(Object.keys(on.cards).length - Object.keys(off.cards).length).toBe(19); // the full test deck: Cory's 15 guests, Scouts back (Nov 7), Cheerleaders (Nov 4; Victors out Nov 6), plus the cut Insider and Straggler (Oct 28)
+    expect(Object.keys(on.cards).length - Object.keys(off.cards).length).toBe(19); // the full test deck: Cory's 15 guests, Weeders back (Nov 7), Trumpeters (Nov 4; Victors out Nov 6), plus the cut Seer and Straggler (Oct 28)
   });
   it('a bender whose color is not on the table is paid in any colors', () => {
     // Squatter leans Magenta; the default table has no magenta
@@ -52,7 +52,7 @@ describe('guest members join the deck', () => {
     expect(R(t).red + R(t).blue).toBe(10 - cost('benders.squatter'));
   });
   it('a guest is colorless even when the sphere it leans to is on the table: no sphere counts it, and its whole cost is any colors', () => {
-    // Line Cutters (Front-runner) leans Purple (printed 5 colored + 0 any): on a table with Purple, it's still nobody's color
+    // Lord of the Manor (Front-runner) leans Purple (printed 5 colored + 0 any): on a table with Purple, it's still nobody's color
     const Q = ['gold', 'red', 'purple', 'green'];
     expect(defById('benders.frontrunner')).toMatchObject({ quadrant: 'guest', lean: 'purple', s: 0, w: 1 + EXTRA_WILD });
     const s = scene({ quadrants: Q, res: [{ red: 20 }], shop: ['benders.frontrunner'], queue: [{ t: 'buy', p: 0 }] });
@@ -64,11 +64,11 @@ describe('guest members join the deck', () => {
     expect(R(t).red).toBe(20 - cost('benders.frontrunner'));
     expect(R(t).purple).toBe(0);
     const v = scene({ quadrants: Q, members: [['benders.frontrunner']] });
-    for (const q of [...Q, 'guest']) expect(contextFor(v).countMembersOfColor(v.players[0], q), q).toBe(q === 'guest' ? 1 : 0); // Line Cutters rebased to worth 1 and 1 member (Cory, Nov 12)
+    for (const q of [...Q, 'guest']) expect(contextFor(v).countMembersOfColor(v.players[0], q), q).toBe(q === 'guest' ? 1 : 0); // Lord of the Manor rebased to worth 1 and 1 member (Cory, Nov 12)
   });
 });
 
-describe('Party Crasher: Once per game, the next minion may go on a space a rival already took', () => {
+describe('Trespasser: Once per game, the next minion may go on a space a rival already took', () => {
   it('offers rivals’ taken spaces once used, does the action, and only for one minion', () => {
     let s = scene({ members: [['benders.squatter']], slots: { [JV]: 1, [RUSH]: 0 } });
     expect(ids(s).some(id => id.startsWith('squat:'))).toBe(false);
@@ -128,7 +128,7 @@ describe('Party Crasher: Once per game, the next minion may go on a space a riva
   });
 });
 
-describe('Big Spender: once per round, buy twice in one turn', () => {
+describe('Squanderer: once per round, buy twice in one turn', () => {
   it('a second buy follows a real first buy, once per round', () => {
     let s = scene({ members: [['benders.bigspender1']], res: [{ gold: 4, red: 4, blue: 4, green: 4 }], queue: [{ t: 'buy', p: 0 }, { t: 'buy', p: 0, extra: true }, { t: 'endTurn', p: 0 }] });
     s.current = 0;
@@ -151,7 +151,7 @@ describe('Big Spender: once per round, buy twice in one turn', () => {
     expect(s.pending).toBe(null);
     expect(s.cards[uidOf(s, 'benders.bigspender1', 0)].spent).toBeUndefined();
   });
-  it('with a Purple extra turn: the extra turn has its own buy, and Big Spender is still once per round', () => {
+  it('with a Purple extra turn: the extra turn has its own buy, and Squanderer is still once per round', () => {
     let s = scene({ round: 2, quadrants: ['gold', 'red', 'purple', 'green'], members: [['benders.bigspender1']], res: [{ gold: 9, red: 9, purple: 2, green: 9 }], rules: { release: false } }); // no extra minions in round I
     extraTurns(contextFor(s), s.players[0], 1);
     s = move(s, `slot:${RUSH}`);
@@ -179,7 +179,7 @@ describe('Freelancer: pay any member’s colored part in any colors', () => {
   });
 });
 
-describe('Insider: also recruit from the top 3 of the pile', () => {
+describe('Seer: also recruit from the top 3 of the pile', () => {
   it('offers the top 3 of the pile (not the 4th) and takes the card from the pile', () => {
     let s = scene({ members: [['benders.insider']], res: [{ gold: 30, red: 30, blue: 30, green: 30 }], rules: { release: false }, queue: [{ t: 'buy', p: 0 }] });
     const top = s.pile.slice(0, 4), row = s.shop.length;
@@ -190,7 +190,7 @@ describe('Insider: also recruit from the top 3 of the pile', () => {
     expect(s.pile).not.toContain(top[1]);
     expect(s.shop.length).toBe(row);
   });
-  it('a Doppelganger copying Insider does not reach deeper', () => {
+  it('a Doppelganger copying Seer does not reach deeper', () => {
     let s = scene({ members: [['benders.insider', 'echo.doppel']], res: [{ gold: 30, red: 30, blue: 30, green: 30 }], rules: { release: false }, queue: [{ t: 'buy', p: 0 }] });
     s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'benders.insider';
     expect(ids(s)).not.toContain(`card:${s.pile[3]}`);
@@ -320,7 +320,7 @@ describe('Release (base rule): once per round, release a member for its colored 
     s.current = 0;
     expect(s.pending).toBe(null); // nothing to buy, nothing to release
   });
-  it('the refund is not a gain (gold gain doublers like Underdog don’t touch it)', () => {
+  it('the refund is not a gain (gold gain doublers like Poor Relation don’t touch it)', () => {
     let s = scene({ members: [['gold.underdog', 'gold.banker']], res: [{}, { gold: 9 }], queue: [{ t: 'buy', p: 0 }] });
     s.current = 0; s = resume(s);
     s = move(s, `release:${uidOf(s, 'gold.banker', 0)}`);
@@ -369,21 +369,21 @@ describe('Release with once-per-game members, just-bought members and Echo copie
     expect(ids(s)).not.toContain(`release:${u}`);
   });
   // Rewritten for "not in the round you recruited it" (dead-window audit, 2026-10-14). These two used to show a
-  // just-bought member released in the same turn (Big Spender's second buy) or the same round (a later buy step).
-  it('a just-bought member can’t be released in a Big Spender second buy step; next round it can', () => {
+  // just-bought member released in the same turn (Squanderer's second buy) or the same round (a later buy step).
+  it('a just-bought member can’t be released in a Squanderer second buy step; next round it can', () => {
     const Q = ['gold', 'red', 'echo', 'purple'];
     let s = scene({ quadrants: Q, members: [['benders.bigspender1']], shop: ['echo.mirror'], res: [{ green: 10 }, { green: 5 }], queue: [{ t: 'buy', p: 0 }, { t: 'buy', p: 0, extra: true }, { t: 'endTurn', p: 0 }] });
     s.current = 0; s = resume(s);
     const u = uidOf(s, 'echo.mirror', 'shop');
     s = payFirst(move(s, `card:${u}`));
-    expect(R(s).green).toBe(10 - cost('echo.mirror')); // Fan Club: no minion on a Green space yet
+    expect(R(s).green).toBe(10 - cost('echo.mirror')); // Admirers: no minion on a Green space yet
     expect(s.pending.extra).toBe(true);
     expect(ids(s)).not.toContain(`release:${u}`);
     expect(s.cards[u]).toMatchObject({ recruitedRound: 1, recruitedBy: 0 });
     s.round = 2; s.queue = [{ t: 'buy', p: 0 }]; s.current = 0; s.pending = null; s = resume(s);
     expect(ids(s)).toContain(`release:${u}`);
   });
-  it('without Big Spender, a just-bought member waits for next round (not a later buy step this round)', () => {
+  it('without Squanderer, a just-bought member waits for next round (not a later buy step this round)', () => {
     let s = scene({ shop: ['red.bigfamily'], res: [{ red: 20 }], queue: [{ t: 'buy', p: 0 }, { t: 'endTurn', p: 0 }] });
     s.current = 0; s = resume(s);
     const u = uidOf(s, 'red.bigfamily', 'shop');
@@ -422,7 +422,7 @@ describe('Release with once-per-game members, just-bought members and Echo copie
 });
 
 describe('Doppelganger and Magenta theft with once-per-round benders', () => {
-  it('a Doppelganger copying Party Crasher is a second use', () => {
+  it('a Doppelganger copying Trespasser is a second use', () => {
     let s = scene({ members: [['benders.squatter', 'echo.doppel']], slots: { [JV]: 1, [RUSH]: 1 }, rules: { release: false } });
     const d = uidOf(s, 'echo.doppel', 0);
     s.cards[d].copy = 'benders.squatter';
@@ -433,7 +433,7 @@ describe('Doppelganger and Magenta theft with once-per-round benders', () => {
     s = move(s, `use:${d}`);
     expect(ids(s)).toContain(`squat:${RUSH}`);
   });
-  it('a stolen Big Spender that was used this round stays used for the thief; next round it works', () => {
+  it('a stolen Squanderer that was used this round stays used for the thief; next round it works', () => {
     const Q = ['gold', 'red', 'thieves', 'green'];
     let s = scene({ quadrants: Q, members: [[], ['benders.bigspender1']], res: [{ gold: 9, red: 9, green: 9, magenta: 9 }], rules: { release: false }, queue: [] });
     const u = uidOf(s, 'benders.bigspender1', 1);
@@ -476,14 +476,14 @@ describe('bots play every bender and Release without breaking the game', () => {
 });
 void cardDef;
 
-describe('Scouts pays Patroness once, like the other sends to the discard pile', () => {
-  it('two shop members sent: Patroness +1 follower once', () => {
+describe('Weeders pays Gravedigger once, like the other sends to the discard pile', () => {
+  it('two shop members sent: Gravedigger +1 follower once', () => {
     let s = scene({ quadrants: ['gold', 'red', 'market', 'green'], members: [['benders.scout', 'market.patroness']] });
     s = move(s, `use:${uidOf(s, 'benders.scout', 0)}`);
     s = move(s, s.pending.options.find(o => o.id.startsWith('card:')).id);
     s = move(s, s.pending.options.find(o => o.id.startsWith('card:')).id);
     s = move(s, 'done');
     expect(s.players[0].bonus).toBe(1);
-    expect(s.log.some(l => /Patroness: \+1 follower/.test(typeof l === 'string' ? l : l.text || ''))).toBe(true);
+    expect(s.log.some(l => /Gravedigger: \+1 follower/.test(typeof l === 'string' ? l : l.text || ''))).toBe(true);
   });
 });

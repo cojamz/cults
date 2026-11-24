@@ -126,7 +126,7 @@ describe('REPLACE3: each card fires', () => {
     s = answer(s, `card:${uidIn(s, 'market.snob', 1)}`);
     const me = s.cards[uidIn(s, 'echo.impersonators', 0)];
     expect(me.ability).toBe('market.snob');
-    expect(named(s, 'Impersonator')).toContain('P1\'s Impersonator: has the ability of P2\'s Snobs ("Game End: +1 follower per blue member you have.").');
+    expect(named(s, 'Impersonator')).toContain('P1\'s Impersonator: has the ability of P2\'s Blue Bloods ("Game End: +1 follower per blue member you have.").');
   });
 
   it("Impersonator does the chosen member's On Recruit too (Cory, Nov 5: \"Impersonator should impersontate the on recruit\")", () => {
@@ -136,7 +136,7 @@ describe('REPLACE3: each card fires', () => {
     s = resume(s);
     const gold = s.players[0].res.gold;
     s = answer(s, `card:${uidIn(s, 'gold.seed', 1)}`);
-    // Treasurer: "+1 gold per member you have, this one included": Regulars and Impersonator
+    // Treasurer: "+1 gold per member you have, this one included": Gardeners and Impersonator
     expect(s.players[0].res.gold - gold).toBe(2);
     expect(s.cards[uidIn(s, 'echo.impersonators', 0)].ability).toBe('gold.seed');
     expect(named(s, 'Impersonator')).toContain("P1's Impersonator does Treasurer's On Recruit.");
@@ -150,7 +150,7 @@ describe('REPLACE3: each card fires', () => {
     s = resume(s);
     s = answer(s, `card:${uidIn(s, 'market.snob', 1)}`);
     s = resume({ ...s, queue: [{ t: 'finish' }], pending: null });
-    expect(s.players[0].final.parts).toContain('Snobs +1');
+    expect(s.players[0].final.parts).toContain('Blue Bloods +1');
   });
 
   it('Missionaries: give one member to each rival, then a free recruit costing up to 2 more for each', () => {
@@ -199,11 +199,11 @@ describe('REPLACE3: each card fires', () => {
     expect(s.players[1].res.silver).toBe(3);
   });
 
-  it('Creditor × Caterer: the 3 silver is a gift, so the gift hooks fire', () => {
+  it('Creditor × Almsgiver: the 3 silver is a gift, so the gift hooks fire', () => {
     let s = table(['red', 'silver', 'market', 'yellow'], { n: 2, round: 2, bonus: [0, 3], members: [['silver.creditors', 'silver.caterer']], queue: [{ t: 'buy', p: 0 }] });
     const before = s.players[0].res.silver;
     s = answer(move(s, `use:${uidIn(s, 'silver.creditors', 0)}`), 'player:1');
-    expect(s.players[0].res.silver).toBe(before + 2); // Caterer: whenever you gift silver, +2 silver (Cory, Nov 7)
+    expect(s.players[0].res.silver).toBe(before + 2); // Almsgiver: whenever you gift silver, +2 silver (Cory, Nov 7)
   });
 
   it('Pacers: once per round, move a minion to an open space and do that action', () => {

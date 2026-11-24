@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Combo tester, Cory's Nov 11 White and Purple members (design/decisions.md, 9:10pm, 9:12pm, and Claude's 9:35pm build
-// notes): Leavetakers ("Whenever one of your members leaves your cult, +2 white."; any of your members, itself included:
-// discard, give, steal, swap), Minimalists ("Game End: +2 followers per member you have costing 8 or more.", was 6; the cost the
+// notes): Mourners ("Whenever one of your members leaves your cult, +2 white."; any of your members, itself included:
+// discard, give, steal, swap), Connoisseurs ("Game End: +2 followers per member you have costing 8 or more.", was 6; the cost the
 // shop shows, Richer moves the 6 with the text), Last Callers ("On Use, once per round: take the Goes Last token."; as a
 // Purple space takes it: all your other minions wait). Played against every way a member leaves, the costing cards and
 // Purple's turn-order spaces. Harness: combos-green-nov12.test.js's scene/drive/go (the queue array is copied).
@@ -55,34 +55,34 @@ const END = [{ t: 'allPlaced' }, { t: 'endRound' }];
 const FIN = [{ t: 'finish' }];
 const T = (...ps) => [...ps.map(p => ({ t: 'turn', p })), { t: 'allPlaced' }];
 const turnsLine = s => s.queue.filter(t => t.t === 'turn').map(t => `${t.p}${t.token ? 'T' : ''}`).join(' ');
-const leave = (s, i) => lines(s, new RegExp(`^P${i + 1}'s Leavetakers: `));
+const leave = (s, i) => lines(s, new RegExp(`^P${i + 1}'s Mourners: `));
 
-describe('Leavetakers: "Whenever one of your members leaves your cult, +2 white."', () => {
+describe('Mourners: "Whenever one of your members leaves your cult, +2 white."', () => {
   it('Farewell discards one of your members: +2 white (with Farewell\'s +1)', () => {
     const { s } = go('lt-farewell', { quads: W, turns: [0], members: [['trading.leavetakers', 'red.intern']] }, [/Farewell/, /Intern/]);
     expect(s.players[0].res.white).toBe(3);
-    expect(leave(s, 0)).toEqual(["P1's Leavetakers: Intern left: +2 white."]);
+    expect(leave(s, 0)).toEqual(["P1's Mourners: Intern left: +2 white."]);
     cleanLog(s);
   });
 
-  it('Downsizers discards Leavetakers itself: it pays for its own leaving (+2, with Downsizers\' +4)', () => {
-    const { s } = go('lt-self', { quads: W, queue: BUY, members: [['trading.leavetakers', 'trading.moneylender', 'red.intern']] }, [/Downsizers/, /Leavetakers/]);
-    expect(names(s, 0)).toEqual(['Downsizers', 'Intern']);
+  it('Executioner discards Mourners itself: it pays for its own leaving (+2, with Executioner\' +4)', () => {
+    const { s } = go('lt-self', { quads: W, queue: BUY, members: [['trading.leavetakers', 'trading.moneylender', 'red.intern']] }, [/Executioner/, /Mourners/]);
+    expect(names(s, 0)).toEqual(['Executioner', 'Intern']);
     expect(s.players[0].res.white).toBe(6);
-    expect(leave(s, 0)).toEqual(["P1's Leavetakers: Leavetakers left: +2 white."]);
+    expect(leave(s, 0)).toEqual(["P1's Mourners: Mourners left: +2 white."]);
   });
 
   it('Appraiser discards a member: +2 white besides its cost in followers', () => {
     const { s } = go('lt-appraiser', { quads: W, queue: BUY, members: [['trading.leavetakers', 'trading.appraiser', 'red.intern']] }, [/Appraiser/, /Intern/, /followers/]);
     expect(s.players[0].res.white).toBe(2);
     expect(s.players[0].bonus).toBe(4);
-    expect(leave(s, 0)).toEqual(["P1's Leavetakers: Intern left: +2 white."]);
+    expect(leave(s, 0)).toEqual(["P1's Mourners: Intern left: +2 white."]);
   });
 
   it('Release (table setting on): a released member pays +2 white besides its refund', () => {
     const { s } = go('lt-release', { quads: W, queue: BUY, rules: { release: true }, members: [['trading.leavetakers', 'red.intern']] }, [/Release Intern/]);
     expect(s.players[0].res).toMatchObject({ white: 2, red: 2 });
-    expect(leave(s, 0)).toEqual(["P1's Leavetakers: Intern left: +2 white."]);
+    expect(leave(s, 0)).toEqual(["P1's Mourners: Intern left: +2 white."]);
   });
 
   it('Write-Off gives a member to a rival: +2 white (with Write-Off\'s 4 + 1); the rival who gets it gets no white', () => {
@@ -96,24 +96,24 @@ describe('Leavetakers: "Whenever one of your members leaves your cult, +2 white.
     const { s } = go('lt-borrow', { quads: W, queue: [{ t: 'turn', p: 0 }, ...END], shop: ['red.volunteer', 'trading.recluse'], members: [['trading.leavetakers'], []] },
       [/Borrow/, /^pass$/]);
     expect(s.log).toContain("P1's Volunteer was on loan from Borrow: back to the shop at round end.");
-    expect(leave(s, 0)).toEqual(["P1's Leavetakers: Volunteer left: +2 white."]);
-    expect(names(s, 0)).toEqual(['Leavetakers']);
+    expect(leave(s, 0)).toEqual(["P1's Mourners: Volunteer left: +2 white."]);
+    expect(names(s, 0)).toEqual(['Mourners']);
     expect(s.players[0].res.white).toBe(2);
   });
 
   it('Poach steals one of your members: +2 white to you, nothing to the thief', () => {
     const { s } = go('lt-poach', { quads: W, turns: [1], members: [['trading.leavetakers', 'red.intern'], []] }, [/Poach/, /Intern/]);
     expect(s.players.map(p => p.res.white)).toEqual([2, 0]);
-    expect(leave(s, 0)).toEqual(["P1's Leavetakers: Intern left: +2 white."]);
+    expect(leave(s, 0)).toEqual(["P1's Mourners: Intern left: +2 white."]);
   });
 
-  it('Poach steals Leavetakers itself: its old owner +2; its new owner gets nothing (it arrived, nothing left)', () => {
-    const { s } = go('lt-poach-self', { quads: W, turns: [1], members: [['trading.leavetakers', 'red.intern'], []] }, [/Poach/, /Leavetakers/]);
+  it('Poach steals Mourners itself: its old owner +2; its new owner gets nothing (it arrived, nothing left)', () => {
+    const { s } = go('lt-poach-self', { quads: W, turns: [1], members: [['trading.leavetakers', 'red.intern'], []] }, [/Poach/, /Mourners/]);
     expect(s.players.map(p => p.res.white)).toEqual([2, 0]);
-    expect(names(s, 1)).toEqual(['Leavetakers']);
+    expect(names(s, 1)).toEqual(['Mourners']);
   });
 
-  it('your Leavetakers ignores a rival\'s member leaving: you Poach theirs, no white', () => {
+  it('your Mourners ignores a rival\'s member leaving: you Poach theirs, no white', () => {
     const { s } = go('lt-rival', { quads: W, turns: [0], members: [['trading.leavetakers'], ['red.intern']] }, [/Poach/, /Intern/]);
     expect(s.players.map(p => p.res.white)).toEqual([0, 0]);
     expect(leave(s, 0)).toEqual([]);
@@ -121,7 +121,7 @@ describe('Leavetakers: "Whenever one of your members leaves your cult, +2 white.
 
   it('Swindle takes one of yours and gives you a shop member: +2 once; the member arriving pays nothing', () => {
     const { s } = go('lt-swindle', { quads: W, turns: [1], shop: ['red.volunteer'], members: [['trading.leavetakers', 'red.intern'], []] }, [/Swindle/, /Intern/, /Volunteer/]);
-    expect(names(s, 0)).toEqual(['Leavetakers', 'Volunteer']);
+    expect(names(s, 0)).toEqual(['Mourners', 'Volunteer']);
     expect(s.players[0].res.white).toBe(2);
     expect(leave(s, 0)).toHaveLength(1);
   });
@@ -129,116 +129,116 @@ describe('Leavetakers: "Whenever one of your members leaves your cult, +2 white.
   it('Hostages swaps your Raiders for a rival\'s Last Callers: one leaves, one arrives, +2 once', () => {
     const { s } = go('lt-exchange', { quads: W, queue: BUY, shop: ['yellow.exchangestudents'], members: [['trading.leavetakers', 'trading.raider'], ['purple.lastcallers']], res: [{ yellow: 9, red: 9 }] },
       [/Hostages/, /Raiders ↔ P2: Last Callers/]);
-    expect(names(s, 0)).toEqual(['Leavetakers', 'Hostages', 'Last Callers']);
+    expect(names(s, 0)).toEqual(['Mourners', 'Hostages', 'Last Callers']);
     expect(s.players[0].res.white).toBe(2);
-    expect(leave(s, 0)).toEqual(["P1's Leavetakers: Raiders left: +2 white."]);
+    expect(leave(s, 0)).toEqual(["P1's Mourners: Raiders left: +2 white."]);
     cleanLog(s);
   });
 
-  it('Hostages swaps Leavetakers itself away: +2 to you; the rival who swaps it in gets nothing for their Raiders leaving', () => {
+  it('Hostages swaps Mourners itself away: +2 to you; the rival who swaps it in gets nothing for their Raiders leaving', () => {
     const { s } = go('lt-exchange-self', { quads: W, queue: BUY, shop: ['yellow.exchangestudents'], members: [['trading.leavetakers', 'red.panel'], ['trading.raider']], res: [{ yellow: 9, red: 9 }] },
-      [/Hostages/, /Leavetakers ↔ P2: Raiders/]);
-    expect(names(s, 1)).toEqual(['Leavetakers']);
+      [/Hostages/, /Mourners ↔ P2: Raiders/]);
+    expect(names(s, 1)).toEqual(['Mourners']);
     expect(s.players.map(p => p.res.white)).toEqual([2, 0]);
     expect(leave(s, 1)).toEqual([]);
   });
 
-  it('Changeling swaps itself for a rival\'s Intern: the rival\'s Leavetakers pays +2', () => {
+  it('Changeling swaps itself for a rival\'s Intern: the rival\'s Mourners pays +2', () => {
     const { s } = go('lt-doubleagent', { quads: W, queue: BUY, shop: ['thieves.doubleagent'], members: [[], ['trading.leavetakers', 'red.intern']], res: [{ magenta: 20 }] },
       [/Changeling/, /Intern/]);
     expect(names(s, 0)).toEqual(['Intern']);
-    expect(names(s, 1)).toEqual(['Leavetakers', 'Changeling']);
+    expect(names(s, 1)).toEqual(['Mourners', 'Changeling']);
     expect(s.players[1].res.white).toBe(2);
-    expect(leave(s, 1)).toEqual(["P2's Leavetakers: Intern left: +2 white."]);
+    expect(leave(s, 1)).toEqual(["P2's Mourners: Intern left: +2 white."]);
     cleanLog(s);
   });
 
   it('Swindler (Round Start) swaps with your member: +2 white', () => {
     const { s } = go('lt-bodysnatchers', { quads: W, queue: [{ t: 'round', r: 3 }], members: [['red.bodysnatchers'], ['trading.leavetakers', 'red.intern']] }, [/Intern/]);
-    expect(names(s, 1)).toEqual(['Leavetakers', 'Swindler']);
+    expect(names(s, 1)).toEqual(['Mourners', 'Swindler']);
     expect(s.players[1].res.white).toBe(2);
-    expect(leave(s, 1)).toEqual(["P2's Leavetakers: Intern left: +2 white."]);
+    expect(leave(s, 1)).toEqual(["P2's Mourners: Intern left: +2 white."]);
   });
 
   it('Promote swaps your member for a shop member: +2 white', () => {
-    const { s } = go('lt-promote', { quads: W, turns: [0], shop: ['trading.recluse'], members: [['trading.leavetakers', 'red.intern']] }, [/Promote/, /Intern ↔ Shop: Recluse/]);
-    expect(names(s, 0)).toEqual(['Leavetakers', 'Recluse']);
+    const { s } = go('lt-promote', { quads: W, turns: [0], shop: ['trading.recluse'], members: [['trading.leavetakers', 'red.intern']] }, [/Promote/, /Intern ↔ Shop: Hermit/]);
+    expect(names(s, 0)).toEqual(['Mourners', 'Hermit']);
     expect(s.players[0].res.white).toBe(2);
   });
 
   it('Press Gang (Round End): the member you give pays +2 white', () => {
     const { s } = go('lt-kidnappers', { quads: W, queue: END, members: [['thieves.kidnappers'], ['trading.leavetakers', 'red.intern']] }, [/Intern/]);
     expect(names(s, 0)).toEqual(['Press Gang', 'Intern']);
-    expect(leave(s, 1)).toEqual(["P2's Leavetakers: Intern left: +2 white."]);
+    expect(leave(s, 1)).toEqual(["P2's Mourners: Intern left: +2 white."]);
     expect(s.players[1].res.white).toBe(2);
   });
 
   it('3 players, two Press Gang both pick you at Round End: two members leave, +2 each (+4)', () => {
     const { s } = go('lt-kidnappers-3p', { quads: W, n: 3, queue: END, members: [['thieves.kidnappers'], ['thieves.kidnappers'], ['trading.leavetakers', 'red.intern', 'red.volunteer']] },
       [/player:2/, /Intern/, /player:2/, /Volunteer/]);
-    expect(names(s, 2)).toEqual(['Leavetakers']);
+    expect(names(s, 2)).toEqual(['Mourners']);
     expect(s.players[2].res.white).toBe(4);
-    expect(leave(s, 2)).toEqual(["P3's Leavetakers: Intern left: +2 white.", "P3's Leavetakers: Volunteer left: +2 white."]);
+    expect(leave(s, 2)).toEqual(["P3's Mourners: Intern left: +2 white.", "P3's Mourners: Volunteer left: +2 white."]);
     cleanLog(s);
   });
 
-  it('Doppelganger copying Leavetakers: each copy pays, +4 for one member leaving', () => {
+  it('Doppelganger copying Mourners: each copy pays, +4 for one member leaving', () => {
     const { s } = go('lt-doppel', { quads: W, turns: [0], members: [['trading.leavetakers', 'echo.doppel', 'red.intern']],
       prep: st => { st.cards[uidOf(st, 0, 'echo.doppel')].copy = 'trading.leavetakers'; } }, [/Farewell/, /Intern/]);
     expect(s.players[0].res.white).toBe(5);
     expect(leave(s, 0)).toHaveLength(2);
   });
 
-  it('the Doppelganger copying Leavetakers leaves itself: both pay as it goes (+4)', () => {
+  it('the Doppelganger copying Mourners leaves itself: both pay as it goes (+4)', () => {
     const { s } = go('lt-doppel-self', { quads: W, turns: [0], members: [['trading.leavetakers', 'echo.doppel']],
       prep: st => { st.cards[uidOf(st, 0, 'echo.doppel')].copy = 'trading.leavetakers'; } }, [/Farewell/, /Doppelganger/]);
-    expect(names(s, 0)).toEqual(['Leavetakers']);
+    expect(names(s, 0)).toEqual(['Mourners']);
     expect(s.players[0].res.white).toBe(5);
-    expect(leave(s, 0)).toEqual(["P1's Leavetakers: Doppelganger left: +2 white.", "P1's Leavetakers: Doppelganger left: +2 white."]);
+    expect(leave(s, 0)).toEqual(["P1's Mourners: Doppelganger left: +2 white.", "P1's Mourners: Doppelganger left: +2 white."]);
   });
 });
 
-describe('Minimalists: "Game End: +2 followers per member you have costing 8 or more." (Cory, Nov 11 11:53pm; was 6)', () => {
-  const part = (s, i) => s.players[i].final.parts.filter(x => /Minimalists/.test(x));
-  // costs as the shop shows them: Minimalists 8, Downsizers 6, Recluse 6, Journeyman 5, Intern 4
+describe('Connoisseurs: "Game End: +2 followers per member you have costing 8 or more." (Cory, Nov 11 11:53pm; was 6)', () => {
+  const part = (s, i) => s.players[i].final.parts.filter(x => /Connoisseurs/.test(x));
+  // costs as the shop shows them: Connoisseurs 8, Executioner 6, Hermit 6, Journeyman 5, Intern 4
   const SET = ['trading.minimalists', 'trading.moneylender', 'trading.recluse', 'red.seatfiller', 'red.intern'];
   it('counts itself (8); not 6, 5 or 4: +2', () => {
     const { s } = go('mm-base', { quads: W, queue: FIN, members: [SET, ['red.mob']] }, []);
-    expect(part(s, 0)).toEqual(['Minimalists +2']);
+    expect(part(s, 0)).toEqual(['Connoisseurs +2']);
     expect(part(s, 1)).toEqual([]);
   });
 
   it('Richer: every cost and the 8 move up 2 together (text reads 10), same members count: +2', () => {
     const { s } = go('mm-rich', { quads: W, queue: FIN, rules: { econ: 'rich' }, members: [SET] }, []);
     expect(richText(s, defById('trading.minimalists').text)).toBe('Game End: +2 followers per member you have costing 10 or more.');
-    expect(part(s, 0)).toEqual(['Minimalists +2']);
+    expect(part(s, 0)).toEqual(['Connoisseurs +2']);
   });
 
   it('4 players: each owner counts only their own members', () => {
     const { s } = go('mm-4p', { quads: W, n: 4, queue: FIN,
       members: [['trading.minimalists'], ['trading.minimalists', 'red.mob', 'red.panel'], ['red.mob'], ['trading.minimalists', 'red.intern']] }, []);
-    expect([0, 1, 2, 3].map(i => part(s, i))).toEqual([['Minimalists +2'], ['Minimalists +6'], [], ['Minimalists +2']]);
+    expect([0, 1, 2, 3].map(i => part(s, i))).toEqual([['Connoisseurs +2'], ['Connoisseurs +6'], [], ['Connoisseurs +2']]);
   });
 
   // Settled (Cory, Nov 12): Mob was rebased to worth 1 and 1 member, so it is one member here and everywhere;
-  // Minimalists pays +2 for it.
-  it('Mob (worth 4, cost 14) counts as one member here: Minimalists + Mob = +4', () => {
+  // Connoisseurs pays +2 for it.
+  it('Mob (worth 4, cost 14) counts as one member here: Connoisseurs + Mob = +4', () => {
     const { s } = go('mm-mob', { quads: W, queue: FIN, members: [['trading.minimalists', 'red.mob']] }, []);
-    expect(part(s, 0)).toEqual(['Minimalists +4']);
+    expect(part(s, 0)).toEqual(['Connoisseurs +4']);
   });
 
-  it('Doppelganger copying Minimalists: each card pays, and each counts the other (+4 and +4)', () => {
+  it('Doppelganger copying Connoisseurs: each card pays, and each counts the other (+4 and +4)', () => {
     const { s } = go('mm-doppel', { quads: W, queue: FIN, members: [['trading.minimalists', 'echo.doppel', 'red.intern']],
       prep: st => { st.cards[uidOf(st, 0, 'echo.doppel')].copy = 'trading.minimalists'; } }, []);
-    expect(part(s, 0)).toEqual(['Minimalists +4', 'Minimalists +4']);
+    expect(part(s, 0)).toEqual(['Connoisseurs +4', 'Connoisseurs +4']);
   });
 
-  it('Changeling (swaps for a rival\'s member costing up to 8) cannot reach Minimalists at cost 10 (Cory, Nov 12)', () => {
+  it('Changeling (swaps for a rival\'s member costing up to 8) cannot reach Connoisseurs at cost 10 (Cory, Nov 12)', () => {
     const { s } = go('mm-doubleagent', { quads: W, queue: [...BUY, ...FIN], shop: ['thieves.doubleagent'], members: [[], ['trading.minimalists', 'trading.leavetakers']], res: [{ magenta: 20 }] },
       [/Changeling/]);
     const labels = (s.pending?.options || []).map(o => o.label || '').join(' | ');
-    expect(labels).not.toMatch(/Minimalists/);
-    expect(names(s, 1)).toContain('Minimalists');
+    expect(labels).not.toMatch(/Connoisseurs/);
+    expect(names(s, 1)).toContain('Connoisseurs');
   });
 });
 
@@ -332,21 +332,21 @@ describe('Last Callers: "On Use, once per round: take the Goes Last token."', ()
 // to the shop at round end, before scoring (its Round End doesn't pay the rival).
 describe('a loaned member given away stays on loan', () => {
   const R = ['red', 'trading', 'yellow', 'thieves'];
-  it('Borrow Recluse, Demote it to a rival for their Volunteer: Recluse goes back to the shop at round end', () => {
+  it('Borrow Recluse, Demote it to a rival for their Volunteer: Hermit goes back to the shop at round end', () => {
     const { s, trail } = go('loan-given', { quads: R, round: 2, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }, ...END], shop: ['trading.recluse'], members: [[], ['red.volunteer']] },
-      [/Borrow/, /^pass$/, /Demote/, /Recluse.*Volunteer|Volunteer.*Recluse/, /^pass$/]);
+      [/Borrow/, /^pass$/, /Demote/, /Hermit.*Volunteer|Volunteer.*Hermit/, /^pass$/]);
     expect(trail.join('\n')).not.toMatch(/STOP/);
-    expect(s.log).toContain("P2's Recluse was on loan from Borrow: back to the shop at round end.");
+    expect(s.log).toContain("P2's Hermit was on loan from Borrow: back to the shop at round end.");
     expect(names(s, 0)).toEqual(['Volunteer']);
     expect(names(s, 1)).toEqual([]);
     expect(s.shop.map(u => s.cards[u].def)).toContain('trading.recluse');
-    expect(lines(s, /Recluse: \+/)).toEqual([]);
+    expect(lines(s, /Hermit: \+/)).toEqual([]);
     expect(s.borrowed).toBeUndefined();
     cleanLog(s);
   });
   it('a loaned member swapped into the shop is no longer on loan; the member taken for it is kept', () => {
     const { s, trail } = go('loan-to-shop', { quads: R, round: 2, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }, ...END], shop: ['trading.recluse'], members: [[], []] },
-      [/Borrow/, /^pass$/, /Demote/, /Recluse.*Intern/, /^pass$/]);
+      [/Borrow/, /^pass$/, /Demote/, /Hermit.*Intern/, /^pass$/]);
     expect(trail.join('\n')).not.toMatch(/STOP/);
     expect(names(s, 0)).toEqual(['Intern']);
     expect(has(s, /on loan from Borrow/)).toBe(false);

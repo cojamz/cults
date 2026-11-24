@@ -8,11 +8,11 @@ export const STRAYS = new Set(['echo.doppel', 'benders.extrahand3', 'benders.big
   'purple.clockmaker', 'thieves.sticky', 'market.connoisseur', 'benders.hr', // and the four retired Nov 4 (Night Watch, Second-Story Man, Hawker, Sore Loser)
   'red.recruitbonus', // Greeters, retired Nov 4 (Abbess)
   'yellow.tastemaker', // Tastemaker, retired Nov 4 (Jack-of-All-Trades)
-  'silver.polisher', // Polisher, retired Nov 4 (Guest of Honor)
+  'silver.polisher', // Polisher, retired Nov 4 (Matchmaker)
   'silver.philanthropists', // Philanthropist, retired Nov 4 (Charity Ball)
   'yellow.harmonist', // Harmonist, retired Nov 4 (Seamstress)
   'yellow.customs', // Customs Officer, retired Nov 4 (Tithe Collector)
-  'echo.chronicler', // Chronicler, retired Nov 4 (Encore, Cory's call)
+  'echo.chronicler', // Chronicler, retired Nov 4 (Minstrel, Cory's call)
   'echo.evergreen', // Busker, retired Nov 4 (Song Request)
   'trading.shopkeeper', // Landlord, retired Nov 4 (Barker, Cory's extra follower buy)
   'echo.roadie', // Roadie (On Recruit / Round Start green), retired Nov 4 (Roadie reworked: green on every copy)
@@ -22,7 +22,7 @@ export const STRAYS = new Set(['echo.doppel', 'benders.extrahand3', 'benders.big
   'benders.victors', // Victors, retired Nov 6 (Cory: "Victors is bad")
   'red.patriarch', // Patriarch, retired Nov 11 (Clan Chief)
   'red.movementpenalty', // Deprogrammers, retired Nov 12 (Dyer)
-  'purple.gossip']); // Gossip, retired Nov 12 (Place Keepers)
+  'purple.gossip']); // Gossip, retired Nov 12 (Usher)
 export function stray(s, def) {
   const uid = Math.max(...Object.keys(s.cards).map(Number)) + 1;
   s.cards[uid] = { uid, def };

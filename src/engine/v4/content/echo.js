@@ -268,7 +268,7 @@ export function agentsBlocked(ctx, p, which, skip = null) {
   return Object.values(L.now).filter(e => e.key !== skip && fits(e) && (which === 'own' ? e.p === p.id : which === 'rival' ? e.p !== p.id : true));
 }
 /** " (Agents prevents copying Gather)" when Agents is why nothing could be copied, else "". */
-const agentsWhy = (ctx, blocked) => (blocked.length ? ` (${[...new Set(blocked.map(e => `${ctx.player(e.p).name}'s Agents prevents copying ${e.name}`))].join('; ')})` : '');
+const agentsWhy = (ctx, blocked) => (blocked.length ? ` (${[...new Set(blocked.map(e => `${ctx.player(e.p).name}'s Secret-Keepers prevents copying ${e.name}`))].join('; ')})` : '');
 export function targets(ctx, p, which, skip = null) {
   const L = ledger(ctx.state);
   const pool = Object.values(L.now);
@@ -290,7 +290,7 @@ export function ownPlan(ctx, p, self = null) {
   const skip = mine.filter(e => !allowed(ctx, e, p)).map(e => ({ e, why: protectedAction(ctx, e, p) ? 'protected' : pathNow(ctx).includes(actionKey(e.key)) ? 'chain' : 'nothing' }));
   return { take, skip };
 }
-const SKIP_WHY = { protected: 'Agents prevents copying', chain: 'already in this chain', nothing: 'gave nothing' };
+const SKIP_WHY = { protected: 'Secret-Keepers prevents copying', chain: 'already in this chain', nothing: 'gave nothing' };
 /** Group skipped actions by the rule that blocked them. */
 export function skipWords(skip) {
   return ['protected', 'chain', 'nothing'].map(why => {
@@ -428,7 +428,7 @@ function copyResolved(ctx, p, e, { later, by, asker }) {
   const was = { ...p.res };
   ctx.copyPlus1(p, actionOf(e, ctx.state), e.color, mult, () => { for (const [c, n] of Object.entries(e.res)) ctx.gain(p, asGreen ? 'green' : c, n * mult, { fromAction: true }); }, asGreen ? 'green' : null);
   if (e.discount) ctx.discount(p, e.discount, `Copy of ${e.name}`);
-  const notes = [mult > 1 ? `doubled by ${p.name}'s Wallflower` : '', asGreen && Object.keys(e.res).length ? `as green by ${p.name}'s Translator` : ''].filter(Boolean);
+  const notes = [mult > 1 ? `doubled by ${p.name}'s Tall-Tale Teller` : '', asGreen && Object.keys(e.res).length ? `as green by ${p.name}'s Translator` : ''].filter(Boolean);
   // the line says what the copy paid: a copy never gets the space's first-taker +1, so copying Build Up's "+2, +1" pays
   // 2, not the 3 its taker got (player-agents review r3g4, Nov 13: "copied Build Up: +3 green" when the copier got 2)
   // (in the chip's order and before Wallflower doubles it, as the line always read; Translator's all-green stays as is)
@@ -442,7 +442,7 @@ function copyResolved(ctx, p, e, { later, by, asker }) {
 function heard(ctx, p, e, taker) {
   // each runs as its member, so the log names it ("P1's Choir: +1 green.")
   // any player's copy, +2 (Cory, Nov 1)
-  for (const o of impressed(ctx, p)) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, IMPRESSION));
+  for (const o of impressed(ctx, p)) each(ctx, o, 'tuningfork', 'Forger', () => ctx.gain(o, ctx.quadrant(e.color).resource, IMPRESSION));
   // Royalties (REPLACE11=royalties): a rival copying Royalties pays its taker's tab +2 green
   if (e.name === 'Royalties') for (const t of ctx.state.royalties || []) if (t.round === ctx.state.round && t.pid !== p.id) {
     const o = ctx.player(t.pid); ctx.gain(o, 'green', 2); ctx.log(`${o.name}'s Royalties: ${p.name} copied it, +2 green.`);
@@ -451,10 +451,10 @@ function heard(ctx, p, e, taker) {
   each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
   each(ctx, p, 'roadie9', 'Roadie', () => { const g = ctx.countMembersOfColor(p, 'echo'); if (g) ctx.gain(p, 'green', g); }); // REPLACE9
   for (const owner of ctx.rivals(p)) each(ctx, owner, 'muse', 'Muse', () => ctx.gain(owner, 'green', 1));
-  if (taker === p) each(ctx, p, 'ensemble', 'Ensemble', () => { p.bonus += 1; });
+  if (taker === p) each(ctx, p, 'ensemble', 'Chorus', () => { p.bonus += 1; });
   // −1 for the copier, +1 for Bait's owner, so copying your own is even (Cory, Oct 29: "clearly neutral for the
   // player who has it (+1 -1). the +1 shouldnt be limited to rivals only")
-  if (taker !== p) each(ctx, taker, 'bait', 'Bait', () => {
+  if (taker !== p) each(ctx, taker, 'bait', 'Trapper', () => {
     p.bonus -= Math.min(1, ctx.followers(p));
     taker.bonus += 1;
   });
@@ -837,7 +837,7 @@ const echoQ = {
         const rival = ctx.player(data.pid);
         const e = Object.values(ledger(ctx.state).now).filter(x => x.p === data.pid && actionKey(x.key) === data.key).sort((a, b) => (b.seq || 0) - (a.seq || 0))[0];
         if (!e || !copyable(e)) { ctx.log(`${p.name}'s Opening Act: ${rival.name}'s first space gave nothing to copy.`); return; }
-        if (protectedAction(ctx, e, p)) { ctx.log(`${p.name}'s Opening Act: ${rival.name}'s Agents prevents copying ${e.name}.`); return; }
+        if (protectedAction(ctx, e, p)) { ctx.log(`${p.name}'s Opening Act: ${rival.name}'s Secret-Keepers prevents copying ${e.name}.`); return; }
         withPath(ctx, [], () => copy(ctx, p, e, { by: 'Opening Act' }), e.key);
       },
     }),
@@ -915,7 +915,7 @@ const echoQ = {
       if (!hit) { ctx.log(`${p.name}: that action has a minion now.`); return; }
       withPath(ctx, [...pathNow(ctx), key], () => {
         ctx.log(`${p.name} copies ${hit.a.name}: doing it.`);
-        for (const o of impressed(ctx, p)) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
+        for (const o of impressed(ctx, p)) each(ctx, o, 'tuningfork', 'Forger', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
         each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
         each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
         each(ctx, p, 'roadie9', 'Roadie', () => { const g = ctx.countMembersOfColor(p, 'echo'); if (g) ctx.gain(p, 'green', g); }); // REPLACE9
@@ -1083,18 +1083,18 @@ const echoQ = {
     }),
     // Cory, 2026-11-11 9:01pm Eastern: "+1 follower per minion you have on green at round end is good" (Stagehand's rule,
     // bot-tested Nov 4; Stagehand's price, 2 green + 3 any as a player sees it). Fills Tribute Band's slot (Ensemble out).
-    m('regulars', 'Regulars', 1, 1, 'Round End: +1 follower per minion you have on Green spaces.', {
+    m('regulars', 'Gardeners', 1, 1, 'Round End: +1 follower per minion you have on Green spaces.', {
       onRoundEnd(ctx, owner) {
         const n = minionsOnGreen(ctx, owner);
         if (!n) return;
         owner.bonus += n;
-        ctx.log(`${owner.name}'s Regulars: ${n} minion${n === 1 ? '' : 's'} on Green spaces: +${n} follower${n === 1 ? '' : 's'}.`);
+        ctx.log(`${owner.name}'s Gardeners: ${n} minion${n === 1 ? '' : 's'} on Green spaces: +${n} follower${n === 1 ? '' : 's'}.`);
       },
     }),
     // Cory, 2026-11-11 9:08pm Eastern: "if you have the most green members, like +6 followers… Something simple." Name,
     // ties count as most, and the price (3 green + 4 any as a player sees it) are Claude's fill-ins. Green members are
     // counted as the Green members' own cards count them (countMembersOfColor).
-    m('diehards', 'Die-Hards', 2, 2, 'Game End: if you have the most green members, +6 followers.', {
+    m('diehards', 'Druids', 2, 2, 'Game End: if you have the most green members, +6 followers.', {
       onGameEnd: (ctx, owner) => {
         const mine = ctx.countMembersOfColor(owner, 'echo');
         return mine > 0 && ctx.rivals(owner).every(o => ctx.countMembersOfColor(o, 'echo') <= mine) ? 6 : 0;
@@ -1112,7 +1112,7 @@ const echoQ = {
     }),
     // was "Game end: +1 follower per green member." (2+2) until the design critic's follow-ups (2026-10-14): now it
     // pays for the copy itself, a rival's space only, and the follower counts at once (heard() above).
-    m('ensemble', 'Ensemble', 2, 2, 'Whenever you copy your own action, +1 follower.', { n: 2, f: 3 }), // Cory, 2026-10-28: 2 members; (Cory, Oct 29, balance run: +1 follower)
+    m('ensemble', 'Chorus', 2, 2, 'Whenever you copy your own action, +1 follower.', { n: 2, f: 3 }), // Cory, 2026-10-28: 2 members; (Cory, Oct 29, balance run: +1 follower)
     m('groupie', 'Groupie', 4, 4, 'Whenever anyone recruits a green member, +1 green.', {
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (recruited.uid !== card.uid && recruited.def.id.startsWith('echo.')) ctx.gain(owner, 'green', 1);
@@ -1122,9 +1122,9 @@ const echoQ = {
       toggle: true,
       onRecruited(ctx, owner, card) { card.on = true; },
     }),
-    m('tuningfork', 'Impressionist', 1, 2, 'Whenever you copy an action or a member, +2 of its color (grey: any color).'),
+    m('tuningfork', 'Forger', 1, 2, 'Whenever you copy an action or a member, +2 of its color (grey: any color).'),
     // Cory, 2026-10-28: back as a big card at 10 (6 green + 3 any + the +1 wild); no follower condition any more
-    m('wallflower', 'Wallflower', 6, 3, 'Whenever you copy an action, double the resources it gives you.', { ...old2, ...old10('bigfinish'), ...old10('coverband') }),
+    m('wallflower', 'Tall-Tale Teller', 6, 3, 'Whenever you copy an action, double the resources it gives you.', { ...old2, ...old10('bigfinish'), ...old10('coverband') }),
     // REPLACE10 bot tests (Nov 4, Members D, requalified paper candidates; gate D-wallflower): Wallflower's place, 7 green
     // + 3 any as a player sees it. Big Finish: every space your minions are on right now, each copied once, as Greatest
     // Hits copies (Agents and copy loops stop what they stop).
@@ -1170,7 +1170,7 @@ const echoQ = {
     // Nov 4 (Claude, under Cory's go-with-your-gut; was "+1 green per Green space with anyone's minion"): fans copy the
     // leader. Holding the most yourself, or tying for it, it reads the rival with the most; rivals tied for the most:
     // any of their actions (Claude's reading). Nothing when that player has no minion on the board.
-    m('mirror', 'Fan Club', 2, 3, 'On Recruit: copy an action of the rival with the most followers.', { n: 3, // 3 members, 3 to 6 (Cory, Oct 29: yes to "counts as 3 members, price 3 to 6")
+    m('mirror', 'Admirers', 2, 3, 'On Recruit: copy an action of the rival with the most followers.', { n: 3, // 3 members, 3 to 6 (Cory, Oct 29: yes to "counts as 3 members, price 3 to 6")
       onRecruited(ctx, owner) {
         const rivals = ctx.rivals(owner);
         if (!rivals.length) return;
@@ -1179,8 +1179,8 @@ const echoQ = {
         const list = targets(ctx, owner, 'any').filter(e => leaders.includes(e.p));
         const names = leaders.map(id => ctx.player(id).name).join(' and ');
         const whose = leaders.map(id => `${ctx.player(id).name}'s`).join(' or ');
-        if (!list.length) { ctx.log(`${owner.name}'s Fan Club: ${names} has no minion on an action to copy.`); return; }
-        offer(ctx, owner, list, `Fan Club: copy which of ${whose} actions?`, 'now', 'Fan Club');
+        if (!list.length) { ctx.log(`${owner.name}'s Admirers: ${names} has no minion on an action to copy.`); return; }
+        offer(ctx, owner, list, `Admirers: copy which of ${whose} actions?`, 'now', 'Admirers');
       },
     }),
     // Cory, 2026-10-28: "Roadie is good" (Green's 16th); cost 3 is Claude's
@@ -1236,11 +1236,11 @@ const echoQ = {
         offer(ctx, owner, list, 'Sleepwalker: copy which of your spaces from last round?', 'last', 'Sleepwalker');
       },
     }),
-    m('hourglass', 'Stunt Double', 2, 2, 'On Recruit: copy the action you just took.', {
+    m('hourglass', 'Shadow', 2, 2, 'On Recruit: copy the action you just took.', {
       onRecruited(ctx, owner) {
         const e = justTook(ctx, owner);
         if (!e) {
-          ctx.log(`${owner.name}'s Stunt Double has nothing to copy.`);
+          ctx.log(`${owner.name}'s Shadow has nothing to copy.`);
           return;
         }
         // A recruited member begins its own chain, even when an action recruited it for free; copied by Greatest Hits,
@@ -1248,7 +1248,7 @@ const echoQ = {
         // Impersonator → a rival's Stunt Double), when hitsChain is already off but the path still holds Greatest Hits:
         // starting fresh there copied Greatest Hits again, forever (seeded bot game, Nov 6).
         const hits = hitsKeys(ctx), inHits = hitsChain || pathNow(ctx).some(k => hits.includes(k));
-        withPath(ctx, inHits ? pathNow(ctx) : [], () => copy(ctx, owner, e, { by: 'Stunt Double' }), inHits ? undefined : e.key);
+        withPath(ctx, inHits ? pathNow(ctx) : [], () => copy(ctx, owner, e, { by: 'Shadow' }), inHits ? undefined : e.key);
       },
     }),
     // Cory, 2026-10-28: "lets shift tribute band into this", then "should maybe get to pick the rival they copy"
@@ -1309,8 +1309,8 @@ const echoQ = {
       onRecruited(ctx, owner) { ctx.gain(owner, 'green', nonGreenMembers(ctx, owner)); },
       onRoundStart(ctx, owner) { ctx.gain(owner, 'green', nonGreenMembers(ctx, owner)); },
     }),
-    m('agents', 'Agents', 1, 1, 'Your actions can’t be copied.', { f: 2, n: 2 }),
-    m('bait', 'Bait', 1, 1, 'Whenever anyone copies one of your actions, they −1 follower and you +1 follower.'),
+    m('agents', 'Secret-Keepers', 1, 1, 'Your actions can’t be copied.', { f: 2, n: 2 }),
+    m('bait', 'Trapper', 1, 1, 'Whenever anyone copies one of your actions, they −1 follower and you +1 follower.'),
     // REPLACE10 bot test (Nov 4): Chronicler's place, Cory's idea ("use once per game and the next on-recruit is doubled").
     // 2 green + 3 any as a player sees it. Used on your turn; the member you recruit later this same turn has its On
     // Recruit (or now-and-round-start effect) done twice (core's recruit). A recruit on another turn doesn't count.
@@ -1318,11 +1318,11 @@ const echoQ = {
     // your next On Recruit is doubled"). Used on any turn; the next member you recruit that has an On Recruit, on any turn,
     // has it happen twice; the card stays turned until then, so a table can see it's waiting. Price 2 green + 3 any.
     // Archived: the "this turn" wording (REPLACE10=encore, Nov 4 trials q-d-encore-c1, A/B +0.28).
-    m('encore', 'Encore', 2, 2, /* Cory, Nov 5 backlog price yes */ 'On Use, once per game: your next On Recruit happens twice.', { f: 3, // worth 3 (Cory, Nov 12 10:31am Eastern)
+    m('encore', 'Minstrel', 2, 2, /* Cory, Nov 5 backlog price yes */ 'On Use, once per game: your next On Recruit happens twice.', { f: 3, // worth 3 (Cory, Nov 12 10:31am Eastern)
       activate: 'game',
       onActivate(ctx, owner) {
         owner.encoreTurn = 'next';
-        ctx.log(`${owner.name} uses Encore: their next On Recruit happens twice.`);
+        ctx.log(`${owner.name} uses Minstrel: their next On Recruit happens twice.`);
       },
       // bots use it in the buy step, right before the recruit it should double (Cory, Nov 4: the A/B lost because bots
       // used it early and then bought something else): only when the priciest shop member they can pay for has an On Recruit

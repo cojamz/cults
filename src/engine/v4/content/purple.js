@@ -233,7 +233,7 @@ function takeToken(ctx, p, why, what = '') {
   // POCKETWATCH=token<n>, bot test only (Cory, Nov 6: "when you take the Go Last token, +4 purple or something")
   const tok = String(globalThis.process?.env?.POCKETWATCH || 'token2').match(/^token(\d+)$/);
   if (tok && was !== p.id) for (const c of ctx.abilitiesOf(p)) if (c.def.id === 'purple.pocketwatch') ctx.asMember(p, c.def.name, () => {
-    const got = ctx.gain(p, 'purple', Number(tok[1])); if (got) ctx.log(`${p.name}'s ${ctx.cloakOr(c, 'Pocket Watch')}: +${got.n} ${got.color}.`);
+    const got = ctx.gain(p, 'purple', Number(tok[1])); if (got) ctx.log(`${p.name}'s ${ctx.cloakOr(c, 'Sleepyhead')}: +${got.n} ${got.color}.`);
   }, c.uid);
   // Sleepyheads (REPLACE7): "Whenever you take the Goes Last token, +2 followers."
   for (const c of ctx.membersOf(p)) if (c.def.tokenPay) ctx.asMember(p, c.def.name, () => {
@@ -565,7 +565,7 @@ export default {
       const turns = st.queue.filter(t => t.t === 'turn' && t.workerSource === undefined);
       turns.forEach((t, i) => { const pass = Math.floor(i / n), at = i % n; t.p = (pass % 2 ? [...base].reverse() : base)[at]; });
       for (let i = 0; i < turns.length && i < st.order.length; i++) st.order[i] = turns[i].p;
-      ctx.log(`${p.name}'s Place Keepers: ${p.name} takes place ${k + 1} in this round's turn order (${base.map(id => st.players[id].name).join(', ')}).`);
+      ctx.log(`${p.name}'s Usher: ${p.name} takes place ${k + 1} in this round's turn order (${base.map(id => st.players[id].name).join(', ')}).`);
     },
     switchTurn(ctx, p, id, data) {
       const o = ctx.player(id), q = ctx.state.queue, i = nextOwnTurn(ctx, p), j = nextOwnTurn(ctx, o);
@@ -924,9 +924,9 @@ export default {
           o => (turnsLeft(ctx, o) ? 10 : 0) + ctx.followers(o));
       },
     }), 'pool1'),
-    m('secondwind', 'Go-Getter', 4, 2, 'On Use, once per game: +1 minion, placed right after this turn.', { from: 2,
+    m('secondwind', 'Errand Boy', 4, 2, 'On Use, once per game: +1 minion, placed right after this turn.', { from: 2,
       activate: 'game',
-      onActivate(ctx, owner, card) { if (!extraTurns(ctx, owner, 1, 'Go-Getter')) card.used = false; },
+      onActivate(ctx, owner, card) { if (!extraTurns(ctx, owner, 1, 'Errand Boy')) card.used = false; },
       botActivate: ctx => ctx.state.round === 3 && spareSpace(ctx),
     }),
     m('errand', 'Errand Runner', 4, 4, 'On Recruit: take an extra turn after this one.', {
@@ -940,7 +940,7 @@ export default {
       },
       botActivate: (ctx, owner) => canBuyTurn(ctx, owner, 5) && ctx.state.round >= 2,
     }),
-    m('lateriser', 'Late Risers', 4, 2, 'Round Start: if you have the fewest followers (ties count), +1 minion, placed before anyone else.', { f: 2, n: 2, from: 2, // +1 (Cory, Oct 30)
+    m('lateriser', 'Early Riser', 4, 2, 'Round Start: if you have the fewest followers (ties count), +1 minion, placed before anyone else.', { f: 2, n: 2, from: 2, // +1 (Cory, Oct 30)
       // the round's turns are queued after round-start hooks, so this one goes first
       onRoundStart(ctx, owner) {
         const me = ctx.followers(owner);
@@ -948,10 +948,10 @@ export default {
           // the round's minions aren't queued yet, so count them from what each player has left: with one sphere per
           // player and Extra Hand twice (a Doppelganger), round III at 2 players can be full before this turn
           const due = ctx.state.players.reduce((n, o) => n + o.left, 0);
-          if (openSpaces(ctx).length <= due) { ctx.log(`No space to spare: ${owner.name} gets no extra turn from Late Risers.`); return; }
+          if (openSpaces(ctx).length <= due) { ctx.log(`No space to spare: ${owner.name} gets no extra turn from Early Riser.`); return; }
           ctx.state.queue.unshift({ t: 'turn', p: owner.id });
           owner.left += 1;
-          ctx.log(`${owner.name}'s Late Risers: 1 more minion, placed first.`);
+          ctx.log(`${owner.name}'s Early Riser: 1 more minion, placed first.`);
           extraHooks(ctx, owner);
         }
       },
@@ -1145,13 +1145,13 @@ export default {
     // Purple's artifact only, never dealt (Claude's pick, 2026-10-24, after Cory found Courier "a little too good").
     // Name is Claude's fill-in.
     // +2 (Cory, Nov 1 8:25pm: option A; 19.5% held in the 200-game test, against 11% at +1)
-    m('pocketwatch', 'Pocket Watch', 0, 0, 'Whenever you take the Goes Last token, +2 purple.', { artifact: true, // +2 (Cory, Nov 11 9:32pm Eastern: "ship ... purple at +2"; was +3, owners won 40% in the action test)
+    m('pocketwatch', 'Sleepyhead', 0, 0, 'Whenever you take the Goes Last token, +2 purple.', { artifact: true, // +2 (Cory, Nov 11 9:32pm Eastern: "ship ... purple at +2"; was +3, owners won 40% in the action test)
       onSkip(ctx, owner, card, p, by) {
         // POCKETWATCH=self<n>: bot test of "Whenever you skip a rival's turn, +n purple." (Nov 6; off in the game)
         const own = String(globalThis.process?.env?.POCKETWATCH || 'token2').match(/^self(\d+)$/);
         if (own && (by !== owner.id || p === owner)) return;
         if (/^token/.test(String(globalThis.process?.env?.POCKETWATCH || 'token2'))) return;
-        const got = ctx.gain(owner, 'purple', own ? Number(own[1]) : 2); if (got) ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Pocket Watch')}: +${got.n} ${got.color}.`); },
+        const got = ctx.gain(owner, 'purple', own ? Number(own[1]) : 2); if (got) ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Sleepyhead')}: +${got.n} ${got.color}.`); },
     }),
     m('gossip', 'Gossip', 2, 2, /* Cory, Nov 5 backlog price yes */ 'Whenever a player’s turn is skipped, +1 follower.', { retired: true, /* cut, Cory Nov 12 (design/cuts.md) */ ...old13('busybody'),
       onSkip(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Gossip: +1 follower.`); },
@@ -1159,7 +1159,7 @@ export default {
     // Cory, 2026-11-12 7:09pm Eastern: "Place Keepers is good" (Gossip's open slot). Once the round's turns are queued,
     // the owner picks their place in this round's turn order; the snake is rebuilt from it. Line Cutters still go first
     // (Claude's fill-in: you choose among the places after them). Price is Claude's fill-in, Last Callers'. In Gossip's place in the deck list, so seeded test decks keep their order.
-    m('placekeepers', 'Place Keepers', 2, 2, "Round Start: choose your place in this round's turn order.", {
+    m('placekeepers', 'Usher', 2, 2, "Round Start: choose your place in this round's turn order.", {
       onRoundQueued(ctx, owner, card) {
         const st = ctx.state, n = st.players.length, base = st.order.slice(0, n);
         if (!base.includes(owner.id)) return;
@@ -1171,7 +1171,7 @@ export default {
         for (let k = lead; k < n; k++) opts.push({ id: `place:${k}`, kind: 'choice', value: k,
           label: `${['1st', '2nd', '3rd', '4th'][k]}${k === 0 ? ' (first pick)' : ''}${k === lastAt ? " (places the round's last minion)" : ''}`,
           hint: k === lastAt ? 2 : k === 0 ? 1 : 0 });
-        if (opts.length > 1) ctx.choose(owner, "Place Keepers: choose your place in this round's turn order.", opts, 'purple.placeKeep');
+        if (opts.length > 1) ctx.choose(owner, "Usher: choose your place in this round's turn order.", opts, 'purple.placeKeep');
       },
       ...see(info => 2 * endsAhead(info).length), // BOTSEE: the contest's place or first pick, each round left
     }),
@@ -1179,10 +1179,10 @@ export default {
     ...add13(m('busybody', 'Busybody', 3, 2, 'Whenever a player’s turn is skipped, +2 followers.', {
       onSkip(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Busybody: +2 followers.`); },
     })),
-    m('extrashift', 'Extra Shift', 5, 3, 'On Recruit: +1 minion this round.', { from: 2,
+    m('extrashift', 'Day Laborer', 5, 3, 'On Recruit: +1 minion this round.', { from: 2,
       // the snake carries on until every minion is placed, so the new one goes after everyone else's
       onRecruited(ctx, owner) {
-        extraMinion(ctx, owner, 'Extra Shift');
+        extraMinion(ctx, owner, 'Day Laborer');
       },
     }),
     // Cory, 2026-10-23: "its when you place THE last minion of the round. so it benefits folks going last"
@@ -1242,8 +1242,8 @@ export default {
     })),
     // Live Nov 6 (Cory: "2 yea but plus 2 followers. fuck it just add them both. we'll slowly start getting to 12 each"):
     // +2 followers, joining Purple's deck beside Night Owls. Night Watch's price (Claude, under Cory's go-with-your-gut).
-    m('lookouts', 'Lookouts', 2, 2, 'Whenever you take a consecutive turn, +2 followers.', { f: 2, n: 2,
-      onTurnInRow(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Lookouts: a turn in a row, +2 followers.`); },
+    m('lookouts', 'Hurriers', 2, 2, 'Whenever you take a consecutive turn, +2 followers.', { f: 2, n: 2,
+      onTurnInRow(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Hurriers: a turn in a row, +2 followers.`); },
       ...see(info => 3 * endsAhead(info).length),
     }),
     ...add7(m('errandboy', 'Errand Boy', 1, 2, 'On Recruit: your next turn comes right after this one.', { round: 1,
@@ -1296,7 +1296,7 @@ export default {
     })),
     // Live in Early Birds' slot (Cory, Nov 5: "night manager yes"). Was REPLACE7 (Nov 4, Members A batch 2): Timekeeper's place (paper 19, 18 on a second gate). 2 purple + 2
     // any as a player sees it. "Placed the round's last minion" is the By color Purple contest's own measure (lastPlaced).
-    m('nightmanager', 'Night Managers', 1, 2, 'Round End: if you placed the round’s last minion, +1 follower per purple member you have.', { n: 2, // counts as 2 members, price kept (Cory, Nov 6: "night managers should be worth 2 members")
+    m('nightmanager', 'Curfew Ringers', 1, 2, 'Round End: if you placed the round’s last minion, +1 follower per purple member you have.', { n: 2, // counts as 2 members, price kept (Cory, Nov 6: "night managers should be worth 2 members")
       onRoundEnd(ctx, owner, card) {
         const last = ctx.state.lastPlaced;
         if (!last || last.round !== ctx.state.round || last.pid !== owner.id) return;
@@ -1335,7 +1335,7 @@ export default {
         ctx.log(`${owner.name}'s Closing Act: the round's last minion, +${k} followers.`);
       },
     })),
-    m('closer', 'Closer', 2, 2, 'When you place the last minion of the round: +4 purple.', { ...old13('lastorders', 'nightporter', 'closingact'),
+    m('closer', 'Gate-Shutter', 2, 2, 'When you place the last minion of the round: +4 purple.', { ...old13('lastorders', 'nightporter', 'closingact'),
       afterAction(ctx, owner, card) {
         if (card.paidRound === ctx.state.round || ctx.state.players.some(o => o.left > 0)) return;
         card.paidRound = ctx.state.round;
@@ -1343,13 +1343,13 @@ export default {
       },
     }),
     // Cory, 2026-10-28: Once per game at +3 per turn in a row (was once per round at +2)
-    m('streak', 'Hot Streak', 2, 2, 'On Use, once per game: +3 followers per turn in a row you’ve taken just before this one.', {
+    m('streak', 'Juggler', 2, 2, 'On Use, once per game: +3 followers per turn in a row you’ve taken just before this one.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const k = inARow(ctx, owner);
-        if (!k) { card.used = false; ctx.log(`${owner.name}'s Hot Streak: no turns in a row just before this one yet.`); return; }
+        if (!k) { card.used = false; ctx.log(`${owner.name}'s Juggler: no turns in a row just before this one yet.`); return; }
         owner.bonus += 3 * k;
-        ctx.log(`${owner.name}'s Hot Streak: +${3 * k} followers.`);
+        ctx.log(`${owner.name}'s Juggler: +${3 * k} followers.`);
       },
       botActivate: (ctx, owner) => inARow(ctx, owner) >= 2 || (inARow(ctx, owner) >= 1 && ctx.state.round === 3),
     }),
@@ -1372,8 +1372,8 @@ export default {
     // Live since Nov 4 in Shift Crew's place (scale-up 4: paper 13, set 13 vs 10, play A/B +0.42, owners 28% vs 29%; the
     // director's ship call under Cory's "you aren't supposed to wait for me"). Silversmith's rule in purple, in its words
     // ("takes a Silver space"), so the hook is the same (afterRivalAction).
-    m('picketline', 'Picket Line', 2, 1, 'Whenever a rival takes a Purple space, +1 purple.', { f: 3, n: 3, round: 1,
-      afterRivalAction(ctx, owner, card, qid) { if (qid === P) { ctx.gain(owner, P, 1); ctx.log(`${owner.name}'s Picket Line: +1 purple.`); } },
+    m('picketline', 'Turnpike Keeper', 2, 1, 'Whenever a rival takes a Purple space, +1 purple.', { f: 3, n: 3, round: 1,
+      afterRivalAction(ctx, owner, card, qid) { if (qid === P) { ctx.gain(owner, P, 1); ctx.log(`${owner.name}'s Turnpike Keeper: +1 purple.`); } },
       ...see(info => 2 * endsAhead(info).length),
     }),
     m('crew', 'Shift Crew', 2, 1, 'Worth 4 followers.', { f: 4, n: 4, vanilla: true, round: 1, ...old3, retired: true }), // retired Nov 4: Picket Line

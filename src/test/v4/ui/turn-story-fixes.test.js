@@ -62,7 +62,7 @@ describe('an extra turn names the card that gave it', () => {
     expect(extra.lines[1]).toBe('Night Owls: extra turn');
   });
 
-  it('Go-Getter, used before the placement: its card leads the head and names the turn it gives', () => {
+  it('Errand Boy, used before the placement: its card leads the head and names the turn it gives', () => {
     const d = table({ quadrants: ['gold', 'red', 'purple', 'green'], round: 2, left: 1, members: [['purple.secondwind']],
       queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }], order: [0, 1] }, 1);
     d.use();
@@ -71,9 +71,9 @@ describe('an extra turn names the card that gave it', () => {
     d.take('purple.lastcall');
     d.on();
     const [earn, extra] = d.t.stories;
-    expect(earn.head).toBe(`P1 used Go-Getter, then took ${actionName('purple.windup')}`);
-    expect(earn.lines).toContain('Go-Getter: +1 minion, placed now');
-    expect(extra.lines[1]).toBe('Go-Getter: extra turn');
+    expect(earn.head).toBe(`P1 used Errand Boy, then took ${actionName('purple.windup')}`);
+    expect(earn.lines).toContain('Errand Boy: +1 minion, placed now');
+    expect(extra.lines[1]).toBe('Errand Boy: extra turn');
   });
 
   it('Crunch Time: the turns it moves up say they were taken now, not that they are extra', () => {

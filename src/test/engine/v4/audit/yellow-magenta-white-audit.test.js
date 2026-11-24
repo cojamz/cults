@@ -44,7 +44,7 @@ describe('Yellow', () => {
     const Q = ['gold', 'red', 'yellow', 'trading']; // no purple: Front-runner leans purple
     let s = table(Q, { round: 2, members: [['benders.frontrunner', 'yellow.explorer']], shop: ROW });
     s = take(s, 'yellow.meltingpot');
-    // Explorer is yellow: +1 yellow; Line Cutters is grey: 1 of any color, picked
+    // Explorer is yellow: +1 yellow; Lord of the Manor is grey: 1 of any color, picked
     expect(s.pending.prompt).toMatch(/Melting Pot: \+1 of which color/);
     s = move(s, 'color:red');
     expect(R(s)).toEqual({ gold: 0, red: 1, yellow: 1, white: 0 });

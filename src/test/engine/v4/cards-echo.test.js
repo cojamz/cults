@@ -127,7 +127,7 @@ describe('Green current actions', () => {
     s = go(s, 'echo.eternity');
     expect(R(s)).toMatchObject({ green: 1 });
   });
-  it('Agents: your actions can’t be copied, by rivals or by you (Cory, 2026-11-11)', () => {
+  it('Secret-Keepers: your actions can’t be copied, by rivals or by you (Cory, 2026-11-11)', () => {
     let s = table(Q, { round: 3, members: [['echo.agents']], queue: turns(0, 1) });
     s = go(s, 'gold.rush');
     const plan = ownPlan(contextFor(s), s.players[0]);
@@ -155,40 +155,40 @@ describe('Green current actions', () => {
 });
 
 describe('Green current members', () => {
-  // Cory, 2026-10-28: Green grows to 16 (Wallflower at 10, Fan Club, Roadie)
-  it('Wallflower doubles what every copy gives you, whatever your followers', () => {
+  // Cory, 2026-10-28: Green grows to 16 (Tall-Tale Teller at 10, Admirers, Roadie)
+  it('Tall-Tale Teller doubles what every copy gives you, whatever your followers', () => {
     for (const extra of [[], ['red.twins']]) {
       const s = buildThenEcho({ members: [['echo.wallflower', ...extra]], bonus: [0, 2] });
       expect(R(s).green).toBe(5); // Echo's own +1, Build Up's +2 doubled
     }
   });
-  it('Fan Club: when recruited, copy an action the player with the most followers has a minion on (Nov 4)', () => {
+  it('Admirers: when recruited, copy an action the player with the most followers has a minion on (Nov 4)', () => {
     let s = table(Q, { n: 3, shop: ['echo.mirror', ...ROW], res: [{ green: 1, red: 2 }], bonus: [0, 5, 0], queue: turns(1, 2, 0) });
     s = go(s, 'echo.chant'); s = go(s, 'echo.echo', sp('echo.chant'));
     s = move(take(s, 'gold.rush'), cardOpt(s, 'echo.mirror'));
     expect(s.players[0].members).toContain(uidIn(s, 'echo.mirror', 0));
-    expect(s.pending.prompt).toBe("Fan Club: copy which of P2's actions?");
+    expect(s.pending.prompt).toBe("Admirers: copy which of P2's actions?");
     expect(s.pending.options.map(o => o.label)).toEqual([expect.stringMatching(/^Build Up \(P2\)/)]); // P3's Echo isn't the leader's
     const g = R(s).green;
     s = move(s, s.pending.options[0].id);
     expect(R(s).green).toBe(g + 2); // Build Up's +2 as P2 got it (one minion on Green, +1)
   });
-  it('Fan Club: holding the most yourself, it copies the rival with the most; nothing when they have no minion out', () => {
+  it('Admirers: holding the most yourself, it copies the rival with the most; nothing when they have no minion out', () => {
     let s = table(Q, { n: 3, shop: ['echo.mirror', ...ROW], res: [{ green: 1, red: 2 }], bonus: [9, 0, 3], queue: turns(1, 2, 0) });
     s = go(s, 'echo.chant'); s = go(s, 'gold.rush');
     s = move(take(s, 'red.turnout'), cardOpt(s, 'echo.mirror'));
-    expect(s.pending.prompt).toBe("Fan Club: copy which of P3's actions?");
+    expect(s.pending.prompt).toBe("Admirers: copy which of P3's actions?");
     let t = table(Q, { n: 3, shop: ['echo.mirror', ...ROW], res: [{ green: 1, red: 2 }], bonus: [0, 5, 0], queue: turns(2, 0) });
     t = go(t, 'echo.chant');
     const g = R(t).green;
     t = move(take(t, 'gold.rush'), cardOpt(t, 'echo.mirror'));
     expect(t.players[0].members).toContain(uidIn(t, 'echo.mirror', 0));
-    expect(named(t, 'Fan Club')).toContain("P1's Fan Club: P2 has no minion on an action to copy.");
-    expect(t.pending?.prompt || '').not.toMatch(/Fan Club/);
+    expect(named(t, 'Admirers')).toContain("P1's Admirers: P2 has no minion on an action to copy.");
+    expect(t.pending?.prompt || '').not.toMatch(/Admirers/);
   });
   it('Roadie: round start, +1 green per Green member you have', () => {
     const start = members => { let s = table(Q, { members: [members] }); s.queue = [{ t: 'round', r: 2 }]; return R(resume(s)).green || 0; };
-    expect(start(['echo.roadie', 'echo.muse', 'echo.ensemble', 'red.twins']) - start(['echo.muse', 'echo.ensemble', 'red.twins'])).toBe(3); // Roadie, Muse, Ensemble: each worth 1, so 1 member (every member rebased to 1, Cory Nov 12)
+    expect(start(['echo.roadie', 'echo.muse', 'echo.ensemble', 'red.twins']) - start(['echo.muse', 'echo.ensemble', 'red.twins'])).toBe(3); // Roadie, Muse, Chorus: each worth 1, so 1 member (every member rebased to 1, Cory Nov 12)
   });
   it('Roadie: On Recruit too, +1 green per Green member, itself counted (Cory, Nov 1)', () => {
     let s = table(Q, { members: [['echo.muse']], shop: ['echo.roadie', ...ROW], res: [{ green: 4, red: 4 }], queue: turns(0) });
@@ -223,13 +223,13 @@ describe('Green current members', () => {
     const fx = (s.effects || []).filter(e => e && e.cause && e.cause.kind === 'member' && e.cause.pid === 2 && e.type === 'gain');
     expect(fx.map(e => e.cause.uid).sort()).toEqual([dop, muse].sort());
   });
-  it('Impressionist gains the copied action’s color, separately from inherent green', () => {
+  it('Forger gains the copied action’s color, separately from inherent green', () => {
     let s = table(Q, { round: 2, shop: ROW, queue: turns(1, 0), members: [['echo.tuningfork']] });
     s = go(go(s, 'gold.rush'), 'echo.echo', sp('gold.rush'));
     expect(R(s)).toMatchObject({ gold: 6, green: 1 }); // +2 on your own copy (Cory, Nov 6)
-    expect(named(s, 'Impressionist')).toEqual(["P1's Impressionist: +2 gold."]);
+    expect(named(s, 'Forger')).toEqual(["P1's Forger: +2 gold."]);
   });
-  it('Impressionist held as an artifact is its own source (the turn story named it "A member")', () => {
+  it('Forger held as an artifact is its own source (the turn story named it "A member")', () => {
     let s = table(Q, { round: 2, shop: ROW, queue: turns(1, 0), members: [['echo.tuningfork']] });
     const uid = s.players[0].members[0];
     s.players[0].members = [];
@@ -240,31 +240,31 @@ describe('Green current members', () => {
     const fx = (s.effects || []).filter(e => e && e.cause && e.cause.kind === 'member' && e.type === 'gain');
     expect(fx.map(e => e.cause.uid)).toEqual([uid]);
   });
-  it('Ensemble gives a loose follower for your own action, never a rival’s', () => {
+  it('Chorus gives a loose follower for your own action, never a rival’s', () => {
     const s = buildThenEcho({ members: [['echo.ensemble']] });
     expect(s.players[0].bonus).toBe(0);
     let t = table(Q, { round: 2, shop: ROW, queue: turns(0, 0), members: [['echo.ensemble']] });
     t = go(go(t, 'gold.rush'), 'echo.refrain', sp('gold.rush'));
     expect(t.players[0].bonus).toBe(1);
-    expect(named(t, 'Ensemble')).toEqual(["P1's Ensemble: +1 follower."]);
+    expect(named(t, 'Chorus')).toEqual(["P1's Chorus: +1 follower."]);
     const f = table(Q, { members: [['echo.ensemble', 'echo.muse', 'red.twins']], queue: [{ t: 'finish' }] });
-    expect(f.players[0].final.parts.join(' ')).not.toMatch(/Ensemble/);
+    expect(f.players[0].final.parts.join(' ')).not.toMatch(/Chorus/);
   });
-  it('Stunt Double copies the action just taken when recruited, and has no activation', () => {
+  it('Shadow copies the action just taken when recruited, and has no activation', () => {
     let s = table(Q, { shop: ['echo.hourglass', ...ROW], res: [{ green: 4 }], queue: turns(0, 0) });
     s = move(take(s, 'gold.rush'), cardOpt(s, 'echo.hourglass'));
     expect(R(s).gold).toBe(3); // Default payment spends one gold before Stunt copies the two-gold action.
-    expect(named(s, 'Stunt Double').length).toBe(1);
+    expect(named(s, 'Shadow').length).toBe(1);
     expect(ids(s).some(id => id.startsWith('use:'))).toBe(false);
   });
-  it('Stunt Double recruited by an action copies that action and offers its choices again', () => {
+  it('Shadow recruited by an action copies that action and offers its choices again', () => {
     let s = table(Q, { round: 3, shop: ['echo.hourglass', ...ROW], queue: turns(0, 0) });
     s = move(take(s, 'red.take'), cardOpt(s, 'echo.hourglass'));
     expect(s.pending.kind).toBe('choose');
     s = pass(move(s, cardOpt(s, 'red.twins')));
     expect(s.players[0].members).toHaveLength(2);
   });
-  it('taking Stunt Double fires Recruit and copies the still-resolving Heist with a fresh choice', () => {
+  it('taking Shadow fires Recruit and copies the still-resolving Heist with a fresh choice', () => {
     let s = table(QT, { round: 3, shop: ROW, res: [{ gold: 2 }], members: [[], ['echo.hourglass', 'thieves.crew']], queue: turns(1, 0, 0) });
     s = go(s, 'gold.rush');
     s = play(take(s, 'thieves.heist'), cardOpt(s, 'echo.hourglass', 1));
@@ -273,8 +273,8 @@ describe('Green current members', () => {
     expect(s.pending.kind).toBe('choose');
     s = move(s, cardOpt(s, 'thieves.crew', 1));
     expect(s.players[0].members).toHaveLength(2);
-    expect(named(s, 'Stunt Double').length).toBe(1);
-    expect(s.recruits).toBe(3); // Stunt Double plus Twins's printed member quantity.
+    expect(named(s, 'Shadow').length).toBe(1);
+    expect(s.recruits).toBe(3); // Shadow plus Twins's printed member quantity.
   });
   // Cory, 2026-10-28: Tribute Band plays a rival's actions, you pick whose (was: your own)
   it('Tribute Band does every action a rival has a minion on, once per game', () => {
@@ -337,7 +337,7 @@ describe('Green current members', () => {
     s.queue = [{ t: 'round', r: 3 }]; s = resume(s);
     expect(R(s).green).toBe(6);
   });
-  it('Agents, rebased to 1 (Cory, Nov 12), is worth 1 follower and 1 member; Bait loss/gain rules are explicit', () => {
+  it('Secret-Keepers, rebased to 1 (Cory, Nov 12), is worth 1 follower and 1 member; Trapper loss/gain rules are explicit', () => {
     const agents = quadrant('echo').members.find(d => d.key === 'agents');
     expect([agents.f, agents.n]).toEqual([1, 1]);
     const bait = quadrant('echo').members.find(d => d.key === 'bait');
@@ -345,7 +345,7 @@ describe('Green current members', () => {
   });
   it('Chronicler scores green members, each counting 1, ignoring held green', () => {
     const s = table(Q, { res: [{ green: 50 }], members: [['echo.chronicler', 'echo.agents', 'red.twins']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.parts).toContain('Chronicler +2'); // Chronicler and Agents, 1 each (Agents rebased to 1, Cory Nov 12)
+    expect(s.players[0].final.parts).toContain('Chronicler +2'); // Chronicler and Secret-Keepers, 1 each (Secret-Keepers rebased to 1, Cory Nov 12)
   });
 });
 

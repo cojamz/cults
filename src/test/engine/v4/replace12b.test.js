@@ -64,16 +64,16 @@ describe('Right Away, reworded: "+2 purple in round I, +3 in round II, +4 in rou
   });
 });
 
-describe('Snobs, trading up: "Whenever you recruit a member costing more than each of your others, +2 followers."', () => {
+describe('Blue Bloods, trading up: "Whenever you recruit a member costing more than each of your others, +2 followers."', () => {
   const R = { red: 20, blue: 20, yellow: 20, white: 20 };
-  it('recruiting Fairy Godmother over Snobs and Volunteer: +2', () => {
+  it('recruiting Fairy Godmother over Blue Bloods and Volunteer: +2', () => {
     let s = table(['yellow', 'red', 'market', 'trading'], { round: 2, res: [R], members: [['market.snob', 'red.volunteer']],
       shop: ['red.panel', 'red.fosterparents'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }] });
     s = take(s, 'yellow.dilute');
     s = move(s, `card:${uidIn(s, 'red.panel', 'shop')}`);
     while (s.pending?.player === 0 && s.pending.kind !== 'place') s = move(s, s.pending.options[0].id);
     expect(s.players[0].bonus).toBe(2);
-    expect(named(s, 'Snobs').join(' ')).toContain('Fairy Godmother (8) costs more than each of their other members, +2 followers.');
+    expect(named(s, 'Blue Bloods').join(' ')).toContain('Fairy Godmother (8) costs more than each of their other members, +2 followers.');
   });
   it('a recruit cheaper than one of your members pays nothing', () => {
     let s = table(['yellow', 'red', 'market', 'trading'], { round: 2, res: [R], members: [['market.snob', 'red.mentor']],

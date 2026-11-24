@@ -11,12 +11,12 @@ import { seedSave } from './lib/seed.mjs';
 import { freeCard } from './lib/deal.mjs';
 import { countMembersOfColor } from '../../src/engine/v4/core.js';
 
-/** Seed 21 at P1's last placement of round III, with Mob (+1 per red member; P1 holds two more) and Tycoon (+1 per 2
+/** Seed 21 at P1's last placement of round III, with Mob (+1 per red member; P1 holds two more) and Baron (+1 per 2
  *  gold; P1 gets 10) in P1's cult, minted if the cull leaves them out of the deck (lib/deal.mjs). */
 function scoringSave() {
   const save = lateSave(21, 3);
   const s = save.state;
-  // a game-end source per kind: Chronicler counts members of a color (Mob was this until it became Round End, Nov 4); Tycoon reads held gold
+  // a game-end source per kind: Chronicler counts members of a color (Mob was this until it became Round End, Nov 4); Baron reads held gold
   for (const def of ['echo.chronicler', 'gold.tycoon']) {
     const uid = freeCard(s, def);
     s.shop = s.shop.filter(u => u !== uid); s.pile = s.pile.filter(u => u !== uid);
@@ -142,7 +142,7 @@ try {
     if (!grant || grant.n <= 0 || grant.n !== amount) errors.push(`fixture: ${source.def} should grant ${amount}, engine recorded ${grant?.n}`);
   }
   // Two kinds of member step follow the contests (Reckoning.jsx reckonSteps): the members that answer the contests
-  // (Cheerleader, Cheerleaders, Victors, Sore Loser: "After contests", Cory Nov 5: "round ends, contests, members."), then the
+  // (Trumpeter, Trumpeters, Victors, Sore Loser: "After contests", Cory Nov 5: "round ends, contests, members."), then the
   // Game End members. This gate's fixture is about Game End; the After contests steps the dealt table brings are checked
   // against the engine's log lines, and must all come before the first Game End step.
   const gameEnd = fs.bonuses.filter(b => b.phase === 'bonus'), afters = fs.bonuses.filter(b => b.phase === 'after');

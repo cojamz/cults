@@ -860,7 +860,7 @@ function inputFor(state, task) {
       if (!real.length) return { kind: 'buy', prompt: '', options: [], onEmpty: task.extra ? undefined : () => log(state, `${p.name} couldn't afford anything.`) };
       opts.push({ id: 'pass', label: 'Pass', kind: 'pass' });
       if (task.doorbuster) return { kind: 'buy', prompt: `${p.name}: Doorbusters: recruit once before anyone places, or pass`, options: opts };
-      if (task.lastMinute) return { kind: 'buy', prompt: `${p.name}: Last-Minute Shopper: recruit once before contests are scored, or pass`, options: opts };
+      if (task.lastMinute) return { kind: 'buy', prompt: `${p.name}: Dusk Buyer: recruit once before contests are scored, or pass`, options: opts };
       if (task.lateShop) return { kind: 'buy', prompt: `${p.name}: Late Shoppers: recruit once after the contests, or pass`, options: opts };
       if (task.cheap) return { kind: 'buy', prompt: `${p.name}: Ushers: also recruit a member costing ${task.cheap} or less, or pass`, options: opts };
       if (barkerOnly) return { kind: 'buy', extra: true, prompt: `${p.name}: recruit followers again (${cardDef(state, task.by ?? followersTwiceCard(state, p)).name}), or pass`, options: opts };
@@ -1388,7 +1388,7 @@ function endRound(state) {
   const counts = table.filter(c => c.rows && c.rows.length).map(c => {
     const extra = /\bmembers\b/i.test(c.label) && !/\b(?:of one color|cards?|blue|red|green|purple|white|silver|yellow|magenta|gold)\b/i.test(c.label)
       ? state.players.map(p => ({ p, n: contestMembers(state, p) - memberCount(state, p) })).filter(x => x.n > 0) : [];
-    return `${c.label}: ${c.rows.map(r => `${state.players[r.player].name} ${r.count}`).join(', ')}${extra.map(x => ` (${x.p.name}'s Mannequin counts ${x.n} blue shop member${x.n === 1 ? '' : 's'})`).join('')}`;
+    return `${c.label}: ${c.rows.map(r => `${state.players[r.player].name} ${r.count}`).join(', ')}${extra.map(x => ` (${x.p.name}'s Stallholder counts ${x.n} blue shop member${x.n === 1 ? '' : 's'})`).join('')}`;
   });
   if (counts.length) log(state, `Round ${roman(state.round)} counts. ${counts.join(' · ')}.`);
   log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
@@ -1848,7 +1848,7 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
   // Encore (REPLACE10 bot test): used this turn, the recruited member's On Recruit happens a second time
   if (!again && p.encoreTurn === 'next' && (def.onRecruited || def.now)) { // Encore (Cory, Nov 4)
     delete p.encoreTurn;
-    log(state, `${p.name}'s Encore: ${def.name}'s On Recruit again.`);
+    log(state, `${p.name}'s Minstrel: ${def.name}'s On Recruit again.`);
     if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
     joinNow(state, p, w, [def]);
   }
@@ -2162,7 +2162,7 @@ function spendBonus(state, p, spend) {
   asSource(bonusCause(state, p, 'Splurge'), () => { p.bonus += n; });
   if (extra) asSource(memberFlagCause(state, p, 'brokerBonus'), () => { p.bonus += extra; });
   fCredit(state, mark, 'Splurge');
-  log(state, `${p.name}'s Splurge: +${n} follower${n > 1 ? 's' : ''} for spending.${extra ? ` Brokers: +${extra}.` : ''}`);
+  log(state, `${p.name}'s Splurge: +${n} follower${n > 1 ? 's' : ''} for spending.${extra ? ` Preachers: +${extra}.` : ''}`);
 }
 // Gather-style fuel spaces (Cory, 2026-10-31: Gather, then Allowance and Stash "gather style"): "This turn, if you recruit
 // a member, +1 follower (+2 in round II, +3 in round III)". Each space taken this turn adds { n, name, broker } to
@@ -2214,7 +2214,7 @@ function recruitFollowersBonus(state, p, member) {
     asSource(bonusCause(state, p, name), () => { p.bonus += n; });
     if (extra) asSource(memberFlagCause(state, p, 'brokerBonus'), () => { p.bonus += extra; });
     fCredit(state, mark, name);
-    log(state, `${p.name}'s ${name}: +${n} follower${n > 1 ? 's' : ''} for recruiting a member.${extra ? ` Brokers: +${extra}.` : ''}`);
+    log(state, `${p.name}'s ${name}: +${n} follower${n > 1 ? 's' : ''} for recruiting a member.${extra ? ` Preachers: +${extra}.` : ''}`);
   }
 }
 function buyFollowers(state, p, tier, chosen) {

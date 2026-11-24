@@ -1,7 +1,7 @@
 // @vitest-environment node
 // A full board never squeezes anyone out (Cory, 2026-10-15: "somebody taking ALL the extra turn members will have
 // enough places to play"). Extra turns only come while a space is spare, counting the minion still to land this turn:
-// Go-Getter used beside the spaces, before placing, at 4 players in round I (12 spaces, 12 minions) took a rival's
+// Errand Boy used beside the spaces, before placing, at 4 players in round I (12 spaces, 12 minions) took a rival's
 // last space, and that rival's minion sat out without a word. Through real moves.
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, chooseBotMove, openSlots } from '../../../engine/v4/index.js';
@@ -11,7 +11,7 @@ const placements = (log, name) => log.filter(l => l.startsWith(`${name} took `) 
 const roundOne = log => log.slice(log.findIndex(l => /^Round I begins/.test(l)), log.findIndex(l => /^Round I ends/.test(l)));
 
 describe('a full board', () => {
-  it('Go-Getter before placing at a full round I gives no extra turn, and every minion lands', () => {
+  it('Errand Boy before placing at a full round I gives no extra turn, and every minion lands', () => {
     const rand = seededRandom(5);
     let s = createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed: 3, quadrants: ['purple', 'red', 'gold', 'yellow'] });
     const uid = Object.values(s.cards).find(c => c.def === 'purple.secondwind').uid;
@@ -24,7 +24,7 @@ describe('a full board', () => {
         expect(openSlots(s).length).toBe(s.queue.filter(t => t.t === 'turn').length + 1); // the board is exactly full
         s = applyMove(s, { player: pend.player, option: `use:${uid}` });
         used = true;
-        expect(s.log.at(-1)).toBe('No extra minions in round I: P1 gets no extra turn from Go-Getter.');
+        expect(s.log.at(-1)).toBe('No extra minions in round I: P1 gets no extra turn from Errand Boy.');
         expect(s.cards[uid].used).toBe(false); // kept for later
         continue;
       }
@@ -37,9 +37,9 @@ describe('a full board', () => {
   });
 });
 
-describe('Late Risers on a full board', () => {
-  it('2 players, 2 spheres, round III: Extra Hand twice fills all 12 spaces, so Late Risers gives no turn', () => {
-    // seed 1 since Guild Master and Purists (Nov 11); seed 4 since Victors left (Nov 6); seed 3 since Promote and Demote give only your own member (Nov 4 night); seed 2 since bots play out every choice (Nov 2); seed 1 since the Goes Last token (Nov 1, 2:35pm); seed 8 since Cory's Nov 1 balance calls; seed 7 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 5 since Late Risers is 2 members (Oct 30); seed 3 since Promote and Demote reach rivals (Oct 29): on seed 2 P1 swapped its Warden to P2, then Late Risers away
+describe('Early Riser on a full board', () => {
+  it('2 players, 2 spheres, round III: Extra Hand twice fills all 12 spaces, so Early Riser gives no turn', () => {
+    // seed 1 since Guild Master and Purists (Nov 11); seed 4 since Victors left (Nov 6); seed 3 since Promote and Demote give only your own member (Nov 4 night); seed 2 since bots play out every choice (Nov 2); seed 1 since the Goes Last token (Nov 1, 2:35pm); seed 8 since Cory's Nov 1 balance calls; seed 7 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 5 since Early Riser is 2 members (Oct 30); seed 3 since Promote and Demote reach rivals (Oct 29): on seed 2 P1 swapped its Warden to P2, then Early Riser away
     let s = createGame({ seats: [{ kind: 'bot' }, { kind: 'bot' }], seed: 1, quadrants: ['purple', 'red'], rules: { release: false } });
     const give = id => {
       const uid = Object.values(s.cards).find(c => c.def === id).uid;
@@ -47,7 +47,7 @@ describe('Late Risers on a full board', () => {
       s.players[0].members.push(uid);
     };
     give('purple.lateriser');
-    give('red.loyalists'); // Red's swaps (v0.8.0) would otherwise let a bot trade Late Risers away before round III
+    give('red.loyalists'); // Red's swaps (v0.8.0) would otherwise let a bot trade Early Riser away before round III
     s.players[1].bonus += 50; // P1 keeps the fewest followers
     const rand = seededRandom(1);
     let dealt = false;
@@ -60,9 +60,9 @@ describe('Late Risers on a full board', () => {
       }
       s = applyMove(s, chooseBotMove(s, rand));
     }
-    expect(s.players[0].left).toBe(7); // 5 + Extra Hand twice, and no Late Risers turn: 7 + 5 fill all 12 spaces
+    expect(s.players[0].left).toBe(7); // 5 + Extra Hand twice, and no Early Riser turn: 7 + 5 fill all 12 spaces
     expect(s.round).toBe(3);
-    expect(s.log.some(l => l === 'No space to spare: P1 gets no extra turn from Late Risers.')).toBe(true);
+    expect(s.log.some(l => l === 'No space to spare: P1 gets no extra turn from Early Riser.')).toBe(true);
     while (!s.over) s = applyMove(s, chooseBotMove(s, rand));
     expect(s.log.some(l => /sits out/.test(l))).toBe(false);
   });

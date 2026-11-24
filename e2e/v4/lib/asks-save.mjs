@@ -1,6 +1,6 @@
 // Saved hot-seat games stopped where one of P1's members asks something of P1 (blind testers, 2026-10-15: a member
 // you can use must glow on your seat and carry its control). P1 is the only person, on an Echo table:
-//  askSave('bigspender'): P1's second buy of the turn (Big Spender used), also holding Translator (a switch, off).
+//  askSave('bigspender'): P1's second buy of the turn (Squanderer used), also holding Translator (a switch, off).
 //  askSave('straggler'):  after the last minion is placed, Straggler asks where P1's last minion goes.
 // Used by the asks gate (e2e/v4/asks.mjs) and the before/after shots in design/eval/member-asks/.
 import { createGame, applyMove, chooseBotMove } from '../../../src/engine/v4/index.js';
@@ -22,7 +22,7 @@ function give(s, pid, defId) {
 
 export function askSave(name, from = 3) {
   for (let seed = from; seed < from + 200; seed++) {
-    // the cull's off: Big Spender and Translator are out of today's deck (content/cull.js), but a table can deal them
+    // the cull's off: Squanderer and Translator are out of today's deck (content/cull.js), but a table can deal them
     let s = createGame({ seats: SEATS, seed, quadrants: ASK_TABLE, rules: { cull: false } });
     const rand = seededRandom(seed);
     if (name === 'bigspender') {
@@ -34,12 +34,12 @@ export function askSave(name, from = 3) {
       s.cards[tr].on = false;
       for (const r of s.resources) s.players[0].res[r] = 6;
       resume(s);
-      // Big Spender is "On Use, once per game: recruit twice this turn" since Cory's Oct 28 call: use it first
+      // Squanderer is "On Use, once per game: recruit twice this turn" since Cory's Oct 28 call: use it first
       if (!s.pending.options.some(o => o.id === `use:${big}`)) continue;
       s = applyMove(s, { player: 0, option: `use:${big}` });
       for (let k = 0; k < 4 && s.pending && s.pending.player === 0 && s.pending.kind !== 'buy'; k++) s = applyMove(s, { player: 0, option: s.pending.options[0].id });
       if (!(s.pending && s.pending.player === 0 && s.pending.kind === 'buy')) continue;
-      // a real first buy (2 followers), paid the first way offered: then Big Spender's second buy waits
+      // a real first buy (2 followers), paid the first way offered: then Squanderer's second buy waits
       const tier = s.pending.options.find(o => o.kind === 'tier');
       if (!tier) continue;
       s = applyMove(s, { player: 0, option: tier.id });

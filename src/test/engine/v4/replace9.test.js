@@ -117,9 +117,9 @@ describe('Quilter: "On Use, once per game: turn up to 3 full sets into 6 followe
   });
 });
 
-describe('Last-Minute Shopper: "Round End: +3 blue, then you may recruit." (Cory, Nov 6: +3)', () => {
+describe('Dusk Buyer: "Round End: +3 blue, then you may recruit." (Cory, Nov 6: +3)', () => {
   const Q4 = ['red', 'market', 'purple', 'silver'];
-  const PROMPT = 'P1: Last-Minute Shopper: recruit once before contests are scored, or pass';
+  const PROMPT = 'P1: Dusk Buyer: recruit once before contests are scored, or pass';
   const pay = s => { while (s.pending?.kind === 'pay' || s.pending?.kind === 'choose' && /pay/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id); return s; };
   it('Round End, before contests: +3 blue, then one ordinary recruit: shop members it can pay for, the follower cards, or pass (Cory, Nov 5)', () => {
     const s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer', 'market.snob'], queue: [{ t: 'allPlaced' }] });
@@ -152,7 +152,7 @@ describe('Last-Minute Shopper: "Round End: +3 blue, then you may recruit." (Cory
     expect(s.log.some(l => /P1 bought 1 follower/.test(typeof l === 'string' ? l : l.text))).toBe(true);
   });
   it('pitched turn: round I end, the recruit counts in Blue\'s Most members before it is scored', () => {
-    // P1: Last-Minute Shopper + 2 members (3), P2: 3 members, a tie. P1 buys Window Dressers at round end: 4 to 3
+    // P1: Dusk Buyer + 2 members (3), P2: 3 members, a tie. P1 buys Window Dressers at round end: 4 to 3
     // (Window Dressers rebased to worth 1 and 1 member: Cory, Nov 12).
     let s = table(Q4, { n: 3, round: 1, rules: BY, res: [{ blue: 3, red: 1 }], members: [['market.lastminute', 'red.volunteer', 'red.intern'], ['red.bodysnatchers', 'purple.gossip', 'silver.godparents']],
       shop: ['market.windowdresser'], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
@@ -280,7 +280,7 @@ describe('Ambassadors: "On Recruit: +1 of each color you have a member of. Round
   });
 });
 
-describe('Mannequin: "Blue members in the shop count as your members when contests are scored."', () => {
+describe('Stallholder: "Blue members in the shop count as your members when contests are scored."', () => {
   const Q4 = ['red', 'market', 'purple', 'silver'];
   it('price and retirement', () => {
     const d = defById('market.mannequin');
@@ -295,7 +295,7 @@ describe('Mannequin: "Blue members in the shop count as your members when contes
     expect(won(['market.mannequin'])).toEqual([0]);
     expect(won(['market.lastminute'])).toEqual([1]);
   });
-  it('White\'s Fewest members counts only your own members: the shop never counts against Mannequin\'s owner (Cory, Nov 6)', () => {
+  it('White\'s Fewest members counts only your own members: the shop never counts against Stallholder\'s owner (Cory, Nov 6)', () => {
     const Q = ['red', 'market', 'trading', 'silver'];
     const s = table(Q, { n: 2, round: 1, rules: BY, members: [['market.mannequin'], ['red.bodysnatchers', 'silver.godparents']], shop: ['market.windowdresser', 'market.curator', 'red.volunteer'], queue: [{ t: 'endRound' }] });
     expect((s.contests || []).at(-1).results.find(c => c.qid === 'trading').winners).toEqual([0]);
@@ -355,7 +355,7 @@ describe('Hawker at Round Start: "Round Start: choose a shop member. Starting on
     let s = table(Q4, { n: 3, round: 1, res, members: [['market.hawker2']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.prompt).toBe('Hawker: offer which shop member?');
     expect(s.pending.player).toBe(0);
-    return answer(s, (s.pending.options.find(o => /Timekeeper|Intern|Tiebreaker|Ferryman/.test(o.label)) || s.pending.options[0]).id); // a plain member: one with an On Recruit (Hostesses' gift) moves the owner's count
+    return answer(s, (s.pending.options.find(o => /Timekeeper|Intern|Crooked Judge|Ferryman/.test(o.label)) || s.pending.options[0]).id); // a plain member: one with an On Recruit (Hostesses' gift) moves the owner's count
   };
   it('price, round I, retires the old Hawker, and no On Use', () => {
     const d = defById('market.hawker2');

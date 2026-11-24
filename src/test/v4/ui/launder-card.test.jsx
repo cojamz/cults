@@ -1,4 +1,4 @@
-// Launderers (Cory, 2026-10-29: "should let me rearrange colors as i please, not all to one color"): the card sets any
+// Moneychangers (Cory, 2026-10-29: "should let me rearrange colors as i please, not all to one color"): the card sets any
 // mix with − and +, keeps the total, and Done answers the engine's steps for that mix, one after another.
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup, act } from '@testing-library/react';
@@ -23,7 +23,7 @@ function table(s) {
 const row = c => document.querySelector(`[data-launder="${c}"]`);
 const press = (c, step) => fireEvent.click(row(c).querySelector(`[data-step="${step}"]`));
 
-describe('Launderers card', () => {
+describe('Moneychangers card', () => {
   it('any mix: lift some off, put them on other colors, Done answers each step', () => {
     vi.useFakeTimers();
     const s0 = recruited();

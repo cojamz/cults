@@ -118,29 +118,29 @@ describe('locked Red action progression', () => {
     expect(ids).not.toContain(`card:${uidIn(s, 'echo.impersonators', 'shop')}`);
   });
 
-  it('Tryout offers members whose On Recruit copies an action (Fan Club, Stunt Double, Understudy), and each ends', () => {
+  it('Tryout offers members whose On Recruit copies an action (Admirers, Shadow, Understudy), and each ends', () => {
     for (const id of ['echo.mirror', 'echo.hourglass', 'echo.understudy']) {
       let s = take(table(Q, { shop: [id, 'red.twins', 'red.intern'] }), 'red.evenswap');
       const uid = uidIn(s, id, 'shop');
       expect(s.pending.options.map(o => o.id)).toContain(`card:${uid}`);
       s = move(s, `card:${uid}`);
       let i = 0;
-      // always take the same member again when offered: Stunt Double copying the Tryout that borrowed it looped (bot games, Nov 4)
+      // always take the same member again when offered: Shadow copying the Tryout that borrowed it looped (bot games, Nov 4)
       for (; s.pending?.kind === 'choose' && i < 20; i++) s = move(s, (s.pending.options.find(o => o.id === `card:${uid}`) || s.pending.options[0]).id);
       expect(i).toBeLessThan(20);
       expect(s.shop).toContain(uid);
     }
   });
 
-  it('a Tryout copied by the Stunt Double it used names that Stunt Double, never "no shop member has one" (frame review, Nov 7)', () => {
+  it('a Tryout copied by the Shadow it used names that Shadow, never "no shop member has one" (frame review, Nov 7)', () => {
     let s = take(table(Q, { shop: ['echo.hourglass', 'red.twins', 'red.intern'] }), 'red.evenswap');
     s = move(s, `card:${uidIn(s, 'echo.hourglass', 'shop')}`);
     for (let i = 0; s.pending?.kind === 'choose' && i < 20; i++) s = move(s, s.pending.options[0].id);
-    expect(s.log.some(l => /no shop member has an On Recruit to use again this turn \(Stunt Double’s already was\)/.test(l))).toBe(true);
+    expect(s.log.some(l => /no shop member has an On Recruit to use again this turn \(Shadow’s already was\)/.test(l))).toBe(true);
     expect(s.log.some(l => /no shop member has an On Recruit effect/.test(l))).toBe(false);
   });
 
-  it('Promote never reaches a cheaper member, any cult (Cory, Nov 4 night: a copied Promote swapped Extra Hand for Line Cutters)', () => {
+  it('Promote never reaches a cheaper member, any cult (Cory, Nov 4 night: a copied Promote swapped Extra Hand for Lord of the Manor)', () => {
     const s = take(table(Q, { round: 2, members: [['red.twins'], ['benders.extrahand', 'red.intern']], shop: ['red.volunteer', 'gold.banker'] }), 'red.hireup');
     const cost = u => { const d = s.cards[u].def; return d; };
     const eh = uidIn(s, 'benders.extrahand', 1), twins = uidIn(s, 'red.twins', 0);

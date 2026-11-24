@@ -53,8 +53,8 @@ describe('11 · every choice names the card or space that asked', () => {
 });
 
 describe('12 · one price rule for every recruit', () => {
-  it('Talent Scout offers Underdog when Penny Pincher makes it affordable (2 gold count as 4, plus 2 blue)', () => {
-    const restore = pinCosts({ 'gold.underdog': [4, 2] }); // the price this case was written at (Underdog is 8 since 2026-10-15)
+  it('Talent Scout offers Poor Relation when Skinflint makes it affordable (2 gold count as 4, plus 2 blue)', () => {
+    const restore = pinCosts({ 'gold.underdog': [4, 2] }); // the price this case was written at (Poor Relation is 8 since 2026-10-15)
     try {
     let s = sceneQ({ quadrants: CLASSIC, res: [{ gold: 2, blue: 2 }], members: [['gold.thrift', 'market.blackmarket']] });
     row(s, ['red.patriarch', 'red.mob'], ['gold.underdog']);
@@ -69,11 +69,11 @@ describe('12 · one price rule for every recruit', () => {
     } finally { restore(); }
   });
   it('Talent Scout uses (and spends) an Intro Offer discount', () => {
-    const restore = pinCosts({ 'gold.underdog': [4, 2] }); // the price this case was written at (Underdog is 8 since 2026-10-15)
+    const restore = pinCosts({ 'gold.underdog': [4, 2] }); // the price this case was written at (Poor Relation is 8 since 2026-10-15)
     try {
     let s = sceneQ({ quadrants: CLASSIC, res: [{ red: 2, blue: 2 }], discount: [4], members: [['market.blackmarket']] });
     row(s, ['red.patriarch'], ['gold.underdog', 'red.mob']);
-    s = move(s, `use:${uidOf(s, 'market.blackmarket', 0)}`); // 4 in all; Underdog costs 6, 2 after the discount
+    s = move(s, `use:${uidOf(s, 'market.blackmarket', 0)}`); // 4 in all; Poor Relation costs 6, 2 after the discount
     const ud = uidOf(s, 'gold.underdog', 'pile');
     expect(s.pending.options.map(o => o.value)).toContain(ud);
     s = move(s, `card:${ud}`);
@@ -124,7 +124,7 @@ describe('12 · one price rule for every recruit', () => {
       }
     }
   });
-  it('Penny Pincher: 2 gold pay a 3-gold-plus-1 member (the spare half counts toward the rest)', () => {
+  it('Skinflint: 2 gold pay a 3-gold-plus-1 member (the spare half counts toward the rest)', () => {
     const restore = pinCosts({ 'gold.underdog': [3, 1] });
     try {
       const s = sceneQ({ quadrants: CLASSIC, res: [{ gold: 2 }], members: [['gold.thrift']] });
@@ -160,7 +160,7 @@ describe('13 · Hand-pick’s preview never offers last round’s spaces as copi
   });
 });
 
-describe('14 · Underdog vs Hustler: the preview gives the real number and says why', () => {
+describe('14 · Poor Relation vs Hustler: the preview gives the real number and says why', () => {
   const setup = gold => {
     const s = sceneQ({ quadrants: CLASSIC, round: 3, res: [{ gold }, { gold: 11 }], members: [['gold.underdog', 'gold.hustler']] });
     s.cards[uidOf(s, 'gold.hustler', 0)].color = 'gold';
@@ -175,21 +175,21 @@ describe('14 · Underdog vs Hustler: the preview gives the real number and says 
     t = move(t, t.pending.options[0].id);
     expect(t.players[0].res.gold - 9).toBe(6);
     expect(pv.you.res.gold).toEqual([6, 6]);
-    expect(pv.reasons).toContain('Underdog: no ×2 (Hustler’s +3 lands first)');
+    expect(pv.reasons).toContain('Poor Relation: no ×2 (Hustler’s +3 lands first)');
     expect(pv.reasons).toContain('Hustler: +3 gold');
   });
-  it('5 gold vs 11: still behind after Hustler, so ×2; the preview says +9 and names Underdog', () => {
+  it('5 gold vs 11: still behind after Hustler, so ×2; the preview says +9 and names Poor Relation', () => {
     const s = setup(5);
     const k = kick(s);
     const pv = previewSpace(s, 0, k.q, k.i);
     expect(pv.you.res.gold).toEqual([9, 9]);
-    expect(pv.reasons).toContain('Underdog: gold gain 3 → 6');
+    expect(pv.reasons).toContain('Poor Relation: gold gain 3 → 6');
   });
-  it('nobody richer at all: Underdog says why it stays off', () => {
+  it('nobody richer at all: Poor Relation says why it stays off', () => {
     const s = setup(20);
     const k = kick(s);
     const pv = previewSpace(s, 0, k.q, k.i);
-    expect(pv.reasons.some(r => /^Underdog: no ×2 \(no one has more gold/.test(r))).toBe(true);
+    expect(pv.reasons.some(r => /^Poor Relation: no ×2 \(no one has more gold/.test(r))).toBe(true);
   });
 });
 
@@ -207,7 +207,7 @@ describe('19 · Collect Debts keeps its count through a save and load', () => {
 
 // The online gate stalled on a Snap Up pay choice (a seat in round III, 2026-10-15). Snap Up is gone (Blue's Oct 20
 // rework); Talent Scout keeps that off-buy recruit path, so drive Talent Scout → pay to the end
-// with Penny Pincher and an Intro Offer, by the bot and by the first option, also through a JSON save (the online
+// with Skinflint and an Intro Offer, by the bot and by the first option, also through a JSON save (the online
 // session stores stateJson), and check every offered pay option is legal and finishes.
 import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { STRAYS, stray } from './stray.js';

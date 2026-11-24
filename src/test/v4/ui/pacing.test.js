@@ -39,7 +39,7 @@ function paceGame(seed, mine = [0]) {
         if (turn != null && s.pending.kind === 'place') { rivalTurns.push(turn); byRound[s.round].push(turn); turn = null; if (wait != null) between++; }
         turn = (turn || 0) + hold;
         if (!sameNext) { rivalTurns.push(turn); byRound[s.round].push(turn); turn = null; if (wait != null) between++; }
-        if (wait != null) { wait += hold; if (s.pending.extra) extra = true; } // (a member's extra buy: Big Spender)
+        if (wait != null) { wait += hold; if (s.pending.extra) extra = true; } // (a member's extra buy: Squanderer)
       } else if (!sameNext) {
         // your turn ends here (your own chain has played): the wait runs until your next turn starts
         wait = 0; between = 0; extra = false;
@@ -71,8 +71,8 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // H2 judges the wait at p50 over every seat and every turn (the snake's gaps run 2/4 rival turns for a middle seat,
     // 6/0 for an end seat: three on average), and caps every wait (the snake's run of six) at 13s
     const usual = waits.map(w => w.ms);
-    // the long gap is the snake's run of up to six rival turns; members that give extra turns or extra buys (Big Spender)
-    // make longer runs, outside it (Claude, 2026-10-28: Launderer's new price put a Big Spender buy in seed 7's run of six)
+    // the long gap is the snake's run of up to six rival turns; members that give extra turns or extra buys (Squanderer)
+    // make longer runs, outside it (Claude, 2026-10-28: Launderer's new price put a Squanderer buy in seed 7's run of six)
     const h3p50 = pct(turns, 0.5), h3p95 = pct(turns, 0.95), h2p50 = pct(usual, 0.5), h2max = Math.max(...waits.filter(w => w.turns <= 6 && !w.extra).map(w => w.ms));
     const over = waits.filter(w => w.turns > 6 || w.extra).map(w => `${w.ms}ms/${w.turns} turns${w.extra ? ' + an extra buy' : ''}`);
     if (over.length) console.log(`[pacing] runs of more than six rival turns (extra turns): ${over.join(', ')}`);
@@ -80,9 +80,9 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     console.log(`[pacing] rival turn p50 ${h3p50}ms p95 ${h3p95}ms (${turns.length} turns); the usual wait for your turn p50 ${h2p50}ms (${usual.length}), longest ${h2max}ms (${waits.length} waits)`);
     expect(turns.length).toBeGreaterThan(40);
     expect(usual.length).toBeGreaterThan(10);
-    // 2100 and 3700 (Claude, Nov 4): Cheerleaders and Victors in the grey deck and the same day's card changes moved the seeded
+    // 2100 and 3700 (Claude, Nov 4): Trumpeters and Victors in the grey deck and the same day's card changes moved the seeded
     // turns on top of the 1s rival hold (p50 3.33s, p95 5.84s at Steady); content, not slower motion
-    // 2200 (Claude, Nov 4 night): Promote and Demote giving only your own member, Tryout's copiers and Mannequin moved the
+    // 2200 (Claude, Nov 4 night): Promote and Demote giving only your own member, Tryout's copiers and Stallholder moved the
     // seeded turns (p50 3.48s at Steady); content, not slower motion
     expect(h3p50).toBeLessThanOrEqual(2200 * K);
     // 3100 (Claude, Nov 1): the Nov 1 balance numbers and Greatest Hits copying rivals' round I spaces moved the seeded turns; content, not slower motion
@@ -95,10 +95,10 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     expect(h2p50).toBeLessThanOrEqual(8500 * K); // 7300 (Nov 4, same content move: 11.5s)
     // 13.5s (was 13s; Claude, 2026-10-29): HR at 4 members moved seed 2's bots into a run of six turns holding a Walk-In
     // 14s (Claude, 2026-10-29): members counting their printed number moved a seeded run of six to 13.76s; same shows, longer chain
-    // free recruit, a Con Men steal of 5, an Anarchist swap and three recruits (21.2s vs 21.1s); content, not slower motion
+    // free recruit, a Robbers steal of 5, an Meddler swap and three recruits (21.2s vs 21.1s); content, not slower motion
     // 14.1s (Claude, Nov 1): the Nov 1 balance numbers moved a seeded run of six by 24 ms
     // 15s (Claude, Nov 1): Tryout's +2 red, Ferryman and Last Call moved seed 2's round II run of six (seat 0) into a
-    // Tryout on Treasurer plus two Anarchist swaps, a Coach and a Governess protégé (14.95s); content, not slower motion
+    // Tryout on Treasurer plus two Meddler swaps, a Taskmaster and a Governess protégé (14.95s); content, not slower motion
     // 15.5s (Claude, Nov 4): recruits play one step at a time, coins in, then to the middle, then to the buyer (Cory's
     // "yes" to the audit's pick): seed 2's run of six holds three recruits, 21.5s to 24.9s at Steady; slower by his call
     expect(h2max).toBeLessThanOrEqual(25000 * K);

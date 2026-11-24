@@ -1,8 +1,8 @@
 // A saved hot-seat game for the members gate (e2e/v4/members.mjs): P1 (the only person) is about to place in round I
 // on a table of Gold, Echo, Trading and Magenta, holding a full spread of members: use-once ones ready (Lottery Winner,
-// Heiresses), one worth nothing now (Safecracker: the rivals hold nothing), one already used (Speculator), switches
-// (Midas on, Translator off), reactions (Prospector, Impressionist), a game-end scorer
-// (Tycoon) and one the engine would refuse now (Pawnbroker: nothing to sell). P2 holds Raider (a use still in hand; Stunt Double's copy is a recruit trigger now, not a use);
+// Heiresses), one worth nothing now (Safecracker: the rivals hold nothing), one already used (Gambler), switches
+// (Midas on, Translator off), reactions (Gold Panner, Forger), a game-end scorer
+// (Baron) and one the engine would refuse now (Pawnbroker: nothing to sell). P2 holds Raider (a use still in hand; Shadow's copy is a recruit trigger now, not a use);
 // P3 lies low (safe this round), and only P3; P4 holds 13
 // members (its card scrolls inside the window). The round-start snapshot
 // is saved too. No round-start income, so the seat has room for six figures.

@@ -249,7 +249,7 @@ function extraGrants(state) {
     // Night Owls since Nov 1 2:35pm: its one more minion waits on the Goes Last token
     m = l.match(/^(.+?)'s (.+?): (.+?) takes the Goes Last token with 1 more minion on it\b/);
     if (m && m[1] === m[3]) { add(m[1], m[2], 1); continue; }
-    m = l.match(/^(.+?)'s (Late Risers): 1 more minion, placed first\.$/);
+    m = l.match(/^(.+?)'s (Early Riser|Late Risers): 1 more minion, placed first\.$/);
     if (m) { add(m[1], m[2], 1); continue; }
     m = l.match(/^(.+?) gets (1 more minion|(\d+) more minions), placed now\.$/);
     if (!m) continue;

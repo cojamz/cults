@@ -118,7 +118,7 @@ describe('White, Red, Green and Blue candidates', () => {
     s = go(s, turn(0, 1));
     s = move(s, `use:${spec}`);
     expect(s.players[0].res.gold).toBe(4);
-    expect(s.pending.prompt).toMatch(/^Retirees: discard Speculator for \+3 white/);
+    expect(s.pending.prompt).toMatch(/^Retirees: discard Gambler for \+3 white/);
     s = move(s, `card:${spec}`);
     expect(s.players[0].members).not.toContain(spec);
     expect(s.players[0].res.white).toBe(3);
@@ -131,7 +131,7 @@ describe('White, Red, Green and Blue candidates', () => {
     s = move(s, `card:${uidOf(s, 'benders.conmen', 'shop')}`);
     let k = 0;
     while (!/^Retirees/.test(s.pending?.prompt || '') && k++ < 10) s = move(s, s.pending.options[0].id);
-    expect(s.pending.prompt).toMatch(/^Retirees: discard Con Men/);
+    expect(s.pending.prompt).toMatch(/^Retirees: discard Robbers/);
     let t = sceneQ({ quadrants: ['trading', 'gold', 'red', 'echo'], members: [['trading.retirees']], res: [{ gold: 20, red: 20, white: 20, green: 20 }], queue: [] });
     const u = t.shop.find(x => plain(t, x));
     t = take(go(t, turn(0, 1)), 'gold.rush');

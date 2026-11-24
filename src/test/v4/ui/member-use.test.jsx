@@ -117,9 +117,9 @@ describe('the seat card list', () => {
   });
   it('the prompt names only what would do something, once', () => {
     const s = scene();
-    expect(promptFor(s, true).sub).toBe('…or use Lottery Winner first'); // not Pawnbroker (nothing to sell), not Speculator (used)
+    expect(promptFor(s, true).sub).toBe('…or use Lottery Winner first'); // not Pawnbroker (nothing to sell), not Gambler (used)
   });
-  it('Stunt Double is a recruit effect, without an activation row or button', () => {
+  it('Shadow is a recruit effect, without an activation row or button', () => {
     const s = table(['gold', 'echo', 'trading', 'purple'], { members: [['echo.hourglass']] });
     const uid = uidIn(s, 'echo.hourglass', 0);
     const row = memberRows(s, 0, 0, optionsOf(s)).find(r => r.uids.includes(uid));
@@ -140,7 +140,7 @@ describe('the seat card list', () => {
 
 describe('threats you can see coming (w2b #19, #21)', () => {
   it('a use worth nothing now is muted with its reason; Lie Low reads "safe this round"', () => {
-    // Speculator with no gold to double (Safecracker, its example until Nov 4, now keeps its use when there is nothing to
+    // Gambler with no gold to double (Safecracker, its example until Nov 4, now keeps its use when there is nothing to
     // take: "Can't use now", below)
     const s = table(['gold', 'echo', 'trading', 'thieves'], { members: [['gold.speculator', 'thieves.bigscore'], ['echo.hourglass']], res: [{ magenta: 0 }, {}] });
     const uid = uidIn(s, 'gold.speculator', 0);
@@ -148,7 +148,7 @@ describe('threats you can see coming (w2b #19, #21)', () => {
     expect(u.idle).toBe(true);
     expect(u.label).toBe('Use: +0');
     expect(u.why).toBe('it would give you nothing right now');
-    expect(promptFor(s, true).sub || '').not.toMatch(/Speculator|Safecracker/);
+    expect(promptFor(s, true).sub || '').not.toMatch(/Gambler|Safecracker/);
     const { container } = render(<MemberActions state={s} uid={uid} me={0} optionFor={optionsOf(s)} onPick={() => {}} />);
     expect(container.querySelector('[data-use]')).toBeNull(); // no button that does nothing (w4b #20)
     expect(container.textContent).toMatch(/Nothing to gain now: it would give you nothing right now/);
@@ -178,7 +178,7 @@ describe('a use that changes only the shop is a real use (Cory, Oct 28: Restocke
     cleanup();
   });
 });
-describe("a use that only sets up later is a real use (Cory's playtest, Nov 1: Party Crasher wouldn't light)", () => {
+describe("a use that only sets up later is a real use (Cory's playtest, Nov 1: Trespasser wouldn't light)", () => {
   for (const id of ['benders.squatter', 'benders.bigspender']) it(`${id}: lit, a Use button, never "nothing to gain now"`, () => {
     const s = table(['red', 'gold', 'echo', 'trading'], { members: [[id]], res: [{}, {}] });
     const uid = uidIn(s, id, 0);
@@ -189,14 +189,14 @@ describe("a use that only sets up later is a real use (Cory's playtest, Nov 1: P
   });
 });
 describe('a second buy is seen (w2a #6)', () => {
-  it('Big Spender: the headline says "Recruit again (Big Spender)", the member hops, then reads "used this round"', () => {
+  it('Squanderer: the headline says "Recruit again (Squanderer)", the member hops, then reads "used this round"', () => {
     const s = table(['gold', 'echo', 'trading', 'thieves'], { members: [['benders.bigspender1']], res: [{ gold: 6, white: 6 }] });
     s.players[0].turnBuys = 1;
     s.queue = [{ t: 'buy', p: 0, extra: true }];
     resume(s);
     expect(s.pending.kind).toBe('buy');
     expect(s.pending.extra).toBe(true);
-    expect(promptFor(s, true).text).toBe('Recruit again (Big Spender)');
+    expect(promptFor(s, true).text).toBe('Recruit again (Squanderer)');
     // its glow on the seat carries "Skip, keep it for later": the header doesn't say it a second time (f8)
     expect(promptFor(s, true).sub || '').not.toMatch(/keeps it for a later turn/);
     const uid = uidIn(s, 'benders.bigspender1', 0);

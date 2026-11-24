@@ -3,7 +3,7 @@
 // for winning contests") added to the grey deck. One test per sentence.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE15 = 'warchest,gloaters'; // Cheerleaders and Victors are live
+process.env.REPLACE15 = 'warchest,gloaters'; // Trumpeters and Victors are live
 // trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
 // 4 more since Nov 5 evening, and these tests check what the cards do, not their price
 process.env.MEMBER_UP = '2';
@@ -26,10 +26,10 @@ describe('REPLACE15: contest-win members added to the grey deck', () => {
     expect(defById('benders.dabblers').retired).toBeFalsy();
   });
 
-  it('Cheerleaders: +2 followers per contest won', () => {
+  it('Trumpeters: +2 followers per contest won', () => {
     const s = scene('benders.cheerleaders');
     expect(s.players[0].bonus).toBe(12 + 4);
-    expect(named(s, 'Cheerleaders')).toContain("P1's Cheerleaders: +2 followers.");
+    expect(named(s, 'Trumpeters')).toContain("P1's Trumpeters: +2 followers.");
   });
 
   it("Victors: +2 of each won contest's color", () => {

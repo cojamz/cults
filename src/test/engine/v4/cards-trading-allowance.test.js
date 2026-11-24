@@ -30,11 +30,11 @@ const text = k => [...W.actions, ...W.members].find(c => c.key === k).text;
 useRetired(['trading.stipend', 'trading.exchange', 'trading.estatesale']);
 
 describe('Estate Sale (retired Nov 11, Write-Off took its slot)', () => {
-  it('Estate Sale: Tycoon (8+4) pays 12 white, named', () => {
+  it('Estate Sale: Baron (8+4) pays 12 white, named', () => {
     let s = take(table(Q, { round: 2, members: [['gold.tycoon']], shop: ROW }), 'trading.estatesale');
     s = move(s, cardOpt(s, 'gold.tycoon', 0));
     expect([R(s).white, B(s), owns(s, 0, 'gold.tycoon')]).toEqual([13, 0, false]);
-    expect(named(s, 'Estate Sale')).toContain("P1's Estate Sale: Tycoon paid 12 white.");
+    expect(named(s, 'Estate Sale')).toContain("P1's Estate Sale: Baron paid 12 white.");
   });
 });
 
@@ -47,7 +47,7 @@ describe('White: Allowance and Exchange (retired Nov 11)', () => {
     expect(named(s, 'Allowance')).toContain("P1's Allowance: +2 followers for recruiting a member.");
   });
 
-  it('× Doppelganger copying Brokers: two Brokers, +4 on Allowance', () => {
+  it('× Doppelganger copying Preachers: two Preachers, +4 on Allowance', () => {
     let s = table(QE, { members: [['trading.broker', 'echo.doppel']], shop: ROW });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'trading.broker';
     s.players[0].res.red = 2;

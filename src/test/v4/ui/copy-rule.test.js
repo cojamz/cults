@@ -1,6 +1,6 @@
 // @vitest-environment node
 // The copy rule's words match the engine (panel tester C #2): a copy gives the space's own printed gain (its chip),
-// never the taker's members' bonuses (Grand Host's double, Caterer). A copied gift is done again (Cory, Nov 6). Greatest Hits copying a
+// never the taker's members' bonuses (Grand Host's double, Almsgiver). A copied gift is done again (Cory, Nov 6). Greatest Hits copying a
 // Grand Host's Toast gives the printed +9, as the engine does (interactions.test.js pins the engine side).
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -18,7 +18,7 @@ describe('the copy rule says what a copy gives', () => {
     expect(copy.def).not.toMatch(/as if you had taken it/);
     expect(copy.def).toMatch(/Copying a copy lets you choose again/);
     expect(copy.def).toMatch(/never choose an action already in that chain/);
-    expect(copy.def).toMatch(/Agents stops rivals/);
+    expect(copy.def).toMatch(/Secret-Keepers stop rivals/);
     expect(copy.def).not.toMatch(/never copy another copy/);
   });
 });

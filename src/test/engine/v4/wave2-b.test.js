@@ -122,7 +122,7 @@ describe('#19 a member Use that would change nothing is marked idle', () => {
     expect(o).toBeTruthy();
     expect(o.idle).toBe(true);
   });
-  it("Party Crasher's use only sets up your next minion: not idle (Cory's playtest, Nov 1)", () => {
+  it("Trespasser's use only sets up your next minion: not idle (Cory's playtest, Nov 1)", () => {
     const s = human(sceneQ({ quadrants: MAG, n: 2, round: 3, res: [{ gold: 2 }, {}], members: [['benders.squatter']] }));
     const o = s.pending.options.find(x => x.kind === 'use');
     expect(o).toBeTruthy();

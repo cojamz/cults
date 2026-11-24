@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Green's new members from Cory's Nov 11 member pass: Mimics (replaces Impersonator), Regulars (Tribute Band's slot),
-// Die-Hards (the 10th). Each fires once in a small hand-built position.
+// Green's new members from Cory's Nov 11 member pass: Mimics (replaces Impersonator), Gardeners (Tribute Band's slot),
+// Druids (the 10th). Each fires once in a small hand-built position.
 import { describe, it, expect } from 'vitest';
 import { contextFor } from '../../../engine/v4/core.js';
 import { defById } from '../../../engine/v4/content/index.js';
@@ -46,7 +46,7 @@ describe('Green members, Nov 11', () => {
     expect(s.log.some(l => /Mimics: no member in play/.test(l))).toBe(true);
   });
 
-  it('Regulars: at round end, +1 follower per minion you have on Green spaces', () => {
+  it('Gardeners: at round end, +1 follower per minion you have on Green spaces', () => {
     let s = table(Q, { members: [['echo.regulars']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }] });
     s = pass(play(take(s, 'echo.chant')));
     s = pass(play(take(s, 'echo.refrain')));
@@ -55,7 +55,7 @@ describe('Green members, Nov 11', () => {
     expect(p.bonus).toBe(b + 2);
   });
 
-  it('Die-Hards: +6 at game end with the most green members, ties count, none with no green member', () => {
+  it('Druids: +6 at game end with the most green members, ties count, none with no green member', () => {
     const s = table(Q, { n: 3, members: [['echo.diehards', 'echo.groupie'], ['echo.copyist', 'echo.hourglass'], ['gold.taxman']] });
     const ctx = contextFor(s), d = defById('echo.diehards');
     expect(d.onGameEnd(ctx, s.players[0])).toBe(6); // 2 to 2: a tie counts

@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Wallflower: "Whenever you copy an action, double the resources it gives you." Every way of copying an action
-// (Cory, Nov 3: "copying Polish didnt double with Wallflower. gotta audit what wallflower works with").
+// Tall-Tale Teller: "Whenever you copy an action, double the resources it gives you." Every way of copying an action
+// (Cory, Nov 3: "copying Polish didnt double with Tall-Tale Teller. gotta audit what wallflower works with").
 import { describe, it, expect } from 'vitest';
 import { take, move, play, actionName } from './helpers.js';
 import { table } from './cards-helpers-b.js';
@@ -13,8 +13,8 @@ const sp = id => o => o.kind === 'space' && o.label.startsWith(actionName(id));
 const red = o => o.id === 'color:red';
 const sum = r => Object.values(r).reduce((a, b) => a + b, 0);
 
-describe('Wallflower doubles every copied action', () => {
-  // Polish (Nov 24): "+3 silver. Turn all your silver into one other color. Each rival +1 silver." Wallflower doubles the
+describe('Tall-Tale Teller doubles every copied action', () => {
+  // Polish (Nov 24): "+3 silver. Turn all your silver into one other color. Each rival +1 silver." Tall-Tale Teller doubles the
   // silver gained, not the turn (Cory, Nov 11: "just the +3 should double"). The rival's Polish first gave the copier
   // +1 silver: 3 held + 3 = 6 red, or + 6 doubled = 9 red
   it('Echo copying a rival\'s Polish: the silver gained doubled, the turn not', () => {
@@ -62,7 +62,7 @@ describe('Wallflower doubles every copied action', () => {
     s = pass(s);
     expect(R(s)).toMatchObject({ red: 0, silver: 0, green: 1 + 6 }); // Echo's +1, Polish's 3 held (2 + the rival's gift) + 3 turned, as green
   });
-  it('an Impersonator holding a rival\'s Wallflower doubles a copy', () => {
+  it('an Impersonator holding a rival\'s Tall-Tale Teller doubles a copy', () => {
     let s = table(['gold', 'red', 'market', 'echo'], { members: [['echo.impersonators'], ['echo.wallflower']], queue: turns(1, 0) });
     s.cards[s.players[0].members[0]].ability = 'echo.wallflower';
     s = go(s, 'echo.chant');

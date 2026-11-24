@@ -5,13 +5,13 @@ import { take, pinCosts } from './helpers.js';
 import { sceneQ } from './cards-helpers.js';
 
 // Bots rate a swap for everyone it touches, not only their own cult (Cory, 2026-10-29: the bots "clearly aren't
-// using it to switch into somebody"). Anarchist's own hint scores a swap of two members that aren't yours as 0, so
+// using it to switch into somebody"). Meddler's own hint scores a swap of two members that aren't yours as 0, so
 // before this a bot never pushed a shop Saboteur into the leader's cult.
 const botMove = s => applyMove(s, chooseBotMove(s, () => 0.5, { level: 'normal' }));
 
 describe('bots and rival swaps', () => {
-  it('uses Anarchist to swap a shop Saboteur into the leader’s cult for their member', () => {
-    // Prospector priced like Ghost (5), so the two cost the same (Ghost 5 since Nov 6: "ghost should stay 5 cost")
+  it('uses Meddler to swap a shop Saboteur into the leader’s cult for their member', () => {
+    // Gold Panner priced like Plague Bearer (5), so the two cost the same (Plague Bearer 5 since Nov 6: "ghost should stay 5 cost")
     const back = pinCosts({ 'gold.prospector': [2, 3] });
     try {
     let s = sceneQ({ round: 2, bonus: [0, 20], members: [['benders.anarchist'], ['gold.prospector']], shop: ['benders.saboteur'] });
@@ -23,7 +23,7 @@ describe('bots and rival swaps', () => {
     expect(s.pending.options.some(o => o.kind === 'trade')).toBe(true);
     s = botMove(s);
     const sab = Object.values(s.cards).find(c => c.def === 'benders.saboteur').uid;
-    expect(s.log.join('\n')).toMatch(/Anarchist swapped/);
+    expect(s.log.join('\n')).toMatch(/Meddler swapped/);
     expect(s.players[1].members).toContain(sab);
     expect(s.players[1].bonus).toBe(15); // Old Maid −5 (Nov 1)
     } finally { back(); }

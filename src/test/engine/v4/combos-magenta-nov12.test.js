@@ -191,21 +191,21 @@ describe('Night Thieves: "Round End, before scoring: steal 3 resources."', () =>
 });
 
 describe('Press Gang: "Round End: a rival you choose gives you one of their members." (worth 2)', () => {
-  it('3 players, only one rival has members: that rival is asked, no rival question; Leavetakers on the giver pays +2 white', () => {
+  it('3 players, only one rival has members: that rival is asked, no rival question; Mourners on the giver pays +2 white', () => {
     const { s } = go('kid-leave', { quads: QW, n: 3, round: 1, queue: END, members: [['thieves.kidnappers'], ['trading.leavetakers', 'red.intern'], []] },
       [/Intern/]);
     expect(names(s, 0)).toEqual(['Press Gang', 'Intern']);
-    expect(s.log).toContain("P2's Leavetakers: Intern left: +2 white.");
+    expect(s.log).toContain("P2's Mourners: Intern left: +2 white.");
     expect(s.log).toContain("P1's Press Gang: P2 gives Intern to P1.");
     expect(s.players[1].res.white).toBe(2);
     cleanLog(s);
   });
 
-  it('the giver gives Leavetakers itself: it counts its own leaving (+2 white to the giver, none to the new holder)', () => {
-    const { s } = go('kid-leave-self', { quads: QW, round: 1, queue: END, members: [['thieves.kidnappers'], ['trading.leavetakers', 'red.intern']] }, [/Leavetakers/]);
+  it('the giver gives Mourners itself: it counts its own leaving (+2 white to the giver, none to the new holder)', () => {
+    const { s } = go('kid-leave-self', { quads: QW, round: 1, queue: END, members: [['thieves.kidnappers'], ['trading.leavetakers', 'red.intern']] }, [/Mourners/]);
     expect(s.players[1].res.white).toBe(2);
     expect(s.players[0].res.white).toBe(0);
-    expect(names(s, 0)).toContain('Leavetakers');
+    expect(names(s, 0)).toContain('Mourners');
   });
 
   it('no rival has a member: one plain line', () => {
@@ -267,7 +267,7 @@ describe('Changeling: "On Recruit: swap this member for a rival\'s member costin
     const { s } = go('da-cap-4p', { quads: Q, n: 4, turns: [0], shop: ['thieves.doubleagent'], members: [[], ['red.bigfamily', 'thieves.lookout'], ['silver.bookies'], ['thieves.shoplifter']], res: [RICHRES] },
       [/Stash/, /Changeling/]);
     expect(s.pending.prompt).toBe('Changeling: swap for which member?');
-    expect(s.pending.options.map(o => o.label).sort()).toEqual(["P2's Big Family (8)", "P3's Bookies (8)"]);
+    expect(s.pending.options.map(o => o.label).sort()).toEqual(["P2's Big Family (8)", "P3's Indulgence Seller (8)"]);
   });
 
   it('no rival member costing 8 or less: one plain line, and the Changeling stays', () => {
@@ -281,7 +281,7 @@ describe('Changeling: "On Recruit: swap this member for a rival\'s member costin
     const { s } = go('da-rich', { quads: Q, n: 3, turns: [0], shop: ['thieves.doubleagent'], members: [[], ['red.bigfamily', 'thieves.lookout'], ['silver.bookies']], res: [{ magenta: 14, red: 14 }],
       rules: { econ: 'rich' } }, [/Stash/, /Changeling/]);
     expect(s.pending.prompt).toBe('Changeling: swap for which member?');
-    expect(s.pending.options.map(o => o.label).sort()).toEqual(["P2's Big Family (10)", "P3's Bookies (10)"]);
+    expect(s.pending.options.map(o => o.label).sort()).toEqual(["P2's Big Family (10)", "P3's Indulgence Seller (10)"]);
   });
 
   it('Richer, nothing at 10 or less: the line names 10', () => {
@@ -290,7 +290,7 @@ describe('Changeling: "On Recruit: swap this member for a rival\'s member costin
     expect(s.log).toContain("P1's Changeling: no rival member costing 10 or less to swap for.");
   });
 
-  // Nov 12, a seeded game looped forever: Changeling swapped away, then swapped straight back the same turn (Stunt Double
+  // Nov 12, a seeded game looped forever: Changeling swapped away, then swapped straight back the same turn (Shadow
   // copying Reprise copying Promote), firing its On Recruit each time. Its On Recruit happens once a turn for a player.
   it('swapped straight back the same turn, Changeling does not swap again', () => {
     const { s } = go('da-back', { quads: Q, turns: [0], shop: ['thieves.doubleagent'], members: [[], ['thieves.bigscore']], res: [RICHRES, { gold: 4 }] },
@@ -313,8 +313,8 @@ describe('Changeling: "On Recruit: swap this member for a rival\'s member costin
 
   it("swapped for a rival's Hostages: its On Recruit fires for the new holder (your own swap is a recruit: Cory, Nov 1)", () => {
     const { s } = go('da-exchange', { quads: Q, turns: [0], shop: ['thieves.doubleagent'], members: [['red.twins'], ['yellow.exchangestudents', 'echo.regulars']], res: [RICHRES] },
-      [/Stash/, /Changeling/, /Hostages/, /Triplets ↔ P2: Regulars/]); // Regulars, not Copyist, since Copyist costs 7 (Nov 13)
-    expect(names(s, 0).sort()).toEqual(['Hostages', 'Regulars']);
+      [/Stash/, /Changeling/, /Hostages/, /Triplets ↔ P2: Gardeners/]); // Gardeners, not Copyist, since Copyist costs 7 (Nov 13)
+    expect(names(s, 0).sort()).toEqual(['Gardeners', 'Hostages']);
     expect(names(s, 1).sort()).toEqual(['Changeling', 'Triplets']);
     cleanLog(s);
   });
@@ -328,12 +328,12 @@ describe('Changeling: "On Recruit: swap this member for a rival\'s member costin
     cleanLog(s);
   });
 
-  it('Leavetakers on both sides: the Changeling leaving pays its old holder, the member taken pays its old holder', () => {
+  it('Mourners on both sides: the Changeling leaving pays its old holder, the member taken pays its old holder', () => {
     const { s } = go('da-leavetakers', { quads: QW, turns: [0], shop: ['thieves.doubleagent'], members: [['trading.leavetakers'], ['trading.leavetakers', 'red.bigfamily']], res: [RICHRES] },
       [/Stash/, /Changeling/, /Big Family/]);
     expect([s.players[0].res.white, s.players[1].res.white]).toEqual([2, 2]);
-    expect(s.log).toContain("P1's Leavetakers: Changeling left: +2 white.");
-    expect(s.log).toContain("P2's Leavetakers: Big Family left: +2 white.");
+    expect(s.log).toContain("P1's Mourners: Changeling left: +2 white.");
+    expect(s.log).toContain("P2's Mourners: Big Family left: +2 white.");
     cleanLog(s);
   });
 });

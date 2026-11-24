@@ -86,13 +86,13 @@ describe('the warning reads the contest this table plays', () => {
 
 // The full-set contest left with Yellow 2.0 (Oct 31: most yellow, as every 2.0 color); the lead cases above cover it.
 describe('a payment that cuts a member’s game-end bonus is marked (tester A: Kingpin paid +0 unwarned)', () => {
-  // Kingpin counted held magenta until Oct 21 (now: per magenta member), so Tycoon carries the case
-  it('buying followers: paying gold cuts Tycoon (+1 per 2 gold); paying magenta does not', () => {
+  // Kingpin counted held magenta until Oct 21 (now: per magenta member), so Baron carries the case
+  it('buying followers: paying gold cuts Baron (+1 per 2 gold); paying magenta does not', () => {
     let s = sceneQ({ quadrants: ['gold', 'silver', 'trading', 'thieves'], res: [{ gold: 2, magenta: 3 }, { magenta: 9, gold: 9 }], members: [['gold.tycoon'], []], queue: [{ t: 'buy', p: 0 }] });
     s = applyMove(s, { player: 0, option: 'tier:small' });
     expect(s.pending.kind).toBe('pay');
     const by = color => s.pending.options.find(o => o.spend?.[color] === 1 && Object.values(o.spend).reduce((x, y) => x + y, 0) === 1);
-    expect(by('gold').cuts).toEqual([{ member: 'Tycoon', from: 1, to: 0 }]);
+    expect(by('gold').cuts).toEqual([{ member: 'Baron', from: 1, to: 0 }]);
     expect(by('magenta').cuts).toBeUndefined();
   });
 });

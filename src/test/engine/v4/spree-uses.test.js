@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Spree's three recruits survive a recruit that brings a usable member (Speculator): the "use a member, or finish your
+// Spree's three recruits survive a recruit that brings a usable member (Gambler): the "use a member, or finish your
 // turn" step waits until the last recruit, since its Done ends every recruit left (release QA, Oct 28: the UI critic
 // got one recruit of three). Since Nov 10 Spree's first two come from the discard pile, then the turn's own.
 import { describe, it, expect } from 'vitest';
@@ -9,7 +9,7 @@ import { table } from './cards-helpers-b.js';
 const SHOP = ['gold.speculator', 'gold.midas', 'gold.jackpot', 'gold.tycoon', 'red.mentor', 'red.patriarch', 'red.bigfamily'];
 function spree(members) {
   let s = table(['gold', 'red', 'market', 'echo'], { round: 3, left: 8, shop: SHOP.slice(2), res: [{ gold: 40, red: 40, blue: 40, green: 40 }], members: [members, []], queue: [0, 1].map(p => ({ t: 'turn', p })) });
-  // Speculator first, then Midas, from the discard pile
+  // Gambler first, then Midas, from the discard pile
   s.discard = ['gold.midas', 'gold.speculator'].map(d => s.pile.splice(s.pile.findIndex(u => s.cards[u].def === d), 1)[0]);
   const order = [s.discard[1], s.discard[0]];
   s = take(s, 'market.spree');
@@ -27,7 +27,7 @@ function spree(members) {
   return { recruits, usesSeen };
 }
 describe('Spree with a usable member', () => {
-  it('recruiting Speculator first still leaves the other two recruits, and Speculator stays usable', () => {
+  it('recruiting Gambler first still leaves the other two recruits, and Gambler stays usable', () => {
     const r = spree([]);
     expect(r.recruits).toBe(3);
     expect(r.usesSeen).toBeGreaterThan(0);

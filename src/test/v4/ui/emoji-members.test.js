@@ -20,7 +20,7 @@ describe('emoji members', () => {
     const ems = [...names].map(emojiMember).filter(Boolean).map(e => e[0]);
     expect(new Set(ems).size).toBe(ems.length);
   });
-  // picky bot, Nov 8: the emoji look showed Downsizers, Patron Saints, Ballroom Dancers and Kingmakers as pictures
+  // picky bot, Nov 8: the emoji look showed Executioner, Patron Saints, Ballroom Dancers and Good Samaritans as pictures
   // beside emoji in one shop. Every member a game deals has an emoji (blue and green are placeholder colors).
   it('gives every dealt member an emoji', () => {
     const arts = new Set(Object.values(ARTIFACTS));

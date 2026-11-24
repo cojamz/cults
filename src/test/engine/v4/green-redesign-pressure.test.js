@@ -71,13 +71,13 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     s = go(s, 'gold.rush');
     expect(s.players[1].res.gold).toBe(3);
     s = pass(choose(take(s, 'echo.echo'), 'gold.rush'));
-    expect(s.players[0].res).toMatchObject({ gold: 4, green: 1 }); // Impressionist +2 of its color on your own copy (Cory, Nov 6)
+    expect(s.players[0].res).toMatchObject({ gold: 4, green: 1 }); // Forger +2 of its color on your own copy (Cory, Nov 6)
   });
 
   // Greatest Hits copies On Recruits since Nov 1: its sibling-path and nested-remainder checks went with its action
-  // copies. The nested recruit is now a Reprise copy of Walk-In, which must still finish its Stunt Double chain.
-  it('Reprise resumes after a copied Walk-In recruits Stunt Double', () => {
-    const stunt = member('Stunt Double');
+  // copies. The nested recruit is now a Reprise copy of Walk-In, which must still finish its Shadow chain.
+  it('Reprise resumes after a copied Walk-In recruits Shadow', () => {
+    const stunt = member('Shadow');
     let s = table(Q, { round: 3, left: 7, shop: [stunt], queue: turns(0, 0, 0, 0) });
     s = go(s, 'red.hire');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
@@ -131,8 +131,8 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
 });
 
 describe('Green redesign: copy observers and anti-copy members', () => {
-  it('Ensemble rewards own-action copies only, including a copied copy action that targets your action', () => {
-    const ensemble = member('Ensemble');
+  it('Chorus rewards own-action copies only, including a copied copy action that targets your action', () => {
+    const ensemble = member('Chorus');
     let s = table(Q, { round: 2, left: 6, members: [[ensemble]], queue: turns(0, 1, 0, 0, 0) });
     s = go(s, 'gold.rush');
     s = go(s, 'echo.chant');
@@ -151,20 +151,20 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     expect(s.players.map(p => p.res.green)).toEqual([1, 1, 1]); // P1's Echo +1; each Muse +1
   });
 
-  it('Agents blocks its owner and rivals from copying its owner’s actions', () => {
-    const agents = member('Agents');
+  it('Secret-Keepers blocks its owner and rivals from copying its owner’s actions', () => {
+    const agents = member('Secret-Keepers');
     let s = table(Q, { round: 2, left: 6, members: [[agents]], queue: turns(0, 1, 0, 0) });
     s = go(s, 'gold.rush');
     s = go(s, 'echo.echo');
     expect(s.players[1].res).toMatchObject({ gold: 0, green: 1 });
     s = go(s, 'echo.refrain');
     expect(s.players[0].res).toMatchObject({ gold: 4, green: 1 });
-    expect(memberCount(s, s.players[0])).toBe(1); // Agents, rebased to worth 1 and 1 member (Cory, Nov 12)
+    expect(memberCount(s, s.players[0])).toBe(1); // Secret-Keepers, rebased to worth 1 and 1 member (Cory, Nov 12)
     expect(followers(s, s.players[0])).toBe(2);
   });
 
-  it('a copied Agents blocks copying and takes the copied worth (1 follower, 1 member)', () => {
-    const agents = member('Agents');
+  it('a copied Secret-Keepers blocks copying and takes the copied worth (1 follower, 1 member)', () => {
+    const agents = member('Secret-Keepers');
     let s = table(Q, { members: [['echo.doppel']], queue: turns(0, 1, 0) });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = agents;
     s = go(s, 'gold.rush');
@@ -176,8 +176,8 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     expect(followers(s, s.players[0])).toBe(2);
   });
 
-  it('Bait makes a rival lose the follower and pays the owner; self-copy is even', () => {
-    const bait = member('Bait');
+  it('Trapper makes a rival lose the follower and pays the owner; self-copy is even', () => {
+    const bait = member('Trapper');
     let s = table(Q, { round: 2, left: 6, members: [[bait]], bonus: [3, 3], queue: turns(0, 1, 0, 0) });
     s = go(s, 'gold.rush');
     s = pass(choose(take(s, 'echo.echo'), 'gold.rush'));
@@ -186,7 +186,7 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     expect(bonus(s)).toEqual([4, 2]);
   });
 
-  it('Bait takes printed/base followers too, floors the copier at zero, and still pays its owner', () => {
+  it('Trapper takes printed/base followers too, floors the copier at zero, and still pays its owner', () => {
     let s = table(Q, { round: 2, left: 6, members: [['echo.bait']], queue: turns(0, 1, 0, 1) });
     s = go(s, 'gold.rush');
     s = pass(choose(take(s, 'echo.echo'), 'gold.rush'));
@@ -197,7 +197,7 @@ describe('Green redesign: copy observers and anti-copy members', () => {
   });
 
   // (Greatest Hits copies On Recruits since Nov 1: the Agents-midway-through-its-copies check went with it.)
-  it('losing a printed member after Bait losses cannot take the total below zero', () => {
+  it('losing a printed member after Trapper losses cannot take the total below zero', () => {
     let s = table(Q, { round: 2, left: 6, members: [['echo.bait'], ['red.bigfamily']], queue: turns(0, 1, 0, 1) });
     s = go(s, 'gold.rush');
     s = pass(choose(take(s, 'echo.echo'), 'gold.rush'));
@@ -207,8 +207,8 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     expect(followers(s, s.players[1])).toBe(0);
   });
 
-  it('copied Bait reacts as its current owner’s passive', () => {
-    const bait = member('Bait');
+  it('copied Trapper reacts as its current owner’s passive', () => {
+    const bait = member('Trapper');
     let s = table(Q, { members: [['echo.doppel']], bonus: [2, 2], queue: turns(0, 1, 0) });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = bait;
     s = go(s, 'gold.rush');
@@ -244,13 +244,13 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     expect(s.queue.filter(t => t.workerSource === uid && t.p === 0)).toHaveLength(1);
   });
 
-  it('Doppelganger can copy a resolved Impostors without losing its effective Agents identity', () => {
+  it('Doppelganger can copy a resolved Impostors without losing its effective Secret-Keepers identity', () => {
     let s = table(Q, { round: 3, left: 5, members: [['echo.impostor']], shop: ['echo.doppel'], queue: turns(0, 1) });
     s.cards[uidIn(s, 'echo.impostor', 0)].copy = 'echo.agents';
     s = move(take(s, 'red.take'), memberOption(s, 'echo.doppel'));
     s = move(saved(s), `card:${uidIn(s, 'echo.impostor', 0)}`);
     expect(s.cards[uidIn(s, 'echo.doppel', 0)].copy).toBe('echo.agents');
-    expect(memberCount(s, s.players[0])).toBe(2); // two Agents copies, 1 member each (Agents rebased to 1, Cory Nov 12)
+    expect(memberCount(s, s.players[0])).toBe(2); // two Secret-Keepers copies, 1 member each (Secret-Keepers rebased to 1, Cory Nov 12)
     expect(followers(s, s.players[0])).toBe(3);
     expect(targets(contextFor(s), s.players[1], 'any')).toEqual([]);
   });

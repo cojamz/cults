@@ -36,7 +36,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //      none; bottom-seat member cards ran under the shop strip), and so does every rival's seat, each whole at once:
 //      what it says and its height 400ms later are what it first painted (speed squad 2026-10-15: testers saw hover
 //      cards fill in late, in bursts); the pay dialog takes focus (Enter pays) and names
-//      each rule-changer bending the price (Penny Pincher, a discount);
+//      each rule-changer bending the price (Skinflint, a discount);
 //  (n) you are "You": the round summary and the Chronicle never use your seat's name; the summary keeps the type scale (caps labels 11, words 14 at least);
 //  (r) every hover card opened in (m) reads whole (lib/textclip.mjs) and keeps to the two marks (lib/legacy.mjs);
 //  (s) hovering Initiation ("Recruit a member in the shop costing 10 or less, for free.") in round III lights exactly the
@@ -679,7 +679,7 @@ try {
   {
     const save = richSave(4, { roundDecks: 0 }); // the pay dialog needs a gold member, which round decks hold back until round III
     const st = save.state;
-    // every chair holds members (one with Penny Pincher and a discount: the pay dialog's rule-changers)
+    // every chair holds members (one with Skinflint and a discount: the pay dialog's rule-changers)
     const give = (pid, def) => {
       const c = Object.values(st.cards).find(x => x.def === def && !st.players.some(p => p.members.includes(x.uid)));
       if (!c) return;
@@ -769,7 +769,7 @@ try {
     // the pay dialog: place, then recruit a gold member; the dialog holds focus and names the rule-changers
     await pg.mouse.move(4, 690);
     // a plain gain (blue's "+3 blue"): Intro Offer stacked on the −4 to 8 off, so every gold member came free, and Even
-    // Swap's question swapped Penny Pincher away (both after the Oct 21 prices and deck)
+    // Swap's question swapped Skinflint away (both after the Oct 21 prices and deck)
     const plain = `${st.quadrants.indexOf('blue')}-${quadrant('blue').actions.findIndex(a => a.key === 'a1')}`;
     const sp = await pg.$(`.slot.can[data-slot="${plain}"] .base`);
     const bb = await sp.boundingBox();
@@ -782,7 +782,7 @@ try {
       if (await pg.$('.lt[data-phase="choose"][data-yours="1"], .lt[data-phase="pay"][data-yours="1"]')) await answerChoice(pg, { avoid: ['pass', 'card:', 'tier:', 'slot:', 'release:'] });
       await pg.waitForTimeout(250);
     }
-    // the priciest gold member, so the −4 still leaves a real choice of how to pay (Oct 21 prices: Merchant left 2, one
+    // the priciest gold member, so the −4 still leaves a real choice of how to pay (Oct 21 prices: Gold Merchant left 2, one
     // way, paid without asking)
     const golds = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('patrons.v4.local')).state; return s.shop.filter(u => s.cards[u].def.startsWith('gold.') && s.cards[u].def !== 'gold.thrift'); });
     const uid = golds.length ? golds.map(u => [u, cardDef(st, u)]).sort((a, b) => (b[1].s + b[1].w) - (a[1].s + a[1].w))[0][0] : null;
@@ -795,7 +795,7 @@ try {
         await pg.waitForTimeout(400);
         const r = await pg.evaluate(() => ({ inside: document.querySelector('.dialog.pay').contains(document.activeElement), rules: [...document.querySelectorAll('[data-pay-rule]')].map(e => e.textContent) }));
         if (!r.inside) fail('(q) the pay dialog does not take focus (Enter would do nothing)', 'pay');
-        if (!r.rules.some(t => /gold counts double/.test(t))) fail(`(q) the pay dialog never says Penny Pincher's gold counts double (${JSON.stringify(r.rules)})`, 'pay');
+        if (!r.rules.some(t => /gold counts double/.test(t))) fail(`(q) the pay dialog never says Skinflint's gold counts double (${JSON.stringify(r.rules)})`, 'pay');
         if (!r.rules.some(t => /−4/.test(t))) fail(`(q) the pay dialog never says the −4 discount (${JSON.stringify(r.rules)})`, 'pay');
         await pg.screenshot({ path: `${SHOTS}/11-pay-rules.png` });
         await pg.keyboard.press('Enter');

@@ -104,7 +104,7 @@ describe('Silver members', () => {
     expect(R(s, 1).silver).toBe(0);
   });
 
-  it('Caterer: whenever you gift silver, +2 silver (once per gift, not per player)', () => {
+  it('Almsgiver: whenever you gift silver, +2 silver (once per gift, not per player)', () => {
     let s = take(scene({ members: [['silver.caterer']] }), 'silver.toast');
     expect(R(s).silver).toBe(7); // Toast's 5, the Silver Cloak +2 (Cory, Nov 7)
     s = move(move(move(take(scene({ members: [['silver.caterer']] }), 'silver.partygifts'), 'player:1'), 'player:2'), 'done');
@@ -169,7 +169,7 @@ describe('Silver members', () => {
     expect(s.players[0].bonus).toBe(0);
   });
 
-  it('Debutantes: once per game, double your silver and everyone else +2 silver', () => {
+  it('Bride and Groom: once per game, double your silver and everyone else +2 silver', () => {
     let s = scene({ res: [{ silver: 5 }], members: [['silver.gala']], queue: [{ t: 'buy', p: 0 }] });
     const u = uidOf(s, 'silver.gala', 0);
     s = move(s, `use:${u}`);
@@ -196,7 +196,7 @@ describe('Silver members', () => {
 
   it('Patron Saint: game end +1 follower per 2 silver members in play, anyone’s', () => {
     const s = scene({ members: [['silver.saint', 'gold.banker'], ['silver.caterer', 'silver.heir'], ['silver.steward']], queue: [{ t: 'finish' }] });
-    // Saint, Caterer, Heir, Steward: 4 silver members, so +2
+    // Saint, Almsgiver, Heir, Steward: 4 silver members, so +2
     expect(s.players[0].final.total).toBe(2);
   });
 });

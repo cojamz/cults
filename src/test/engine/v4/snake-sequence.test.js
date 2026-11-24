@@ -1,7 +1,7 @@
 // @vitest-environment node
 // The round's real turn sequence against the plain snake when one seat takes turns out of it (3 players, Purple table).
 // Cory's play notes #98/#99 (2026-10-17): "the middle player went twice?" after Crunch Time.
-// - An extra turn (Go-Getter, Night Owls, Errand Runner, Taskmaster, Late Risers) is a turn put in: everyone else keeps
+// - An extra turn (Errand Boy, Night Owls, Errand Runner, Taskmaster, Early Riser) is a turn put in: everyone else keeps
 //   the plain snake, untouched.
 // - Crunch Time ("Take your next 2 turns right away", Cory 2026-10-15) moves your own last two turns of the round up (Cory, 2026-10-21: it shouldn't skip your next turns). Nobody gains
 //   or loses a turn, everyone else keeps their order, but the gaps those two turns left close: a seat that never places
@@ -40,7 +40,7 @@ function playRound(s, rand, onTurn) {
 }
 /** A bot move, minus Purple's turn-moving spaces (Sleep In, Hold Up, Right Away, Last Call, and Overtime's extra minion; these tests count the plain snake against Crunch Time). */
 function botMove(s, rand) {
-  // nobody recruits (Nov 13): members that add, skip or move turns (Extra Hand, Bouncers, Latecomers, Go-Getter…) changed
+  // nobody recruits (Nov 13): members that add, skip or move turns (Extra Hand, Bouncers, Latecomers, Errand Boy…) changed
   // every time the deck did, and these seeded tables broke after each deck change. Without members the turn order is the
   // spaces' alone, whatever the deck holds.
   if (s.pending?.kind === 'buy' || s.pending?.options?.some(x => x.kind === 'card')) {
@@ -88,17 +88,17 @@ describe('snake vs real sequence, 3 players, one seat taking turns out of it', (
     expect(letters(base, seq)).toBe('A B B B C C B A A B C C A A C');
     expect(others(seq, who)).toEqual(others(plain, who));
   });
-  for (const at of [0, 1]) it(`an extra turn (Go-Getter) for seat ${L[at]} in round II goes in; nobody else moves`, () => {
+  for (const at of [0, 1]) it(`an extra turn (Errand Boy) for seat ${L[at]} in round II goes in; nobody else moves`, () => {
     const { s, rand } = toRound(2, 11); // any seed works since nobody recruits (Nov 13)
     const base = s.order.slice(0, 3), who = base[at];
     let done = false;
     const seq = playRound(s, rand, st => {
       if (done || st.pending.player !== who) return null;
       done = true;
-      expect(extraTurns(contextFor(st), st.players[who], 1, 'Go-Getter')).toBe(1);
+      expect(extraTurns(contextFor(st), st.players[who], 1, 'Errand Boy')).toBe(1);
       return null;
     });
-    console.log(`Go-Getter, seat ${L[at]}\n  plain : ${letters(base, s.order)}\n  actual: ${letters(base, seq)}`);
+    console.log(`Errand Boy, seat ${L[at]}\n  plain : ${letters(base, s.order)}\n  actual: ${letters(base, seq)}`);
     expect(letters(base, seq)).toBe(at === 0 ? 'A A B C C B A A B C C B A' : 'A B B C C B A A B C C B A');
     expect(seq.length).toBe(s.order.length + 1);
     // take the inserted turn out (right after the seat's first) and it's the plain snake

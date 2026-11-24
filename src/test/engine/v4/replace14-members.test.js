@@ -21,7 +21,7 @@ const slot = (s, q, name) => `${s.quadrants.indexOf(q)}-${quadrant(q).actions.fi
 const log = s => s.log.join('\n');
 
 describe('REPLACE14: Big Spenders', () => {
-  it("is dealt in Smooth Talkers' place", () => {
+  it("is dealt in Silver Tongues' place", () => {
     expect(defById('silver.bigspenders').name).toBe('Big Spenders');
     expect(defById('silver.smoothtalker').retired).toBe(true);
   });
@@ -69,7 +69,7 @@ describe('REPLACE14: Early Birds reworked ("If you place the round’s first min
 });
 
 describe('REPLACE14: Charmers ("Whenever you gift silver to rivals, +1 of any color per silver gifted.")', () => {
-  it("is dealt in Smooth Talkers' place", () => {
+  it("is dealt in Silver Tongues' place", () => {
     expect(defById('silver.charmers').name).toBe('Charmers');
     expect(defById('silver.smoothtalker').retired).toBe(true);
   });
@@ -152,11 +152,11 @@ describe('REPLACE14: Extortionist replacements (lane F paper passers)', () => {
   });
 });
 
-describe('REPLACE14: Misers (interest), Brokers (cash-out), Bandit (per rival)', () => {
+describe('REPLACE14: Misers (interest), Preachers (cash-out), Bandit (per rival)', () => {
   it('each is dealt in its old card’s place', () => {
     expect(defById('trading.interest').name).toBe('Misers');
     expect(defById('trading.heirs').retired).toBe(true);
-    expect(defById('trading.brokerage').name).toBe('Brokers');
+    expect(defById('trading.brokerage').name).toBe('Preachers');
     expect(defById('trading.broker').retired).toBe(true);
     expect(defById('thieves.partners').name).toBe('Bandit');
     expect(defById('thieves.accomplice').retired).toBe(true);
@@ -168,14 +168,14 @@ describe('REPLACE14: Misers (interest), Brokers (cash-out), Bandit (per rival)',
     const t = table(['red', 'trading'], { n: 2, queue: [{ t: 'round', r: 2 }], res: [{ white: 2 }, {}], members: [['trading.interest']] });
     expect(t.players[0].res.white).toBe(2);
   });
-  it('Brokers, Round End before contests: up to 2 white into 2 followers each, or keep it', () => {
+  it('Preachers, Round End before contests: up to 2 white into 2 followers each, or keep it', () => {
     let s = table(['red', 'trading'], { n: 2, round: 1, queue: [{ t: 'allPlaced' }], res: [{ white: 5 }, {}], members: [['trading.brokerage']] });
     expect(s.pending.options.map(o => o.id)).toEqual(['n:2', 'n:1', 'n:0']);
     const b = s.players[0].bonus;
     s = answer(s, 'n:2');
     expect(s.players[0].res.white).toBe(3);
     expect(s.players[0].bonus).toBe(b + 4);
-    expect(log(s)).toContain("P1's Brokers: 2 white into 4 followers.");
+    expect(log(s)).toContain("P1's Preachers: 2 white into 4 followers.");
   });
   it('Bandit: steal 3 split 1-1-1 across 3 rivals gives +3 followers', () => {
     let s = table(['red', 'thieves'], { n: 4, round: 2, res: [{ magenta: 9, red: 9 }, { red: 3 }, { blue: 3 }, { gold: 3 }], shop: ['thieves.partners'] });

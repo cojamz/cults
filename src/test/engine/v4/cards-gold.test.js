@@ -50,11 +50,11 @@ describe('Gold members', () => {
     expect(s.players[0].res.gold).toBe(2); // Tryout's +2 red (Nov 1)
     expect(named(s, 'Midas')[0]).toMatch(/P1's Midas: 2 red comes as 2 gold/);
   });
-  it('Midas × Prospector × Haggler: the converted gain is gold, so Prospector adds 1 and Haggler stays quiet', () => {
+  it('Midas × Gold Panner × Haggler: the converted gain is gold, so Gold Panner adds 1 and Haggler stays quiet', () => {
     let s = sceneQ({ members: [['gold.tinker', 'gold.midas', 'gold.prospector']] });
     s = take(s, 'red.evenswap');
-    expect(s.players[0].res.gold).toBe(3); // Tryout's 2 red as 2 gold, Prospector +1
-    expect(named(s, 'Prospector')).toHaveLength(1);
+    expect(s.players[0].res.gold).toBe(3); // Tryout's 2 red as 2 gold, Gold Panner +1
+    expect(named(s, 'Gold Panner')).toHaveLength(1);
     expect(named(s, 'Haggler')).toHaveLength(0);
   });
 
@@ -63,35 +63,35 @@ describe('Gold members', () => {
     expect(G(s)[0]).toBe(3);
     expect(named(s, 'Banker')[0]).toMatch(/P1's Banker: \+3 gold/);
   });
-  it('Banker × Underdog: the doubled income still names Banker (not only Underdog)', () => {
+  it('Banker × Poor Relation: the doubled income still names Banker (not only Poor Relation)', () => {
     const s = sceneQ({ res: [{}, { gold: 9 }], members: [['gold.banker', 'gold.underdog']], queue: [{ t: 'round', r: 2 }] });
     expect(G(s)[0]).toBe(6);
-    expect(named(s, 'Underdog')[0]).toMatch(/gold gain 3 → 6/);
+    expect(named(s, 'Poor Relation')[0]).toMatch(/gold gain 3 → 6/);
     expect(named(s, 'Banker')[0]).toMatch(/P1's Banker: \+6 gold/);
   });
 
-  it('Prospector: +1 when an action gains gold, named; a Doppelganger copy adds another', () => {
+  it('Gold Panner: +1 when an action gains gold, named; a Doppelganger copy adds another', () => {
     let s = take(sceneQ({ members: [['gold.prospector']] }), 'gold.rush');
     expect(G(s)[0]).toBe(3);
-    expect(named(s, 'Prospector')).toHaveLength(1);
+    expect(named(s, 'Gold Panner')).toHaveLength(1);
     s = sceneQ({ members: [['gold.prospector', 'echo.doppel']] });
     s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'gold.prospector';
     s = take(s, 'gold.rush');
     expect(G(s)[0]).toBe(4);
   });
 
-  it('Tax Collector: +1 gold when the rival with the most followers buys followers, named; Underdog doubles it', () => {
+  it('Pardoner: +1 gold when the rival with the most followers buys followers, named; Poor Relation doubles it', () => {
     // two players: the one rival is always the rival with the most followers
     let s = sceneQ({ res: [{}, rich], members: [['gold.taxman']], queue: [{ t: 'turn', p: 1 }] });
     s = take(s, 'gold.rush'); s = move(s, 'tier:small');
     expect(G(s)[0]).toBe(1);
-    expect(named(s, 'Tax Collector')[0]).toMatch(/P1's Tax Collector: \+1 gold/);
+    expect(named(s, 'Pardoner')[0]).toMatch(/P1's Pardoner: \+1 gold/);
     s = sceneQ({ res: [{}, rich], members: [['gold.taxman', 'gold.underdog']], queue: [{ t: 'turn', p: 1 }] });
     s = take(s, 'gold.rush'); s = move(s, 'tier:small');
     expect(G(s)[0]).toBe(2);
-    expect(named(s, 'Tax Collector')).toHaveLength(1);
+    expect(named(s, 'Pardoner')).toHaveLength(1);
   });
-  it('Tax Collector: any rival buying followers pays +1 gold (Cory 2026-10-15); your own buys don\'t', () => {
+  it('Pardoner: any rival buying followers pays +1 gold (Cory 2026-10-15); your own buys don\'t', () => {
     const buyAs = (p, bonus, tier = 'small') => {
       const res = [{}, {}, {}]; res[p] = rich;
       const s = sceneQ({ n: 3, res, bonus, members: [['gold.taxman']], queue: [{ t: 'turn', p }] });
@@ -99,25 +99,25 @@ describe('Gold members', () => {
     };
     expect(G(buyAs(1, [0, 5, 0]))[0]).toBe(1); // the leader buys
     expect(G(buyAs(2, [0, 5, 0]))[0]).toBe(1); // a trailing rival buys: it pays too now
-    expect(named(buyAs(2, [0, 5, 0]), 'Tax Collector').length).toBe(1);
-    expect(named(buyAs(0, [0, 5, 0]), 'Tax Collector')).toEqual([]); // the owner's own buy pays nothing
+    expect(named(buyAs(2, [0, 5, 0]), 'Pardoner').length).toBe(1);
+    expect(named(buyAs(0, [0, 5, 0]), 'Pardoner')).toEqual([]); // the owner's own buy pays nothing
   });
 
-  it('Merchant: +1 gold whenever anyone recruits a gold member, named; a guest (Big Spender, leans gold) is colorless and doesn’t count', () => {
+  it('Gold Merchant: +1 gold whenever anyone recruits a gold member, named; a guest (Squanderer, leans gold) is colorless and doesn’t count', () => {
     let s = sceneQ({ res: [{}, rich], members: [['gold.merchant']], shop: ['gold.banker', 'benders.bigspender'], queue: [{ t: 'turn', p: 1 }] });
     s = take(s, 'gold.rush'); s = buy(s, 'gold.banker');
     expect(G(s)[0]).toBe(1);
-    expect(named(s, 'Merchant')).toHaveLength(1);
-    // neutral cards stay neutral (Cory, 2026-10-18): the recruit happens, Merchant stays quiet
+    expect(named(s, 'Gold Merchant')).toHaveLength(1);
+    // neutral cards stay neutral (Cory, 2026-10-18): the recruit happens, Gold Merchant stays quiet
     s = sceneQ({ res: [{}, rich], members: [['gold.merchant']], shop: ['benders.bigspender'], queue: [{ t: 'turn', p: 1 }] });
     const u = uidOf(s, 'benders.bigspender', 'shop');
     s = take(s, 'gold.rush'); s = buy(s, 'benders.bigspender');
     expect(s.players[1].members).toContain(u);
     expect(G(s)[0]).toBe(0);
-    expect(named(s, 'Merchant')).toEqual([]);
+    expect(named(s, 'Gold Merchant')).toEqual([]);
   });
 
-  it('Penny Pincher: gold spent on members counts double, and the recruit line says so', () => {
+  it('Skinflint: gold spent on members counts double, and the recruit line says so', () => {
     const restore = pinCosts({ 'gold.prospector': [4, 2] });
     try {
       let s = sceneQ({ res: [{ gold: 3 }], members: [['gold.thrift']], shop: ['gold.prospector'] });
@@ -125,7 +125,7 @@ describe('Gold members', () => {
       expect(s.players[0].discount).toBe(4);
       s = buy(s, 'gold.prospector');
       expect(s.players[0].res.gold).toBe(2);
-      expect(named(s, 'Penny Pincher')[0]).toMatch(/Penny Pincher: gold counts double/);
+      expect(named(s, 'Skinflint')[0]).toMatch(/Skinflint: gold counts double/);
       s = sceneQ({ res: [{ gold: 3 }], members: [['gold.thrift']], shop: ['gold.prospector'] });
       s = take(s, 'gold.jv'); s = move(s, 'player:1'); // 6 gold
       s = buy(s, 'gold.prospector'); // 4 colored → 2 gold, 2 wild → 1 gold
@@ -143,19 +143,19 @@ describe('Gold members', () => {
     expect(named(s, 'Middleman')).toHaveLength(1);
   });
 
-  it('Underdog: doubles a gold gain while anyone has more gold, and names itself; not on a tie', () => {
+  it('Poor Relation: doubles a gold gain while anyone has more gold, and names itself; not on a tie', () => {
     let s = take(sceneQ({ res: [{}, { gold: 1 }], members: [['gold.underdog']] }), 'gold.rush');
     expect(G(s)[0]).toBe(4);
-    expect(named(s, 'Underdog')).toHaveLength(1);
+    expect(named(s, 'Poor Relation')).toHaveLength(1);
     s = take(sceneQ({ res: [{ gold: 1 }, { gold: 1 }], members: [['gold.underdog']] }), 'gold.rush');
     expect(G(s)[0]).toBe(3);
   });
-  it('Underdog × Speculator: "every gold gain" doubles the doubling', () => {
+  it('Poor Relation × Gambler: "every gold gain" doubles the doubling', () => {
     let s = sceneQ({ round: 3, res: [{ gold: 5 }, { gold: 90 }], members: [['gold.underdog', 'gold.speculator']] });
     s = take(s, 'gold.rush'); // 6 → 12 doubled: 17
     s = move(s, `use:${uidOf(s, 'gold.speculator', 0)}`);
     expect(G(s)[0]).toBe(17 + 34);
-    expect(named(s, 'Speculator')).toHaveLength(1);
+    expect(named(s, 'Gambler')).toHaveLength(1);
   });
 
   it('Alchemists: an action gaining another color gives +1 gold, named', () => {
@@ -186,9 +186,9 @@ describe('Gold members', () => {
     expect(s.pending.options.some(o => o.id.startsWith('use:'))).toBe(false);
   });
 
-  it('Tycoon: game end +1 follower per 2 gold, in the final parts', () => {
+  it('Baron: game end +1 follower per 2 gold, in the final parts', () => {
     const s = sceneQ({ res: [{ gold: 10 }], members: [['gold.tycoon']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.parts).toContain('Tycoon +5');
+    expect(s.players[0].final.parts).toContain('Baron +5');
     expect(followers(s, s.players[0])).toBe(1 + 1 + 5);
   });
 
@@ -199,7 +199,7 @@ describe('Gold members', () => {
     expect(s.players[0].members.length).toBe(3);
     expect(named(s, 'Treasurer')[0]).toMatch(/P1's Treasurer: \+3 gold/);
   });
-  it('Treasurer × Underdog: doubled, and still named', () => {
+  it('Treasurer × Poor Relation: doubled, and still named', () => {
     let s = sceneQ({ round: 3, res: [{}, { gold: 50 }], members: [['gold.underdog']], shop: ['gold.seed'] });
     s.shop = [uidOf(s, 'gold.seed', 'shop')];
     s = take(s, 'red.take'); s = move(s, s.pending.options[0].id);

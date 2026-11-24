@@ -14,7 +14,7 @@ let s=createGame({seats,seed:53,quadrants:['gold','red','purple','echo']});
 Object.assign(s,{round:1,queue:[{t:'turn',p:0},{t:'endRound'},{t:'afterRound'}],pending:null,slots:{},squats:{},order:[0],log:[]});
 delete s.echo;
 s.players.forEach((p,i)=>{p.left=i===0?1:0;p.res=Object.fromEntries(s.resources.map(r=>[r,0]));});
-// many printed members (Deprogrammers, Panel, Ensemble) on a cult with no red or green: Mob and Buskers left the deck Nov 11
+// many printed members (Deprogrammers, Panel, Chorus) on a cult with no red or green: Mob and Buskers left the deck Nov 11
 for(const def of ['red.movementpenalty','red.panel','red.seatfiller','echo.ensemble','echo.encore']){
  const uid=Object.keys(s.cards).map(Number).find(u=>s.cards[u].def===def);
  if(uid==null)throw new Error('Missing deck member '+def);

@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Members as piles (experiment, branch only; Cory, 2026-11-01): face-up piles of copies anyone can recruit from, and the
-// members that meet copies of themselves (two Line Cutters, two Party Crashers, two Old Maids on a swap, two Tiebreakers).
+// members that meet copies of themselves (two Lord of the Manor, two Party Crashers, two Old Maids on a swap, two Tiebreakers).
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, resume, contextFor, contestTable, actionAt, spacesOf } from '../../../engine/v4/core.js';
 import { GREY_CORE, pileRules, allPiles } from '../../../engine/v4/piles.js';
@@ -32,7 +32,7 @@ function takeCopy(s, def) {
 }
 
 describe('Piles: variant A (the grey core as piles)', () => {
-  it('deals each grey core member as a pile of 10 (Cory, Nov 1); the other greys, Con Men among them, stay in the deck', () => {
+  it('deals each grey core member as a pile of 10 (Cory, Nov 1); the other greys, Robbers among them, stay in the deck', () => {
     const s = game('A');
     expect(GREY_CORE).not.toContain('benders.conmen');
     for (const d of GREY_CORE) expect(copiesOf(s, d)).toBe(10);
@@ -75,7 +75,7 @@ describe('Piles: members that meet copies of themselves', () => {
     const bonus = s.players[1].bonus;
     expect(contextFor(s).swapMembers(s.players[0], rivalMaid, shopMaid)).toBe(false);
     expect(s.players[1].bonus).toBe(bonus);
-    // and Anarchist doesn't offer the pair
+    // and Meddler doesn't offer the pair
     const t = move(s, `use:${s.players[0].members[0]}`);
     const pairs = t.pending.options.filter(o => o.kind === 'trade').map(o => o.value.map(u => defOf(t, u)));
     expect(pairs.some(([a, b]) => a === b)).toBe(false);
@@ -88,14 +88,14 @@ describe('Piles: members that meet copies of themselves', () => {
     expect(s.players[1].members).toContain(maid);
     expect(s.players[1].bonus).toBe(0);
   });
-  it('Line Cutters: one cult with two goes first; two cults with one each keep their usual order', () => {
+  it('Lord of the Manor: one cult with two goes first; two cults with one each keep their usual order', () => {
     const s = scene('A', { members: [[], ['benders.frontrunner', 'benders.frontrunner']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.player).toBe(1);
     const t = scene('A', { n: 3, members: [['benders.frontrunner'], [], ['benders.frontrunner']], queue: [{ t: 'round', r: 2 }] });
     expect(t.order.slice(0, 2).sort()).toEqual([0, 2]);
     expect(t.order[2]).toBe(1);
   });
-  it('Party Crasher: a second copy used while the first is waiting is handed back unused', () => {
+  it('Trespasser: a second copy used while the first is waiting is handed back unused', () => {
     let s = scene('A', { members: [['benders.squatter', 'benders.squatter']] });
     const [a, b] = s.players[0].members;
     s = move(s, `use:${a}`);
@@ -107,7 +107,7 @@ describe('Piles: members that meet copies of themselves', () => {
     }
     expect(s.cards[a].used).toBe(true);
   });
-  it('Tiebreaker: two tied players who each hold one share the tie; one cult holding two still wins it alone', () => {
+  it('Crooked Judge: two tied players who each hold one share the tie; one cult holding two still wins it alone', () => {
     const rules = { piles: { defs: [...GREY_CORE, 'benders.tiebreaker'], copies: 3 } };
     let s = scene('A', { n: 3, rules, members: [['benders.tiebreaker'], ['benders.tiebreaker'], []] });
     for (const p of s.players) p.res.red = 5;

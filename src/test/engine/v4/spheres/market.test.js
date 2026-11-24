@@ -93,7 +93,7 @@ describe('Blue actions', () => {
     }
   });
   it('Out of Style (ring I, Nov 10): discard 3 shop members you pick, +1 of each one\'s color, +1 blue', () => {
-    let s = take(scene({ shop: S5 }), 'market.restock'); // Midas, Jackpot, Tycoon gold; Governess, Proselytizers red
+    let s = take(scene({ shop: S5 }), 'market.restock'); // Midas, Jackpot, Baron gold; Governess, Proselytizers red
     expect(R(s).blue).toBe(1);
     s = move(s, card(s, 'gold.midas'));
     s = move(s, card(s, 'gold.jackpot'));
@@ -191,7 +191,7 @@ describe('Blue members', () => {
   it('Reseller: whenever you recruit, +1 of that member’s color', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9 }], members: [['market.reseller']], shop: SHOP }), 'market.clearance');
     s = move(s, card(s, 'gold.tycoon'));
-    // Recruit Twice's 3 blue (Nov 24): 1 blue and 3 gold pay Tycoon's 4, Reseller's +1 gold back.
+    // Recruit Twice's 3 blue (Nov 24): 1 blue and 3 gold pay Baron's 4, Reseller's +1 gold back.
     expect(R(s)).toEqual({ gold: 7, red: 0, blue: 2, green: 0 });
   });
   it('Curator: round start, +1 blue per other blue member', () => {
@@ -268,9 +268,9 @@ describe('Blue members', () => {
     expect(s.pending.kind).toBe('buy'); // then the buy step, fresh: used, so no second use
     expect(ids(s)).not.toContain(use);
   });
-  it('Snobs: game end, +1 follower per blue member (itself included)', () => {
+  it('Blue Bloods: game end, +1 follower per blue member (itself included)', () => {
     const s = scene({ members: [['market.snob', 'market.stylist', 'gold.midas', 'gold.tycoon', 'red.intern']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.total).toBe(2); // Snobs (rebased to worth 1: Cory, Nov 12) and Stylist
+    expect(s.players[0].final.total).toBe(2); // Blue Bloods (rebased to worth 1: Cory, Nov 12) and Stylist
   });
   it('Recluse: game end, +2 followers per rival with more members', () => {
     const s = scene({ n: 3, members: [['market.recluse'], ['red.intern', 'red.drive'], ['red.twins', 'red.bigfamily']], queue: [{ t: 'finish' }] });
@@ -306,7 +306,7 @@ describe(`Blue table: ${GAMES} seeded bot games`, () => {
     // Bots still reach Spree in about half the games. The bar was 0.75 under the old 10→10 clock (166/200 then), then
     // 0.6 with 10→10 unlimited (134/200). Re-measured 2026-10-15 on these 200 seeds, Normal bots: 105/200 at c90c278
     // and the live tree. Bisected: 134 through balance pass 1, 129 at a6ebe85 (pass 2), 95 at 86a7c8a (Cory's six
-    // pass-1 fixes, Tax Collector and Open House here, together with the Blue pricing and scoring change; neither
+    // pass-1 fixes, Pardoner and Open House here, together with the Blue pricing and scoring change; neither
     // alone moves it that far). Spree still pays: 2.1 buys a Spree turn on average, 8 of 20 use all 3 (40 seeds).
     // A bot-use rate, not a design verdict: the bar guards against Spree going dead.
     expect(usedSpree).toBeGreaterThan(GAMES * 0.45);

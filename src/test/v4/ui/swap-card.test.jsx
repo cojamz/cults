@@ -1,4 +1,4 @@
-// Night Traders' swaps (Cory, Nov 5: the swapping "is also clunky"): the Launderers card with a cap. Set the colors with
+// Night Traders' swaps (Cory, Nov 5: the swapping "is also clunky"): the Moneychangers card with a cap. Set the colors with
 // − and +, up to 3 swaps; Done (Swap N) answers the engine's one-for-one swaps for that mix, one after another.
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup, act } from '@testing-library/react';

@@ -1,4 +1,4 @@
-// Godparent's "give which of your members to which rival?" was a wall of "Kingmakers (8) to bee" buttons, one per
+// Godparent's "give which of your members to which rival?" was a wall of "Good Samaritans (8) to bee" buttons, one per
 // member per rival (Cory, Nov 9: "this can be way better"). It's the gift card now: your members as pictures with
 // their cost, then the rivals' faces; tap a member, then a rival. The other walls (a grey member's color, Spoilsport's
 // contest, Highwayman's pile) went to the card too.
@@ -16,9 +16,9 @@ const godparent = () => {
 };
 
 describe('a member to a rival, on the gift card', () => {
-  it('Patrons (was Godparent): members first, then the rivals light for the picked one', () => {
+  it('Dowry-Givers (was Godparent): members first, then the rivals light for the picked one', () => {
     const s = godparent();
-    expect(s.pending.prompt).toMatch(/Patrons/);
+    expect(s.pending.prompt).toMatch(/Dowry-Givers/);
     const g = giftPick(s, s.pending);
     expect(g.kind).toBe('handover');
     expect(g.firsts.map(f => f.a).sort()).toEqual([...s.players[0].members].sort());
@@ -38,7 +38,7 @@ describe('a member to a rival, on the gift card', () => {
     expect(answers).toEqual([`give:${martyr}:2`]);
   });
 
-  it('Guest of Honor and Nosy Neighbors take the same card', () => {
+  it('Matchmaker and Nosy Neighbors take the same card', () => {
     let s = scene({ n: 3, round: 2, quadrants: ['red', 'silver', 'market', 'trading'], members: [['silver.guestofhonor', 'red.crowd']], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidOf(s, 'silver.guestofhonor', 0)}`);
     const g = giftPick(s, s.pending);

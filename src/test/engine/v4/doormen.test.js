@@ -49,7 +49,7 @@ describe('Doormen', () => {
   });
 });
 
-describe('Bargain Bin', () => {
+describe('Rag-and-Bone Man', () => {
   // a cult's member counts too; the Blue Cloak pays +1 of the discarded member's color (Cory, Nov 7)
   it('pays +1 blue when Doormen sends a rival red member to the discard pile (Cory, Nov 13: "make the blue cloak +blue")', () => {
     let s = table(Q, { members: [['market.doorman'], ['red.bigfamily']], shop: ['red.host'], ...buy() });
@@ -60,11 +60,11 @@ describe('Bargain Bin', () => {
     s = move(s, `use:${uidIn(s, 'market.doorman', 0)}`);
     s = move(s, `trade:${uidIn(s, 'red.bigfamily', 1)}:${uidIn(s, 'red.host', 'shop')}`);
     expect((s.players[0].res.red || 0) - r0).toBe(0);
-    expect(s.log.join('\n')).toMatch(/P1's Bargain Bin: \+1 blue/);
+    expect(s.log.join('\n')).toMatch(/P1's Rag-and-Bone Man: \+1 blue/);
   });
 });
 
-describe('Bargain Bin on a grey member', () => {
+describe('Rag-and-Bone Man on a grey member', () => {
   // +1 blue whatever the member's color since Nov 13 (Cory: "make the blue cloak +blue"): no question for a grey member
   it('pays +1 blue for a grey member, with no color question', () => {
     let s = table(Q, { members: [['market.doorman'], ['benders.cheerleader']], shop: ['red.host'], ...buy() });
@@ -73,8 +73,8 @@ describe('Bargain Bin on a grey member', () => {
     s.current = 0;
     s = move(s, `use:${uidIn(s, 'market.doorman', 0)}`);
     s = move(s, `trade:${uidIn(s, 'benders.cheerleader', 1)}:${uidIn(s, 'red.host', 'shop')}`);
-    expect(s.pending?.prompt || '').not.toMatch(/Cheerleader is grey/);
-    expect(s.log.join('\n')).toMatch(/P1's Bargain Bin: \+1 blue/);
+    expect(s.pending?.prompt || '').not.toMatch(/Trumpeter is grey/);
+    expect(s.log.join('\n')).toMatch(/P1's Rag-and-Bone Man: \+1 blue/);
   });
 });
 

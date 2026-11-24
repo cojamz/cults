@@ -213,17 +213,17 @@ describe('White members', () => {
     expect([B(s, 0), B(s, 1)]).toEqual([0, 5]); // a rival's buy: nothing
   });
 
-  it('Brokers: whenever a White action gives you followers, +2 followers (once per action)', () => {
+  it('Preachers: whenever a White action gives you followers, +2 followers (once per action)', () => {
     const br = { members: [['trading.broker']] };
     const al = take(scene({ round: 2, res: [{ gold: 4 }], shop: ['gold.midas'], ...br }), 'trading.stipend');
-    expect(B(move(al, pick(al, 'gold.midas', 'shop')))).toBe(4); // Allowance's +2 on a member recruit, Brokers +2
+    expect(B(move(al, pick(al, 'gold.midas', 'shop')))).toBe(4); // Allowance's +2 on a member recruit, Preachers +2
     expect(B(move(move(take(scene({ round: 2, res: [{ red: 2 }], ...br }), 'trading.exchange'), 'color:red'), 'color:red'))).toBe(6);
     expect(B(take(scene({ round: 3, res: [{ white: 2 }], ...br }), 'trading.cashin'))).toBe(4);
     expect(B(take(scene({ round: 3, ...br }), 'trading.cashin'))).toBe(0); // nothing turned, no bonus
     let s = take(scene({ round: 2, members: [['trading.broker', 'red.twins']] }), 'trading.farewell');
     expect(B(move(s, `card:${uidOf(s, 'red.twins', 0)}`))).toBe(4);
     const sp = take(scene({ res: [{ gold: 4 }], shop: ['gold.midas'], ...br }), 'trading.splurge');
-    expect(B(move(sp, pick(sp, 'gold.midas', 'shop')))).toBe(2 + 2); // Midas paid 5: +2, Brokers +2
+    expect(B(move(sp, pick(sp, 'gold.midas', 'shop')))).toBe(2 + 2); // Midas paid 5: +2, Preachers +2
     expect(B(move(scene({ res: [{ red: 1 }], ...br, ...buyTurn }), 'tier:small'))).toBe(1); // a buy isn't a White action
   });
 
@@ -266,7 +266,7 @@ describe('White members', () => {
     expect([R(s).white, B(s)]).toEqual([0, 3]); // paid 2 white, the other 3 turned
     let k = scene({ res: [{ white: 6 }], members: [['trading.changer']], shop: ['trading.cashier'], ...buyTurn });
     k = move(k, pick(k, 'trading.cashier', 'shop'));
-    expect([R(k).white, B(k)]).toEqual([0, 4]); // the turning is no follower buy: Money Changers stays quiet (Nov 1)
+    expect([R(k).white, B(k)]).toEqual([0, 4]); // the turning is no follower buy: Penitents stays quiet (Nov 1)
     let none = scene({ res: [{ white: 2 }], shop: ['trading.cashier'], ...buyTurn });
     none = move(none, pick(none, 'trading.cashier', 'shop'));
     expect([R(none).white, B(none)]).toEqual([0, 0]);
@@ -290,7 +290,7 @@ describe('White members', () => {
     expect([R(s).white, B(s)]).toEqual([7, 4]); // Estate Sale's white 3, Martyrs +4 white and +4 followers
   });
 
-  it('Money Changers: whenever you buy followers, +2 white; a rival\'s buy and turning things into followers pay nothing', () => {
+  it('Penitents: whenever you buy followers, +2 white; a rival\'s buy and turning things into followers pay nothing', () => {
     const bk = 'trading.changer';
     let s = scene({ res: [{ gold: 5 }], members: [[], [bk]], ...buyTurn });
     s = move(s, 'tier:mid');
@@ -332,7 +332,7 @@ describe('White members', () => {
     expect(B(s)).toBe(2 + 2 + 4); // Appraiser, Undertaker, Martyrs discarded (+4 followers, Cory Nov 9)
   });
 
-  it('Magpie (was Hoarder): once per game, turn all your resources into white', () => {
+  it('Washerwoman (was Hoarder): once per game, turn all your resources into white', () => {
     let s = scene({ res: [{ gold: 2, red: 3, blue: 1, white: 1 }], members: [['trading.hoarder']], ...buyTurn });
     const u = uidOf(s, 'trading.hoarder', 0);
     s = move(s, `use:${u}`);

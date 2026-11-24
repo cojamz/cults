@@ -362,30 +362,30 @@ const members = [
     botActivate: (ctx, owner) => ctx.rivals(owner).some(o => ctx.canSteal(owner, o) && Object.values(o.res).reduce((a, b) => a + b, 0) >= 3),
   }), 'pool15'),
   // Party Crasher (was Squatter; id kept for old records): Cory, 2026-10-28, Once per game, cheaper; 5 with the +1 wild (Cory, Nov 1: "5"; was 4)
-  m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { // cut Nov 7 (cull.js): Scouts takes its place (Cory, "Yes") // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
+  m('squatter', 'Trespasser', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { // cut Nov 7 (cull.js): Scouts takes its place (Cory, "Yes") // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
     activate: 'game',
     onActivate(ctx, owner, card) {
       if (owner.crashNext) { card.used = false; return; }
       owner.crashNext = true;
-      ctx.log(`${owner.name}'s Party Crasher: the next minion may go on a space a rival took.`);
+      ctx.log(`${owner.name}'s Trespasser: the next minion may go on a space a rival took.`);
     },
     botActivate: (ctx, p) => ctx.state.round >= 2 && !p.crashNext,
   }),
   // Big Spender as it printed until Oct 28, never dealt: the fixture for the engine's once-per-round second buy
-  m('bigspender1', 'Big Spender', 'gold', 1, 1, 'Once per round: recruit twice in one turn.', { extraBuy: true, retired: true }),
+  m('bigspender1', 'Squanderer', 'gold', 1, 1, 'Once per round: recruit twice in one turn.', { extraBuy: true, retired: true }),
   // Cory, 2026-10-28: back in the deck (it stands in for Blue's recruits), One Time Use, 3
-  m('bigspender', 'Big Spender', 'gold', 1, 1, 'On Use, once per game: recruit twice this turn.', {
+  m('bigspender', 'Squanderer', 'gold', 1, 1, 'On Use, once per game: recruit twice this turn.', {
     activate: 'game',
     onActivate(ctx, owner, card) {
       if (owner.buyTwiceNow) { card.used = false; return; }
       owner.buyTwiceNow = true;
-      ctx.log(`${owner.name}'s Big Spender: recruit twice this turn.`);
+      ctx.log(`${owner.name}'s Squanderer: recruit twice this turn.`);
     },
     onTurnEnd(ctx, owner, card, p) { if (p === owner) delete owner.buyTwiceNow; },
     botActivate: (ctx, p) => !p.buyTwiceNow && ctx.state.round >= 2 && p.turnBuys === 0 && Object.values(p.res).reduce((a, b) => a + b, 0) >= 10,
   }),
-  m('freelancer', 'Alchemists', 'yellow', 2, 2, /* Freelancer until Cory renamed it, Oct 28 */ 'All your resources count as any when you recruit a member.', { f: 3, anyColorPart: true, ...old6 }), // (Cory, Oct 29, balance run: +1 follower)
-  m('insider', 'Insider', 'market', 3, 1, 'You may also recruit from the top 3 of the pile.', { pileReach: 3 }),
+  m('freelancer', 'Conjurer', 'yellow', 2, 2, /* Freelancer until Cory renamed it, Oct 28 */ 'All your resources count as any when you recruit a member.', { f: 3, anyColorPart: true, ...old6 }), // (Cory, Oct 29, balance run: +1 follower)
+  m('insider', 'Seer', 'market', 3, 1, 'You may also recruit from the top 3 of the pile.', { pileReach: 3 }),
   // Extra Hand as it printed until Oct 28, never dealt (retired): the tests of extra minions a card grants by round
   // (Poach and swaps moving an unplaced grant, copies, a full board) keep it as their fixture
   m('extrahand3', 'Extra Hand', 'purple', 5, 4, '+1 minion in round III.', { extraWorkers: [0, 0, 1], retired: true }),
@@ -437,7 +437,7 @@ const members = [
       return Math.max(...est) - Math.min(...est) >= 3;
     },
   })),
-  m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: CUTTERS_F, n: CUTTERS_F, ...old1, ...old11('placeholders') }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
+  m('frontrunner', 'Lord of the Manor', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: CUTTERS_F, n: CUTTERS_F, ...old1, ...old11('placeholders') }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
   // Place Holders' bot pick (Evaluators, Nov 4: bots held Last Call by ring and never took it): hold the space worth
   // most to the holder right now, which is also the one its own placement takes first
   // REPLACE11 bot test (Actions lane, Nov 4; quality/pitches/actions-line-cutters.md): Line Cutters' place, same cost,
@@ -482,16 +482,16 @@ const members = [
   // once and being flexible across colors": all into one color in one click, or split color by color.
   // Cory, Oct 29: "should let me rearrange colors as i please, not all to one color": on screen the Launderers card
   // (LaunderCard.jsx) sets any mix at once and answers these steps itself; bots still pick here
-  m('launderer', 'Launderers', null, 0, 3, /* Cory, Oct 27: "closer to 5" with the +1 wild */ 'On Recruit: rearrange your resources into any mix of colors.', { f: 3, n: 3, // +1 (Cory, Oct 30)
-    onRecruited(ctx, owner) { startLaunder(ctx, owner, 'Launderers'); },
+  m('launderer', 'Moneychangers', null, 0, 3, /* Cory, Oct 27: "closer to 5" with the +1 wild */ 'On Recruit: rearrange your resources into any mix of colors.', { f: 3, n: 3, // +1 (Cory, Oct 30)
+    onRecruited(ctx, owner) { startLaunder(ctx, owner, 'Moneychangers'); },
   }),
   // Cory, 2026-10-28: "a 5 cost Saboteur… gives -3 Followers each time it enters somebody's cult (swapped in OR recruited etc)"
   // Cory, 2026-10-31: renamed Old Maid (the card nobody wants stuck with), same card; the id stays 'saboteur'
-  m('saboteur', 'Ghost', null, 0, 2, /* 5 any as a player sees it, round II as before (Cory, Nov 6: "ghost should stay 5 cost") */ 'Worth 0 members. Whenever this member joins your cult, −5 followers.', { f: 0, n: 0, round: 2, // was Old Maid (Cory, Nov 5 backlog yes)
+  m('saboteur', 'Plague Bearer', null, 0, 2, /* 5 any as a player sees it, round II as before (Cory, Nov 6: "ghost should stay 5 cost") */ 'Worth 0 members. Whenever this member joins your cult, −5 followers.', { f: 0, n: 0, round: 2, // was Old Maid (Cory, Nov 5 backlog yes)
     botValue: 0,
     onJoined(ctx, owner) {
       owner.bonus -= 5; // −5 (Cory, Nov 1 playtest: "old maid might need to be -5 followers")
-      ctx.log(`${owner.name}'s Ghost: −5 followers.`);
+      ctx.log(`${owner.name}'s Plague Bearer: −5 followers.`);
     },
   }),
   // Cory, 2026-10-28: Dabblers (Turncoat, then Groupies), 3, "give 2 members, and count as every color"
@@ -500,20 +500,20 @@ const members = [
   // the single version. 2 any as a player sees it, worth 1, counts as 1 member of every color on the table.
   ...add9(m('dabbler', 'Dabbler', null, 0, 1, 'Counts as a member of every color.', { everyColor: true })),
   // Cory, 2026-10-28: Cheerleader (Champion), 4
-  m('cheerleader', 'Cheerleader', null, 0, 3, 'Whenever you win a contest, +1 follower.', {
+  m('cheerleader', 'Trumpeter', null, 0, 3, 'Whenever you win a contest, +1 follower.', {
     // after every contest, as Cheerleaders (Cory, Nov 5: "round ends, contests, members.", then "yes" to moving it), so its
     // +1 never counts in a later contest; a shared contest counts as a win
     afterContests(ctx, owner, card, table) {
-      for (const c of table) if (c.winners.includes(owner.id)) { owner.bonus += 1; ctx.log(`${owner.name}'s Cheerleader: +1 follower.`); }
+      for (const c of table) if (c.winners.includes(owner.id)) { owner.bonus += 1; ctx.log(`${owner.name}'s Trumpeter: +1 follower.`); }
     },
   }),
   // REPLACE15 bot test (Cory, Nov 4: "when you win a contest, get x y z", then "the member should give resources for
   // winning contests", "though cheerleaders is kinda cool too"): added, nothing retired (Cory: Spoilsport and Dabblers stay). A shared contest
   // counts as a win, as for Cheerleader and Sore Loser. Each pays the moment its contest is scored. Prices are guesses.
   // Both pay after every contest is scored (contests score at once at round end), so a +2 never changes another contest's count.
-  ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 4, 'Whenever you win a contest, +2 followers.', { f: 3, n: 3, /* Cory, Nov 5: cheaper, counts as 3 */ // worth 2 (owners won 19% at worth 1, 30% at 2: cw3-cheerleaders). Cory, Nov 4: "maybe we can bump cheerleaders to 3 members", then "but for now they go in as-is"
+  ...add15(m('cheerleaders', 'Trumpeters', null, 0, 4, 'Whenever you win a contest, +2 followers.', { f: 3, n: 3, /* Cory, Nov 5: cheaper, counts as 3 */ // worth 2 (owners won 19% at worth 1, 30% at 2: cw3-cheerleaders). Cory, Nov 4: "maybe we can bump cheerleaders to 3 members", then "but for now they go in as-is"
     afterContests(ctx, owner, card, table) {
-      for (const c of table) if (c.winners.includes(owner.id)) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); }
+      for (const c of table) if (c.winners.includes(owner.id)) { owner.bonus += 2; ctx.log(`${owner.name}'s Trumpeters: +2 followers.`); }
     },
   })),
   // retired Nov 6 (Cory: "i said Victors is bad didnt we take that out??"); grey deals 11 again
@@ -540,15 +540,15 @@ const members = [
     },
   })),
   // Cory, 2026-10-28: Anarchist, 7, once per round (it stands in for Red's swaps)
-  m('anarchist', 'Anarchist', null, 0, 5, /* 6 with the +1 wild (Cory, Nov 1 3:03pm: "maybe we make it a touch cheaper? yes to 1"; was 7) */ 'On Use, once per round: swap any 2 members that cost the same, in any cult or the shop.' /* Cory, Nov 5: fine print cut */, {
+  m('anarchist', 'Meddler', null, 0, 5, /* 6 with the +1 wild (Cory, Nov 1 3:03pm: "maybe we make it a touch cheaper? yes to 1"; was 7) */ 'On Use, once per round: swap any 2 members that cost the same, in any cult or the shop.' /* Cory, Nov 5: fine print cut */, {
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
       const pairs = anarchyPairs(ctx, owner);
-      if (!pairs.length) { card.used = false; ctx.log(`${owner.name}'s Anarchist: no two members of the same cost to swap.`); return; }
-      ctx.log(`${owner.name} uses Anarchist.`);
+      if (!pairs.length) { card.used = false; ctx.log(`${owner.name}'s Meddler: no two members of the same cost to swap.`); return; }
+      ctx.log(`${owner.name} uses Meddler.`);
       const where = c => ctx.ownerOf(c.uid)?.name || 'Shop';
-      ctx.choose(owner, 'Anarchist: choose two members of the same cost to swap', pairs.map(([a, b]) => ({
+      ctx.choose(owner, 'Meddler: choose two members of the same cost to swap', pairs.map(([a, b]) => ({
         id: `trade:${a.uid}:${b.uid}`, label: `${where(a)}: ${a.def.name} ↔ ${where(b)}: ${b.def.name}`, kind: 'trade', value: [a.uid, b.uid],
         hint: gainFor(ctx, owner, a, b),
       })).concat({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: -99 }), 'benders.anarchy', { uid: card.uid });
@@ -556,7 +556,7 @@ const members = [
     botActivate: (ctx, p) => anarchyPairs(ctx, p).some(([a, b]) => gainFor(ctx, p, a, b) >= 2),
   }),
   // Cory, 2026-10-28: Scout, 4, once per round (it stands in for Blue's shop work)
-  m('scout', 'Scouts', null, 2, 2, /* Party Crasher's price (Claude, Nov 7) */ 'On Use, once per round: discard any shop members and refill.', { f: 2, n: 2, // back in Party Crasher's place (Cory, Nov 7: "Yes"); earlier Spoilsport took its place (Claude, under Cory's "use your judgement", 2026-11-03); worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
+  m('scout', 'Weeders', null, 2, 2, /* Party Crasher's price (Claude, Nov 7) */ 'On Use, once per round: discard any shop members and refill.', { f: 2, n: 2, // back in Party Crasher's place (Cory, Nov 7: "Yes"); earlier Spoilsport took its place (Claude, under Cory's "use your judgement", 2026-11-03); worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
@@ -587,9 +587,9 @@ const members = [
   }),
   // Cory, 2026-10-28: Con Men, 6, counts as 2 members; On Recruit (was One Time Use), split among rivals like Help Yourself
   // Cory, 2026-10-29: "for the steal on recruit, you should get to choose when you steal": On Use, once per game
-  m('conmen', 'Con Men', null, 0, 6, /* 7 (Cory, Oct 29: "i would put con men at 7") */ 'On Recruit: steal 5 resources.', { n: 2,
+  m('conmen', 'Robbers', null, 0, 6, /* 7 (Cory, Oct 29: "i would put con men at 7") */ 'On Recruit: steal 5 resources.', { n: 2,
     // On Recruit, not a once-per-game use (Cory, 2026-10-31: "Con men should be on recruit")
-    onRecruited(ctx, owner) { startSteal(ctx, owner, 'Con Men', 5, { fromAction: false }); },
+    onRecruited(ctx, owner) { startSteal(ctx, owner, 'Robbers', 5, { fromAction: false }); },
   }),
   // Cory, 2026-10-28: HR (Archivist), 9, worth 3 (so it counts as 3 members)
   m('hr', 'HR', null, 0, 9, /* price 10 and +2 per color (Cory, Nov 1: "we can try +2. then price it at 10 to start") */ 'Game End: +2 followers per color you have 3 members of.', { f: 4, n: 4, retired: true, // Sore Loser takes its place (Claude, under Cory's "use your judgement", 2026-11-04)
@@ -599,11 +599,11 @@ const members = [
   // Cory, 2026-10-28: the 8 ("use one of your One Time Use members again"), named Coach (Cory, Oct 29); now any member's
   // Once per game or Once per round ability, as a free extra use (Cory, Oct 29: "activate the On Use effect of one of
   // your members (could be a once per round)")
-  m('secondwind', 'Coach', null, 0, 6, /* 7 (Cory, Oct 30: "coach should be cheaper") */ 'On Recruit: use one of your members’ On Use an extra time.', {
+  m('secondwind', 'Taskmaster', null, 0, 6, /* 7 (Cory, Oct 30: "coach should be cheaper") */ 'On Recruit: use one of your members’ On Use an extra time.', {
     onRecruited(ctx, owner) {
       const list = coachable(ctx, owner);
-      if (!list.length) { ctx.log(`${owner.name}'s Coach: no member with an On Use ability.`); return; }
-      ctx.choose(owner, 'Coach: which member’s On Use ability do you activate?', list.map(c => ({
+      if (!list.length) { ctx.log(`${owner.name}'s Taskmaster: no member with an On Use ability.`); return; }
+      ctx.choose(owner, 'Taskmaster: which member’s On Use ability do you activate?', list.map(c => ({
         id: `card:${c.uid}`, label: c.def.name, kind: 'card', value: c.uid, hint: cost(c),
       })), 'benders.rewind');
     },
@@ -613,12 +613,12 @@ const members = [
   // the owner chooses. Loose followers only, through the shared steal (Bodyguards blocks it), as Raiders takes.
   // Cory, 2026-11-12 7:04pm Eastern: "consolation prize should be, for each contest you dont win, +2 followers": a
   // shared contest still counts as a win, as before
-  m('sorelosers', 'Consolation Prize', null, 0, 4, 'Round End: +2 followers per contest you don\u2019t win.', { round: 3, // Sore Loser redesigned (Cory, Nov 11 3:56pm); same id and price
+  m('sorelosers', 'Comforter', null, 0, 4, 'Round End: +2 followers per contest you don\u2019t win.', { round: 3, // Sore Loser redesigned (Cory, Nov 11 3:56pm); same id and price
     afterContests(ctx, owner, card, table) {
       const lost = table.filter(c => !c.winners.includes(owner.id)).length;
-      if (!lost) { ctx.log(`${owner.name}'s Consolation Prize: won or tied every contest, so nothing.`); return; }
+      if (!lost) { ctx.log(`${owner.name}'s Comforter: won or tied every contest, so nothing.`); return; }
       owner.bonus += 2 * lost;
-      ctx.log(`${owner.name}'s Consolation Prize: didn\u2019t win ${lost} contest${lost > 1 ? 's' : ''}, +${2 * lost} followers.`);
+      ctx.log(`${owner.name}'s Comforter: didn\u2019t win ${lost} contest${lost > 1 ? 's' : ''}, +${2 * lost} followers.`);
     },
   }),
   // REPLACE6 bot test: Alchemists' place. 5 any as a player sees it. The stall is a list beside this card
@@ -633,7 +633,7 @@ const members = [
       ctx.log(`${owner.name}'s Peddlers: ${ctx.card(uid).def.name} goes on the stall.`);
     },
   })),
-  m('tiebreaker', 'Tiebreaker', null, 0, 3, /* Cory, Oct 28 night: "a little cheaper. 4?": 4 with the +1 wild */ 'You win every contest tie you’re in.', { tiebreak: true }),
+  m('tiebreaker', 'Crooked Judge', null, 0, 3, /* Cory, Oct 28 night: "a little cheaper. 4?": 4 with the +1 wild */ 'You win every contest tie you’re in.', { tiebreak: true }),
   m('straggler', 'Straggler', 'purple', 6, 1, /* Oct 27, Cory "too cheap": 8 with the +1 wild (Claude's price) */ 'Once per round, after the last minion is placed: you may move your last minion to an open space and take it.', {
     onAllPlaced(ctx, owner, card) {
       if (card.usedRound === ctx.state.round) return;
@@ -735,7 +735,7 @@ export const handlers = {
     const [a, b] = value;
     if (!anarchyPairOk(ctx, p, a, b)) return;
     const names = [a, b].map(uid => `${ctx.ownerOf(uid)?.name || 'Shop'}'s ${ctx.card(uid).def.name}`);
-    if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name}'s Anarchist swapped ${names[0]} and ${names[1]}.`);
+    if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name}'s Meddler swapped ${names[0]} and ${names[1]}.`);
   },
   scoutPick(ctx, p, uid, data) {
     if (uid === null || uid === undefined) return scoutDone(ctx, p, data);
@@ -747,7 +747,7 @@ export const handlers = {
   },
   rewind(ctx, p, uid) {
     if (!coachable(ctx, p).some(x => x.uid === uid)) return;
-    ctx.log(`${p.name}'s Coach: uses ${ctx.card(uid).def.name}.`);
+    ctx.log(`${p.name}'s Taskmaster: uses ${ctx.card(uid).def.name}.`);
     ctx.freeUse(p, uid);
   },
 

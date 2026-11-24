@@ -264,7 +264,7 @@ function givenAway(state, me) {
     const m = line.startsWith(`${p.name} traded `) && line.match(/ traded (.+) for .+'s (.+)\.$/);
     if (m) { given.add(m[1]); continue; }
     // Anarchist logs "P1's Anarchist swapped P1's X and P2's Y." (benders.js anarchy): the same body
-    const head = [`${p.name} swapped `, `${p.name}'s Anarchist swapped `, `${p.name} used the swap card: swapped `].find(h => line.startsWith(h));
+    const head = [`${p.name} swapped `, `${p.name}'s Meddler swapped `, `${p.name} used the swap card: swapped `].find(h => line.startsWith(h));
     if (!head || !line.endsWith('.')) continue;
     const body = line.slice(head.length, -1);
     for (const left of owners) for (const right of owners) {

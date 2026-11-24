@@ -55,7 +55,7 @@ export function oracleWinners(state, qid) {
   if (state.spoiled?.round === state.round && state.spoiled.list.some(x => x.qid === qid)) return [];
   const best = Math.max(...rows.map(r => r.c));
   const top = best > 0 ? rows.filter(r => r.c === best).map(r => r.id).sort((a, b) => a - b) : [];
-  // Tiebreaker (guest, Cory 2026-10-21): "Ties you're in go to you alone" when exactly one tied player holds one
+  // Crooked Judge (guest, Cory 2026-10-21): "Ties you're in go to you alone" when exactly one tied player holds one
   const tb = top.filter(id => state.players[id].members.some(u => [state.cards[u].def, state.cards[u].copy].includes('benders.tiebreaker')));
   return top.length > 1 && tb.length === 1 ? tb : top;
 }

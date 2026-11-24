@@ -6,7 +6,7 @@ import { take, move, useRetired } from '../../engine/v4/helpers.js';
 import { memberCopyTargets, ownCopyPlan, copiesAll, copyAllPlan } from '../../../v4/game/cards.js';
 
 describe('Green hover targets follow the current rules', () => {
-  it('Stunt Double highlights the action just taken, and nothing once you hold Agents (Cory, Nov 11: "your actions can\'t be copied")', () => {
+  it('Shadow highlights the action just taken, and nothing once you hold Secret-Keepers (Cory, Nov 11: "your actions can\'t be copied")', () => {
     const s = take(table(['gold', 'echo'], { shop: ['echo.agents'] }), 'gold.rush');
     const key = Object.keys(s.slots)[0];
     expect(memberCopyTargets(s, 0, defById('echo.hourglass'))).toEqual([key]);

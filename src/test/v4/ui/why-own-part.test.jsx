@@ -18,6 +18,6 @@ it('On a Roll on your second turn in a row with Purple Cloak: Why shows the 2 tu
   const c = render(<SpaceCard state={s} me={0} spaceKey={`${q}-${i}`} />).container;
   const why = c.querySelector('[data-reasons]').textContent;
   expect(why).toMatch(/On a Roll: 2 turns in a row, \+4/);
-  expect(why).toMatch(/(Purple Cloak|Pocket Watch): \+2/);
-  expect(why.indexOf('On a Roll')).toBeLessThan(why.search(/Purple Cloak|Pocket Watch/));
+  expect(why).toMatch(/(Purple Cloak|Sleepyhead): \+2/);
+  expect(why.indexOf('On a Roll')).toBeLessThan(why.search(/Purple Cloak|Sleepyhead/));
 });

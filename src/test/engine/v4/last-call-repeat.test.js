@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Last Call skips only turns that still have a rival's turn after them ("Skip your turns until everyone else is out of
-// minions"). balance-1.0 expert game g8 (2 players): Ava's Echo copied Ben's Last Call, then her Stunt Double copied it
-// again; the second copy re-skipped turns already after all of Ben's, so Gossip and Pocket Watch paid for skips that
+// minions"). balance-1.0 expert game g8 (2 players): Ava's Echo copied Ben's Last Call, then her Shadow copied it
+// again; the second copy re-skipped turns already after all of Ben's, so Gossip and Sleepyhead paid for skips that
 // passed over no one.
 import { describe, it, expect } from 'vitest';
 import { applyMove } from '../../../engine/v4/core.js';
@@ -46,7 +46,7 @@ describe('Last Call skips only turns a rival still places after', () => {
     expect(end.players[1].bonus).toBe(0);
   });
 
-  it('g8: Echo copies a rival’s Last Call, then Stunt Double copies it again; the second copy skips nothing', () => {
+  it('g8: Echo copies a rival’s Last Call, then Shadow copies it again; the second copy skips nothing', () => {
     let s = sceneQ({ quadrants: Q, round: 2, left: 4, res: [{ green: 20, purple: 20 }], members: [[], ['purple.gossip']], shop: ['echo.hourglass'],
       queue: [...turns(1, 0, 0, 1, 1, 0, 0, 1), { t: 'allPlaced' }] });
     s = toPlace(take(s, 'purple.lastcall'));

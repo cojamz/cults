@@ -38,7 +38,7 @@ describe('Barker', () => {
     expect(!!(s.pending && s.pending.player === 0 && s.pending.kind === 'buy' && s.pending.options.some(o => o.kind === 'tier'))).toBe(false);
   });
   // Spree gives no extra buys since Nov 10 (two discard pile recruits now, then the turn's own), so the extra recruits
-  // come from Big Spender ("Once per round: recruit twice in one turn")
+  // come from Squanderer ("Once per round: recruit twice in one turn")
   it('stacks with an extra recruit: each member recruited brings its own followers recruit', () => {
     let s = table(['red', 'trading'], { n: 2, round: 3, res: [{ red: 30, white: 30 }], members: [['trading.barker', 'benders.bigspender1']],
       shop: ['red.recruiter', 'trading.martyr', 'trading.cashier'] });
@@ -73,7 +73,7 @@ describe('Barker', () => {
   // each of them brings Barker's followers recruit right after it, then the turn's own recruit follows
   it('stacks with Spree: each discard pile recruit brings its own followers recruit', () => {
     let s = table(['market', 'trading'], { n: 2, round: 3, res: [{ blue: 30, white: 30 }], members: [['trading.barker']] });
-    // two plain members (Repeat Customers, Nov 11, would open a third discard pile recruit of its own)
+    // two plain members (Homecomers, Nov 11, would open a third discard pile recruit of its own)
     for (const u of s.pile.filter(u => s.cards[u].def !== 'market.repeatcustomers').slice(0, 2)) { s.pile.splice(s.pile.indexOf(u), 1); (s.discard ||= []).push(u); }
     s = answer(s, `slot:${slot(s, 'market', 'Spree')}`);
     const first = o => o.id !== 'none' && o.id !== 'pass' && o.id !== 'back';

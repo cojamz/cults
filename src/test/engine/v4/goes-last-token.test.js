@@ -4,7 +4,7 @@
 // Last Call: "+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token and put your other
 // minions on it." Sleep In: "+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your other
 // minions are placed after everyone else’s." (Nov 10; was "put your next minion on it"). Night Owls: "Once per round: after you place your last minion, take the Goes Last token with 1 more
-// minion on it." A pass because your hand is empty counts as a skipped turn (Pocket Watch, Gossip).
+// minion on it." A pass because your hand is empty counts as a skipped turn (Sleepyhead, Gossip).
 import { describe, it, expect } from 'vitest';
 import { applyMove } from '../../../engine/v4/core.js';
 import { take } from './helpers.js';

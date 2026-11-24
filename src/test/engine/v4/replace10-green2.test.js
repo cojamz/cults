@@ -33,7 +33,7 @@ describe('REPLACE10 second versions', () => {
     expect([d.s, d.w]).toEqual([2, 3]);
   });
 
-  it('Encore, Cory\'s wording: your next On Recruit happens twice, on a later turn too', () => {
+  it('Minstrel, Cory\'s wording: your next On Recruit happens twice, on a later turn too', () => {
     expect(defById('echo.encore').text).toBe('On Use, once per game: your next On Recruit happens twice.');
     let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, res: [{ magenta: 9 }, { red: 9 }], members: [['echo.encore']], shop: ['thieves.accomplice'] });
     const u = uidOf(s, 'echo.encore', 0);
@@ -43,7 +43,7 @@ describe('REPLACE10 second versions', () => {
     contextFor(s).recruit(s.players[0], acc, { spend: contextFor(s).payChoices(s.players[0], acc, {})[0], how: {}, paid: true });
     s = resume(s);
     while (s.pending?.player === 0 && s.pending.kind === 'choose' && /steal|Bandit/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
-    expect(named(s, 'Encore')).toContain("P1's Encore: Bandit's On Recruit again.");
+    expect(named(s, 'Minstrel')).toContain("P1's Minstrel: Bandit's On Recruit again.");
     expect(s.players[0].encoreTurn).toBeUndefined();
   });
 

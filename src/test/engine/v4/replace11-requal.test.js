@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Actions lane, requalified under "paper filters, play ranks" (Nov 4): Duty Free (Pilgrim's place), Snobs disdain
-// (Snobs' place), Open Bar (Polish's place). Each by its own REPLACE11 key.
+// Actions lane, requalified under "paper filters, play ranks" (Nov 4): Duty Free (Pilgrim's place), Blue Bloods disdain
+// (Blue Bloods' place), Open Bar (Polish's place). Each by its own REPLACE11 key.
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE11 = 'dutyfree,snobs3,openbar';
@@ -23,7 +23,7 @@ describe('REPLACE11: Duty Free', () => {
   });
 });
 
-describe('REPLACE11: Snobs (disdain)', () => {
+describe('REPLACE11: Blue Bloods (disdain)', () => {
   it('is in the Blue list in place of the Game End Snobs', async () => {
     const { defById } = await import('../../../engine/v4/content/index.js');
     expect(defById('market.snobs3').text).toBe('Whenever a rival recruits a member costing 4 or less, +1 follower.');

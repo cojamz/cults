@@ -60,20 +60,20 @@ describe('Green: a space’s chip is what the space gave, closed at the buy step
 
 describe('Gold', () => {
   // fixed 2026-10-15 (Cory): the steal's later victims are the same gain (core gain's again)
-  it('Prospector: one action that gains you gold pays +1 more once (Collect Debts split over two rivals)', () => {
+  it('Gold Panner: one action that gains you gold pays +1 more once (Collect Debts split over two rivals)', () => {
     let s = scene({ n: 3, round: 2, turns: [0], res: [{}, { gold: 2 }, { gold: 2 }], members: [['gold.prospector'], [], []] });
     s = take(s, 'gold.steal');
     s = move(s, 'player:1'); s = move(s, 'player:1'); s = move(s, 'player:2');
-    // 3 stolen + Prospector's +1
+    // 3 stolen + Gold Panner's +1
     expect(s.players[0].res.gold).toBe(4);
   });
 
-  it('Speculator: the log says what was gained (Underdog doubles it)', () => {
+  it('Gambler: the log says what was gained (Poor Relation doubles it)', () => {
     let s = scene({ round: 3, turns: [0], res: [{ gold: 3 }, { gold: 9 }], members: [['gold.speculator', 'gold.underdog'], []] });
     const u = uidOf(s, 'gold.speculator', 0);
     s = move(s, `use:${u}`);
     expect(s.players[0].res.gold).toBe(9);
-    const line = s.log.find(l => l.includes('Speculator'));
+    const line = s.log.find(l => l.includes('Gambler'));
     expect(line).not.toMatch(/doubled to 9/);
   });
 });
@@ -100,7 +100,7 @@ describe('Red', () => {
 });
 
 describe('Green members', () => {
-  it('Tribute Band with nothing to copy keeps its once-per-game use (as Stunt Double does)', () => {
+  it('Tribute Band with nothing to copy keeps its once-per-game use (as Shadow does)', () => {
     let s = scene({ round: 2, turns: [0], members: [['echo.dejavu'], []] });
     const u = uidOf(s, 'echo.dejavu', 0);
     s = move(s, `use:${u}`);
@@ -108,9 +108,9 @@ describe('Green members', () => {
     expect(s.cards[u].used).toBeFalsy();
   });
 
-  it('a copy gives the printed gain, not what the taker’s members added (Underdog on Kickback)', () => {
+  it('a copy gives the printed gain, not what the taker’s members added (Poor Relation on Kickback)', () => {
     let s = scene({ turns: [1, 0], res: [{}, { gold: 0 }], members: [[], ['gold.underdog']] });
-    // P1 holds more gold than P2, so P2's Underdog doubles: P2 gets 6 from Kickback
+    // P1 holds more gold than P2, so P2's Poor Relation doubles: P2 gets 6 from Kickback
     s.players[0].res.gold = 5;
     s = take(s, 'gold.jv'); s = pass(move(s, s.pending.options[0].id));
     expect(s.players[1].res.gold).toBe(6);

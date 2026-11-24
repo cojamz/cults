@@ -90,11 +90,11 @@ export default function LaunderCard({ state, onPick, busy, turnOf = null }) {
   const locked = busy || sending;
 
   return (
-    <div className="overlay sheet pay-overlay launder-overlay" role="dialog" aria-modal="true" aria-label="Launderers: rearrange your resources">
+    <div className="overlay sheet pay-overlay launder-overlay" role="dialog" aria-modal="true" aria-label="Moneychangers: rearrange your resources">
       <div className="dialog pay pay-card launder-card" ref={box}
         onKeyDown={e => { if (e.key === 'Enter' && !loose && !e.target.closest('.ld-keep')) { e.preventDefault(); send(mix); } }}>
         {turnOf && <TurnOf player={turnOf} />}
-        <h2 className="ld-title">{String(pend?.prompt || 'Launderers:').split(':')[0]}</h2>
+        <h2 className="ld-title">{String(pend?.prompt || 'Moneychangers:').split(':')[0]}</h2>
         <p className="ld-sub">Rearrange your <b className="num">{total}</b> resources into any mix of colors.</p>
         <div className="ld-rows" role="group" aria-label="Your colors">
           {shown.map(({ c, n, was }) => (

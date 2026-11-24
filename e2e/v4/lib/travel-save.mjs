@@ -22,7 +22,7 @@ export const TRAVEL = {
   // a member given to a rival (Swindle, Nov 10, in Shake Down's old place: "give them a shop member of your choice in its
   // place"): the shop card goes to the rival's crowd
   swindle: { q: ['gold', 'thieves', 'red', 'purple'], hit: (s, mv, n) => /^Swindle: give /.test(prompt(s)) && (e => e && { from: { kind: 'shop', uid: e.from.uid }, to: { kind: 'member', pid: e.to.pid, uid: e.what.uid } })(fx(n).find(e => e.type === 'recruit' && e.from.kind === 'shop' && e.to.pid !== 0)) },
-  // a member's Use: what it gives flies from the member to your stack. P1 holds Speculator ("On Use, once per game:
+  // a member's Use: what it gives flies from the member to your stack. P1 holds Gambler ("On Use, once per game:
   // double your gold"), used at its first buy step with gold in hand: the live On Use members that gain at once are rare
   // in bot games (the others ask a question first)
   use: { q: ['gold', 'red', 'blue', 'green'], give: 'gold.speculator', forceUse: true, hit: (s, mv, n) => String(mv.option).startsWith('use:') && (g => g && { from: { kind: 'member', pid: 0, uid: g.cause.uid }, to: g.to })(fx(n).find(e => e.type === 'gain' && e.cause.kind === 'member' && e.to.pid === 0)) },

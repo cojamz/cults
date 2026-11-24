@@ -180,7 +180,7 @@ describe('White candidate spaces (round II)', () => {
       expect(s.players[0].members).not.toContain(u);
       expect(s.players[0].res.white).toBe(each * c + 1);
       expect(s.players[0].bonus).toBe(f);
-      expect(named(s, name)).toEqual([`P1's ${name}: gives Go-Getter to P3.`, `P1's ${name}: +${each * c} white${f ? `, +${f} followers` : ''}, +1 white.`]);
+      expect(named(s, name)).toEqual([`P1's ${name}: gives Errand Boy to P3.`, `P1's ${name}: +${each * c} white${f ? `, +${f} followers` : ''}, +1 white.`]);
     });
   }
   it('Hand-Offs and Bequest: +1 white; a player with no members gives nothing and still gets the +1', () => {

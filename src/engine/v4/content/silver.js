@@ -566,7 +566,7 @@ const silver = {
       const c = ctx.card(uid), k = c.def.s + c.def.w, name = c.def.name;
       if (!ctx.moveMember(uid, p, o, { actor: p })) return;
       p.bonus += k;
-      ctx.log(`${p.name}'s Patrons: gives ${name} to ${o.name}: +${k} followers.`);
+      ctx.log(`${p.name}'s Dowry-Givers: gives ${name} to ${o.name}: +${k} followers.`);
     },
     // live since Nov 4 (quality loop): Polisher's place
     guestofhonor(ctx, p, value) {
@@ -576,7 +576,7 @@ const silver = {
       const name = ctx.card(uid).def.name;
       if (!ctx.moveMember(uid, p, o, { actor: p })) return;
       p.bonus += 4;
-      ctx.log(`${p.name}'s Guest of Honor: gives ${name} to ${o.name}: +4 followers.`);
+      ctx.log(`${p.name}'s Matchmaker: gives ${name} to ${o.name}: +4 followers.`);
     },
     // Kingmakers (Cory, Nov 5; Nov 9: "should give from your silver. And +1 follower for each given. So you dont auto get 3")
     kingmakers(ctx, p, id, data = {}) {
@@ -594,13 +594,13 @@ const silver = {
       if (!o || o === p) return;
       const mine = p.res[S] || 0, theirs = o.res[S] || 0;
       p.res[S] = theirs; o.res[S] = mine;
-      ctx.log(`${p.name}'s Hustlers: swaps silver with ${o.name} (${mine} for ${theirs}).`);
+      ctx.log(`${p.name}'s Purse-Switchers: swaps silver with ${o.name} (${mine} for ${theirs}).`);
     },
     bookies(ctx, p, n) {
       n = Math.min(4, Number(n) || 0, p.res[S] || 0);
-      if (!n) { ctx.log(`${p.name}'s Bookies: keeps their silver.`); return; }
+      if (!n) { ctx.log(`${p.name}'s Indulgence Seller: keeps their silver.`); return; }
       p.res[S] -= n; p.bonus += 2 * n;
-      ctx.log(`${p.name}'s Bookies: turns in ${n} silver, +${2 * n} followers.`);
+      ctx.log(`${p.name}'s Indulgence Seller: turns in ${n} silver, +${2 * n} followers.`);
     },
     loanSwap(ctx, p, v, data) {
       if (v === 'done') return loanSwap(ctx, p, null, { ...data, left: 0 });
@@ -814,7 +814,7 @@ const silver = {
     })),
     // Cory, Nov 1: "whenever a player is gifted silver +1 silver", then +2 after the test read −4; one gift per space counts once
     // words and +1 (Cory, Nov 1, 2:25pm: "Whenever silver is gifted, +1 silver."), once per gift event
-    m('caterer', 'Caterer', 2, 2, 'Whenever you gift silver, +2 silver.', {
+    m('caterer', 'Almsgiver', 2, 2, 'Whenever you gift silver, +2 silver.', {
       onAnyGifted(ctx, owner, card, giver, once) {
         const k = once || `${ctx.state.moves}:${giver.id}`;
         if (card.catered === k) return;
@@ -878,12 +878,12 @@ const silver = {
     m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', { ...old8('silver.toastmaster'), ...old16('silver.toastmaster'),
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
-    m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, keepCount: true, /* given back: costs 10+ (Claude, under Cory's Nov 12 rebase to 1) */ ...old2, ...old6, // worth 2 (Cory, Nov 1)
+    m('gala', 'Bride and Groom', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, keepCount: true, /* given back: costs 10+ (Claude, under Cory's Nov 12 rebase to 1) */ ...old2, ...old6, // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {
         ctx.gain(owner, S, owner.res[S]);
         giveAll(ctx, owner, S, 2);
-        ctx.log(`${owner.name}'s Debutantes: silver doubled to ${owner.res[S]}, +2 silver to everyone else.`);
+        ctx.log(`${owner.name}'s Bride and Groom: silver doubled to ${owner.res[S]}, +2 silver to everyone else.`);
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.res[S] >= 6,
     }),
@@ -912,7 +912,7 @@ const silver = {
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08 * WW_N),
     })),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
-    m('smoothtalker', 'Smooth Talkers', 5, 4, /* Cory, Nov 5 backlog price yes */ 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, keepCount: true, /* given back: costs 10+ */ ...old2, ...old14('bigspenders'), ...old14('charmers'), ...old16('silver.smoothtalker') }),
+    m('smoothtalker', 'Silver Tongues', 5, 4, /* Cory, Nov 5 backlog price yes */ 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, keepCount: true, /* given back: costs 10+ */ ...old2, ...old14('bigspenders'), ...old14('charmers'), ...old16('silver.smoothtalker') }),
     // REPLACE16 bot test (thread "Make Silver cards more communal", Nov 4; silver-communal/paper.md 3): Smooth Talkers'
     // place, same price. Everyone's silver pays a colored part (core.js tableFlag); a rival's recruit whose colored part
     // took silver pays the owner 1 follower, once per recruit. Your own recruits pay nothing extra.
@@ -1122,7 +1122,7 @@ const silver = {
       botActivate: (ctx) => { const k = onSilver(ctx); return k >= Math.max(3, ctx.state.players.length) || (ctx.state.round === 3 && k >= 2 && ctx.state.players.every(o => o.left <= 1)); },
       ...see(info => (endsAhead(info).length ? 7 : 0)),
     }),
-    m('kingmakers', 'Kingmakers', 2, 1, 'Round End: give rivals up to 3 of your silver, split as you choose. +1 follower per silver given.', {
+    m('kingmakers', 'Good Samaritans', 2, 1, 'Round End: give rivals up to 3 of your silver, split as you choose. +1 follower per silver given.', {
       onAllPlaced(ctx, owner) {
         if (!others(ctx, owner).length) return;
         kingStep(ctx, owner, { once: `kingmakers:${ctx.state.round}:${owner.id}`, left: 3, to: {} });
@@ -1141,50 +1141,50 @@ const silver = {
     }),
     // Cory, 2026-11-11 7:47pm Eastern (his idea): Barker's extra followers recruit, after a silver member only (core.js
     // followersTwiceCard). Price is Claude's fill-in (Barker's).
-    m('splurgers', 'Splurgers', 2, 1, /* 1 cheaper (Cory, Nov 12 6:37pm Eastern: "splurgers should be a touch cheaper") */ 'Whenever you recruit a silver member, you may also buy followers.', { followersOnColor: S, round: 2 }), // stays in the round II deck at its lower price
+    m('splurgers', 'Wastrels', 2, 1, /* 1 cheaper (Cory, Nov 12 6:37pm Eastern: "splurgers should be a touch cheaper") */ 'Whenever you recruit a silver member, you may also buy followers.', { followersOnColor: S, round: 2 }), // stays in the round II deck at its lower price
     // Cory, 2026-11-11 7:48pm Eastern (his idea; 7:49pm: "any"): a follower buy with any silver in its payment.
     // Name, words and price are Claude's fill-ins (price: Tax Collector's trigger, a follower instead of a resource).
-    m('tollcollectors', 'Toll Collectors', 2, 2, 'Whenever any player buys followers with silver, +1 follower.', {
+    m('tollcollectors', 'Camp Followers', 2, 2, 'Whenever any player buys followers with silver, +1 follower.', {
       onBuyFollowers(ctx, owner, card, buyer, tier, spend) {
         if (!(spend?.[S] > 0)) return;
         owner.bonus += 1;
-        ctx.log(`${owner.name}'s Toll Collectors: ${buyer.name} paid silver for followers, +1 follower.`);
+        ctx.log(`${owner.name}'s Camp Followers: ${buyer.name} paid silver for followers, +1 follower.`);
       },
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08),
     }),
     // Cory, 2026-11-11 7:38pm Eastern: "On use, give a rival all of your silver. Let's say once per round, up to 5."
     // Price is Claude's fill-in (Debt Collectors' old price: once per round, 5 resources of your choice). The silver
     // is a gift (gift hooks fire); taking their resources is not a steal.
-    m('loanofficers', 'Loan Officers', 4, 2, 'On Use, once per round: swap up to 5 of your silver for rivals\u2019 resources, one for one.', {
+    m('loanofficers', 'Pawnbrokers', 4, 2, 'On Use, once per round: swap up to 5 of your silver for rivals\u2019 resources, one for one.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
-        if (!loanOpts(ctx, owner).length) { card.used = false; ctx.log(`${owner.name}'s Loan Officers: nothing to swap.`); return; }
-        ctx.log(`${owner.name} uses Loan Officers.`);
+        if (!loanOpts(ctx, owner).length) { card.used = false; ctx.log(`${owner.name}'s Pawnbrokers: nothing to swap.`); return; }
+        ctx.log(`${owner.name} uses Pawnbrokers.`);
         loanSwap(ctx, owner, null, { left: 5, took: {}, once: `loan:${ctx.state.round}:${owner.id}` });
       },
       botActivate: (ctx, owner) => (owner.res[S] || 0) >= 2 && loanOpts(ctx, owner).length > 0,
     }),
     // Cory, 2026-11-11 8:00pm Eastern (his card): "on recruit, you may turn in up to 4 silver for 2 followers each".
     // Price is Claude's fill-in.
-    m('bookies', 'Bookies', 3, 2, 'On Recruit: turn in up to 4 silver for 2 followers each.', {
+    m('bookies', 'Indulgence Seller', 3, 2, 'On Recruit: turn in up to 4 silver for 2 followers each.', {
       onRecruited(ctx, owner) {
         const k = Math.min(4, owner.res[S] || 0);
-        if (!k) { ctx.log(`${owner.name}'s Bookies: no silver to turn in.`); return; }
+        if (!k) { ctx.log(`${owner.name}'s Indulgence Seller: no silver to turn in.`); return; }
         const opts = [];
         for (let n = k; n >= 0; n--) opts.push({ id: `n:${n}`, label: n ? `Turn in ${n} silver: +${2 * n} followers` : 'Keep my silver', kind: n ? 'choice' : 'pass', value: n,
           // bots keep 1 silver only while they lead the Silver contest by 1 or less
           hint: n - (n === k && leadIn(ctx, owner, S) >= 0 && leadIn(ctx, owner, S) <= 1 && ctx.state.round < 3 ? 1.5 : 0) });
-        ctx.choose(owner, `Bookies: turn in how much silver? 2 followers each (you have ${owner.res[S]})`, opts, 'silver.bookies');
+        ctx.choose(owner, `Indulgence Seller: turn in how much silver? 2 followers each (you have ${owner.res[S]})`, opts, 'silver.bookies');
       },
     }),
     // Cory, 2026-11-11 8:17pm Eastern: "super simple. Pretty perfect" (you pick the rival). A swap, not a gift: no gift
     // hooks fire. Price is Claude's fill-in.
-    m('hustlers', 'Hustlers', 2, 2, 'On Recruit: swap all your silver with a rival\u2019s.', {
+    m('hustlers', 'Purse-Switchers', 2, 2, 'On Recruit: swap all your silver with a rival\u2019s.', {
       onRecruited(ctx, owner) {
         const list = others(ctx, owner);
         if (!list.length) return;
-        ctx.choose(owner, `Hustlers: swap all your silver (${owner.res[S] || 0}) with which rival's?`, list.map(o => ({
+        ctx.choose(owner, `Purse-Switchers: swap all your silver (${owner.res[S] || 0}) with which rival's?`, list.map(o => ({
           id: `player:${o.id}`, label: `${o.name} (${o.res[S] || 0} silver)`, kind: 'player', value: o.id,
           // bots take the biggest pile, unless holding little silver suits them (the Silver contest is most silver)
           hint: (o.res[S] || 0) - (owner.res[S] || 0) + ctx.followers(o) * 0.01,
@@ -1209,7 +1209,7 @@ function kingStep(ctx, p, data) {
   const list = others(ctx, p).filter(o => !dry(ctx, p, o));
   if (data.left > 0 && (p.res[S] || 0) > 0 && list.length) {
     const given = Object.values(data.to).reduce((a, n) => a + n, 0);
-    ctx.choose(p, `Kingmakers: give 1 of your silver to which rival? +1 follower (${Math.min(data.left, p.res[S])} more at most)`, [
+    ctx.choose(p, `Good Samaritans: give 1 of your silver to which rival? +1 follower (${Math.min(data.left, p.res[S])} more at most)`, [
       ...list.map(o => ({
         id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers, ${o.res[S] || 0} silver)`, kind: 'player', value: o.id,
         // bots hand it to whoever it helps least: off the Silver contest lead, and not the leader in followers
@@ -1223,7 +1223,7 @@ function kingStep(ctx, p, data) {
   if (!given) return;
   afterGive(ctx, p, S, data.once);
   p.bonus += given;
-  ctx.log(`${p.name}'s Kingmakers: gave ${given} silver (${Object.entries(data.to).map(([k, v]) => `${v} to ${k}`).join(', ')}): +${given} follower${given === 1 ? '' : 's'}.`);
+  ctx.log(`${p.name}'s Good Samaritans: gave ${given} silver (${Object.entries(data.to).map(([k, v]) => `${v} to ${k}`).join(', ')}): +${given} follower${given === 1 ? '' : 's'}.`);
 }
 // Almoners (pool 6): one silver at a time until none is left, then the followers
 function almsStep(ctx, p, data) {
@@ -1257,32 +1257,32 @@ function loanSwap(ctx, p, _v, data) {
   if (!opts.length) {
     const list = Object.entries(data.took || {}).map(([k, n]) => { const [who, c] = k.split(':'); return `${n} ${c} from ${who}`; }).join(', ');
     if (list) afterGive(ctx, p, S, data.once);
-    ctx.log(`${p.name}'s Loan Officers: ${list ? `swapped silver for ${list}` : 'swapped nothing'}.`);
+    ctx.log(`${p.name}'s Pawnbrokers: ${list ? `swapped silver for ${list}` : 'swapped nothing'}.`);
     return;
   }
   const n = Object.values(data.took || {}).reduce((a, k) => a + k, 0);
   opts.push({ id: 'done', label: n ? 'Done' : 'Swap nothing', kind: 'done', value: 'done', hint: n ? 0.5 : -5 });
-  ctx.choose(p, `Loan Officers: swap 1 of your silver for which rival's resource? (${data.left} more at most)`, opts, 'silver.loanSwap', data);
+  ctx.choose(p, `Pawnbrokers: swap 1 of your silver for which rival's resource? (${data.left} more at most)`, opts, 'silver.loanSwap', data);
 }
 
 // Guest of Honor and Patrons move to White (Cory, 2026-11-11 2:29pm: "guest of honor should be white", "it's more of a
 // white card too. Patrons"). Same words, price and play; their choices still run through Silver's handlers. Each call
 // makes a fresh card (registration stamps its color on it). Silver keeps its copies for old games, out of the deck.
 export function guestOfHonorDef() {
-  return m('guestofhonor', 'Guest of Honor', 1, 1, 'On Use, once per round: give a rival one of your members. +4 followers.' /* Cory, Nov 5: "costing 4 or less" cut */, {
+  return m('guestofhonor', 'Matchmaker', 1, 1, 'On Use, once per round: give a rival one of your members. +4 followers.' /* Cory, Nov 5: "costing 4 or less" cut */, {
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
       const opts = goh(ctx, owner, card);
-      if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Guest of Honor: no member to give.`); return; }
-      ctx.log(`${owner.name} uses Guest of Honor.`);
-      ctx.choose(owner, 'Guest of Honor: give which member, to which rival? +4 followers', opts, 'silver.guestofhonor');
+      if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Matchmaker: no member to give.`); return; }
+      ctx.log(`${owner.name} uses Matchmaker.`);
+      ctx.choose(owner, 'Matchmaker: give which member, to which rival? +4 followers', opts, 'silver.guestofhonor');
     },
     botActivate: (ctx, p, card) => goh(ctx, p, card || ctx.membersOf(p).find(c => c.def.key === 'guestofhonor')).some(o => o.hint > 0),
   });
 }
 export function patronsDef() {
-  return m('godparents', 'Patrons', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain its cost in followers.', { // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
+  return m('godparents', 'Dowry-Givers', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain its cost in followers.', { // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
     activate: 'game',
     onActivate(ctx, owner, card) {
       const opts = [];
@@ -1290,7 +1290,7 @@ export function patronsDef() {
         id: `give:${c.uid}:${o.id}`, label: `${c.def.name} (${c.def.s + c.def.w}) to ${o.name}`, kind: 'choice', value: [c.uid, o.id],
         hint: c.def.s + c.def.w - (c.def.f || 1) * 1.5 - (c.used || c.def.vanilla ? 0 : 1) + (c.def.onJoined ? 5 : 0) - ctx.followers(o) * 0.01,
       });
-      ctx.choose(owner, 'Patrons: give which of your members to which rival?', opts, 'silver.godparents');
+      ctx.choose(owner, 'Dowry-Givers: give which of your members to which rival?', opts, 'silver.godparents');
     },
     botActivate: (ctx, owner) => ctx.state.round === 3 || (ctx.state.round === 2 && ctx.membersOf(owner).some(c => c.used && c.def.activate === 'game')),
   });

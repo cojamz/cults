@@ -1,5 +1,5 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
-// E2E: Party Crasher (was Squatter) onto a rival's Greatest Hits does it for you (Cory's v0.9.1 playtest, Oct 27:
+// E2E: Trespasser (was Squatter) onto a rival's Greatest Hits does it for you (Cory's v0.9.1 playtest, Oct 27:
 // "using squatter on greatest hits didnt seem to work… players actions werent copied"). Round III, you took two
 // spaces, a rival took Greatest Hits; you join it on the wheel. Since Nov 10 Greatest Hits reads "Choose a color other
 // than green. Copy every action with a minion on its spaces. +1 green.", so the joiner picks Gold and copies the Golden
@@ -30,7 +30,7 @@ function squatSave(stamp) {
   s.cards[uid] = { uid, def: 'benders.squatter', used: true };
   s.players[0].members.push(uid);
   for (const def of ['gold.seed', 'red.twins']) { const u = Math.max(...Object.keys(s.cards).map(Number)) + 1; s.cards[u] = { uid: u, def }; s.players[0].members.push(u); }
-  s.players[0].crashNext = true; // Party Crasher already used: the next minion may join (Once per game since Oct 28)
+  s.players[0].crashNext = true; // Trespasser already used: the next minion may join (Once per game since Oct 28)
   s.queue = [0, 1, 0, 0, 1].map(p => ({ t: 'turn', p }));
   s = resume(s);
   const mv = (p, option) => { s = applyMove(s, { player: p, option }); while (s.pending?.player === p && s.pending.kind !== 'place') s = applyMove(s, { player: p, option: s.pending.kind === 'buy' ? 'pass' : s.pending.options[0].id }); };

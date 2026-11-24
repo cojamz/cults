@@ -113,7 +113,7 @@ describe('By color: Red Most members of one color, Blue Most members (Cory, Nov 
     const r = scoringOf(s, 'red'), b = scoringOf(s, 'market');
     expect(r.label).toBe('Most members of one color');
     expect(r.score(ctx, s.players[0])).toBe(2); // two red members (Mob counts as 1 member since Nov 12)
-    expect(r.score(ctx, s.players[1])).toBe(3); // grey: Party Crasher 1 + Dabblers, which counts as 2 members
+    expect(r.score(ctx, s.players[1])).toBe(3); // grey: Trespasser 1 + Dabblers, which counts as 2 members
     expect(b.label).toBe('Most members');
     expect(b.score(ctx, s.players[0])).toBe(3); // three cards; Mob rebased to worth 1 and 1 member (Cory, Nov 12)
   });

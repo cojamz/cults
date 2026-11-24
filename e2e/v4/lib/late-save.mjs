@@ -1,5 +1,5 @@
 // A saved hot-seat game, ready to resume, where P1 (the only person) is about to place their last minion of round
-// `round` (bots elsewhere). Seed 21 reaches the end with end-game bonuses on the table (Mob, Tycoon) when the rest is
+// `round` (bots elsewhere). Seed 21 reaches the end with end-game bonuses on the table (Mob, Baron) when the rest is
 // played by bots. Used by the reckoning gate (the round-III summary at 700px).
 import { createGame, applyMove, chooseBotMove } from '../../../src/engine/v4/index.js';
 import { seededRandom } from '../../../src/engine/v4/rng.js';

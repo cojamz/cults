@@ -87,27 +87,27 @@ export default {
     m('banker', 'Banker', 3, 1, 'On Recruit: +3 gold. Round Start: +3 gold.', { now: true,
       onRoundStart(ctx, owner) { ctx.gain(owner, 'gold', 3); },
     }),
-    m('prospector', 'Prospector', 2, 2, 'When an action gains you gold, +1 gold.', {
+    m('prospector', 'Gold Panner', 2, 2, 'When an action gains you gold, +1 gold.', {
       afterGain(ctx, owner, card, g) { if (g.fromAction && !g.again && g.color === 'gold' && g.n > 0) owner.res.gold += 1; },
     }),
     // Cory, 2026-10-15 (balance pass 1, #1): only the top rival pays it, about a third of what any rival paid
     // (both bots read the old card at 8.7 for 4). Ties for the most all count; it's measured before the buy lands.
     // Cory, 2026-10-15: from any rival buying followers, period
-    m('taxman', 'Tax Collector', 4, 4, 'Whenever a rival buys followers, +1 gold.', {
+    m('taxman', 'Pardoner', 4, 4, 'Whenever a rival buys followers, +1 gold.', {
       onBuyFollowers(ctx, owner, card, buyer) { if (buyer !== owner) ctx.gain(owner, 'gold', 1); },
     }),
-    m('merchant', 'Merchant', 3, 1, 'Whenever anyone recruits a gold member, +1 gold.', {
+    m('merchant', 'Gold Merchant', 3, 1, 'Whenever anyone recruits a gold member, +1 gold.', {
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (recruited.uid !== card.uid && ctx.defOf(recruited).quadrant === 'gold') ctx.gain(owner, 'gold', 1);
       },
     }),
-    m('thrift', 'Penny Pincher', 4, 0, 'Gold you spend on members counts double.', { goldPaysDouble: true }),
+    m('thrift', 'Skinflint', 4, 0, 'Gold you spend on members counts double.', { goldPaysDouble: true }),
     m('coinpurse', 'Middleman', 2, 2, 'Whenever you recruit a non-gold member, +1 gold.', {
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by === owner && recruited.uid !== card.uid && ctx.defOf(recruited).quadrant !== 'gold') ctx.gain(owner, 'gold', 1);
       },
     }),
-    m('underdog', 'Underdog', 5, 3, 'While a rival has more gold than you, double your gold gains.', {
+    m('underdog', 'Poor Relation', 5, 3, 'While a rival has more gold than you, double your gold gains.', {
       modifyGain(ctx, owner, card, g) {
         if (g.color === 'gold' && !g.doubled && ctx.state.players.some(o => o !== owner && o.res.gold > owner.res.gold)) {
           g.n *= 2; g.doubled = true;
@@ -159,19 +159,19 @@ export default {
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.res.gold >= 4,
     }),
-    m('speculator', 'Speculator', 4, 4, 'On Use, once per game: double your gold.', {
+    m('speculator', 'Gambler', 4, 4, 'On Use, once per game: double your gold.', {
       activate: 'game',
       onActivate(ctx, owner) {
         const had = owner.res.gold;
         ctx.gain(owner, 'gold', had);
         // a member that changes the gain (Underdog) makes it more than double: the log says what came, not "doubled"
         const got = owner.res.gold - had;
-        ctx.log(got === had ? `${owner.name} used Speculator: gold doubled to ${owner.res.gold}.` : `${owner.name} used Speculator: +${got} gold, now ${owner.res.gold}.`);
+        ctx.log(got === had ? `${owner.name} used Gambler: gold doubled to ${owner.res.gold}.` : `${owner.name} used Gambler: +${got} gold, now ${owner.res.gold}.`);
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.res.gold >= 6,
     }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 12 → 6
-    m('tycoon', 'Tycoon', 4, 2, 'Game End: +1 follower per 2 gold.', { // Cory, 2026-10-15: per 2, was per 3
+    m('tycoon', 'Baron', 4, 2, 'Game End: +1 follower per 2 gold.', { // Cory, 2026-10-15: per 2, was per 3
       onGameEnd: (ctx, owner) => Math.floor(owner.res.gold / 2),
     }),
     m('seed', 'Treasurer', 4, 0, 'On Recruit: +1 gold per member you have, this one included.', {

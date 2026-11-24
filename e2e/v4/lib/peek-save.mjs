@@ -1,6 +1,6 @@
 // Saved hot-seat games at Peek (Blue): P1 has just taken Peek in round I and is ordering the top 4 (stage 'order'), or
 // has ordered them and is recruiting (stage 'buy'). P1 holds `res` (every color named: a missing one pays nothing), and
-// Peek's +2 blue on top, so some peeked cards are out of reach (Agents' green part; prices fell Oct 25 and the old hand
+// Peek's +2 blue on top, so some peeked cards are out of reach (Secret-Keepers' green part; prices fell Oct 25 and the old hand
 // reached all four; prices fell again by Oct 29 and blue 1 + red 1 reached all four, so blue 0).
 import { createGame, applyMove, chooseBotMove } from '../../../src/engine/v4/index.js';
 import { resume } from '../../../src/engine/v4/core.js';

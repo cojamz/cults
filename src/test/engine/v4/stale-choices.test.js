@@ -100,7 +100,7 @@ describe('a queued choice never offers a card that moved', () => {
   });
 
   it('Promote drops a pair when its outgoing member changes cults', () => {
-    let s = table(['gold', 'red', 'market', 'echo'], { n: 3, round: 2, members: [['red.twins'], ['red.bigfamily'], ['gold.taxman']], shop: ['red.volunteer', 'gold.tycoon'] }); // Big Family 6 -> Tycoon 7: Promote never reaches cheaper (Nov 4 night)
+    let s = table(['gold', 'red', 'market', 'echo'], { n: 3, round: 2, members: [['red.twins'], ['red.bigfamily'], ['gold.taxman']], shop: ['red.volunteer', 'gold.tycoon'] }); // Big Family 6 -> Baron 7: Promote never reaches cheaper (Nov 4 night)
     s = take(s, N('red', 'hireup'));
     const outgoing = s.players[1].members[0];
     const pair = s.pending.options.find(o => o.value[0] === outgoing);

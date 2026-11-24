@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Actions lane member trials (REPLACE11, Nov 4): Punch Card in Regular's place, Place Holders in Line Cutters' place.
+// Actions lane member trials (REPLACE11, Nov 4): Punch Card in Regular's place, Place Holders in Lord of the Manor' place.
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE11 = 'punchcard,placeholders';

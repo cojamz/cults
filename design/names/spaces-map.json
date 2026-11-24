@@ -1,0 +1,64 @@
+{
+ "echo.js": {
+  "Build Up": "Flock Together",
+  "Echo": "Follow Suit",
+  "Reprise": "Do It Again",
+  "Crowd": "Draw a Crowd",
+  "Cover": "Imitate",
+  "Greatest Hits": "Replay All"
+ },
+ "gold.js": {
+  "Kickback": "Grease a Palm",
+  "Golden Years": "Let It Grow",
+  "Intro Offer": "Bargain Down",
+  "Collect Debts": "Call In Debts",
+  "Tithe": "Pass the Plate",
+  "Double Down": "Multiply"
+ },
+ "market.js": {
+  "Test Drive": "Try Out",
+  "Out of Style": "Clear Out",
+  "Markdown": "Buy Secondhand",
+  "Word of Mouth": "Spread the Word",
+  "Spree": "Salvage"
+ },
+ "purple.js": {
+  "Sleep In": "Lie Abed",
+  "On a Roll": "Keep Going",
+  "Right Away": "Make Haste",
+  "Last Call": "Bide Your Time",
+  "Crunch Time": "Flurry",
+  "Overtime": "Burn the Candle"
+ },
+ "red.js": {
+  "Late Shift": "Call to Arms",
+  "Gather": "Gather the Kin",
+  "Initiation": "Induct"
+ },
+ "silver.js": {
+  "Toast": "Raise a Glass",
+  "Party Gifts": "Hand Out Gifts",
+  "Buyout": "Hire Away",
+  "Largesse": "Throw Coins"
+ },
+ "thieves.js": {
+  "Help Yourself": "Pilfer",
+  "Catch Up": "Beg",
+  "Heist": "Plunder",
+  "Swindle": "Sleight of Hand"
+ },
+ "trading.js": {
+  "Modest Means": "Live Simply",
+  "Splurge": "Spend Freely",
+  "Nest Egg": "Put By",
+  "Farewell": "Bid Farewell",
+  "Cash In": "Redeem"
+ },
+ "yellow.js": {
+  "Survey": "Count Heads",
+  "New Blood": "Welcome Strangers",
+  "Dye Job": "Paint Over",
+  "Melting Pot": "Hold a Fair",
+  "Offering": "Demand Tribute"
+ }
+}

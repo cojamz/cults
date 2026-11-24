@@ -1,4 +1,4 @@
-// Every member's name fits its shop card (todo "Ours" 2: Lottery Winner, Sponsor, Patriarch, Speculator, Stunt Double).
+// Every member's name fits its shop card (todo "Ours" 2: Lottery Winner, Sponsor, Patriarch, Gambler, Shadow).
 // The shop deals 6 cards in round I, 7 in round II, 8 in round III (core.js shopSize), so cards narrow as the game goes:
 // each member is dealt into a full shop of each size, longest names first, at laptop (1270x700) and tablet (1100x700),
 // with details off and on. A name passes when its text stays inside the card's name bar (nothing spills or is cut, the

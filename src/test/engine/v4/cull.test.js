@@ -24,12 +24,12 @@ describe('the curated member decks', () => {
   // Magenta deals 13 (Cory, 2026-10-21: 12 per color, Magenta stays at 13 for now, a cut is on the backlog)
   // Member structure (Cory, 2026-10-24): a once per game for Red, Magenta and Blue, Blue's round start, a go-deep for
   // Purple and White; Bulk Buyer, Appraiser and Makeover cut
-  // Oct 25: Recluse moves to White, Stylist cut
-  // Green grows to 16 (Cory, 2026-10-29: Understudy, Wallflower, Fan Club, Roadie), then 15 (Connector cut)
-  // Silver deals 10 besides Caterer, its artifact (Cory, Nov 1: "on silver - it should be 10"; Gift Wrapper)
+  // Oct 25: Hermit moves to White, Stylist cut
+  // Green grows to 16 (Cory, 2026-10-29: Understudy, Tall-Tale Teller, Admirers, Roadie), then 15 (Connector cut)
+  // Silver deals 10 besides Almsgiver, its artifact (Cory, Nov 1: "on silver - it should be 10"; Gift Wrapper)
   // Yellow 16 on the 15-card deck: Pilgrim joined (Cory, Nov 1); it replaces Barterer only in the 10-card deck
   // Nov 5 cuts (Cory): Magenta −2 then +1 (Big Score in; Informer back in the 10 deck), Purple −1, Blue −1, White −1, Yellow −2, Silver −3; Journeyman in for Volunteer
-  const DEALT = { echo: 15, /* Nov 11: Tribute Band, Impersonator and Buskers out; Mimics, Regulars, Die-Hards in */ red: 13, /* Mob and Proselytizers out, Guild Master and Purists in (Nov 11); Dyer in for Deprogrammers (Nov 12) */ thieves: 14, purple: 13, /* Place Keepers in for Gossip (Nov 12) */ market: 12, yellow: 15, silver: 11, trading: 11 }; // Nov 11 (Cory): Silver's 8 of 10 plus Bookies and Caterer; Guest of Honor and Patrons to White; White 11 with Leavetakers and Minimalists in, Undertaker, Barker, Old Money, Cashier and Heiresses out // purple 13: Night Watch and Night Owls out, Sleepyheads and Lookouts in (Nov 6)
+  const DEALT = { echo: 15, /* Nov 11: Tribute Band, Impersonator and Buskers out; Mimics, Gardeners, Druids in */ red: 13, /* Mob and Proselytizers out, Guild Master and Purists in (Nov 11); Dyer in for Deprogrammers (Nov 12) */ thieves: 14, purple: 13, /* Usher in for Gossip (Nov 12) */ market: 12, yellow: 15, silver: 11, trading: 11 }; // Nov 11 (Cory): Silver's 8 of 10 plus Indulgence Seller and Almsgiver; Matchmaker and Dowry-Givers to White; White 11 with Mourners and Connoisseurs in, Undertaker, Barker, Old Money, Cashier and Heiresses out // purple 13: Night Watch and Night Owls out, Sleepyheads and Hurriers in (Nov 6)
   it('Green deals 15, Blue 12, Red and Purple 13, Magenta 15, White 12, Yellow 15, other spheres 10, guests 20; no cut card is dealt', () => {
     for (const q of SPHERES) {
       const s = createGame({ seats: seats(4), quadrants: [q, ...SPHERES.filter(x => x !== q).slice(0, 3)] });
@@ -40,7 +40,7 @@ describe('the curated member decks', () => {
       const fromDeck = ARTIFACTS[q] && !CUT.has(ARTIFACTS[q]) && !defById(ARTIFACTS[q]).artifact ? 1 : 0;
       expect(dealt.filter(d => d.startsWith(`${q}.`)).length, q).toBe((DEALT[q] ?? 10) - fromDeck);
       expect(dealt.filter(d => CUT.has(d))).toEqual([]);
-      expect(dealt.filter(d => d.startsWith('benders.')).length).toBe(20); // Cory's 15 guests (Oct 28), plus Cheerleaders (Nov 4; Victors out Nov 6), plus the Test version's Protesters, Gift Swappers and Purifiers (the game since Nov 11), plus Mutineers (Nov 12)
+      expect(dealt.filter(d => d.startsWith('benders.')).length).toBe(20); // Cory's 15 guests (Oct 28), plus Trumpeters (Nov 4; Victors out Nov 6), plus the Test version's Protesters, Gift Swappers and Purifiers (the game since Nov 11), plus Mutineers (Nov 12)
     }
   });
 
@@ -61,7 +61,7 @@ describe('the curated member decks', () => {
       let s = createGame({ seats: seats(4), seed, quadrants: qs });
       for (let n = 0; s.pending && n < 5000; n++) { s = applyMove(s, chooseBotMove(s, rand)); checkInvariants(s, `cull seed=${seed}`); }
       expect(s.over, qs.join(',')).toBe(true);
-      // an artifact may be a cut card (Silver's Caterer): it's never dealt, only picked
+      // an artifact may be a cut card (Silver's Almsgiver): it's never dealt, only picked
       const arts = new Set(Object.values(s.artifacts || {}));
       expect(Object.values(s.cards).some(c => CUT.has(c.def) && !arts.has(c.uid))).toBe(false);
     }

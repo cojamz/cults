@@ -627,9 +627,9 @@ const trading = {
     ...handlers14({
       brokerage(ctx, p, value) {
         const k = Math.min(Number(value) || 0, p.res[W] || 0);
-        if (!k) { ctx.log(`${p.name}'s Brokers: kept their white.`); return; }
+        if (!k) { ctx.log(`${p.name}'s Preachers: kept their white.`); return; }
         p.res[W] -= k; p.bonus += 2 * k;
-        ctx.log(`${p.name}'s Brokers: ${k} white into ${2 * k} followers.`);
+        ctx.log(`${p.name}'s Preachers: ${k} white into ${2 * k} followers.`);
       },
       pawnShop(ctx, p, value) {
         if (value !== 'done') {
@@ -682,7 +682,7 @@ const trading = {
     moneylender(ctx, p, uid) {
       if (!p.members.includes(uid)) return;
       const name = ctx.card(uid).def.name;
-      ctx.asMember(p, 'Downsizers', () => { ctx.buryMember(p, uid); ctx.gain(p, W, 4); ctx.log(`${p.name}'s Downsizers: discarded ${name}, +4 white.`); });
+      ctx.asMember(p, 'Executioner', () => { ctx.buryMember(p, uid); ctx.gain(p, W, 4); ctx.log(`${p.name}'s Executioner: discarded ${name}, +4 white.`); });
       gotRidOf(ctx, p);
     },
     dowagers(ctx, p, value, data) {
@@ -836,12 +836,12 @@ const trading = {
     }), 'pool2'),
     // Recluse moves here from Blue (Cory, 2026-10-25: "yes"), so a seat with few members has a payoff
     // Round End, not Game End (Cory, 2026-11-06: "Recluse should be Round End"): counted at each round's end
-    m('recluse', 'Recluse', 2, 1, 'Round End: +2 followers per rival with more members than you.', { round: 1,
+    m('recluse', 'Hermit', 2, 1, 'Round End: +2 followers per rival with more members than you.', { round: 1,
       onRoundEnd(ctx, owner) {
         const k = ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner)).length;
         if (!k) return;
         owner.bonus += 2 * k;
-        ctx.log(`${owner.name}'s Recluse: ${k} rival${k === 1 ? ' has' : 's have'} more members: +${2 * k} followers.`);
+        ctx.log(`${owner.name}'s Hermit: ${k} rival${k === 1 ? ' has' : 's have'} more members: +${2 * k} followers.`);
       },
       ...see(info => endsAhead(info).length * 2),
     }),
@@ -889,13 +889,13 @@ const trading = {
     // player sees it. One of your other members costing 4 or less (3 before every member +1) to the bottom of the pile (as Farewell), +4 white; with
     // none, the use comes back. Bots cast out their cheapest-worth member, from round II.
     // Live in Raiders' slot as Downsizers (Cory, Nov 5: "i like moneylender. needs a different name. maybe slightly cheap"; name Claude's fill-in, 3 white + 2 any as a player sees it)
-    m('moneylender', 'Downsizers', 2, 1, 'On Use, once per round: discard one of your members. +4 white.' /* Cory, Nov 5: "costing 4 or less" cut */, {
+    m('moneylender', 'Executioner', 2, 1, 'On Use, once per round: discard one of your members. +4 white.' /* Cory, Nov 5: "costing 4 or less" cut */, {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         // it may discard itself (Cory, Nov 13: "I think fine if Downsizers discards itself?", then "yes.")
         const list = ctx.membersOf(owner);
-        ctx.choose(owner, 'Downsizers: discard which member for 4 white?', list.map(c => ({
+        ctx.choose(owner, 'Executioner: discard which member for 4 white?', list.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: -(c.def.f + (c.def.onDiscard ? -6 : 0)),
         })), 'trading.moneylender');
       },
@@ -954,7 +954,7 @@ const trading = {
         if (buyer === owner && tier?.get >= 5) { owner.bonus += 1; ctx.log(`${owner.name}'s Bulk Buyer: +1 follower.`); }
       },
     }),
-    m('broker', 'Brokers', 2, 2, 'Whenever a White action gives you followers, +2 followers.', { f: 3, brokerBonus: 2, ...old14('brokerage') }), // (Cory, Oct 29, balance run: +1 follower; Nov 11: +2)
+    m('broker', 'Preachers', 2, 2, 'Whenever a White action gives you followers, +2 followers.', { f: 3, brokerBonus: 2, ...old14('brokerage') }), // (Cory, Oct 29, balance run: +1 follower; Nov 11: +2)
     m('exporter', 'Exporters', 2, 4, 'Whenever you recruit a non-white member, +1 white.', { f: 2, retired: true, // Misers takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by === owner && recruited.uid !== card.uid && ctx.defOf(recruited).quadrant !== 'trading') ctx.gain(owner, W, 1);
@@ -984,11 +984,11 @@ const trading = {
     })),
     // Brokers with a round-end cash-out (paper 14 vs 13, quality/pitches/E-brokers.md), same price. After the round's last
     // placement and before contests, as Night Market's swap.
-    ...add14(m('brokerage', 'Brokers', 2, 2, 'Round End: before contests are scored, you may turn up to 2 of your white into 2 followers each.', { f: 3,
+    ...add14(m('brokerage', 'Preachers', 2, 2, 'Round End: before contests are scored, you may turn up to 2 of your white into 2 followers each.', { f: 3,
       onAllPlaced(ctx, owner) {
         const max = Math.min(2, owner.res[W] || 0);
-        if (!max) { ctx.log(`${owner.name}'s Brokers: no white to turn in.`); return; }
-        ctx.choose(owner, 'Brokers: turn how many white into 2 followers each?', Array.from({ length: max + 1 }, (_, i) => max - i).map(n => ({
+        if (!max) { ctx.log(`${owner.name}'s Preachers: no white to turn in.`); return; }
+        ctx.choose(owner, 'Preachers: turn how many white into 2 followers each?', Array.from({ length: max + 1 }, (_, i) => max - i).map(n => ({
           id: `n:${n}`, label: n ? `${n} white → ${2 * n} followers` : 'Keep the white', kind: 'number', value: n, hint: n,
         })), 'trading.brokerage');
       },
@@ -1062,10 +1062,10 @@ const trading = {
     // Cory, 2026-11-11 9:10pm Eastern: "replace undertaker with leave takers" (his idea, 3:56pm: "when a thing leaves your
     // cult, you get 2 white"). Any of your members leaving, itself too: discarded, given, stolen, swapped (core's cardLeaves,
     // onAnyLeave). Undertaker's price (Claude, under Cory's go-with-your-gut).
-    m('leavetakers', 'Leavetakers', 2, 2, 'Whenever one of your members leaves your cult, +2 white.', {
+    m('leavetakers', 'Mourners', 2, 2, 'Whenever one of your members leaves your cult, +2 white.', {
       onAnyLeave(ctx, owner, card, gone) {
         ctx.gain(owner, W, 2);
-        ctx.log(`${owner.name}'s Leavetakers: ${gone.def.name} left: +2 white.`);
+        ctx.log(`${owner.name}'s Mourners: ${gone.def.name} left: +2 white.`);
       },
     }),
     // Cory, 2026-11-11 9:12pm Eastern: "Minimalists over exiles" ("you're going to want to be like small but big"). Costing
@@ -1073,7 +1073,7 @@ const trading = {
     // Cory, 2026-11-11 11:53pm Eastern: "yeah just nerf minimalists. +2 followers per. member costing 8 or more." (was 6;
     // bots, v0.99.738: it paid cults of 6+ members 12.8 a game and cults of 5 or fewer 7.2)
     // costs 10 (Cory, Nov 12 10:31am Eastern, yes to "Minimalists cost 8 → 10")
-    m('minimalists', 'Minimalists', 1, 6, 'Game End: +2 followers per member you have costing 8 or more.', {
+    m('minimalists', 'Connoisseurs', 1, 6, 'Game End: +2 followers per member you have costing 8 or more.', {
       onGameEnd: (ctx, owner) => 2 * ctx.membersOf(owner).filter(c => c.def.s + c.def.w >= 8 + richUp(ctx.state)).length,
     }),
     m('appraiser', 'Appraiser', 3, 2, 'On Use, once per game: discard one of your members. Gain its cost in followers or white.', {
@@ -1093,13 +1093,13 @@ const trading = {
     // From Silver (Cory, 2026-11-11 2:29pm: "guest of honor should be white", "it's more of a white card too. Patrons")
     guestOfHonorDef(),
     patronsDef(),
-    m('changer', 'Money Changers', 2, 1, 'Whenever you buy followers, +2 white.', { f: 2,
+    m('changer', 'Penitents', 2, 1, 'Whenever you buy followers, +2 white.', { f: 2,
       onBuyFollowers(ctx, owner, card, buyer) {
         const CH = globalThis.process?.env?.CHANGER || 'self'; // live: own buys only, +2 (Cory, Nov 6 "ok")
         if (CH.startsWith('self') && buyer?.id !== owner.id) return; // CHANGER=self: bot test only (Nov 3); self3: +3 (Nov 6)
         const k = CH === 'self3' ? 3 : buyer?.id === owner.id && CH !== 'one' ? 2 : 1; // CHANGER=one: +1 on every buy, bot test only (Nov 4, with Most white)
         ctx.gain(owner, W, k);
-        ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Money Changers')}: +${k} white.`);
+        ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Penitents')}: +${k} white.`);
       },
     }),
     // Cory, 2026-11-09 10:16pm Eastern: "martyr should give +4 white +4 followers when discarded" (was "Whenever this member
@@ -1157,14 +1157,14 @@ const trading = {
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'trading'),
     }),
     // was Hoarder; new name (Cory, Nov 4: "I like hoarder! it should have a different name/image")
-    m('hoarder', 'Magpie', 4, 3, 'On Use, once per game: turn all your resources into white.', { ...old3,
+    m('hoarder', 'Washerwoman', 4, 3, 'On Use, once per game: turn all your resources into white.', { ...old3,
       activate: 'game',
       onActivate(ctx, owner, card) {
         let n = 0;
         for (const r of ctx.state.resources) if (r !== W && owner.res[r]) { n += owner.res[r]; owner.res[r] = 0; }
-        if (!n) { card.used = false; ctx.log(`${owner.name}'s Magpie: nothing but white already.`); return; }
+        if (!n) { card.used = false; ctx.log(`${owner.name}'s Washerwoman: nothing but white already.`); return; }
         owner.res[W] = (owner.res[W] || 0) + n;
-        ctx.log(`${owner.name}'s Magpie: ${n} resources became white.`);
+        ctx.log(`${owner.name}'s Washerwoman: ${n} resources became white.`);
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && totalRes(owner) - (owner.res[W] || 0) >= 3,
     }),
@@ -1324,7 +1324,7 @@ function actionFollowers(ctx, p, n) {
   p.bonus += n;
   // Brokers is its own source: its followers fly from it, after the space's (Cory, Nov 12: "followers gained are getting
   // grouped from different sources")
-  if (extra) ctx.asMember(p, 'Brokers', () => { p.bonus += extra; ctx.log(`${p.name}'s Brokers: +${extra} follower${extra > 1 ? 's' : ''}.`); });
+  if (extra) ctx.asMember(p, 'Preachers', () => { p.bonus += extra; ctx.log(`${p.name}'s Preachers: +${extra} follower${extra > 1 ? 's' : ''}.`); });
 }
 
 /** The leader: most followers, and more than you. Ties go to whoever has more followers to sell. */
