@@ -138,7 +138,7 @@ const P = {
     buyout: { verb: "Recruit a rival's member", second: 'pay them its cost in silver' }, // Cory, Nov 11
     // Largesse keeps "+1 @f each": the center ring holds about ten letters there, and "per silver given" dropped line 2
     // whole (picky bot, Nov 4); its hover says per silver you give
-    largesse: { verb: 'Give rivals 12 silver', second: '+10 @f', note: 'from the bank' },
+    largesse: { verb: 'Give rivals 10 silver', second: '+7 @f', note: 'from the bank' },
   },
   yellow: {
     // Yellow 2.0 (Oct 31): the wheel printed the old Harvest ("+1 yellow, +1 per other color you hold") and only the

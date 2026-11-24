@@ -104,6 +104,16 @@ if (missing.length) problems.push(`Card text missing. Quote each card in full, n
   const nc = spawnSync('node', [join(root, '.claude/hooks/name-check.mjs')], { input: text, encoding: 'utf8' });
   if (nc.status === 1) problems.push(nc.stdout.trim() + '\nPick names with .claude/rules/member-names.md, then send again.');
 }
+// Cory, Nov 24 4:24pm: "5:15??? what takes so long" (again after Nov 11: "Every message takes so long"). A quoted time over 20 minutes out
+// needs a first piece sooner; a real build or ship time passes with --wait-ok.
+if (!args.includes('--wait-ok')) {
+  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  for (const m of prose.matchAll(/\b(1[0-2]|[1-9]):([0-5]\d)\s*(am|pm)\b/gi)) {
+    const t = new Date(now); t.setHours((+m[1] % 12) + (m[3].toLowerCase() === 'pm' ? 12 : 0), +m[2], 0, 0);
+    const mins = (t - now) / 60000;
+    if (mins > 20 && mins < 12 * 60) { problems.push(`Quoted wait to ${m[0]} is ${Math.round(mins)} minutes. Send a first piece within 15 minutes and the rest as each is finished (Cory, Nov 24: "5:15??? what takes so long"). A real build or ship time? add --wait-ok.`); break; }
+  }
+}
 if (/\bguests\b|\bguest members?\b/i.test(prose)) problems.push('Say "grey" for the neutral members, never "Guests" (Cory, Nov 1).');
 
 // Cory, Nov 7 (said many times): no drawing from the top of the pile, no randomness, all public information.
