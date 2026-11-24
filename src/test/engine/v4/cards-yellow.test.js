@@ -69,7 +69,7 @@ describe('Yellow actions', () => {
     expect(named(s, 'New Blood')).toContain("P1's New Blood: +3 yellow for recruiting a member of a new color.");
   });
   // Cory, Nov 11: Makeover moves to round II in Housewarming's slot; Offering takes round III
-  it('round II holds Dye Job (Makeover's slot, Nov 24) and Melting Pot, round III Offering; Housewarming is off the wheel', async () => {
+  it('round II holds Dye Job (in Makeover\'s slot, Nov 24) and Melting Pot, round III Offering; Housewarming is off the wheel', async () => {
     const { quadrant } = await import('../../../engine/v4/content/index.js');
     const acts = quadrant('yellow').actions, ring = n => acts.filter(a => a.ring === n).map(a => a.name);
     expect(ring(2)).toEqual(expect.arrayContaining(['Dye Job', 'Melting Pot']));
