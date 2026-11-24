@@ -38,9 +38,9 @@ describe('REPLACE10: Encore', () => {
     const acc = s.shop.find(x => s.cards[x].def === 'thieves.accomplice');
     contextFor(s).recruit(s.players[0], acc, { spend: payFor(s, 0, acc), how: {}, paid: true });
     s = resume(s);
-    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /steal|Accomplice/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
+    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /steal|Bandit/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
     expect(s.players[1].res.red).toBe(3); // stole 3, twice
-    expect(named(s, 'Encore')).toContain("P1's Encore: Accomplice's On Recruit again.");
+    expect(named(s, 'Encore')).toContain("P1's Encore: Bandit's On Recruit again.");
   });
 
   it('Cory\'s wording (live Nov 4): still offered after the turn\'s recruit, since it waits for the next one', () => {
@@ -62,8 +62,8 @@ describe('REPLACE10: Encore', () => {
     const u = uidOf(s, 'echo.encore', 0);
     s = move(s, `use:${u}`);
     s = take(s, 'red.hire');
-    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /steal|Accomplice/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
-    expect(named(s, 'Encore')).toContain("P1's Encore: Accomplice's On Recruit again.");
+    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /steal|Bandit/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
+    expect(named(s, 'Encore')).toContain("P1's Encore: Bandit's On Recruit again.");
   });
 
   it('recruited this turn: can be used the same turn, for a later recruit (Cory\'s wording, live Nov 4)', () => {

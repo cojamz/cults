@@ -101,7 +101,7 @@ describe('Collections (Magenta, round II)', () => {
     s = take(s, 'thieves.collections');
     s = move(s, 'player:1');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
-    // Panel is worth 3 but is one card: 2 cards, 2 stolen
+    // Fairy Godmother is worth 3 but is one card: 2 cards, 2 stolen
     expect(total(s.players[1].res)).toBe(8);
     expect(named(s, 'Collections')).toContain("P1's Collections: P2 has 2 member cards.");
   });
@@ -113,7 +113,7 @@ describe('Tall Poppies (Magenta, round II)', () => {
     s = take(s, 'thieves.tallpoppies');
     s = move(s, 'player:1');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
-    // P2: Panel 1 + Dabblers 2 (its printed count) = 3, P1 has 1: 2 more (Cory, Nov 12)
+    // P2: Fairy Godmother 1 + Dabblers 2 (its printed count) = 3, P1 has 1: 2 more (Cory, Nov 12)
     expect(total(s.players[1].res)).toBe(8);
     expect(s.players[0].res.magenta).toBeGreaterThanOrEqual(1);
     expect(named(s, 'Tall Poppies')).toContain("P1's Tall Poppies: P2 has 2 members more.");

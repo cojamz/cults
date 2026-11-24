@@ -40,13 +40,13 @@ describe('REPLACE5: each card fires', () => {
     expect(named(s, 'Second Fiddles')).toContain("P1's Second Fiddles: second in Most red, Most blue: +4 followers.");
   });
 
-  // Cat Burglars (was Second-Story Man; Cory, Nov 11 9:17pm: "Round End, before scoring: steal 3 resources.")
-  it('Cat Burglars: before contests are scored, steal 3 resources from any rivals', () => {
+  // Night Thieves (was Second-Story Man; Cory, Nov 11 9:17pm: "Round End, before scoring: steal 3 resources.")
+  it('Night Thieves: before contests are scored, steal 3 resources from any rivals', () => {
     let s = table(['red', 'thieves', 'market', 'purple'], { n: 3, round: 1, res: [{ blue: 5 }, { blue: 6 }, { red: 1 }], members: [['thieves.secondstory']], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
-    expect(s.pending.prompt).toMatch(/^Cat Burglars/);
+    expect(s.pending.prompt).toMatch(/^Night Thieves/);
     expect(s.pending.options.map(o => o.id)).toEqual(['take:1:blue', 'take:2:red']);
     s = answer(s, 'take:2:red');
-    while (s.pending?.prompt?.startsWith('Cat Burglars')) s = answer(s, 'take:1:blue');
+    while (s.pending?.prompt?.startsWith('Night Thieves')) s = answer(s, 'take:1:blue');
     expect(s.players[0].res.blue).toBe(7);
     expect(s.players[0].res.red).toBe(1);
     expect(s.players[1].res.blue).toBe(4);

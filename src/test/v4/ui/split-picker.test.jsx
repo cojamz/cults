@@ -50,9 +50,9 @@ describe('Harvest on the split card', () => {
   });
 });
 
-// Matchmaker (Cory, Nov 6: "Matchmaker resource selection is slow"): a member's "+2 in colors you choose" took one click on
+// Herald (Cory, Nov 6: "Herald resource selection is slow"): a member's "+2 in colors you choose" took one click on
 // your stacks per coin; it takes the same split card as Harvest, one Take for the whole gain.
-describe("Matchmaker's colors on the split card", () => {
+describe("Herald's colors on the split card", () => {
   it('a yellow recruit opens the split card, and Take answers both coins (Nov 11: +2 wild)', async () => {
     const { sceneQ } = await import('../../engine/v4/cards-helpers.js');
     const { uidOf } = await import('../../engine/v4/helpers.js');
@@ -60,7 +60,7 @@ describe("Matchmaker's colors on the split card", () => {
     let s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], round: 3, res: [rich], members: [['yellow.matchmaker']], shop: ['yellow.dyer'] });
     s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.dyer', 'shop')}`);
     const g = giftPick(s, s.pending);
-    expect([g.title, g.kind, g.toPick]).toEqual(['Matchmaker', 'color', 2]);
+    expect([g.title, g.kind, g.toPick]).toEqual(['Herald', 'color', 2]);
     vi.useFakeTimers();
     try {
       const answers = [];

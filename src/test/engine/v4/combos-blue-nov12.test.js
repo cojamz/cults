@@ -80,10 +80,10 @@ describe('Swap Shoppers: "On Use, once per round: swap one of your members for a
     cleanLog(s);
   });
 
-  it('nothing on the discard pile costs the same (Panel 9 against 7 and 5): no swap', () => {
+  it('nothing on the discard pile costs the same (Fairy Godmother 9 against 7 and 5): no swap', () => {
     const { s } = go('ss-nocost', { quads: QB, round: 2, queue: BUY, members: [['market.swapshoppers', 'red.twins']], prep: disc('red.panel') }, [/use:/]);
     expect(s.log).toContain("P1's Swap Shoppers: no discard-pile member costs the same as one of yours.");
-    expect(discNames(s)).toEqual(['Panel']);
+    expect(discNames(s)).toEqual(['Fairy Godmother']);
     expect(names(s, 0)).toEqual(['Swap Shoppers', 'Triplets']);
   });
 
@@ -136,9 +136,9 @@ describe('Swap Shoppers: "On Use, once per round: swap one of your members for a
     cleanLog(s);
   });
 
-  it('Loyalists on the owner ("Your other members can’t be swapped."): only Loyalists itself can be swapped (was: every member offered; fixed)', () => {
+  it('Warden on the owner ("Your other members can’t be swapped."): only Warden itself can be swapped (was: every member offered; fixed)', () => {
     const { s } = go('ss-loyal', { quads: QB, round: 2, queue: BUY, members: [['market.swapshoppers', 'red.loyalists', 'red.twins']], prep: disc('red.movementpenalty') }, [/use:/]);
-    expect(s.pending.options.map(o => o.label)).toEqual(['Loyalists ↔ Deprogrammers (5)', 'Don’t swap']);
+    expect(s.pending.options.map(o => o.label)).toEqual(['Warden ↔ Deprogrammers (5)', 'Don’t swap']);
   });
 
   // Cory's calls (Nov 1: "A member you get by your own swap is recruited (its On Recruit fires)"; Nov 4: "Any time you bring
@@ -149,13 +149,13 @@ describe('Swap Shoppers: "On Use, once per round: swap one of your members for a
     expect(names(s, 0)).toContain('Deprogrammers');
     expect(s.log).toContain("P1's Thrift Hunters: Deprogrammers from the discard pile, +2 followers.");
   });
-  it('a yellow member swapped in: Matchmaker and Brethren pay, and Power Shoppers counts it as the first member that turn', () => {
+  it('a yellow member swapped in: Herald and Guild Master pay, and Power Shoppers counts it as the first member that turn', () => {
     const { s } = go('ss-recruit-hooks', { quads: QB, round: 2, queue: [{ t: 'buy', p: 0 }, { t: 'buy', p: 0 }], res: [{ red: 10 }], shop: ['red.intern'],
       members: [['market.swapshoppers', 'yellow.matchmaker', 'red.brethren', 'market.powershoppers', 'silver.dowager']], prep: disc('yellow.exchangestudents') },
-      [/use:/, /Dowager ↔ Exchange Students/, /./, /./, /Intern/, /pay:/]);
-    expect(names(s, 0)).toEqual(['Swap Shoppers', 'Matchmaker', 'Brethren', 'Power Shoppers', 'Exchange Students', 'Intern']);
-    expect(has(s, /Matchmaker/)).toBe(true);
-    expect(has(s, /Brethren/)).toBe(true);
+      [/use:/, /Dowager ↔ Hostages/, /./, /./, /Intern/, /pay:/]);
+    expect(names(s, 0)).toEqual(['Swap Shoppers', 'Herald', 'Guild Master', 'Power Shoppers', 'Hostages', 'Intern']);
+    expect(has(s, /Herald/)).toBe(true);
+    expect(has(s, /Guild Master/)).toBe(true);
     expect(lines(s, /Power Shoppers/)).toEqual(["P1's Power Shoppers: a second member this turn, +3 followers."]);
     cleanLog(s);
   });
@@ -205,7 +205,7 @@ describe('Thrift Hunters ("Whenever you recruit from the discard pile, +2 follow
     cleanLog(s);
   });
 
-  it('a free recruit from the shop (Talent Scouts) is not from the discard pile: no Thrift Hunters', () => {
+  it('a free recruit from the shop (Benefactor) is not from the discard pile: no Thrift Hunters', () => {
     const { s } = go('th-scouts', { quads: QB, round: 2, queue: BUY, shop: ['red.twins'], members: [['market.thrifthunters', 'yellow.headhunters']] }, [/use:/, /Triplets/]);
     expect(names(s, 0)).toContain('Triplets');
     expect(has(s, /Thrift Hunters/)).toBe(false);
@@ -242,10 +242,10 @@ describe('Power Shoppers: "Whenever you recruit your second member in a turn, +3
     cleanLog(s);
   });
 
-  it('a free recruit (Talent Scouts) is the first, a paid shop member the second: +3', () => {
+  it('a free recruit (Benefactor) is the first, a paid shop member the second: +3', () => {
     const { s } = go('ps-scouts', { quads: QB, round: 2, queue: [{ t: 'buy', p: 0 }, { t: 'buy', p: 0 }], res: [{ red: 20 }], shop: ['red.twins', 'red.intern'], members: [['market.powershoppers', 'yellow.headhunters']] },
       [/use:/, /Triplets/, /Intern/, /pay:/]);
-    expect(s.log).toContain("P1's Talent Scouts: recruits Triplets for free.");
+    expect(s.log).toContain("P1's Benefactor: recruits Triplets for free.");
     expect(lines(s, /Power Shoppers/)).toEqual(["P1's Power Shoppers: a second member this turn, +3 followers."]);
     expect(bonusOf(s, 0)).toBe(3);
   });
@@ -258,18 +258,18 @@ describe('Power Shoppers: "Whenever you recruit your second member in a turn, +3
     expect(bonusOf(s, 0)).toBe(1);
   });
 
-  it('Exchange Students\' swap-in counts as the second (Cory, Nov 1: "A member you get by your own swap is recruited")', () => {
+  it('Hostages\' swap-in counts as the second (Cory, Nov 1: "A member you get by your own swap is recruited")', () => {
     const { s } = go('ps-xs', { quads: QB, round: 2, queue: BUY, res: [{ red: 20, yellow: 20 }], shop: ['yellow.exchangestudents'], members: [['market.powershoppers', 'red.twins'], ['red.seatfiller']] },
-      [/Exchange Students/, /pay:/, /Triplets ↔/]);
-    expect(s.log).toContain("P1's Exchange Students: swaps Triplets for P2's Seat Filler.");
+      [/Hostages/, /pay:/, /Triplets ↔/]);
+    expect(s.log).toContain("P1's Hostages: swaps Triplets for P2's Journeyman.");
     expect(lines(s, /Power Shoppers/)).toEqual(["P1's Power Shoppers: a second member this turn, +3 followers."]);
   });
 
-  it("Double Agent's swap-in counts as the second, even though Double Agent itself leaves", () => {
+  it("Changeling's swap-in counts as the second, even though Changeling itself leaves", () => {
     const { s } = go('ps-da', { quads: QT, round: 2, queue: BUY, res: [{ red: 20, magenta: 20 }], shop: ['thieves.doubleagent'], members: [['market.powershoppers'], ['red.bigfamily']] },
-      [/Double Agent/, /pay:/, /Big Family/]);
+      [/Changeling/, /pay:/, /Big Family/]);
     expect(names(s, 0)).toEqual(['Power Shoppers', 'Big Family']);
-    expect(names(s, 1)).toEqual(['Double Agent']);
+    expect(names(s, 1)).toEqual(['Changeling']);
     expect(lines(s, /Power Shoppers/)).toEqual(["P1's Power Shoppers: a second member this turn, +3 followers."]);
   });
 

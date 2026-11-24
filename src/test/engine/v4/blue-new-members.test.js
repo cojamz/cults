@@ -68,7 +68,7 @@ describe('Thrift Hunters: "Whenever you recruit from the discard pile, +2 follow
       if (s.pending?.kind === 'buy') break;
     }
     expect(s.players[0].members).toContain(a);
-    expect(s.log.join('\n')).toContain("P1's Thrift Hunters: Seat Filler from the discard pile, +2 followers.");
+    expect(s.log.join('\n')).toContain("P1's Thrift Hunters: Journeyman from the discard pile, +2 followers.");
     expect(s.players[0].bonus - before).toBeGreaterThanOrEqual(2);
   });
 });

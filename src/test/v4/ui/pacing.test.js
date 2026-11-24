@@ -97,8 +97,8 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // 14s (Claude, 2026-10-29): members counting their printed number moved a seeded run of six to 13.76s; same shows, longer chain
     // free recruit, a Con Men steal of 5, an Anarchist swap and three recruits (21.2s vs 21.1s); content, not slower motion
     // 14.1s (Claude, Nov 1): the Nov 1 balance numbers moved a seeded run of six by 24 ms
-    // 15s (Claude, Nov 1): Tryout's +2 red, Recruiter and Last Call moved seed 2's round II run of six (seat 0) into a
-    // Tryout on Treasurer plus two Anarchist swaps, a Coach and a Mentor protégé (14.95s); content, not slower motion
+    // 15s (Claude, Nov 1): Tryout's +2 red, Ferryman and Last Call moved seed 2's round II run of six (seat 0) into a
+    // Tryout on Treasurer plus two Anarchist swaps, a Coach and a Governess protégé (14.95s); content, not slower motion
     // 15.5s (Claude, Nov 4): recruits play one step at a time, coins in, then to the middle, then to the buyer (Cory's
     // "yes" to the audit's pick): seed 2's run of six holds three recruits, 21.5s to 24.9s at Steady; slower by his call
     expect(h2max).toBeLessThanOrEqual(25000 * K);
@@ -117,12 +117,12 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // Relaxed ×6 against Steady ×1.62 (Cory, Nov 4: "the slowest speed is way too fast"); fixed holds and floors keep it under 3.7
     // 2.7 (Claude, Nov 11): Late Shift in Trending's place changed these seeded games' turn mix and the per-turn ratio
     // fell from 2.8+ to 2.72 with no motion code changed; content, not faster Relaxed
-    // 2.6 (Claude, Nov 12): Gossip cut and Assimilators in moved the same seeded games to 2.65, motion code unchanged
+    // 2.6 (Claude, Nov 12): Gossip cut and Dyer in moved the same seeded games to 2.65, motion code unchanged
     expect(pair).toBeGreaterThanOrEqual(2.6);
     expect(pair).toBeLessThanOrEqual(4.2);
     // the old Steady's p50 on these games was 1541ms (2026-10-15); "a little slower" was about a fifth more, until rivals'
     // follower buys moved to the rival pace too (Cory, 2026-10-28: 1565ms): a floor so the table never collapses to a blur
-    // (Claude, Nov 3: the four replacements that went live, Body Snatchers in Triplets' seat above all, moved these seeded
+    // (Claude, Nov 3: the four replacements that went live, Swindler in Triplets' seat above all, moved these seeded
     // games' round III to fewer recruit turns, p50 1753 -> 1370ms with every turn the same length at each speed; content,
     // not faster motion.) The floor now rides on the same turn at Quick, which no change of cards moves: Steady stays
     // at least twice Quick turn by turn (2.28 on this mix), plus an absolute floor under the new mix.

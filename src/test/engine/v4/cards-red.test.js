@@ -31,20 +31,20 @@ describe('Red action gains', () => {
 });
 
 describe('Red members', () => {
-  it('Mentor: when recruited, also the cheapest face-up member free; the log names Mentor', () => {
+  it('Governess: when recruited, also the cheapest face-up member free; the log names Governess', () => {
     let s = sceneQ({ res: [rich], shop: ['red.mentor'] });
     s = take(s, 'gold.rush'); s = buy(s, 'red.mentor');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     expect(s.players[0].members).toHaveLength(2);
-    expect(named(s, 'Mentor')).toHaveLength(1);
+    expect(named(s, 'Governess')).toHaveLength(1);
   });
-  it('Mentor × Recruiter × Pied Piper: the free protégé is a second recruit this turn', () => {
+  it('Governess × Ferryman × Pied Piper: the free protégé is a second recruit this turn', () => {
     let s = sceneQ({ res: [rich], members: [['red.recruiter', 'red.drive']], shop: ['red.mentor'] });
     s = take(s, 'gold.rush');
     s = buy(s, 'red.mentor');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
-    // Drive +2 on the second; Recruiter +1 for each: both came from the shop (Cory, Nov 1 3:59pm)
-    expect(named(s, 'Recruiter')).toHaveLength(2);
+    // Drive +2 on the second; Ferryman +1 for each: both came from the shop (Cory, Nov 1 3:59pm)
+    expect(named(s, 'Ferryman')).toHaveLength(2);
     expect(named(s, 'Pied Piper')).toHaveLength(1);
   });
 
@@ -57,7 +57,7 @@ describe('Red members', () => {
   });
 
   it('Mob: round end +2 followers per rival with fewer red members (Nov 4); a Doppelganger is a second Mob', () => {
-    // P1: Mob + Intern = 2 red; P2: Panel + Recruiter = 2 (a tie: not fewer); P3: none. Mob and Panel were rebased to 1 (Cory, Nov 12).
+    // P1: Mob + Intern = 2 red; P2: Fairy Godmother + Ferryman = 2 (a tie: not fewer); P3: none. Mob and Fairy Godmother were rebased to 1 (Cory, Nov 12).
     const M = [['red.mob', 'red.intern', 'echo.doppel'], ['red.panel', 'red.recruiter'], []];
     let s = sceneQ({ n: 3, members: M, queue: [{ t: 'endRound' }] });
     expect(s.players.map(p => countMembersOfColor(s, p, 'red'))).toEqual([2, 2, 0]);
@@ -69,47 +69,47 @@ describe('Red members', () => {
     expect(defById('red.mob').onGameEnd).toBeUndefined();
   });
 
-  it('Clan: round end +1 follower per member card in your biggest group of one color, grey counts (Cory, Nov 11)', () => {
-    // P1: Clan + Intern + Volunteer = 3 red cards beside 1 blue; P2 has no Clan, so it pays nothing
+  it('Clan Chief: round end +1 follower per member card in your biggest group of one color, grey counts (Cory, Nov 11)', () => {
+    // P1: Clan Chief + Intern + Volunteer = 3 red cards beside 1 blue; P2 has no Clan Chief, so it pays nothing
     const M = [['red.clan', 'red.intern', 'red.volunteer', 'market.regular'], ['market.critic']];
     const s = sceneQ({ n: 2, quadrants: ['gold', 'red', 'market', 'echo'], members: M, queue: [{ t: 'endRound' }] });
-    expect(named(s, 'Clan')).toEqual([
-      "P1's Clan: 3 members in their biggest group of one color: +3 followers.",
+    expect(named(s, 'Clan Chief')).toEqual([
+      "P1's Clan Chief: 3 members in their biggest group of one color: +3 followers.",
     ]);
   });
 
-  it('Recruiter: a rival’s Poach of another rival’s member pays its holder nothing (shop recruits only, Nov 1)', () => {
-    // 3 players, round III: P1 Poaches P3's Triplets; P2 holds Recruiter
+  it('Ferryman: a rival’s Poach of another rival’s member pays its holder nothing (shop recruits only, Nov 1)', () => {
+    // 3 players, round III: P1 Poaches P3's Triplets; P2 holds Ferryman
     let s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'echo'], n: 3, round: 3, members: [[], ['red.recruiter'], ['red.twins']] });
     s = move(take(s, 'thieves.heist'), `card:${uidOf(s, 'red.twins', 2)}`);
     expect(s.players[0].members).toHaveLength(1);
     expect(R(s, 1).red).toBe(0);
-    expect(named(s, 'Recruiter')).toHaveLength(0);
+    expect(named(s, 'Ferryman')).toHaveLength(0);
   });
 
-  it('Recruiter: its holder’s own member leaving pays nothing; a shop swap is a recruit, +1 red (Cory, Nov 1 5:06pm)', () => {
+  it('Ferryman: its holder’s own member leaving pays nothing; a shop swap is a recruit, +1 red (Cory, Nov 1 5:06pm)', () => {
     let s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'echo'], round: 3, members: [[], ['red.recruiter', 'red.twins']] });
     s = move(take(s, 'thieves.heist'), `card:${uidOf(s, 'red.twins', 1)}`);
     expect(s.players[0].members).toHaveLength(1);
     expect(R(s, 1).red).toBe(0);
-    expect(named(s, 'Recruiter')).toHaveLength(0);
+    expect(named(s, 'Ferryman')).toHaveLength(0);
     // Promote (round II) swaps your member with a shop member: a member you recruit
     let t = sceneQ({ round: 2, members: [['red.recruiter', 'red.intern']], shop: ['red.volunteer'] });
     t = take(t, 'red.hireup');
-    // a grey shop member (Line Cutters): no color of its own to pay, since the Nov 11 Red deck put Host first in this shop
+    // a grey shop member (Line Cutters): no color of its own to pay, since the Nov 11 Red deck put Tavern Keeper first in this shop
     const swap = t.pending.options.find(o => o.id.startsWith(`trade:${uidOf(t, 'red.intern', 0)}:`) && o.id.endsWith(`:${uidOf(t, 'benders.frontrunner', 'shop')}`));
     t = settle(move(t, swap.id));
-    expect(R(t).red).toBe(4); // Promote's +3 and Recruiter's +1
-    expect(named(t, 'Recruiter')).toHaveLength(1);
+    expect(R(t).red).toBe(4); // Promote's +3 and Ferryman's +1
+    expect(named(t, 'Ferryman')).toHaveLength(1);
   });
 
-  it('Recruiter: a rival’s member swapped into the shop pays nothing (shop recruits only, Nov 1 3:59pm)', () => {
+  it('Ferryman: a rival’s member swapped into the shop pays nothing (shop recruits only, Nov 1 3:59pm)', () => {
     let s = sceneQ({ round: 2, members: [['red.recruiter'], ['red.intern']], shop: ['red.volunteer'] });
     s = take(s, 'red.hireup');
     const swap = s.pending.options.find(o => o.id.startsWith(`trade:${uidOf(s, 'red.intern', 1)}:`));
     s = settle(move(s, swap.id));
     expect(R(s).red).toBe(3); // Promote's +3
-    expect(named(s, 'Recruiter')).toHaveLength(0);
+    expect(named(s, 'Ferryman')).toHaveLength(0);
   });
 
   it('Pied Piper: the second recruit in one turn pays +2 red at once, named; Big Spender makes it two buys', () => {
@@ -125,10 +125,10 @@ describe('Red members', () => {
     restore();
   });
 
-  it('Host: at round start, +1 red per 2 members, named; a Doppelganger copy pays again', () => {
+  it('Tavern Keeper: at round start, +1 red per 2 members, named; a Doppelganger copy pays again', () => {
     let s = sceneQ({ members: [['red.host', 'red.intern', 'red.twins', 'red.volunteer']], queue: [{ t: 'round', r: 2 }] });
     expect(R(s).red).toBe(3);
-    expect(named(s, 'Host')[0]).toMatch(/P1's Host: \+3 red/);
+    expect(named(s, 'Tavern Keeper')[0]).toMatch(/P1's Tavern Keeper: \+3 red/);
     s = sceneQ({ members: [['red.host', 'red.intern', 'echo.doppel']], queue: [] });
     s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'red.host';
     s.queue = [{ t: 'round', r: 2 }]; s = resume(s);

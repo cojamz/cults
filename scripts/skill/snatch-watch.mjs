@@ -26,7 +26,7 @@ async function playOne({ g }) {
     const pend = s.pending;
     if (bsUid) { const h = s.players.find(p => p.members.includes(bsUid)); if (h && h.id !== holder) { bought.push({ round: s.round, p: h.id }); } holder = h ? h.id : null; }
     const m = chooseBotMove(s, rand, { maxMs: Infinity, level: 'veryhard' });
-    if (/^Body Snatchers/.test(pend.prompt || '')) {
+    if (/^(Swindler|Body Snatchers)/.test(pend.prompt || '')) {
       const opt = pend.options.find(o => o.id === m.option);
       const info = uid => { const d = defById(s.cards[uid].def); const owner = s.players.find(p => p.members.includes(uid)); return { name: d.name, f: d.f, price: (d.s || 0) + (d.w || 0), owner: owner?.id }; };
       const fBefore = s.players.map(p => followers(s, p));

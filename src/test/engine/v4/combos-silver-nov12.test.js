@@ -64,11 +64,11 @@ describe('Paupers: "Round End: if you hold no silver, +3 followers."', () => {
     expect(s.log.filter(l => l === "P1's Paupers: no silver, +3 followers.").length).toBe(2);
   });
 
-  it('Paupers taken by Exchange Students mid-round pays its new holder at Round End', () => {
-    // P2 recruits Exchange Students and swaps their Kingmakers for P1's Paupers (both cost 6)
+  it('Paupers taken by Hostages mid-round pays its new holder at Round End', () => {
+    // P2 recruits Hostages and swaps their Kingmakers for P1's Paupers (both cost 6)
     const { s } = go('paupers-exchange', { quads: Q, turns: [1], queue: [{ t: 'turn', p: 1 }, { t: 'allPlaced' }], shop: ['yellow.exchangestudents'],
       members: [['silver.paupers'], ['silver.kingmakers']], res: [{ silver: 0 }, { yellow: 9, red: 9 }] },
-      [/Gather/, /Exchange Students/, /Paupers/]);
+      [/Gather/, /Hostages/, /Paupers/]);
     expect(names(s, 1)).toContain('Paupers');
     expect(names(s, 0)).toContain('Kingmakers');
     expect(has(s, /P2's Paupers: no silver, \+3 followers\./)).toBe(true);
@@ -203,20 +203,20 @@ describe('Loan Officers: "On Use, once per round: swap up to 5 of your silver fo
     expect(s.players[0].res.silver).toBe(5);
   });
 
-  it('Bodyguards\' owner can still be swapped with: a swap, not a steal; Insurers and Snitch do not fire', () => {
+  it('Thief-Takers\' owner can still be swapped with: a swap, not a steal; Insurers and Informer do not fire', () => {
     const { s } = go('loan-bodyguards', { quads: Q, turns: [0], members: [['silver.loanofficers'], ['thieves.watchdog', 'thieves.insurers', 'thieves.snitch']], res: [{ silver: 3 }, { red: 3 }] },
       [/use:/, /swap:1:red/, /swap:1:red/, /^done$/]);
     expect(s.players[0].res).toMatchObject({ silver: 1, red: 2 });
     expect(s.players[1].res).toMatchObject({ silver: 2, red: 1 });
-    expect(has(s, /Insurers|Snitch|Bodyguards/)).toBe(false);
+    expect(has(s, /Insurers|Informer|Thief-Takers/)).toBe(false);
     cleanLog(s);
   });
 
-  it('used, then taken by Exchange Students: still used for its new holder this round', () => {
+  it('used, then taken by Hostages: still used for its new holder this round', () => {
     const st = scene({ quads: Q, turns: [1], members: [['silver.loanofficers'], ['echo.songrequest']], shop: ['yellow.exchangestudents'], res: [{ silver: 5 }, { yellow: 9, red: 9, silver: 5, magenta: 5 }] });
     const u = uidOf(st, 0, 'silver.loanofficers');
     st.cards[u].used = true;
-    const { s, trail } = drive(st, [/Gather/, /Exchange Students/, /Loan Officers/]);
+    const { s, trail } = drive(st, [/Gather/, /Hostages/, /Loan Officers/]);
     if (DUMP) dump('loan-exchange-used', s, trail);
     expect(s.players[1].members).toContain(u);
     expect(s.cards[u].used).toBe(true);
@@ -264,11 +264,11 @@ describe('Bookies: "On Recruit: turn in up to 4 silver for 2 followers each."', 
     cleanLog(s);
   });
 
-  it('Double Agent swapped for a rival\'s Bookies: does Bookies\' On Recruit fire for the new holder?', () => {
+  it('Changeling swapped for a rival\'s Bookies: does Bookies\' On Recruit fire for the new holder?', () => {
     const { s, trail } = go('bookies-doubleagent', { quads: Q, turns: [0], members: [[], ['silver.bookies']], shop: ['thieves.doubleagent'], res: [{ red: 20, magenta: 9, silver: 3 }, {}] },
-      [/Gather/, /Double Agent/, /Bookies/, /n:3/]);
+      [/Gather/, /Changeling/, /Bookies/, /n:3/]);
     expect(names(s, 0)).toContain('Bookies');
-    expect(names(s, 1)).toContain('Double Agent');
+    expect(names(s, 1)).toContain('Changeling');
     expect(has(s, /P1's Bookies: turns in 3 silver, \+6 followers\./)).toBe(true);
   });
 });
@@ -293,7 +293,7 @@ describe('Hustlers: "On Recruit: swap all your silver with a rival’s."', () =>
     cleanLog(s);
   });
 
-  it('Bodyguards do not stop it (a swap, not a steal)', () => {
+  it('Thief-Takers do not stop it (a swap, not a steal)', () => {
     const { s } = go('hustlers-bodyguards', { quads: Q, turns: [0], shop: ['silver.hustlers'], members: [[], ['thieves.watchdog']], res: [{ red: 9 }, { silver: 8 }] },
       [/Initiation/, /Hustlers/, /player:1/]);
     expect(s.players[0].res.silver).toBe(8);
@@ -333,7 +333,7 @@ describe('more combos (Nov 12)', () => {
     expect(has(s, /Paupers/)).toBe(false);
   });
 
-  // (a Kidnapper scene left here: Kidnappers was reworked Nov 11; the Magenta combo pass covers it)
+  // (a Kidnapper scene left here: Press Gang was reworked Nov 11; the Magenta combo pass covers it)
 
   it('Impersonator copying a rival\'s Hustlers: swaps the copier\'s silver with a rival\'s', () => {
     const { s } = go('hustlers-impersonator', { quads: ['silver', 'red', 'echo', 'thieves'], n: 3, turns: [0], members: [[], ['silver.hustlers'], []], shop: ['echo.impersonators'],

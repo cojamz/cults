@@ -79,7 +79,7 @@ describe('Red members', () => {
     expect(fol(s, 0)).toBe(2);
   });
 
-  it('Mentor: also take the cheapest face-up member free', () => {
+  it('Governess: also take the cheapest face-up member free', () => {
     let s = scene({ res: [{ red: 3, gold: 2 }], shop: ['red.mentor', 'red.intern', 'gold.midas', 'gold.jackpot', 'red.bigfamily'], pileFirst: ['red.volunteer'] });
     s = beginBuy(s);
     s = move(s, `card:${uidOf(s, 'red.mentor', 'shop')}`);
@@ -106,10 +106,10 @@ describe('Red members', () => {
     expect(s.players[0].final.parts.some(x => /Mob/.test(x))).toBe(false);
   });
 
-  it('Recruiter: a recruit from the deck is a recruit, +1 red; a rival’s pays nothing', () => {
+  it('Ferryman: a recruit from the deck is a recruit, +1 red; a rival’s pays nothing', () => {
     let s = scene({ members: [['red.recruiter']], shop: SHOP, pileFirst: ['red.volunteer'] });
     s = take(s, 'red.hire');
-    expect(R(s)[0].red).toBe(2); // Walk-In's +1 and Recruiter's +1
+    expect(R(s)[0].red).toBe(2); // Walk-In's +1 and Ferryman's +1
     const t = scene({ members: [[], ['red.recruiter']], shop: SHOP, pileFirst: ['red.volunteer'] });
     expect(R(take(t, 'red.hire'))[1].red).toBe(1); // only Walk-In's rival +1
   });
@@ -129,7 +129,7 @@ describe('Red members', () => {
     expect(R(t)[0].red).toBe(1);
   });
 
-  it('Host: at round start +1 red per 2 members', () => {
+  it('Tavern Keeper: at round start +1 red per 2 members', () => {
     const s = scene({ members: [['red.host', 'red.twins', 'red.intern', 'red.crowd', 'gold.banker']], queue: [{ t: 'round', r: 2 }] });
     expect(R(s)[0].red).toBe(3);
   });

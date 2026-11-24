@@ -274,7 +274,7 @@ describe('Green current members', () => {
     s = move(s, cardOpt(s, 'thieves.crew', 1));
     expect(s.players[0].members).toHaveLength(2);
     expect(named(s, 'Stunt Double').length).toBe(1);
-    expect(s.recruits).toBe(3); // Stunt Double plus Crew's printed member quantity.
+    expect(s.recruits).toBe(3); // Stunt Double plus Twins's printed member quantity.
   });
   // Cory, 2026-10-28: Tribute Band plays a rival's actions, you pick whose (was: your own)
   it('Tribute Band does every action a rival has a minion on, once per game', () => {

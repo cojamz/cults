@@ -4,7 +4,7 @@
 // so it is set before the engine is imported (dynamic imports below), then cleared.
 import { describe, it, expect } from 'vitest';
 
-// every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
+// every card the lane built (REPLACE7=1 deals only the picks: Journeyman, Abbess, Godfather, Day Laborers, Night Manager)
 process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters,lifers,floorcrew,timekeeperlift,oldtimer,lookouts,errandboy,moonlighters,relayrunners,shepherd,evangelists,zealots';
 // trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
 // 4 more since Nov 5 evening, and these tests check what the cards do, not their price
@@ -24,11 +24,11 @@ const passBuys = (s, p) => { while (s.pending?.player === p && s.pending.kind ==
 describe('REPLACE7: the switch', () => {
   it('prints the pitched prices (as a player sees them) and retires the old cards', () => {
     const card = id => { const d = defById(id); return [d.name, d.s, d.w, d.f, d.n]; }; // every live member rebased to worth 1 and 1 member (Cory, Nov 12)
-    expect(card('red.seatfiller')).toEqual(['Seat Filler', 2, 2, 1, 1]);
+    expect(card('red.seatfiller')).toEqual(['Journeyman', 2, 2, 1, 1]);
     expect(card('red.ushers')).toEqual(['Ushers', 2, 3, 1, 1]);
     expect(card('purple.runner')).toEqual(['Runner', 4, 3, 1, 1]);
     expect(card('purple.interrupter')).toEqual(['Interrupter', 4, 3, 1, 1]);
-    expect(card('red.fosterparents')).toEqual(['Foster Parents', 3, 2, 1, 1]);
+    expect(card('red.fosterparents')).toEqual(['Abbess', 3, 2, 1, 1]);
     expect(card('red.godfather')).toEqual(['Godfather', 4, 3, 1, 1]);
     expect(card('red.crimefamily')).toEqual(['Crime Family', 4, 3, 1, 1]);
     expect(card('purple.gobetween')).toEqual(['Go-Between', 2, 3, 1, 1]);
@@ -61,20 +61,20 @@ describe('REPLACE7: the switch', () => {
   });
 });
 
-describe('Seat Filler: "Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free."', () => {
+describe('Journeyman: "Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free."', () => {
   const start = () => table(['red', 'market', 'trading', 'yellow'], { round: 1, members: [['red.seatfiller']],
     pileFirst: ['red.bodysnatchers', 'red.panel', 'red.crowd'], queue: [{ t: 'round', r: 2 }] }); // round II's row
 
-  it('at round start, offers each shop member costing up to 3 more (7 for a 4-cost Seat Filler), and keeping it', () => {
+  it('at round start, offers each shop member costing up to 3 more (7 for a 4-cost Journeyman), and keeping it', () => {
     const s = start();
-    expect(s.pending.prompt).toBe('Seat Filler: give it to the shop and recruit a shop member costing up to 7?');
+    expect(s.pending.prompt).toBe('Journeyman: give it to the shop and recruit a shop member costing up to 7?');
     const labels = s.pending.options.map(o => o.label);
-    expect(labels.some(l => l.includes('Body Snatchers (6)'))).toBe(true);
-    expect(labels.some(l => l.includes('Panel'))).toBe(false); // 8 is 4 more
+    expect(labels.some(l => l.includes('Swindler (6)'))).toBe(true);
+    expect(labels.some(l => l.includes('Fairy Godmother'))).toBe(false); // 8 is 4 more
     expect(labels).toContain('Keep it');
   });
 
-  it('the pitched turn: round II starts, Seat Filler goes to the shop and its owner recruits Body Snatchers for free', () => {
+  it('the pitched turn: round II starts, Journeyman goes to the shop and its owner recruits Swindler for free', () => {
     let s = start();
     const red = s.players[0].res.red;
     s = answer(s, `card:${uidIn(s, 'red.bodysnatchers', 'shop')}`);
@@ -82,10 +82,10 @@ describe('Seat Filler: "Round Start: you may put this in the shop and recruit a 
     expect(owns(s, 0, 'red.seatfiller')).toBe(false);
     expect(s.shop.some(u => s.cards[u].def === 'red.seatfiller')).toBe(true); // face up in the row
     expect(s.players[0].res.red).toBe(red); // free
-    expect(named(s, 'Seat Filler')).toContain("P1's Seat Filler goes to the shop; P1 recruits Body Snatchers for free.");
+    expect(named(s, 'Journeyman')).toContain("P1's Journeyman goes to the shop; P1 recruits Swindler for free.");
   });
 
-  it("its owner's Loyalists doesn't stop it (no swap in its text), and the row stays its size", () => {
+  it("its owner's Warden doesn't stop it (no swap in its text), and the row stays its size", () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 1, members: [['red.seatfiller', 'red.loyalists']],
       pileFirst: ['red.bodysnatchers', 'red.panel', 'red.crowd'], queue: [{ t: 'round', r: 2 }] });
     const size = s.shop.length;
@@ -207,27 +207,27 @@ describe('Interrupter: "Whenever a rival takes two turns in a row, you may skip 
   });
 });
 
-describe('Foster Parents: "Whenever a member joins your cult from a rival’s, +2 followers."', () => {
+describe('Abbess: "Whenever a member joins your cult from a rival’s, +2 followers."', () => {
   it("the pitched turn: Promote gives your member to a rival and brings theirs in: +2", () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.fosterparents', 'red.crowd'], ['red.loyalists']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
     s = take(s, 'red.hireup'); // Promote
     s = answer(s, `trade:${uidIn(s, 'red.crowd', 0)}:${uidIn(s, 'red.loyalists', 1)}`);
     expect(owns(s, 0, 'red.loyalists')).toBe(true);
     expect(s.players[0].bonus).toBe(2);
-    expect(named(s, 'Foster Parents')).toContain("P1's Foster Parents: Loyalists joins from P2's cult, +2 followers.");
+    expect(named(s, 'Abbess')).toContain("P1's Abbess: Warden joins from P2's cult, +2 followers.");
   });
 
   it("a rival's Demote that trades with you pays you too", () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.loyalists'], ['red.fosterparents', 'red.crowd']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
-    s = take(s, 'red.trade'); // Demote (Promote never reaches cheaper, Nov 4 night): P1 gives Loyalists and takes P2's Crowd-Pleaser
+    s = take(s, 'red.trade'); // Demote (Promote never reaches cheaper, Nov 4 night): P1 gives Warden and takes P2's Crowd-Pleaser
     s = answer(s, `trade:${uidIn(s, 'red.loyalists', 0)}:${uidIn(s, 'red.crowd', 1)}`);
     expect(owns(s, 1, 'red.loyalists')).toBe(true);
     expect(s.players[1].bonus).toBe(2);
   });
 
-  it("Foster Parents itself, taken into a rival's cult by their Promote, pays its new owner", () => {
+  it("Abbess itself, taken into a rival's cult by their Promote, pays its new owner", () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.crowd'], ['red.fosterparents']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
-    s = take(s, 'red.hireup'); // P1 gives Crowd-Pleaser and takes P2's Foster Parents
+    s = take(s, 'red.hireup'); // P1 gives Crowd-Pleaser and takes P2's Abbess
     s = answer(s, `trade:${uidIn(s, 'red.crowd', 0)}:${uidIn(s, 'red.fosterparents', 1)}`);
     expect(owns(s, 0, 'red.fosterparents')).toBe(true);
     expect(s.players[0].bonus).toBe(2);
@@ -244,8 +244,8 @@ describe('Foster Parents: "Whenever a member joins your cult from a rival’s, +
 });
 
 describe('Godfather: "On Use, once per game: recruit a shop member costing up to the number of members you have, for free."', () => {
-  it('the pitched turn: 9 members (Deprogrammers counts as 4, Dabblers 2, Godfather, Panel and Intern 1) recruit Proselytizers (9) free, not Mob (13)', () => {
-    // Intern added when every member cost 1 more (Nov 5): Proselytizers went to 9. Panel rebased to 1 (Cory, Nov 12): Dabblers
+  it('the pitched turn: 9 members (Deprogrammers counts as 4, Dabblers 2, Godfather, Fairy Godmother and Intern 1) recruit Proselytizers (9) free, not Mob (13)', () => {
+    // Intern added when every member cost 1 more (Nov 5): Proselytizers went to 9. Fairy Godmother rebased to 1 (Cory, Nov 12): Dabblers
     // makes up its 2; Deprogrammers is retired here and keeps its 4
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.godfather', 'red.panel', 'red.movementpenalty', 'red.intern', 'benders.dabblers']], shop: ['red.proselytizer', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
     const uid = uidIn(s, 'red.godfather', 0);
@@ -268,12 +268,12 @@ describe('Godfather: "On Use, once per game: recruit a shop member costing up to
 });
 
 describe('Crime Family (Godfather retuned): rebased to worth 1, counts as 1 (Cory, Nov 12), "On Use, once per game: recruit a shop member costing up to the number of members you have, for free."', () => {
-  it('the pitched turn: Crime Family (1), Panel (1) and Deprogrammers (4, retired here) make 6, so Host (6) comes free and Mob (13) does not', () => {
+  it('the pitched turn: Crime Family (1), Fairy Godmother (1) and Deprogrammers (4, retired here) make 6, so Tavern Keeper (6) comes free and Mob (13) does not', () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.crimefamily', 'red.panel', 'red.movementpenalty']], shop: ['red.host', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
     const uid = uidIn(s, 'red.crimefamily', 0);
     s = move(s, `use:${uid}`);
     expect(s.pending.prompt).toBe('Crime Family: recruit which shop member (costing up to 6) for free?');
-    expect(s.pending.options.map(o => o.label)).toEqual(['Host (6)']);
+    expect(s.pending.options.map(o => o.label)).toEqual(['Tavern Keeper (6)']);
     s = answer(s, `card:${uidIn(s, 'red.host', 'shop')}`);
     expect(owns(s, 0, 'red.host')).toBe(true);
     expect(s.cards[uid].used).toBe(true);
@@ -288,7 +288,7 @@ describe('Godfather and Crime Family: a bot never takes the use with nothing in 
       let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [[id]], shop: ['red.mob'] });
       const ctx = contextFor(s), p = s.players[0];
       expect(defById(id).botActivate(ctx, p)).toBe(false);
-      s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [[id, 'red.panel', 'red.movementpenalty']], shop: ['red.host'] }); // 6 members (Deprogrammers 4): Host (6) fits
+      s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [[id, 'red.panel', 'red.movementpenalty']], shop: ['red.host'] }); // 6 members (Deprogrammers 4): Tavern Keeper (6) fits
       expect(defById(id).botActivate(contextFor(s), s.players[0])).toBe(true);
     }
   });
@@ -346,13 +346,13 @@ describe('scale-up round 1: Sleepyheads, Night Shift, Drill Sergeant', () => {
     expect(s.players[0].bonus).toBe(2);
     expect(s.log.some(l => l.includes("P1's Night Shift: P1 holds the Goes Last token, +2 followers (2 purple members)."))).toBe(true);
   });
-  it('Drill Sergeant: "Whenever you recruit 2 or more members in one turn, +3 followers." Mentor brings a second: +3, once', async () => {
+  it('Drill Sergeant: "Whenever you recruit 2 or more members in one turn, +3 followers." Governess brings a second: +3, once', async () => {
     const { contextFor } = await import('../../../engine/v4/core.js');
     const s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [['red.drillsergeant'], []], shop: ['red.mentor', 'red.seatfiller'] });
     s.current = 0; s.players[0].turnRecruits = 0;
-    s.pile = []; // no refill: Seat Filler is the one shop member left (Volunteer left the deck Nov 5; the test rode on a refill until Victors left, Nov 6)
+    s.pile = []; // no refill: Journeyman is the one shop member left (Volunteer left the deck Nov 5; the test rode on a refill until Victors left, Nov 6)
     contextFor(s).recruit(s.players[0], uidIn(s, 'red.mentor', 'shop'), { free: true });
-    expect(s.log.some(l => l.includes('Mentor: the cheapest face-up member comes along free'))).toBe(true);
+    expect(s.log.some(l => l.includes('Governess: the cheapest face-up member comes along free'))).toBe(true);
     expect(s.players[0].bonus).toBe(3);
     expect(s.log.filter(l => l.includes("P1's Drill Sergeant")).length).toBe(1);
   });
@@ -371,7 +371,7 @@ describe('Wake-Up Caller: "Round Start: the player with the most followers skips
 });
 
 describe('Converts: "On Recruit: recruit a rival\'s member costing 4 or less, for free; that rival recruits the shop\'s cheapest, for free."', () => {
-  it('the pitched turn: P1 takes P2\'s Intern (3); P2 recruits the shop\'s cheapest; Foster Parents pays', async () => {
+  it('the pitched turn: P1 takes P2\'s Intern (3); P2 recruits the shop\'s cheapest; Abbess pays', async () => {
     // Intern for Deprogrammers when every member cost 1 more (Nov 5): Deprogrammers costs 4, Intern costs 3
     const { contextFor } = await import('../../../engine/v4/core.js');
     let s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [['red.fosterparents'], ['red.intern', 'red.mob']], shop: ['red.converts', 'red.volunteer', 'red.mentor'] });
@@ -381,16 +381,16 @@ describe('Converts: "On Recruit: recruit a rival\'s member costing 4 or less, fo
     expect(s.pending.options.map(o => o.label)).toEqual(['P2: Intern (3)']);
     s = answer(s, `card:${uidIn(s, 'red.intern', 1)}`);
     expect(owns(s, 0, 'red.intern')).toBe(true);
-    expect(s.players[0].bonus).toBe(2); // Foster Parents
+    expect(s.players[0].bonus).toBe(2); // Abbess
     expect(s.log).toContain("P1's Converts: P1 recruits P2's Intern.");
     if (s.pending?.options?.length && /cheapest/.test(s.pending.prompt || '')) s = answer(s, s.pending.options[0].id); // a tie in the refilled shop: the owner picks
     expect(s.log.some(l => /^P2 recruits .* from the shop, for free \(Converts\)\.$/.test(l))).toBe(true);
     expect(s.players[1].members.length).toBe(2); // Mob and the shop's cheapest
   });
-  it('a rival with Loyalists keeps its members (a trade, as a swap)', async () => {
+  it('a rival with Warden keeps its members (a trade, as a swap)', async () => {
     const { contextFor } = await import('../../../engine/v4/core.js');
-    // Loyalists guards its owner's other members; since Cory's Nov 6 price (2 red + 2 any) Loyalists itself costs 4, so
-    // Converts can take Loyalists but never the member it guards
+    // Warden guards its owner's other members; since Cory's Nov 6 price (2 red + 2 any) Warden itself costs 4, so
+    // Converts can take Warden but never the member it guards
     let s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [[], ['red.movementpenalty', 'red.loyalists']], shop: ['red.converts', 'red.mentor'] });
     s.current = 0;
     contextFor(s).recruit(s.players[0], uidIn(s, 'red.converts', 'shop'), { free: true });

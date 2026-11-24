@@ -14,10 +14,10 @@ const fixture = opts => { const s = table(Q, opts); s.queue = []; s.pending = nu
 const buyOne = (s, i = 0) => { s.queue = [{ t: 'buy', p: i }]; s.current = i; return move(resume(s), 'tier:small'); };
 const colors = (s, i) => s.resources.map(r => s.players[i].res[r]);
 
-// Recruiter changed (Cory, Nov 1): "Whenever a member leaves a rival’s cult, +2 red." It no longer watches recruits;
+// Ferryman changed (Cory, Nov 1): "Whenever a member leaves a rival’s cult, +2 red." It no longer watches recruits;
 // these pin what a recruit from the shop, a shop swap and a follower purchase now pay it (nothing), and a rival swap.
 // Red Cloak (Cory, Nov 1 5:06pm, version 1): "Whenever you recruit a member, +1 red." Swaps and steals count.
-describe('Recruiter ("Whenever you recruit a member, +1 red") pays for every member you recruit', () => {
+describe('Ferryman ("Whenever you recruit a member, +1 red") pays for every member you recruit', () => {
   it('a member taken from the shop pays +1 red', () => {
     const s = fixture({ members: [['red.recruiter']], shop: ['red.volunteer', 'red.intern'] });
     contextFor(s).recruit(s.players[0], uidIn(s, 'red.volunteer', 'shop'), { free: true });
@@ -61,7 +61,7 @@ describe('the other "whenever you recruit" members fire on follower purchases to
     expect(s.players[0].bonus).toBe(2);
   });
 
-  it('Shoplifter: steals 1 resource on a follower purchase', () => {
+  it('Cutpurse: steals 1 resource on a follower purchase', () => {
     let s = fixture({ members: [['thieves.shoplifter']], res: [{ gold: 3 }, { yellow: 2 }] });
     s = buyOne(s);
     while (s.pending && s.pending.player === 0 && s.pending.kind === 'choose') s = move(s, s.pending.options[0].id);

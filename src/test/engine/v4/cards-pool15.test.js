@@ -109,7 +109,7 @@ describe('Heirlooms and Swan Song (White, round II)', () => {
     s = take(s, 'trading.swansong');
     expect(s.players[0].res.white).toBe(2);
     s = move(s, `card:${lev}`);
-    expect(named(s, 'Swan Song')).toContain("P1's Swan Song: uses Leveler one last time.");
+    expect(named(s, 'Swan Song')).toContain("P1's Swan Song: uses Witch one last time.");
     s = until(s, 'none');
     expect(s.players[0].members).not.toContain(lev);
     expect(s.discard).toContain(lev);
@@ -192,7 +192,7 @@ describe('Seat Shuffle (Red, round III)', () => {
 });
 
 describe('Matriarchs (Red)', () => {
-  it('Game End: +2 followers per member card of your biggest color, each card counted once (Panel counts as 1)', () => {
+  it('Game End: +2 followers per member card of your biggest color, each card counted once (Fairy Godmother counts as 1)', () => {
     const s = sceneQ({ quadrants: ['red', 'market', 'purple', 'yellow'], members: [['red.matriarchs', 'red.panel', 'market.stylist']], queue: [{ t: 'finish' }] });
     expect(s.over).toBe(true);
     expect(s.players[0].final.parts.join(' ')).toMatch(/Matriarchs \+4/);

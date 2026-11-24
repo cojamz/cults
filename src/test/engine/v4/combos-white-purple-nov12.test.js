@@ -126,36 +126,36 @@ describe('Leavetakers: "Whenever one of your members leaves your cult, +2 white.
     expect(leave(s, 0)).toHaveLength(1);
   });
 
-  it('Exchange Students swaps your Raiders for a rival\'s Last Callers: one leaves, one arrives, +2 once', () => {
+  it('Hostages swaps your Raiders for a rival\'s Last Callers: one leaves, one arrives, +2 once', () => {
     const { s } = go('lt-exchange', { quads: W, queue: BUY, shop: ['yellow.exchangestudents'], members: [['trading.leavetakers', 'trading.raider'], ['purple.lastcallers']], res: [{ yellow: 9, red: 9 }] },
-      [/Exchange Students/, /Raiders ↔ P2: Last Callers/]);
-    expect(names(s, 0)).toEqual(['Leavetakers', 'Exchange Students', 'Last Callers']);
+      [/Hostages/, /Raiders ↔ P2: Last Callers/]);
+    expect(names(s, 0)).toEqual(['Leavetakers', 'Hostages', 'Last Callers']);
     expect(s.players[0].res.white).toBe(2);
     expect(leave(s, 0)).toEqual(["P1's Leavetakers: Raiders left: +2 white."]);
     cleanLog(s);
   });
 
-  it('Exchange Students swaps Leavetakers itself away: +2 to you; the rival who swaps it in gets nothing for their Raiders leaving', () => {
+  it('Hostages swaps Leavetakers itself away: +2 to you; the rival who swaps it in gets nothing for their Raiders leaving', () => {
     const { s } = go('lt-exchange-self', { quads: W, queue: BUY, shop: ['yellow.exchangestudents'], members: [['trading.leavetakers', 'red.panel'], ['trading.raider']], res: [{ yellow: 9, red: 9 }] },
-      [/Exchange Students/, /Leavetakers ↔ P2: Raiders/]);
+      [/Hostages/, /Leavetakers ↔ P2: Raiders/]);
     expect(names(s, 1)).toEqual(['Leavetakers']);
     expect(s.players.map(p => p.res.white)).toEqual([2, 0]);
     expect(leave(s, 1)).toEqual([]);
   });
 
-  it('Double Agent swaps itself for a rival\'s Intern: the rival\'s Leavetakers pays +2', () => {
+  it('Changeling swaps itself for a rival\'s Intern: the rival\'s Leavetakers pays +2', () => {
     const { s } = go('lt-doubleagent', { quads: W, queue: BUY, shop: ['thieves.doubleagent'], members: [[], ['trading.leavetakers', 'red.intern']], res: [{ magenta: 20 }] },
-      [/Double Agent/, /Intern/]);
+      [/Changeling/, /Intern/]);
     expect(names(s, 0)).toEqual(['Intern']);
-    expect(names(s, 1)).toEqual(['Leavetakers', 'Double Agent']);
+    expect(names(s, 1)).toEqual(['Leavetakers', 'Changeling']);
     expect(s.players[1].res.white).toBe(2);
     expect(leave(s, 1)).toEqual(["P2's Leavetakers: Intern left: +2 white."]);
     cleanLog(s);
   });
 
-  it('Body Snatchers (Round Start) swaps with your member: +2 white', () => {
+  it('Swindler (Round Start) swaps with your member: +2 white', () => {
     const { s } = go('lt-bodysnatchers', { quads: W, queue: [{ t: 'round', r: 3 }], members: [['red.bodysnatchers'], ['trading.leavetakers', 'red.intern']] }, [/Intern/]);
-    expect(names(s, 1)).toEqual(['Leavetakers', 'Body Snatchers']);
+    expect(names(s, 1)).toEqual(['Leavetakers', 'Swindler']);
     expect(s.players[1].res.white).toBe(2);
     expect(leave(s, 1)).toEqual(["P2's Leavetakers: Intern left: +2 white."]);
   });
@@ -166,14 +166,14 @@ describe('Leavetakers: "Whenever one of your members leaves your cult, +2 white.
     expect(s.players[0].res.white).toBe(2);
   });
 
-  it('Kidnappers (Round End): the member you give pays +2 white', () => {
+  it('Press Gang (Round End): the member you give pays +2 white', () => {
     const { s } = go('lt-kidnappers', { quads: W, queue: END, members: [['thieves.kidnappers'], ['trading.leavetakers', 'red.intern']] }, [/Intern/]);
-    expect(names(s, 0)).toEqual(['Kidnappers', 'Intern']);
+    expect(names(s, 0)).toEqual(['Press Gang', 'Intern']);
     expect(leave(s, 1)).toEqual(["P2's Leavetakers: Intern left: +2 white."]);
     expect(s.players[1].res.white).toBe(2);
   });
 
-  it('3 players, two Kidnappers both pick you at Round End: two members leave, +2 each (+4)', () => {
+  it('3 players, two Press Gang both pick you at Round End: two members leave, +2 each (+4)', () => {
     const { s } = go('lt-kidnappers-3p', { quads: W, n: 3, queue: END, members: [['thieves.kidnappers'], ['thieves.kidnappers'], ['trading.leavetakers', 'red.intern', 'red.volunteer']] },
       [/player:2/, /Intern/, /player:2/, /Volunteer/]);
     expect(names(s, 2)).toEqual(['Leavetakers']);
@@ -200,7 +200,7 @@ describe('Leavetakers: "Whenever one of your members leaves your cult, +2 white.
 
 describe('Minimalists: "Game End: +2 followers per member you have costing 8 or more." (Cory, Nov 11 11:53pm; was 6)', () => {
   const part = (s, i) => s.players[i].final.parts.filter(x => /Minimalists/.test(x));
-  // costs as the shop shows them: Minimalists 8, Downsizers 6, Recluse 6, Seat Filler 5, Intern 4
+  // costs as the shop shows them: Minimalists 8, Downsizers 6, Recluse 6, Journeyman 5, Intern 4
   const SET = ['trading.minimalists', 'trading.moneylender', 'trading.recluse', 'red.seatfiller', 'red.intern'];
   it('counts itself (8); not 6, 5 or 4: +2', () => {
     const { s } = go('mm-base', { quads: W, queue: FIN, members: [SET, ['red.mob']] }, []);
@@ -233,9 +233,9 @@ describe('Minimalists: "Game End: +2 followers per member you have costing 8 or 
     expect(part(s, 0)).toEqual(['Minimalists +4', 'Minimalists +4']);
   });
 
-  it('Double Agent (swaps for a rival\'s member costing up to 8) cannot reach Minimalists at cost 10 (Cory, Nov 12)', () => {
+  it('Changeling (swaps for a rival\'s member costing up to 8) cannot reach Minimalists at cost 10 (Cory, Nov 12)', () => {
     const { s } = go('mm-doubleagent', { quads: W, queue: [...BUY, ...FIN], shop: ['thieves.doubleagent'], members: [[], ['trading.minimalists', 'trading.leavetakers']], res: [{ magenta: 20 }] },
-      [/Double Agent/]);
+      [/Changeling/]);
     const labels = (s.pending?.options || []).map(o => o.label || '').join(' | ');
     expect(labels).not.toMatch(/Minimalists/);
     expect(names(s, 1)).toContain('Minimalists');
@@ -305,9 +305,9 @@ describe('Last Callers: "On Use, once per round: take the Goes Last token."', ()
     expect(s.log).toContain("P2's Sleep In: P2 takes the Goes Last token from P1, and the 2 minions on it go back to P1.");
   });
 
-  it('used, then swapped to a rival by Exchange Students: once per round is once for the card; usable again next round', () => {
+  it('used, then swapped to a rival by Hostages: once per round is once for the card; usable again next round', () => {
     let { s } = go('lc-swapped', { quads: P, round: 2, queue: [{ t: 'buy', p: 1 }], shop: ['yellow.exchangestudents'], members: [['purple.lastcallers'], ['trading.raider']],
-      res: [{}, { yellow: 9, red: 9 }], prep: st => { st.cards[st.players[0].members[0]].used = true; } }, [/Exchange Students/, /Raiders ↔ P1: Last Callers/]);
+      res: [{}, { yellow: 9, red: 9 }], prep: st => { st.cards[st.players[0].members[0]].used = true; } }, [/Hostages/, /Raiders ↔ P1: Last Callers/]);
     const uid = s.players[1].members.find(u => s.cards[u].def === 'purple.lastcallers');
     expect(uid).toBeDefined();
     expect(useOpt(s, uid)).toBe(false);

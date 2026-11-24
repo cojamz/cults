@@ -11,28 +11,28 @@ const rich = { gold: 30, red: 30, yellow: 30, green: 30, blue: 30 };
 const named = (s, name) => linesNaming(s.log, name);
 
 describe('Dabblers and Drifters audit', () => {
-  it('Big Tent: Dabblers never pushes a color past 3', () => {
+  it('Jack-of-All-Trades: Dabblers never pushes a color past 3', () => {
     const s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], members: [['yellow.bigtent', 'red.intern', 'benders.dabblers']] });
-    // yellow (Big Tent) and red pay; Dabblers is left out of the count
+    // yellow (Jack-of-All-Trades) and red pay; Dabblers is left out of the count
     expect(cardDef(s, uidOf(s, 'yellow.bigtent', 0)).onGameEnd(contextFor(s), s.players[0])).toBe(4);
   });
-  it('Matchmaker: recruiting Dabblers counts as a yellow member; red does not (Cory, Nov 6)', () => {
+  it('Herald: recruiting Dabblers counts as a yellow member; red does not (Cory, Nov 6)', () => {
     const run = (members, buyDef) => {
       let s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], round: 3, res: [rich], members, shop: [buyDef] });
       s = move(take(s, 'red.take'), `card:${uidOf(s, buyDef, 'shop')}`);
-      return named(s, 'Matchmaker').filter(l => /yellow member/.test(l)).length;
+      return named(s, 'Herald').filter(l => /yellow member/.test(l)).length;
     };
     expect(run([['yellow.matchmaker', 'benders.dabblers']], 'red.intern')).toBe(0);
     expect(run([['yellow.matchmaker']], 'yellow.dyer')).toBe(1);
     expect(run([['yellow.matchmaker']], 'benders.dabblers')).toBe(1);
   });
-  it('Matchmaker: Drifters pays once it picks Yellow, only then', () => {
+  it('Herald: Drifters pays once it picks Yellow, only then', () => {
     const run = pick => {
       let s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], round: 3, res: [rich], members: [['yellow.matchmaker', 'red.intern']], shop: ['yellow.drifters'] });
       s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.drifters', 'shop')}`);
-      expect(named(s, 'Matchmaker')).toHaveLength(0);
+      expect(named(s, 'Herald')).toHaveLength(0);
       s = move(s, pick);
-      return named(s, 'Matchmaker').filter(l => /yellow member/.test(l)).length;
+      return named(s, 'Herald').filter(l => /yellow member/.test(l)).length;
     };
     expect(run('color:yellow')).toBe(1);
     expect(run('color:green')).toBe(0);

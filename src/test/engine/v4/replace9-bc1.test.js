@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Members C, batches bC1 and bC2 (Nov 4 scale-up), under REPLACE9: Power Shoppers (Snobs' place), Stand-In (Extra
-// Hand's place), Tailor (Dyer's place), Dabbler (Dabblers' place).
+// Hand's place), Tailor (Gilder's place), Dabbler (Dabblers' place).
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers,dowagers,windowdressers9,moneylender';
@@ -67,7 +67,7 @@ describe('Stand-In: "Round Start: if you have the fewest followers (ties count),
 });
 
 describe('Tailor: "Round Start: +1 follower per full set you hold."', () => {
-  it('price, and Dyer retired', () => {
+  it('price, and Gilder retired', () => {
     const d = defById('yellow.tailor');
     expect([d.s, d.w]).toEqual([5, 3]);
     expect(defById('yellow.dyer').retired).toBe(true);
@@ -135,7 +135,7 @@ describe('Dowagers: "On Use, once per game: discard any of your other members; +
   });
 });
 
-describe('Duty Collector: "Whenever a rival recruits a member in one of your members’ colors, +1 of that color."', () => {
+describe('Tithe Collector: "Whenever a rival recruits a member in one of your members’ colors, +1 of that color."', () => {
   it('price, round I, and Customs Officer retired', () => {
     const d = defById('yellow.dutycollector');
     expect([d.s, d.w, memberRound(d)]).toEqual([3, 3, 3]); // 7 since Nov 12, kept in round III
@@ -147,7 +147,7 @@ describe('Duty Collector: "Whenever a rival recruits a member in one of your mem
     s.players[1].buyTwiceNow = true;
     s = pay(move(s, `card:${uidIn(s, 'red.intern', 'shop')}`));
     expect(s.players[0].res.red).toBe(1);
-    expect(named(s, 'Duty Collector')[0]).toContain("P1's Duty Collector: P2 recruited");
+    expect(named(s, 'Tithe Collector')[0]).toContain("P1's Tithe Collector: P2 recruited");
     s = pay(move(s, `card:${uidIn(s, 'market.regular', 'shop')}`));
     expect(s.players[0].res.blue || 0).toBe(0);
   });

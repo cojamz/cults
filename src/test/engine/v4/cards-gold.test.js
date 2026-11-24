@@ -50,12 +50,12 @@ describe('Gold members', () => {
     expect(s.players[0].res.gold).toBe(2); // Tryout's +2 red (Nov 1)
     expect(named(s, 'Midas')[0]).toMatch(/P1's Midas: 2 red comes as 2 gold/);
   });
-  it('Midas × Prospector × Tinker: the converted gain is gold, so Prospector adds 1 and Tinker stays quiet', () => {
+  it('Midas × Prospector × Haggler: the converted gain is gold, so Prospector adds 1 and Haggler stays quiet', () => {
     let s = sceneQ({ members: [['gold.tinker', 'gold.midas', 'gold.prospector']] });
     s = take(s, 'red.evenswap');
     expect(s.players[0].res.gold).toBe(3); // Tryout's 2 red as 2 gold, Prospector +1
     expect(named(s, 'Prospector')).toHaveLength(1);
-    expect(named(s, 'Tinker')).toHaveLength(0);
+    expect(named(s, 'Haggler')).toHaveLength(0);
   });
 
   it('Banker: +3 gold at round start, named', () => {

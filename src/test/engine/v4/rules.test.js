@@ -89,8 +89,8 @@ describe('setup', () => {
   it('starts with a shuffled deck of every table sphere\'s members (plus the guest rule-benders) and a full row face up', () => {
     const s = createGame({ quadrants: TABLE, seats: seats(2), seed: 9, rules: { guests: false } });
     // 64 on this table (tests deal the full deck, cut cards too): the 12-member Red deck (v0.8.2: Greeters,
-    // Deprogrammers, Panel, Loyalists joined) plus Headhunter (Oct 24); the deck is whatever the spheres hold
-    const deck = 67; // +1 Seat Filler (live Nov 5; Volunteer stays defined, cut from the deck); +2 Brethren and Purists (Nov 11; Proselytizers and Mob stay defined, cut)
+    // Deprogrammers, Fairy Godmother, Warden joined) plus Pied Piper (Oct 24); the deck is whatever the spheres hold
+    const deck = 67; // +1 Journeyman (live Nov 5; Volunteer stays defined, cut from the deck); +2 Guild Master and Purists (Nov 11; Proselytizers and Mob stay defined, cut)
     expect(TABLE.reduce((n, q) => n + quadrant(q).members.reduce((a, d) => a + (d.retired ? 0 : d.copies), 0), 0)).toBe(deck); // a retired card (Triplets, Nov 3) is never dealt
     expect(Object.keys(s.cards)).toHaveLength(deck);
     expect(Object.values(s.cards).every(c => TABLE.includes(c.def.split('.')[0]))).toBe(true);
@@ -107,7 +107,7 @@ describe('turn order and workers', () => {
   it('round I, all tied: a seeded random order, snaking, 3 workers', () => {
     const s = scene({ n: 3, queue: [{ t: 'round', r: 1 }] });
     // random since 2026-10-14 (core.js startRound); pinned to this seed's draw
-    expect(s.order).toEqual([1, 0, 2, 2, 0, 1, 1, 0, 2]); // redrawn when Saboteur joined the deck (Oct 28), and Brethren and Purists (Nov 11)
+    expect(s.order).toEqual([1, 0, 2, 2, 0, 1, 1, 0, 2]); // redrawn when Saboteur joined the deck (Oct 28), and Guild Master and Purists (Nov 11)
     expect(s.order.slice(3, 6)).toEqual([...s.order.slice(0, 3)].reverse()); // the snake
     expect(s.pending.player).toBe(1);
     expect(s.players.map(p => p.left)).toEqual([3, 3, 3]);
@@ -311,7 +311,7 @@ describe('payment', () => {
     // Midas 3 gold + 2 wild: 2 gold for the color part, 1 gold for 2 wild
     expect(paymentPlan(s, p, uidOf(s, 'gold.midas', 'shop'))).toEqual({ gold: 3, red: 0, blue: 0, green: 0 });
     const [t, q] = setup({ gold: 1, red: 3 }, ['gold.thrift']);
-    // Mentor: red part is full price; 1 gold covers the 2 wild
+    // Governess: red part is full price; 1 gold covers the 2 wild
     expect(paymentPlan(t, q, uidOf(t, 'red.mentor', 'shop'))).toEqual({ gold: 1, red: 3, blue: 0, green: 0 });
     q.res.red = 4;
     expect(paymentPlan(t, q, uidOf(t, 'red.mentor', 'shop'))).toEqual({ gold: 1, red: 4, blue: 0, green: 0 });
@@ -321,7 +321,7 @@ describe('payment', () => {
     let s = scene({ res: [{ gold: 2, red: 1 }], shop: ['gold.midas', 'red.mentor', 'gold.banker', 'red.intern', 'red.volunteer', 'gold.seed'] });
     s = take(s, 'red.turnout');
     const offered = s.pending.options.filter(o => o.kind === 'card').map(o => s.cards[o.uid].def).sort();
-    // Gather gives +1 red × round and +1 red (v0.8.0), so 2 gold + 3 red (+3 since Oct 25): Banker (2+1), Intern (1) and Mentor (3+2) are in reach,
+    // Gather gives +1 red × round and +1 red (v0.8.0), so 2 gold + 3 red (+3 since Oct 25): Banker (2+1), Intern (1) and Governess (3+2) are in reach,
     // Midas (3 gold) is not
     expect(s.players[0].res).toMatchObject({ gold: 2, red: 3 });
     expect(offered).toEqual(['gold.banker', 'gold.seed', 'red.intern', 'red.mentor', 'red.volunteer']);

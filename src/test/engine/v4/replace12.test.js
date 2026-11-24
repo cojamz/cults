@@ -28,21 +28,21 @@ describe('REPLACE12: the switch', () => {
 });
 
 describe('Exit Counselor: "Whenever you give one of your members away, use its On Recruit."', () => {
-  it("the pitched turn: Demote gives Mentor to a rival, and its On Recruit (the cheapest shop member, free) is yours", () => {
+  it("the pitched turn: Demote gives Governess to a rival, and its On Recruit (the cheapest shop member, free) is yours", () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.exitcounselor', 'red.mentor'], ['red.fosterparents']],
       shop: ['red.volunteer', 'red.loyalists'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
     s = take(s, 'red.trade'); // Demote
     s = answer(s, `trade:${uidIn(s, 'red.mentor', 0)}:${uidIn(s, 'red.fosterparents', 1)}`);
     expect(owns(s, 1, 'red.mentor')).toBe(true);
     expect(owns(s, 0, 'red.fosterparents')).toBe(true);
-    expect(owns(s, 0, 'red.volunteer')).toBe(true); // Mentor's cheapest shop member, for P1
-    expect(named(s, 'Exit Counselor').join(' ')).toContain('Mentor leaves, and P1 uses its On Recruit.');
+    expect(owns(s, 0, 'red.volunteer')).toBe(true); // Governess's cheapest shop member, for P1
+    expect(named(s, 'Exit Counselor').join(' ')).toContain('Governess leaves, and P1 uses its On Recruit.');
   });
 
   it("a member a rival takes from you doesn't count (you didn't give it)", () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.fosterparents'], ['red.exitcounselor', 'red.mentor']],
       shop: ['red.volunteer'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
-    s = take(s, 'red.hireup'); // P1 promotes: gives Panel (7), takes P2's Mentor (9)
+    s = take(s, 'red.hireup'); // P1 promotes: gives Fairy Godmother (7), takes P2's Governess (9)
     s = answer(s, `trade:${uidIn(s, 'red.fosterparents', 0)}:${uidIn(s, 'red.mentor', 1)}`);
     expect(owns(s, 0, 'red.mentor')).toBe(true);
     expect(named(s, 'Exit Counselor')).toEqual([]);
@@ -51,7 +51,7 @@ describe('Exit Counselor: "Whenever you give one of your members away, use its O
 });
 
 describe('Exit Counselor: a member cast out to the pile is given to nobody', () => {
-  it('Estate Sale casts out Mentor: no On Recruit', () => {
+  it('Estate Sale casts out Governess: no On Recruit', () => {
     let s = table(['trading', 'red', 'market', 'yellow'], { round: 2, members: [['red.exitcounselor', 'red.mentor'], []], shop: ['red.volunteer'] });
     s = take(s, 'trading.estatesale');
     if (s.pending?.options?.some(o => String(o.id).includes(String(uidIn(s, 'red.mentor', 0))))) s = answer(s, s.pending.options.find(o => String(o.id).includes(String(uidIn(s, 'red.mentor', 0)))).id);
@@ -77,8 +77,8 @@ describe('Foundling: "Round Start: if you have the fewest members (ties count), 
 
   it('a rival with fewer members: nothing (members counted as the table counts them)', () => {
     const s = table(['red', 'market', 'trading', 'yellow'], { round: 1, members: [['red.foundling', 'red.volunteer'], ['benders.dabblers']], queue: [{ t: 'round', r: 2 }] });
-    // Dabblers counts as 2 (its printed count), so P2 has 2 and P1 has 2: a tie, it fires; with Foster Parents P1 has 2
-    // against P2's 1 (Foster Parents rebased to worth 1 and 1 member: Cory, Nov 12)
+    // Dabblers counts as 2 (its printed count), so P2 has 2 and P1 has 2: a tie, it fires; with Abbess P1 has 2
+    // against P2's 1 (Abbess rebased to worth 1 and 1 member: Cory, Nov 12)
     expect(named(s, 'Foundling').length).toBe(1);
     const t = table(['red', 'market', 'trading', 'yellow'], { round: 1, members: [['red.foundling', 'red.fosterparents'], ['red.volunteer']], queue: [{ t: 'round', r: 2 }] });
     expect(t.players[0].members.length).toBe(2);
@@ -151,13 +151,13 @@ describe('Dumpster Dive: "Look at the top 3 members of the discard pile and recr
     let s = table(['market', 'red', 'trading', 'yellow'], { round: 2 });
     const pull = d => { const k = s.pile.findIndex(u => s.cards[u].def === d); return s.pile.splice(k, 1)[0]; };
     const deep = pull('red.loyalists'), cheap = pull('red.volunteer'), dear = pull('red.mentor'), mid = pull('red.fosterparents');
-    s.discard.push(deep, cheap, dear, mid); // top 3 of the discard pile: Volunteer (1), Mentor (9), Foster Parents (4)
+    s.discard.push(deep, cheap, dear, mid); // top 3 of the discard pile: Volunteer (1), Governess (9), Abbess (4)
     s = take(s, 'market.dumpsterdive');
     const offered = s.pending.options.map(o => o.label);
     expect(offered.some(l => l.startsWith('Volunteer'))).toBe(true);
-    expect(offered.some(l => l.startsWith('Foster Parents'))).toBe(true);
-    expect(offered.some(l => l.startsWith('Mentor'))).toBe(false);
-    expect(offered.some(l => l.startsWith('Loyalists'))).toBe(false);
+    expect(offered.some(l => l.startsWith('Abbess'))).toBe(true);
+    expect(offered.some(l => l.startsWith('Governess'))).toBe(false);
+    expect(offered.some(l => l.startsWith('Warden'))).toBe(false);
     const res = { ...s.players[0].res };
     s = answer(s, `card:${mid}`);
     expect(owns(s, 0, 'red.fosterparents')).toBe(true);
@@ -171,10 +171,10 @@ describe('Delivery: "Give a shop member to a rival; gain blue equal to its cost.
   it("gives the chosen shop member to the chosen rival (their arrival, not a recruit) and pays its cost in blue", () => {
     let s = table(['market', 'red', 'trading', 'yellow'], { round: 2, shop: ['red.fosterparents', 'red.volunteer'] });
     s = take(s, 'market.delivery');
-    s = answer(s, opt(s, o => o.label.startsWith('Foster Parents')));
+    s = answer(s, opt(s, o => o.label.startsWith('Abbess')));
     s = answer(s, 'player:1');
     expect(owns(s, 1, 'red.fosterparents')).toBe(true);
-    expect(s.players[0].res.blue).toBe(6); // Foster Parents costs 5 here (lowered back to round I, Nov 6)
-    expect(named(s, 'Delivery').join(' ')).toContain("Foster Parents goes to P2's cult; P1 +5 blue.");
+    expect(s.players[0].res.blue).toBe(6); // Abbess costs 5 here (lowered back to round I, Nov 6)
+    expect(named(s, 'Delivery').join(' ')).toContain("Abbess goes to P2's cult; P1 +5 blue.");
   });
 });

@@ -78,22 +78,22 @@ describe('REPLACE3: each card fires', () => {
   });
 
   // Cory, Nov 11 9:17pm: "Round End: a rival you choose gives you one of their members."
-  it('Kidnappers: at round end the owner picks a rival, and that rival picks which member to give', () => {
+  it('Press Gang: at round end the owner picks a rival, and that rival picks which member to give', () => {
     let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['red.recruitbonus', 'trading.martyr'], ['market.snob']], queue: [{ t: 'allPlaced' }] });
     expect(s.pending.player).toBe(0);
-    expect(s.pending.prompt).toBe('Kidnappers: which rival gives you a member of their choice?');
+    expect(s.pending.prompt).toBe('Press Gang: which rival gives you a member of their choice?');
     expect(s.pending.options.map(o => o.id)).toEqual(['player:1', 'player:2']);
     s = answer(s, 'player:1');
     expect(s.pending.player).toBe(1);
-    expect(s.pending.prompt).toBe('Kidnappers: give which of your members to P1?');
+    expect(s.pending.prompt).toBe('Press Gang: give which of your members to P1?');
     expect(s.pending.options.map(o => o.value).sort()).toEqual([uidIn(s, 'red.recruitbonus', 1), uidIn(s, 'trading.martyr', 1)].sort());
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 1)}`);
     expect(owns(s, 0, 'trading.martyr')).toBe(true);
     expect(owns(s, 1, 'trading.martyr')).toBe(false);
-    expect(named(s, 'Kidnappers')).toContain("P1's Kidnappers: P2 gives Martyrs to P1.");
+    expect(named(s, 'Press Gang')).toContain("P1's Press Gang: P2 gives Martyrs to P1.");
   });
 
-  it('Kidnappers: one rival with a member is asked straight away; Bodyguards and Lie Low don\'t stop a gift', () => {
+  it('Press Gang: one rival with a member is asked straight away; Thief-Takers and Lie Low don\'t stop a gift', () => {
     const t = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['thieves.watchdog'], []], queue: [{ t: 'allPlaced' }] });
     t.players[1].hideout = t.round;
     let s = t;

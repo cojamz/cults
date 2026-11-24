@@ -16,13 +16,13 @@ const words = (s, name) => {
 };
 
 describe('hover honesty (live panel r1)', () => {
-  it('Help Yourself with Desperado: the Why names Desperado', () => {
+  it('Help Yourself with Starveling: the Why names Starveling', () => {
     const s = sceneQ({ quadrants: T, round: 3, n: 3, res: [{}, { gold: 5, red: 4 }, { blue: 3 }], bonus: [0, 3, 3], members: [['thieves.desperado'], [], []] });
     const { pv, y } = words(s, 'Help Yourself');
-    // Nov 10: 1 per minion you've placed this round, this one included (here the first: 1), +2 with Desperado (Cory, Nov 1,
+    // Nov 10: 1 per minion you've placed this round, this one included (here the first: 1), +2 with Starveling (Cory, Nov 1,
     // 2:27pm): 3, all your pick, from any rivals; its +1 magenta came back with the Nov 10 text
     expect(y.text).toBe('+1 magenta; steal 3 in colors you pick');
-    expect(whyLine(pv.reasons)).toBe('Desperado: +2 to steal (1 → 3)');
+    expect(whyLine(pv.reasons)).toBe('Starveling: +2 to steal (1 → 3)');
   });
 
   it('Collect Debts with Sticky Fingers: the Why names it, and a rival it can rob reads now and after, never a gift', () => {

@@ -168,14 +168,14 @@ describe('Cory, Nov 13 8:12pm: "Red contest is supposed to be #members not #card
       expect(s.players[0].bonus).toBe(b0 + gets);
     }
   });
-  it('Cosmopolitans (+1 follower per color among your members) counts grey', async () => {
+  it('Harlequin (+1 follower per color among your members) counts grey', async () => {
     const { table } = await import('./cards-helpers-b.js');
     const s = table(['red', 'market', 'yellow', 'silver'], { n: 2, members: [['yellow.cosmopolitans', 'benders.squatter'], []] });
     const ctx = contextFor(s), b0 = s.players[0].bonus;
     defById('yellow.cosmopolitans').onAllPlaced(ctx, s.players[0]);
     expect(s.players[0].bonus).toBe(b0 + 2); // yellow and grey
   });
-  it('Big Tent (+2 per color you have 1 to 3 members of) counts grey', async () => {
+  it('Jack-of-All-Trades (+2 per color you have 1 to 3 members of) counts grey', async () => {
     const { table } = await import('./cards-helpers-b.js');
     const s = table(['red', 'market', 'yellow', 'silver'], { n: 2, members: [['yellow.bigtent', 'benders.squatter'], []] });
     expect(defById('yellow.bigtent').onGameEnd(contextFor(s), s.players[0])).toBe(4); // yellow and grey

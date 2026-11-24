@@ -56,7 +56,7 @@ describe('Toll Keeper: "Round End: each rival who doesn\'t hold a full set gives
     expect(s.players[0].res.purple).toBe(1);
     expect(s.players[1].res.purple).toBe(0);
   });
-  it('it is a gift, not a steal: a rival\'s Bodyguards does not stop it', () => {
+  it('it is a gift, not a steal: a rival\'s Thief-Takers does not stop it', () => {
     let s = table(['red', 'yellow', 'market', 'thieves'], { n: 2, round: 1, res: [{}, { red: 4 }], members: [['yellow.tollkeeper'], ['thieves.watchdog']], queue: [{ t: 'allPlaced' }] });
     s = answerAll(s, 'Toll Keeper', o => o[0]);
     expect(s.players[0].res.red).toBe(2);
@@ -355,7 +355,7 @@ describe('Hawker at Round Start: "Round Start: choose a shop member. Starting on
     let s = table(Q4, { n: 3, round: 1, res, members: [['market.hawker2']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.prompt).toBe('Hawker: offer which shop member?');
     expect(s.pending.player).toBe(0);
-    return answer(s, (s.pending.options.find(o => /Timekeeper|Intern|Tiebreaker|Recruiter/.test(o.label)) || s.pending.options[0]).id); // a plain member: one with an On Recruit (Hostesses' gift) moves the owner's count
+    return answer(s, (s.pending.options.find(o => /Timekeeper|Intern|Tiebreaker|Ferryman/.test(o.label)) || s.pending.options[0]).id); // a plain member: one with an On Recruit (Hostesses' gift) moves the owner's count
   };
   it('price, round I, retires the old Hawker, and no On Use', () => {
     const d = defById('market.hawker2');

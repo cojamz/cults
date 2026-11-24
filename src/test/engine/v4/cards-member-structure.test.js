@@ -12,7 +12,7 @@ const use = (s, def) => move(s, `use:${uidIn(s, def, 0)}`);
 const cost = id => { const d = defById(id); return d.s + d.w; };
 
 describe('member structure: the new members', () => {
-  it('Headhunter: swaps a rival’s member with a shop member of equal or greater cost, never a cheaper one', () => {
+  it('Pied Piper: swaps a rival’s member with a shop member of equal or greater cost, never a cheaper one', () => {
     const Q = ['gold', 'red', 'market', 'thieves'];
     let s = use(table(Q, { members: [['red.headhunter'], ['red.twins']], shop: ['gold.tycoon', 'red.volunteer'], ...buy }), 'red.headhunter');
     const twins = uidIn(s, 'red.twins', 1), tycoon = uidIn(s, 'gold.tycoon', 'shop'), volunteer = uidIn(s, 'red.volunteer', 'shop');
@@ -23,14 +23,14 @@ describe('member structure: the new members', () => {
     expect([owns(s, 1, 'gold.tycoon'), owns(s, 1, 'red.twins'), s.shop.includes(twins)]).toEqual([true, false, true]);
   });
 
-  it('Fixer: spends magenta equal to the member’s cost to steal it, only members it can pay for', () => {
+  it('Briber: spends magenta equal to the member’s cost to steal it, only members it can pay for', () => {
     const Q = ['gold', 'red', 'market', 'thieves'];
     const m = cost('red.twins');
     let s = use(table(Q, { res: [{ magenta: m + 1 }], members: [['thieves.fixer'], ['red.twins', 'gold.tycoon']], ...buy }), 'thieves.fixer');
     expect(ids(s)).toEqual([`card:${uidIn(s, 'red.twins', 1)}`]);
     s = move(s, ids(s)[0]);
     expect([owns(s, 0, 'red.twins'), owns(s, 1, 'red.twins'), s.players[0].res.magenta]).toEqual([true, false, 1]);
-    expect(named(s, 'Fixer')).toHaveLength(1);
+    expect(named(s, 'Briber')).toHaveLength(1);
   });
 
   it('Restockers: once per game, the whole row goes to the discard pile and refills', () => {

@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Members C (Caravan batch, Nov 4): Sign Painters, "On Use, once per round: a member in any cult becomes a member of a
-// color you choose.", Caravan's place under REPLACE9=signpainters.
+// Members C (Peddlers batch, Nov 4): Sign Painters, "On Use, once per round: a member in any cult becomes a member of a
+// color you choose.", Peddlers's place under REPLACE9=signpainters.
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE9 = 'signpainters';
@@ -15,7 +15,7 @@ delete process.env.REPLACE9;
 delete process.env.MEMBER_UP;
 
 describe('REPLACE9: Sign Painters', () => {
-  it('same price as Caravan, which is retired', () => {
+  it('same price as Peddlers, which is retired', () => {
     const d = defById('yellow.signpainters'), o = defById('yellow.caravan');
     expect([d.s, d.w, d.f]).toEqual([o.s, o.w, 1]); // worth 1: a live member is rebased to 1, while the retired card keeps its old worth (Cory, Nov 12)
     expect(o.retired).toBe(true);

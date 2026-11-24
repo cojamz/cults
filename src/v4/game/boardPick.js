@@ -223,10 +223,10 @@ export function giftPick(state, pend, first = null) {
   const swapKind = /^promote\b/i.test(title) || /^promote\b/i.test(question) ? 'Promote' : /^demote\b/i.test(title) || /^demote\b/i.test(question) ? 'Demote' : null;
   // the swap card trades within 2 cost, never only equal ones (its card: "costing up to 2 more or less")
   const swapCard = /swap card/i.test(question) || /swap card/i.test(title);
-  // Body Snatchers trades one of yours for a rival's, never two rivals' (playtest, Nov 3: the generic head read "any two")
-  const snatch = /body snatchers/i.test(title) || /body snatchers/i.test(question);
-  // Exchange Students and Swap Shoppers say their own rule (four-player review, Nov 12: both read Anarchist's "any two")
-  const exchange = /exchange students/i.test(title) || /exchange students/i.test(question);
+  // Swindler (was Body Snatchers) trades one of yours for a rival's, never two rivals' (playtest, Nov 3: the generic head read "any two")
+  const snatch = /swindler/i.test(title) || /swindler/i.test(question);
+  // Hostages (was Exchange Students) and Swap Shoppers say their own rule (four-player review, Nov 12: both read Anarchist's "any two")
+  const exchange = /hostages/i.test(title) || /hostages/i.test(question);
   const swapShop = /swap shoppers/i.test(title) || /swap shoppers/i.test(question);
   // the card's own rule, never its name again under its name (picky bot, Nov 11: "DEMOTE / Demote a member")
   const tradeHead = swapKind === 'Promote' ? 'Swap a member for one costing up to 3 more' : swapKind === 'Demote' ? 'Swap a member for one costing up to 3 less' : swapCard ? 'Swap card: a member within 2 cost' : snatch || exchange ? 'Swap one of yours for a rival’s of the same cost' : swapShop ? 'Swap one of yours for a discard-pile member of the same cost' : 'Swap any two equal-cost members';

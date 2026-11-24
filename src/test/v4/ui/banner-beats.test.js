@@ -73,6 +73,6 @@ it("a hub line's reading time counts the words the card prints for it: its space
   expect(first.endsWith('): P +3 red')).toBe(true);
   expect(first.split(/\s+/).length).toBeGreaterThan(8); // "+3 red" alone is 2 words: the card shows a dozen
   expect(hubShown('+1 blue', 1, 'Gather', null, 1)).toBe('P +1 blue');
-  expect(hubShown('recruited Seat Filler (free)', 1, 'Gather', null, 1)).toBe('recruited Seat Filler (free)');
+  expect(hubShown('recruited Journeyman (free)', 1, 'Gather', null, 1)).toBe('recruited Journeyman (free)');
   expect(hubShown('+3 red', 0, null, null, 1)).toBe('+3 red');
 });

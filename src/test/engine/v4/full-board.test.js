@@ -39,7 +39,7 @@ describe('a full board', () => {
 
 describe('Late Risers on a full board', () => {
   it('2 players, 2 spheres, round III: Extra Hand twice fills all 12 spaces, so Late Risers gives no turn', () => {
-    // seed 1 since Brethren and Purists (Nov 11); seed 4 since Victors left (Nov 6); seed 3 since Promote and Demote give only your own member (Nov 4 night); seed 2 since bots play out every choice (Nov 2); seed 1 since the Goes Last token (Nov 1, 2:35pm); seed 8 since Cory's Nov 1 balance calls; seed 7 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 5 since Late Risers is 2 members (Oct 30); seed 3 since Promote and Demote reach rivals (Oct 29): on seed 2 P1 swapped its Loyalists to P2, then Late Risers away
+    // seed 1 since Guild Master and Purists (Nov 11); seed 4 since Victors left (Nov 6); seed 3 since Promote and Demote give only your own member (Nov 4 night); seed 2 since bots play out every choice (Nov 2); seed 1 since the Goes Last token (Nov 1, 2:35pm); seed 8 since Cory's Nov 1 balance calls; seed 7 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 5 since Late Risers is 2 members (Oct 30); seed 3 since Promote and Demote reach rivals (Oct 29): on seed 2 P1 swapped its Warden to P2, then Late Risers away
     let s = createGame({ seats: [{ kind: 'bot' }, { kind: 'bot' }], seed: 1, quadrants: ['purple', 'red'], rules: { release: false } });
     const give = id => {
       const uid = Object.values(s.cards).find(c => c.def === id).uid;

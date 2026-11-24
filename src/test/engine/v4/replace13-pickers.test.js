@@ -29,7 +29,7 @@ describe('REPLACE13=pickers: Pickers', () => {
   it('after its owner sends a shop member down (Savings), offers to recruit it, paying its cost; the turn recruit still follows', () => {
     let s = table(['market', 'red'], { n: 2, round: 1, members: [['market.pickers']], res: [{ blue: 9, red: 9 }], shop: SHOP });
     s = go(s, slotOf(s, 'market', 'Savings'));
-    const sent = s.pending.options.find(o => o.label.startsWith('Recruiter')).id;
+    const sent = s.pending.options.find(o => o.label.startsWith('Ferryman')).id;
     s = go(s, sent);
     expect(s.pending.prompt).toContain('Pickers');
     s = go(s, sent);

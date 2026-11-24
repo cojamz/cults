@@ -53,18 +53,18 @@ const RICH = { green: 9, red: 9 };
 
 describe('Mimics: "On Recruit: use the On Recruit of any member in play."', () => {
   // Die-Hards, not Regulars, since Copyist costs 7 (Cory, Nov 13: "Copyist can be more expensive")
-  it("copies a rival's Exchange Students: swaps one of the Mimics owner's members for a same-cost rival member", () => {
+  it("copies a rival's Hostages: swaps one of the Mimics owner's members for a same-cost rival member", () => {
     const { s } = go('mimics-exchange', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [['echo.copyist'], ['yellow.exchangestudents', 'silver.bookies', 'echo.diehards']], res: [RICH] },
-      [/Gather/, /Mimics/, /Exchange Students/, /Copyist ↔ P2: Die-Hards/]);
+      [/Gather/, /Mimics/, /Hostages/, /Copyist ↔ P2: Die-Hards/]);
     expect(names(s, 0).sort()).toEqual(['Die-Hards', 'Mimics']);
-    expect(names(s, 1).sort()).toEqual(['Bookies', 'Copyist', 'Exchange Students']);
-    expect(has(s, /P1's Exchange Students: swaps Copyist for P2's Die-Hards/)).toBe(true);
+    expect(names(s, 1).sort()).toEqual(['Bookies', 'Copyist', 'Hostages']);
+    expect(has(s, /P1's Hostages: swaps Copyist for P2's Die-Hards/)).toBe(true);
     cleanLog(s);
   });
 
-  it('Double Agent ("give this member to a rival") is not offered: Mimics is not the Double Agent card', () => {
+  it('Changeling ("give this member to a rival") is not offered: Mimics is not the Changeling card', () => {
     const { s } = go('mimics-doubleagent', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [[], ['thieves.doubleagent', 'gold.banker']], res: [RICH] }, [/Gather/, /Mimics/]);
-    expect(mimicLabels(s).some(l => /Double Agent/.test(l))).toBe(false);
+    expect(mimicLabels(s).some(l => /Changeling/.test(l))).toBe(false);
     expect(mimicLabels(s)).toEqual([expect.stringMatching(/^P2's Banker/)]);
   });
 
@@ -153,12 +153,12 @@ describe('Mimics: "On Recruit: use the On Recruit of any member in play."', () =
   });
 });
 
-// Kidnapper scenes dropped: Kidnappers was reworked Nov 11 (Magenta thread); the Magenta combo pass covers it
-describe('Mimics arriving other ways (a swap or steal brings a member in as your recruit: Cory, Nov 4; Kidnapper, Double Agent notes)', () => {
-  it('swapped in with Exchange Students: its On Recruit fires for the new holder', () => {
+// Kidnapper scenes dropped: Press Gang was reworked Nov 11 (Magenta thread); the Magenta combo pass covers it
+describe('Mimics arriving other ways (a swap or steal brings a member in as your recruit: Cory, Nov 4; Kidnapper, Changeling notes)', () => {
+  it('swapped in with Hostages: its On Recruit fires for the new holder', () => {
     const { s } = go('mimics-swapped-in', { quads: Q, turns: [0], shop: ['yellow.exchangestudents'], members: [['silver.bookies'], ['echo.mimics', 'gold.banker']], res: [{ yellow: 9, red: 9 }] },
-      [/Gather/, /Exchange Students/, /Bookies ↔ P2: Mimics/, /Banker/]);
-    expect(names(s, 0).sort()).toEqual(['Exchange Students', 'Mimics']);
+      [/Gather/, /Hostages/, /Bookies ↔ P2: Mimics/, /Banker/]);
+    expect(names(s, 0).sort()).toEqual(['Hostages', 'Mimics']);
     expect(s.log).toContain("P1's Mimics uses P2's Banker's On Recruit.");
     expect(s.players[0].res.gold).toBe(3);
   });
@@ -237,10 +237,10 @@ describe('Die-Hards: "Game End: if you have the most green members, +6 followers
     expect(part(s, 0)).toEqual(['Die-Hards +6', 'Die-Hards +6']);
   });
 
-  it('Mimics copies Exchange Students to take a rival\'s Die-Hards: it scores for its new holder', () => {
+  it('Mimics copies Hostages to take a rival\'s Die-Hards: it scores for its new holder', () => {
     const { s } = go('diehards-mimics-exchange', { quads: Q, queue: [{ t: 'turn', p: 0 }, ...FIN], shop: ['echo.mimics'],
       members: [['echo.hourglass'], ['yellow.exchangestudents', 'echo.diehards', 'echo.copyist']], res: [RICH] },
-      [/Gather/, /Mimics/, /Exchange Students/, /Stunt Double ↔ P2: Die-Hards/]);
+      [/Gather/, /Mimics/, /Hostages/, /Stunt Double ↔ P2: Die-Hards/]);
     expect(names(s, 0).sort()).toEqual(['Die-Hards', 'Mimics']);
     expect(part(s, 0)).toEqual(['Die-Hards +6']); // 2 green (Mimics, Die-Hards) to P2's 2 (Stunt Double, Copyist): a tie
     expect(part(s, 1)).toEqual([]);

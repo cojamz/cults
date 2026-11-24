@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Actions lane, requalified under "paper filters, play ranks" (Nov 4): Duty Free (Tourist's place), Snobs disdain
+// Actions lane, requalified under "paper filters, play ranks" (Nov 4): Duty Free (Pilgrim's place), Snobs disdain
 // (Snobs' place), Open Bar (Polish's place). Each by its own REPLACE11 key.
 import { describe, it, expect } from 'vitest';
 

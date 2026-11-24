@@ -467,7 +467,7 @@ export default {
       const [a, b] = value;
       if (!snatchPairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
       const names = [a, b].map(uid => `${ctx.ownerOf(uid)?.name || 'Shop'}'s ${ctx.card(uid).def.name}`);
-      ctx.log(`${p.name}'s Body Snatchers: a swap at round start.`);
+      ctx.log(`${p.name}'s Swindler: a swap at round start.`);
       if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name} swapped ${names[0]} and ${names[1]}.`);
     },
     borrow(ctx, p, uid) {
@@ -497,7 +497,7 @@ export default {
       },
       convertGive(ctx, p, uid, data) { convertGive(ctx, ctx.player(data.pid), uid); },
       drift(ctx, p, uid, data) {
-        if (uid == null) { ctx.log(`${p.name} keeps ${ctx.card(data.uid)?.def.name || 'Seat Filler'}.`); return; }
+        if (uid == null) { ctx.log(`${p.name} keeps ${ctx.card(data.uid)?.def.name || 'Journeyman'}.`); return; }
         const me = ctx.card(data.uid);
         if (!ctx.state.shop.includes(uid) || cost(ctx.card(uid)) > cost(me) + 3) return;
         const names = [me.def.name, ctx.card(uid).def.name];
@@ -517,7 +517,7 @@ export default {
       },
     }),
     panelMode(ctx, p, mode, data) {
-      if (mode === 'promote' || mode === 'demote') swap(ctx, p, mode, `Panel: ${mode} another member`, data?.excludeUid);
+      if (mode === 'promote' || mode === 'demote') swap(ctx, p, mode, `Fairy Godmother: ${mode} another member`, data?.excludeUid);
     },
     trade(ctx, p, value, data) {
       if (!Array.isArray(value)) { ctx.log(`${p.name} chose not to swap.`); return; }
@@ -642,11 +642,11 @@ export default {
     // 4 red + 2 any as a player sees it. Its swap is a choice with "Don't swap" (Red's swaps can be skipped: Cory,
     // 2026-10-22, "You shouldnt HAVE to swap"); a rival's member it can take is one that may be swapped (Loyalists,
     // Bodyguards). The member you get is your recruit (its On Recruit fires), as with Promote.
-    m('bodysnatchers', 'Body Snatchers', 2, 2, /* any rival's member (Cory, Nov 8: "swapped for any… make it mid priced… let's try it this way"); already 6, mid priced */ "Round Start: swap one of your members with a rival's member costing up to 3 more.", { f: 2,
+    m('bodysnatchers', 'Swindler', 2, 2, /* any rival's member (Cory, Nov 8: "swapped for any… make it mid priced… let's try it this way"); already 6, mid priced */ "Round Start: swap one of your members with a rival's member costing up to 3 more.", { f: 2,
       onRoundStart(ctx, owner, card) {
         const pairs = snatchPairs(ctx, owner);
-        if (!pairs.length) { ctx.log(`${owner.name}'s Body Snatchers: no rival member to swap with.`); return; }
-        ctx.choose(owner, 'Body Snatchers: swap one of your members with a rival’s?', pairs.map(([a, b]) => ({
+        if (!pairs.length) { ctx.log(`${owner.name}'s Swindler: no rival member to swap with.`); return; }
+        ctx.choose(owner, 'Swindler: swap one of your members with a rival’s?', pairs.map(([a, b]) => ({
           id: `trade:${a.uid}:${b.uid}`, label: `${owner.name}: ${a.def.name} ↔ ${ctx.ownerOf(b.uid).name}: ${b.def.name}`, kind: 'trade',
           value: [a.uid, b.uid], hint: (b.def.f + cost(b)) - (a.def.f + cost(a)),
         })).concat({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: -99 }), 'red.snatch', { uid: card.uid });
@@ -657,7 +657,7 @@ export default {
     // REPLACE7 bot test (Nov 4, quality loop, Members A): Volunteer's place. 2 red + 1 any as a player sees it, a round I
     // member. At round start (II and III; it can't be bought before round I's) the owner may give it to the shop and
     // recruit a shop member costing up to 3 more, for free: Promote's trade, done by the card itself.
-    m('seatfiller', 'Seat Filler', 1, 1, 'Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free.', {
+    m('seatfiller', 'Journeyman', 1, 1, 'Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free.', {
       onRoundStart(ctx, owner, card) {
         const list = ctx.shopCards().filter(x => cost(x) <= cost(card) + 3);
         if (!list.length) { ctx.log(`${owner.name}'s ${card.def.name}: no shop member costs ${cost(card) + 3} or less.`); return; }
@@ -685,12 +685,12 @@ export default {
       },
     })),
     m('intern', 'Intern', 1, 0, 'Worth 1 follower.'),
-    m('mentor', 'Mentor', 4, 1, 'On Recruit: recruit the cheapest member in the shop.', { f: 1, n: 1, // Mentor, counts as 1 member (Cory, Nov 5 backlog yes)
+    m('mentor', 'Governess', 4, 1, 'On Recruit: recruit the cheapest member in the shop.', { f: 1, n: 1, // Mentor, counts as 1 member (Cory, Nov 5 backlog yes)
       // 3 members (Cory, Oct 30: +1 follower, "change the names accordingly")
       // +1 follower (Cory, 2026-10-25)
       // card: this Mentor, or a Doppelganger copying it (its free pick says so)
       onRecruited(ctx, owner, card) {
-        const who = card && card.def && card.def.key === 'doppel' ? 'Doppelganger (as Mentor)' : 'Mentor';
+        const who = card && card.def && card.def.key === 'doppel' ? 'Doppelganger (as Governess)' : 'Governess';
         if (ctx.shopCards().length) ctx.log(`${owner.name}'s ${who}: the cheapest face-up member comes along free.`);
         hireCheapest(ctx, owner, who);
       },
@@ -718,12 +718,12 @@ export default {
     // Cory, 2026-11-11 9:14pm Eastern: Brethren replaces Proselytizers ("Let's try +1 for now"; test +2). "A color you
     // already have" reads as Gather does: one of your other members is that color (grey counts, as for Gather). Not its
     // own arrival (as Proselytizers). Proselytizers' price (Claude, under Cory's go-with-your-gut).
-    m('brethren', 'Brethren', 3, 1, 'Whenever you recruit a member of a color you already have, +1 follower.', { f: 2,
+    m('brethren', 'Guild Master', 3, 1, 'Whenever you recruit a member of a color you already have, +1 follower.', { f: 2,
       onRecruit(ctx, owner, card, by, what) {
         const member = what?.member;
         if (by !== owner || !member || member.uid === card.uid || isNewColor(ctx, owner, member)) return;
         owner.bonus += 1;
-        ctx.log(`${owner.name}'s Brethren: ${member.def.name} is a color they already have: +1 follower.`);
+        ctx.log(`${owner.name}'s Guild Master: ${member.def.name} is a color they already have: +1 follower.`);
       },
       ...see(i => endsAhead(i).length * 1.5), // BOTSEE: about 1.5 matching recruits a round
     }),
@@ -824,13 +824,13 @@ export default {
     // members only, never a follower buy (Cory, 2026-10-29: "red recruit should only work for gaining members")
     // Red Cloak. Cory, Nov 1 5:06pm (version 1 of two tested): "Whenever you recruit a member, +1 red." Swaps and
     // steals count (your own doing: memberAcquired); follower buys don't. 31% of wins off, 28% with the swap card on.
-    m('recruiter', 'Recruiter', 4, 1, 'Whenever you recruit a member, +1 red.', {
+    m('recruiter', 'Ferryman', 4, 1, 'Whenever you recruit a member, +1 red.', {
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what.member) return;
         // RECRUITER=once|twice: bot test only (Nov 4, Cory "nerf red a little"): at most once (twice) per turn
         const cap = { once: 1, twice: 2 }[globalThis.process?.env?.RECRUITER];
         if (cap) { const k = ctx.turnKey(); if (owner.recruiterTurn !== k) { owner.recruiterTurn = k; owner.recruiterN = 0; } if (owner.recruiterN >= cap) return; owner.recruiterN += 1; }
-        ctx.gain(owner, 'red', 1); ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Recruiter')}: +1 red.`);
+        ctx.gain(owner, 'red', 1); ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Ferryman')}: +1 red.`);
       },
     }),
     m('drive', 'Pied Piper', 2, 2, 'Whenever you recruit 2 or more members in one turn, +2 red.', {
@@ -840,7 +840,7 @@ export default {
         if (by === owner && ctx.state.current === owner.id && owner.turnRecruits >= 2 && owner.turnRecruits - ctx.memberWeight(recruited) < 2) { ctx.gain(owner, 'red', 2); ctx.log(`${owner.name}'s Pied Piper: +2 red.`); }
       },
     }),
-    m('host', 'Host', 2, 2, 'On Recruit: +1 red per 2 members you have. Round Start: +1 red per 2 members you have.', { now: true,
+    m('host', 'Tavern Keeper', 2, 2, 'On Recruit: +1 red per 2 members you have. Round Start: +1 red per 2 members you have.', { now: true,
       onRoundStart(ctx, owner) { ctx.gain(owner, 'red', Math.floor(ctx.memberCount(owner) / 2)); },
     }),
     m('sponsor', 'Sponsor', 6, 4, 'Your members cost 2 less.', { costReduction: 2 }),
@@ -864,12 +864,12 @@ export default {
     // Cory, 2026-11-11 12:13am Eastern: "Yeah Clan is good. Round End might be a bit too strong but lets try it." Pays
     // Red's contest count (biggest group of one color, grey counts, each card 1), the same count the contest uses.
     // Price is Claude's fill-in (Patriarch's); Patriarch leaves the deck for it (cull.js; Claude's pick pending Cory).
-    m('clan', 'Clan', 4, 1, 'Round End: +1 follower per member in your biggest group of one color (grey is its own color).', {
+    m('clan', 'Clan Chief', 4, 1, 'Round End: +1 follower per member in your biggest group of one color (grey is its own color).', {
       onRoundEnd(ctx, owner) {
         const n = Math.max(0, ...[...ctx.state.quadrants, 'guest'].map(q => ctx.countMembersOfColor(owner, q, { cards: true })));
         if (!n) return;
         owner.bonus += n;
-        ctx.log(`${owner.name}'s Clan: ${n} member${n === 1 ? '' : 's'} in their biggest group of one color: +${n} followers.`);
+        ctx.log(`${owner.name}'s Clan Chief: ${n} member${n === 1 ? '' : 's'} in their biggest group of one color: +${n} followers.`);
       },
       // BOTSEE: each round end still ahead, about 3 in the biggest group
       ...see(i => endsAhead(i).length * 3),
@@ -915,7 +915,7 @@ export default {
     // cult out of a rival's, whoever moves it (Promote, Demote, Panel, Body Snatchers, Poach, Shake Down, Kidnapper, a
     // rival's Promote that trades with you); not for the shop. Itself arriving from a rival's counts (Evaluators, Nov 4: a
     // table reads it that way, as Old Maid's own joining counts).
-    m('fosterparents', 'Foster Parents', 2, 1, /* 2 red + 1 any printed, 3 red + 3 any as a player sees it: back to a round I price (Cory, Nov 6: "increase the cost a tad", then "lower" so it stays in round I; the split is Claude's fill-in) */ 'Whenever a member joins your cult from a rival’s, +2 followers.', { f: 2, n: 2,
+    m('fosterparents', 'Abbess', 2, 1, /* 2 red + 1 any printed, 3 red + 3 any as a player sees it: back to a round I price (Cory, Nov 6: "increase the cost a tad", then "lower" so it stays in round I; the split is Claude's fill-in) */ 'Whenever a member joins your cult from a rival’s, +2 followers.', { f: 2, n: 2,
       onCultMove(ctx, owner, card, { uid, from, to }) {
         if (to !== owner || !from || from === owner) return; // itself too, arriving from a rival's (as Old Maid's "this member joins" counts)
         owner.bonus += 2;
@@ -945,7 +945,7 @@ export default {
     // Cory, 2026-11-12 6:39pm Eastern: "assimilators is cool" (Deprogrammers' open slot). The count lives in core.js
     // countMembersOfColor (flag greyToBiggest), so Red's contest, Clan and every color count read it. Price is Claude's
     // fill-in, in Deprogrammers' place in the deck list (so seeded test decks keep their order), 3 red + 4 any as printed (joins in round II: in round I nobody holds members yet).
-    m('assimilators', 'Assimilators', 2, 2, 'Your grey members count as members of your biggest color.', { greyToBiggest: true,
+    m('assimilators', 'Dyer', 2, 2, 'Your grey members count as members of your biggest color.', { greyToBiggest: true,
       ...see(i => endsAhead(i).length * 2), // BOTSEE: about one more in the biggest group each round end left
     }),
     // Turncoat (3 red + 1 any as a player sees it; REPLACE12=turncoat, paper requalified Nov 4): Cory's back-pocket
@@ -994,26 +994,26 @@ export default {
       // a free member (about 4) at each Round Start still ahead when behind on members: about half of them
       ...see(info => 2 * (3 - info.round)),
     })),
-    m('panel', 'Panel', 4, 2, 'On Use, once per round: promote or demote another of your members.', { f: 3, n: 3, // On Use (Cory, Nov 5 backlog yes)
+    m('panel', 'Fairy Godmother', 4, 2, 'On Use, once per round: promote or demote another of your members.', { f: 3, n: 3, // On Use (Cory, Nov 5 backlog yes)
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
-        if (!['promote', 'demote'].some(mode => swapPairs(ctx, owner, mode, card.uid).length)) { card.used = false; ctx.log(`${owner.name}'s Panel: nothing to promote or demote.`); return; }
+        if (!['promote', 'demote'].some(mode => swapPairs(ctx, owner, mode, card.uid).length)) { card.used = false; ctx.log(`${owner.name}'s Fairy Godmother: nothing to promote or demote.`); return; }
         const options = ['promote', 'demote'].filter(mode => swapPairs(ctx, owner, mode, card.uid).length).map(mode => ({
           id: mode, label: mode === 'promote' ? 'Promote' : 'Demote', kind: 'choice', value: mode,
         }));
-        ctx.choose(owner, 'Panel: Promote or Demote?', options, 'red.panelMode', { excludeUid: card.uid });
+        ctx.choose(owner, 'Fairy Godmother: Promote or Demote?', options, 'red.panelMode', { excludeUid: card.uid });
       },
     }),
-    m('loyalists', 'Loyalists', 1, 1, /* 2 red + 2 any as seen (Cory, Nov 6: "Maybe make it 2 and 2", then "yes") */ 'Your other members can’t be swapped.', { f: 3, n: 2, blockMemberSwaps: true }),
+    m('loyalists', 'Warden', 1, 1, /* 2 red + 2 any as seen (Cory, Nov 6: "Maybe make it 2 and 2", then "yes") */ 'Your other members can’t be swapped.', { f: 3, n: 2, blockMemberSwaps: true }),
     // Cory, 2026-10-24: Red's once per game, "swap a rivals with the shop" (equal or greater cost); name and price Claude's fill-in
-    m('headhunter', 'Headhunter', 3, 2, 'On Use, once per game: swap a rival’s member with a shop member that costs as much or more.', {
+    m('headhunter', 'Pied Piper', 3, 2, 'On Use, once per game: swap a rival’s member with a shop member that costs as much or more.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
-        if (!swapPairs(ctx, owner, 'rival').length) { card.used = false; ctx.log(`${owner.name}'s Headhunter: no rival member to swap.`); return; }
+        if (!swapPairs(ctx, owner, 'rival').length) { card.used = false; ctx.log(`${owner.name}'s Pied Piper: no rival member to swap.`); return; }
         // its swap line doesn't name it, so say the use (the turn card leads with "used Headhunter")
-        ctx.log(`${owner.name} uses Headhunter.`);
-        swap(ctx, owner, 'rival', 'Headhunter: choose a rival’s member and its shop replacement');
+        ctx.log(`${owner.name} uses Pied Piper.`);
+        swap(ctx, owner, 'rival', 'Pied Piper: choose a rival’s member and its shop replacement');
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && swapPairs(ctx, owner, 'rival').some(([a]) => cost(a) >= 5 + MORE + richUp(ctx.state)),
     }),

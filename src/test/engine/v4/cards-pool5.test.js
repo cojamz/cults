@@ -17,7 +17,7 @@ describe('Clan Elders (Red)', () => {
   it('Game End: +2 followers per member of your biggest color (a member counting 3 counts 3)', () => {
     let s = sceneQ({ quadrants: ['red', 'market', 'purple', 'silver'], members: [['red.clanelders', 'red.panel', 'market.stylist', 'market.onlooker', 'silver.revelers']], queue: [{ t: 'finish' }] });
     expect(s.over).toBe(true);
-    // red: Clan Elders 1 + Panel 1 = 2 (Panel rebased to worth 1: Cory, Nov 12); blue: 2; silver: Revelers 3
+    // red: Clan Elders 1 + Fairy Godmother 1 = 2 (Fairy Godmother rebased to worth 1: Cory, Nov 12); blue: 2; silver: Revelers 3
     expect(s.players[0].final.parts.join(' ')).toMatch(/Clan Elders \+6/);
   });
 });
@@ -100,7 +100,7 @@ describe('Gift Exchange (Silver, round II)', () => {
     if (s.pending?.kind === 'choose' && /how do you pay/.test(s.pending.prompt)) s = move(s, s.pending.options[0].id);
     expect(s.players[0].members).toContain(panel);
     expect(s.players[0].res.silver).toBe(20 - c);
-    expect(named(s, 'Gift Exchange').some(l => /pays \d+ silver for Panel/.test(l))).toBe(true);
+    expect(named(s, 'Gift Exchange').some(l => /pays \d+ silver for Fairy Godmother/.test(l))).toBe(true);
   });
   it('Gift Exchange: "Recruit nothing" keeps your silver', () => {
     let s = sceneQ({ quadrants: ['silver', 'red', 'market', 'yellow'], round: 2, res: [{ silver: 20 }] });

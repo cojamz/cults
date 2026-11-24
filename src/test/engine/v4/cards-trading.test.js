@@ -152,12 +152,12 @@ describe('White members', () => {
     expect(R(t, 1).magenta || 0).toBe(0);
   });
 
-  it('Farewell casting out pays a rival\'s Recruiter nothing (it pays for shop recruits since Cory, Nov 1 3:59pm)', () => {
+  it('Farewell casting out pays a rival\'s Ferryman nothing (it pays for shop recruits since Cory, Nov 1 3:59pm)', () => {
     let s = take(table(Q, { round: 2, members: [['red.bigfamily'], ['red.recruiter']], shop: ROW }), 'trading.farewell');
     const r0 = R(s, 1).red;
     s = move(s, `card:${uidIn(s, 'red.bigfamily', 0)}`);
     expect(R(s, 1).red - r0).toBe(0);
-    expect(named(s, 'Recruiter')).toHaveLength(0);
+    expect(named(s, 'Ferryman')).toHaveLength(0);
   });
 
   it('Raiders can\'t steal from a rival on Lie Low (Cory, Nov 1: Lie Low blocks every steal)', () => {

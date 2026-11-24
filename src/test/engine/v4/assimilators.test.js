@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Assimilators (Cory, Nov 12: "assimilators is cool"): "Your grey members count as members of your biggest color."
+// Dyer (Cory, Nov 12: "assimilators is cool"): "Your grey members count as members of your biggest color."
 import { describe, expect, it } from 'vitest';
 import { countMembersOfColor } from '../../../engine/v4/core.js';
 import { defById } from '../../../engine/v4/content/index.js';
@@ -10,7 +10,7 @@ const Q = ['red', 'echo', 'yellow', 'thieves'];
 const fixture = opts => { const s = table(Q, opts); s.queue = []; s.pending = null; return s; };
 const one = { cards: true };
 
-describe('Assimilators', () => {
+describe('Dyer', () => {
   it('is in Red’s deck with its printed text', () => {
     expect(defById('red.assimilators').text).toBe('Your grey members count as members of your biggest color.');
     expect(CUT.has('red.assimilators')).toBe(false);

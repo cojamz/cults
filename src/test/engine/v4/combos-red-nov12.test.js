@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Combo tester, Red's Nov 11 members (Cory, Nov 11 9:14pm; built 9:50pm): Brethren ("Whenever you recruit a member of a
+// Combo tester, Red's Nov 11 members (Cory, Nov 11 9:14pm; built 9:50pm): Guild Master ("Whenever you recruit a member of a
 // color you already have, +1 follower.") and Purists ("Round End: if your members have 2 or fewer colors, +3
 // followers."), played against grey and every-color members, swaps, gifts, free and discard-pile recruits, copies and
 // the other Round End members. Each scene checks the outcome against the printed text and the logged calls
@@ -57,170 +57,170 @@ const QE = ['market', 'echo', 'red', 'yellow'];
 const BUY = [{ t: 'buy', p: 0 }];
 const END = [{ t: 'allPlaced' }, { t: 'endRound' }];
 const RICH = { red: 30, magenta: 30, blue: 30, yellow: 30, green: 30 };
-const B = 'Brethren';
+const B = 'Guild Master';
 const P = 'Purists';
 
-describe('Brethren: "Whenever you recruit a member of a color you already have, +1 follower."', () => {
+describe('Guild Master: "Whenever you recruit a member of a color you already have, +1 follower."', () => {
   it('prints his text', () => {
     expect(defById('red.brethren').text).toBe('Whenever you recruit a member of a color you already have, +1 follower.');
     expect(defById('red.purists').text).toBe('Round End: if your members have 2 or fewer colors, +3 followers.');
   });
 
-  it('recruiting Brethren itself while holding a red member: no follower (its own arrival is not "whenever you recruit" for it)', () => {
-    const { s } = go('br-self', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['red.brethren'], members: [['red.twins']] }, [/Brethren/, /pay:/]);
-    expect(names(s, 0)).toEqual(['Triplets', 'Brethren']);
-    expect(has(s, /Brethren:/)).toBe(false);
+  it('recruiting Guild Master itself while holding a red member: no follower (its own arrival is not "whenever you recruit" for it)', () => {
+    const { s } = go('br-self', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['red.brethren'], members: [['red.twins']] }, [/Guild Master/, /pay:/]);
+    expect(names(s, 0)).toEqual(['Triplets', 'Guild Master']);
+    expect(has(s, /Guild Master:/)).toBe(false);
     expect(bonusOf(s, 0)).toBe(0);
     cleanLog(s);
   });
 
-  it('Brethren alone, then a red member: +1 (Brethren is red, so red is a color you already have)', () => {
+  it('Guild Master alone, then a red member: +1 (Guild Master is red, so red is a color you already have)', () => {
     const { s } = go('br-red', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['red.twins'], members: [['red.brethren']] }, [/Triplets/, /pay:/]);
-    expect(lines(s, /Brethren/)).toEqual(["P1's Brethren: Triplets is a color they already have: +1 follower."]);
+    expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Triplets is a color they already have: +1 follower."]);
     expect(bonusOf(s, 0)).toBe(1);
     cleanLog(s);
   });
 
-  it('a new color (magenta Snitch): nothing; buying followers: nothing', () => {
-    const { s } = go('br-new', { quads: QR, round: 2, queue: [...BUY, ...BUY], res: [RICH], shop: ['thieves.snitch'], members: [['red.brethren']] }, [/Snitch/, /pay:/, /tier:small/, /pay:/]);
-    expect(names(s, 0)).toEqual(['Brethren', 'Snitch']);
-    expect(has(s, /Brethren:/)).toBe(false);
+  it('a new color (magenta Informer): nothing; buying followers: nothing', () => {
+    const { s } = go('br-new', { quads: QR, round: 2, queue: [...BUY, ...BUY], res: [RICH], shop: ['thieves.snitch'], members: [['red.brethren']] }, [/Informer/, /pay:/, /tier:small/, /pay:/]);
+    expect(names(s, 0)).toEqual(['Guild Master', 'Informer']);
+    expect(has(s, /Guild Master:/)).toBe(false);
     expect(bonusOf(s, 0)).toBe(1); // the 1 bought follower only
   });
 
-  it("a rival's recruit of a color the Brethren owner has pays nothing", () => {
+  it("a rival's recruit of a color the Guild Master owner has pays nothing", () => {
     const { s } = go('br-rival', { quads: QR, round: 2, queue: [{ t: 'buy', p: 1 }], res: [{}, RICH], shop: ['red.twins'], members: [['red.brethren'], ['red.intern']] }, [/Triplets/, /pay:/]);
     expect(names(s, 1)).toEqual(['Intern', 'Triplets']);
-    expect(has(s, /Brethren:/)).toBe(false);
+    expect(has(s, /Guild Master:/)).toBe(false);
     expect([bonusOf(s, 0), bonusOf(s, 1)]).toEqual([0, 0]);
   });
 
   it('grey counts as a color (logged Nov 11): holding Tiebreaker, a second grey member (Scouts) pays +1', () => {
     const { s } = go('br-grey', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['benders.scout'], members: [['red.brethren', 'benders.tiebreaker']] }, [/Scouts/, /pay:/]);
-    expect(lines(s, /Brethren/)).toEqual(["P1's Brethren: Scouts is a color they already have: +1 follower."]);
+    expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Scouts is a color they already have: +1 follower."]);
     expect(bonusOf(s, 0)).toBe(1);
     cleanLog(s);
   });
 
   it('a first grey member with no grey held: nothing', () => {
     const { s } = go('br-grey1', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['benders.scout'], members: [['red.brethren']] }, [/Scouts/, /pay:/]);
-    expect(has(s, /Brethren:/)).toBe(false);
+    expect(has(s, /Guild Master:/)).toBe(false);
   });
 
-  // OPEN QUESTION: Dabblers ("Counts as 2 wild members.") is red too, and Brethren's owner already has red; the code reads
+  // OPEN QUESTION: Dabblers ("Counts as 2 wild members.") is red too, and Guild Master's owner already has red; the code reads
   // it as Gather does (a wild member is "new" while any color is missing), so no follower. Cory's Nov 1 "Dabblers always
   // works in the owner's favor" would pay +1. Asserts what the code does now.
   it('recruiting Dabblers while holding red: nothing today (open question: "works in the owner\'s favor" would pay +1)', () => {
     const { s } = go('br-dabblers-in', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['benders.dabblers'], members: [['red.brethren']] }, [/Dabblers/, /pay:/]);
-    expect(names(s, 0)).toEqual(['Brethren', 'Dabblers']);
-    expect(has(s, /Brethren:/)).toBe(false);
+    expect(names(s, 0)).toEqual(['Guild Master', 'Dabblers']);
+    expect(has(s, /Guild Master:/)).toBe(false);
   });
 
   it('holding Dabblers, a first magenta member: nothing today (same open question: Dabblers counts as magenta elsewhere)', () => {
-    const { s } = go('br-dabblers-held', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['thieves.snitch'], members: [['red.brethren', 'benders.dabblers']] }, [/Snitch/, /pay:/]);
-    expect(has(s, /Brethren:/)).toBe(false);
+    const { s } = go('br-dabblers-held', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['thieves.snitch'], members: [['red.brethren', 'benders.dabblers']] }, [/Informer/, /pay:/]);
+    expect(has(s, /Guild Master:/)).toBe(false);
   });
 
-  it('Drifters ("On Recruit: choose a color; these count as a member of that color.") choosing red, with Brethren held', () => {
+  it('Drifters ("On Recruit: choose a color; these count as a member of that color.") choosing red, with Guild Master held', () => {
     const { s, trail } = go('br-drifters', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['yellow.drifters'], members: [['red.brethren']] }, [/Drifters/, /pay:/, /color:red/]);
-    expect(names(s, 0)).toEqual(['Brethren', 'Drifters']);
+    expect(names(s, 0)).toEqual(['Guild Master', 'Drifters']);
     expect(trail.join('\n')).toMatch(/color:red/);
     // Drifters' color is chosen in its On Recruit, after the recruit itself: at the moment it joined it was yellow, a new color
-    expect(has(s, /Brethren:/)).toBe(false);
+    expect(has(s, /Guild Master:/)).toBe(false);
   });
 
   it('holding Drifters set to magenta, a magenta member pays +1 (Drifters reads as its chosen color)', () => {
     const { s } = go('br-drifters-held', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['thieves.snitch'], members: [['red.brethren', 'yellow.drifters']],
-      prep: st => { st.cards[st.players[0].members[1]].asColor = 'thieves'; } }, [/Snitch/, /pay:/]);
-    expect(lines(s, /Brethren/)).toEqual(["P1's Brethren: Snitch is a color they already have: +1 follower."]);
+      prep: st => { st.cards[st.players[0].members[1]].asColor = 'thieves'; } }, [/Informer/, /pay:/]);
+    expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Informer is a color they already have: +1 follower."]);
   });
 
-  it('Exchange Students\' swap-in (your own swap is a recruit): Triplets for P2\'s Seat Filler, red already held: +1; Exchange Students itself (yellow, new): nothing', () => {
+  it('Hostages\' swap-in (your own swap is a recruit): Triplets for P2\'s Journeyman, red already held: +1; Hostages itself (yellow, new): nothing', () => {
     const { s } = go('br-xs', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['yellow.exchangestudents'], members: [['red.brethren', 'red.twins'], ['red.seatfiller']] },
-      [/Exchange Students/, /pay:/, /Triplets ↔/]);
-    expect(s.log).toContain("P1's Exchange Students: swaps Triplets for P2's Seat Filler.");
-    expect(names(s, 0)).toEqual(['Brethren', 'Exchange Students', 'Seat Filler']);
-    expect(lines(s, /Brethren/)).toEqual(["P1's Brethren: Seat Filler is a color they already have: +1 follower."]);
+      [/Hostages/, /pay:/, /Triplets ↔/]);
+    expect(s.log).toContain("P1's Hostages: swaps Triplets for P2's Journeyman.");
+    expect(names(s, 0)).toEqual(['Guild Master', 'Hostages', 'Journeyman']);
+    expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Journeyman is a color they already have: +1 follower."]);
     expect(bonusOf(s, 0)).toBe(1);
-    // the rival's arrival (Triplets) is not their recruit: their own Brethren would not pay
+    // the rival's arrival (Triplets) is not their recruit: their own Guild Master would not pay
     cleanLog(s);
   });
 
-  it('the rival on the other end of Exchange Students holds Brethren: Triplets arrives by P1\'s swap, not P2\'s recruit: nothing', () => {
+  it('the rival on the other end of Hostages holds Guild Master: Triplets arrives by P1\'s swap, not P2\'s recruit: nothing', () => {
     const { s } = go('br-xs-rival', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['yellow.exchangestudents'], members: [['red.twins'], ['red.brethren', 'red.seatfiller']] },
-      [/Exchange Students/, /pay:/, /Triplets ↔/]);
-    expect(names(s, 1)).toEqual(['Brethren', 'Triplets']);
-    expect(has(s, /Brethren:/)).toBe(false);
+      [/Hostages/, /pay:/, /Triplets ↔/]);
+    expect(names(s, 1)).toEqual(['Guild Master', 'Triplets']);
+    expect(has(s, /Guild Master:/)).toBe(false);
   });
 
-  it("Double Agent (\"On Recruit: swap this member for a rival's member costing up to 8.\"): the swapped-in red Big Family pays +1", () => {
+  it("Changeling (\"On Recruit: swap this member for a rival's member costing up to 8.\"): the swapped-in red Big Family pays +1", () => {
     const { s } = go('br-da', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['thieves.doubleagent'], members: [['red.brethren'], ['red.bigfamily']] },
-      [/Double Agent/, /pay:/, /Big Family/]);
-    expect(names(s, 0)).toEqual(['Brethren', 'Big Family']);
-    expect(names(s, 1)).toEqual(['Double Agent']);
-    expect(lines(s, /Brethren/)).toEqual(["P1's Brethren: Big Family is a color they already have: +1 follower."]);
+      [/Changeling/, /pay:/, /Big Family/]);
+    expect(names(s, 0)).toEqual(['Guild Master', 'Big Family']);
+    expect(names(s, 1)).toEqual(['Changeling']);
+    expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Big Family is a color they already have: +1 follower."]);
     expect(bonusOf(s, 0)).toBe(1);
     cleanLog(s);
   });
 
-  it('Kidnappers ("Round End: a rival you choose gives you one of their members.") is a gift, not a recruit: nothing', () => {
+  it('Press Gang ("Round End: a rival you choose gives you one of their members.") is a gift, not a recruit: nothing', () => {
     const { s } = go('br-kid', { quads: QR, round: 2, queue: END, members: [['red.brethren', 'thieves.kidnappers'], ['red.twins']] }, [/Triplets/]);
-    expect(names(s, 0)).toEqual(['Brethren', 'Kidnappers', 'Triplets']);
-    expect(has(s, /Brethren:/)).toBe(false);
+    expect(names(s, 0)).toEqual(['Guild Master', 'Press Gang', 'Triplets']);
+    expect(has(s, /Guild Master:/)).toBe(false);
     cleanLog(s);
   });
 
-  it('Talent Scouts ("On Use, once per game: recruit a member costing up to 7 for free.") taking a red member: +1', () => {
+  it('Benefactor ("On Use, once per game: recruit a member costing up to 7 for free.") taking a red member: +1', () => {
     const { s } = go('br-scouts', { quads: QR, round: 2, queue: BUY, shop: ['red.twins'], members: [['red.brethren', 'yellow.headhunters']] }, [/use:/, /Triplets/]);
-    expect(s.log).toContain("P1's Talent Scouts: recruits Triplets for free.");
-    expect(lines(s, /Brethren/)).toEqual(["P1's Brethren: Triplets is a color they already have: +1 follower."]);
+    expect(s.log).toContain("P1's Benefactor: recruits Triplets for free.");
+    expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Triplets is a color they already have: +1 follower."]);
   });
 
   it('Initiation ("Recruit a shop member costing 9 or less, for free. +1 red.") taking a red member: +1', () => {
     const { s } = go('br-init', { quads: QR, round: 3, turns: [0], shop: ['red.bigfamily'], members: [['red.brethren']] }, [/Initiation/, /Big Family/]);
     expect(names(s, 0)).toContain('Big Family');
-    expect(lines(s, /Brethren/)).toEqual(["P1's Brethren: Big Family is a color they already have: +1 follower."]);
+    expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Big Family is a color they already have: +1 follower."]);
   });
 
   it('Repeat Customers ("On Recruit: +3 blue, then recruit from the discard pile.") (blue, new): nothing; then Triplets off the discard pile: +1', () => {
     const { s } = go('br-rc', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['market.repeatcustomers'], members: [['red.brethren']], prep: disc('red.twins') },
       [/Repeat Customers/, /pay:/, /Triplets/, /pay:/]);
-    expect(names(s, 0)).toEqual(['Brethren', 'Repeat Customers', 'Triplets']);
-    expect(lines(s, /Brethren/)).toEqual(["P1's Brethren: Triplets is a color they already have: +1 follower."]);
+    expect(names(s, 0)).toEqual(['Guild Master', 'Repeat Customers', 'Triplets']);
+    expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Triplets is a color they already have: +1 follower."]);
     expect(bonusOf(s, 0)).toBe(1);
   });
 
-  it('Spree ("Recruit two members from the discard pile now. +7 blue."): Snitch (new magenta) then Bodyguards (magenta, now held), then a red shop member: +1, +1', () => {
+  it('Spree ("Recruit two members from the discard pile now. +7 blue."): Informer (new magenta) then Thief-Takers (magenta, now held), then a red shop member: +1, +1', () => {
     const { s } = go('br-spree', { quads: QR, round: 3, turns: [0], res: [RICH], shop: ['red.intern'], members: [['red.brethren']], prep: disc('thieves.snitch', 'thieves.watchdog') },
-      [/Spree/, /Snitch/, /pay:/, /Bodyguards/, /pay:/, /Intern/, /pay:/]);
-    expect(names(s, 0)).toEqual(['Brethren', 'Snitch', 'Bodyguards', 'Intern']);
-    expect(lines(s, /Brethren/)).toEqual([
-      "P1's Brethren: Bodyguards is a color they already have: +1 follower.",
-      "P1's Brethren: Intern is a color they already have: +1 follower.",
+      [/Spree/, /Informer/, /pay:/, /Thief-Takers/, /pay:/, /Intern/, /pay:/]);
+    expect(names(s, 0)).toEqual(['Guild Master', 'Informer', 'Thief-Takers', 'Intern']);
+    expect(lines(s, /Guild Master/)).toEqual([
+      "P1's Guild Master: Thief-Takers is a color they already have: +1 follower.",
+      "P1's Guild Master: Intern is a color they already have: +1 follower.",
     ]);
     expect(bonusOf(s, 0)).toBe(2);
     cleanLog(s);
   });
 
-  it('Doppelganger ("On Recruit: this member becomes a copy of another of your members.") copying Brethren: a red recruit pays +1 twice', () => {
+  it('Doppelganger ("On Recruit: this member becomes a copy of another of your members.") copying Guild Master: a red recruit pays +1 twice', () => {
     const { s } = go('br-doppel', { quads: QE, round: 3, queue: [...BUY, ...BUY], res: [RICH], shop: ['echo.doppel', 'red.intern'], members: [['red.brethren']] },
-      [/Doppelganger/, /pay:/, /Brethren/, /Intern/, /pay:/]);
-    expect(s.log).toContain("P1's Doppelganger becomes a copy of Brethren.");
+      [/Doppelganger/, /pay:/, /Guild Master/, /Intern/, /pay:/]);
+    expect(s.log).toContain("P1's Doppelganger becomes a copy of Guild Master.");
     expect(lines(s, /: Intern is a color they already have/)).toHaveLength(2);
     expect(bonusOf(s, 0)).toBe(2);
     cleanLog(s);
   });
 
-  it('Mimics ("On Recruit: use the On Recruit of any member in play.") does not offer Brethren (no On Recruit)', () => {
+  it('Mimics ("On Recruit: use the On Recruit of any member in play.") does not offer Guild Master (no On Recruit)', () => {
     const { s } = go('br-mimics', { quads: QE, round: 2, queue: BUY, res: [RICH], shop: ['echo.mimics'], members: [['red.brethren', 'yellow.exchangestudents']] }, [/Mimics/, /pay:/]);
     const labels = (s.pending?.options || []).map(o => o.label).join(' | ');
-    expect(labels).not.toMatch(/Brethren/);
+    expect(labels).not.toMatch(/Guild Master/);
   });
 
-  it('4 players: two Brethren owners; only the recruiter\'s pays', () => {
+  it('4 players: two Guild Master owners; only the recruiter\'s pays', () => {
     const { s } = go('br-4p', { quads: QR, n: 4, round: 2, queue: [{ t: 'buy', p: 2 }], res: [{}, {}, RICH, {}], shop: ['red.twins'],
       members: [['red.brethren'], ['red.intern'], ['red.brethren'], ['red.brethren']] }, [/Triplets/, /pay:/]);
-    expect(lines(s, /Brethren/)).toEqual(["P3's Brethren: Triplets is a color they already have: +1 follower."]);
+    expect(lines(s, /Guild Master/)).toEqual(["P3's Guild Master: Triplets is a color they already have: +1 follower."]);
     expect([0, 1, 2, 3].map(i => bonusOf(s, i))).toEqual([0, 0, 1, 0]);
   });
 });
@@ -250,16 +250,16 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
     expect(lines(s, /Purists/)).toEqual(["P1's Purists: members of 2 colors: +3 followers."]);
   });
 
-  it('own Kidnappers takes a blue member before Purists counts: 3 colors, nothing', () => {
+  it('own Press Gang takes a blue member before Purists counts: 3 colors, nothing', () => {
     const { s } = go('pu-kid-own', { quads: QR, round: 2, queue: END, members: [['red.purists', 'thieves.kidnappers'], ['market.repeatcustomers']] }, [/Repeat Customers/]);
-    expect(names(s, 0)).toEqual(['Purists', 'Kidnappers', 'Repeat Customers']);
+    expect(names(s, 0)).toEqual(['Purists', 'Press Gang', 'Repeat Customers']);
     expect(has(s, /Purists:/)).toBe(false);
     expect(bonusOf(s, 0)).toBe(0);
   });
 
-  it("a rival's Kidnappers takes the Purists owner's only blue member: down to 2 colors before the count: +3", () => {
+  it("a rival's Press Gang takes the Purists owner's only blue member: down to 2 colors before the count: +3", () => {
     const { s } = go('pu-kid-rival', { quads: QR, round: 2, queue: END, members: [['red.purists', 'thieves.snitch', 'market.repeatcustomers'], ['thieves.kidnappers']] }, [/Repeat Customers/]);
-    expect(names(s, 1)).toEqual(['Kidnappers', 'Repeat Customers']);
+    expect(names(s, 1)).toEqual(['Press Gang', 'Repeat Customers']);
     expect(lines(s, /Purists/)).toEqual(["P1's Purists: members of 2 colors: +3 followers."]);
   });
 
@@ -270,14 +270,14 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
     expect(bonusOf(s, 0)).toBe(6 + 4 * 10); // and the four round III contests, P2 holding nothing
   });
 
-  // AI game, Nov 12: Test Drive on Seat Filler asked which member to take, then gave nothing (the card had to be held).
-  // Cory, Nov 10, reviewing Test Drive's strongest uses: "Seat Filler is fine", so the free recruit happens.
-  it('Test Drive on Seat Filler ("Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free."): recruits the pick for free', () => {
-    const { s } = go('sf-td', { quads: QR, round: 1, turns: [0], shop: ['red.seatfiller', 'market.thrifthunters'] }, [/Test Drive/, /Seat Filler/, /Thrift Hunters/]);
-    expect(s.log).toContain("P1's Test Drive: sends Seat Filler to the discard pile and uses its effect.");
+  // AI game, Nov 12: Test Drive on Journeyman asked which member to take, then gave nothing (the card had to be held).
+  // Cory, Nov 10, reviewing Test Drive's strongest uses: "Journeyman is fine", so the free recruit happens.
+  it('Test Drive on Journeyman ("Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free."): recruits the pick for free', () => {
+    const { s } = go('sf-td', { quads: QR, round: 1, turns: [0], shop: ['red.seatfiller', 'market.thrifthunters'] }, [/Test Drive/, /Journeyman/, /Thrift Hunters/]);
+    expect(s.log).toContain("P1's Test Drive: sends Journeyman to the discard pile and uses its effect.");
     expect(names(s, 0)).toEqual(['Thrift Hunters']);
     expect(has(s, /recruits Thrift Hunters for free/)).toBe(true);
-    expect(s.discard.map(u => defById(s.cards[u].def).name)).toContain('Seat Filler');
+    expect(s.discard.map(u => defById(s.cards[u].def).name)).toContain('Journeyman');
     cleanLog(s);
   });
 
@@ -294,11 +294,11 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
 
   // Claude, under Cory's go-with-your-gut, Nov 24 (Cory, Nov 13: "test drive is probably a bit too good"): Test Drive
   // ("Discard a shop member. Use its effect now, unless it is once per game. +1 blue.") sends a once per game member
-  // to the discard pile without using it; Talent Scouts ("On Use, once per game: recruit a member costing up to 7 for free.")
-  it('Test Drive on Talent Scouts (once per game): discarded, effect not used', () => {
-    const { s } = go('td-opg', { quads: QR, round: 1, turns: [0], shop: ['yellow.headhunters', 'red.purists'] }, [/Test Drive/, /Talent Scouts/]);
-    expect(s.log).toContain("P1's Test Drive: sends Talent Scouts to the discard pile.");
-    expect(s.discard.map(u => defById(s.cards[u].def).name)).toContain('Talent Scouts');
+  // to the discard pile without using it; Benefactor ("On Use, once per game: recruit a member costing up to 7 for free.")
+  it('Test Drive on Benefactor (once per game): discarded, effect not used', () => {
+    const { s } = go('td-opg', { quads: QR, round: 1, turns: [0], shop: ['yellow.headhunters', 'red.purists'] }, [/Test Drive/, /Benefactor/]);
+    expect(s.log).toContain("P1's Test Drive: sends Benefactor to the discard pile.");
+    expect(s.discard.map(u => defById(s.cards[u].def).name)).toContain('Benefactor');
     expect(s.players[0].members.length).toBe(0);
   });
 
@@ -310,7 +310,7 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
     expect(bonusOf(s, 0)).toBe(3);
   });
 
-  it('4 players: each Purists owner in turn order, after every Cat Burglars (Round End members finish first)', () => {
+  it('4 players: each Purists owner in turn order, after every Night Thieves (Round End members finish first)', () => {
     const { s } = go('pu-4p', { quads: QR, n: 4, round: 2, queue: END, res: [{}, { red: 3 }, {}, {}],
       members: [['red.purists'], ['red.purists', 'thieves.snitch', 'market.repeatcustomers'], ['red.purists', 'thieves.secondstory'], ['red.purists', 'benders.dabblers', 'yellow.exchangestudents']] },
       [/take:1:red/, /take:1:red/, /take:1:red/]);
@@ -319,11 +319,11 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
       "P3's Purists: members of 2 colors: +3 followers.",
       "P4's Purists: members of 2 colors: +3 followers.",
     ]);
-    const iCat = s.log.findIndex(l => /Cat Burglars/.test(l)), iPu = s.log.findIndex(l => /Purists:/.test(l));
+    const iCat = s.log.findIndex(l => /Night Thieves/.test(l)), iPu = s.log.findIndex(l => /Purists:/.test(l));
     expect(iCat).toBeGreaterThanOrEqual(0);
     expect(iCat).toBeLessThan(iPu);
     expect(s.log).toContain('Round II ends. Most red: P3 +6');
-    expect([0, 1, 2, 3].map(i => bonusOf(s, i))).toEqual([3, 0, 3 + 6 - 1, 3]); // P3: Most red +6, Snitch −1
+    expect([0, 1, 2, 3].map(i => bonusOf(s, i))).toEqual([3, 0, 3 + 6 - 1, 3]); // P3: Most red +6, Informer −1
     cleanLog(s);
   });
 });

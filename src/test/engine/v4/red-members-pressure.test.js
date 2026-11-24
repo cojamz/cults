@@ -90,7 +90,7 @@ describe('Green exact action targets alongside Red recruitment', () => {
 });
 
 describe('Red members: bounded acquisition and body invariants', () => {
-  it('the normal Red deck contains thirteen approved members (Body Snatchers in Triplets’ place, Nov 3; Seat Filler in Volunteer’s, Nov 5; Clan in Patriarch’s, Nov 11; Brethren in Proselytizers’ and Purists in Mob’s, Nov 11; Assimilators in for Deprogrammers, Nov 12), all priced at twelve or less (Mob 12, Cory Oct 24)', () => {
+  it('the normal Red deck contains thirteen approved members (Swindler in Triplets’ place, Nov 3; Journeyman in Volunteer’s, Nov 5; Clan Chief in Patriarch’s, Nov 11; Guild Master in Proselytizers’ and Purists in Mob’s, Nov 11; Dyer in for Deprogrammers, Nov 12), all priced at twelve or less (Mob 12, Cory Oct 24)', () => {
     const s = createGame({ seats: [{}, {}], quadrants: ['red', 'echo'], rules: { cull: true, guests: false } });
     const red = Object.values(s.cards).map(c => defById(c.def)).filter(d => d.quadrant === 'red');
     expect(red.map(d => d.key).sort()).toEqual(['host', 'loyalists', 'mentor', 'purists', 'assimilators', 'panel', 'clan', 'brethren', 'fosterparents', 'recruiter', 'bodysnatchers', 'seatfiller', 'headhunter'].sort());
@@ -98,20 +98,20 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(['red.bigfamily', 'red.intern', 'red.drive', 'red.sponsor', 'red.crowd', 'red.reserve'].every(id => CUT.has(id))).toBe(true);
   });
 
-  it('Panel and Mob (rebased to 1, Cory Nov 12) count as many members as their followers, with Triplets 3', () => {
+  it('Fairy Godmother and Mob (rebased to 1, Cory Nov 12) count as many members as their followers, with Triplets 3', () => {
     const s = table(Q, { members: [['red.panel', 'red.mob', 'red.twins', 'red.volunteer']] });
     const ctx = contextFor(s), mob = ctx.membersOf(s.players[0]).find(c => c.def.id === 'red.mob');
-    expect(memberCount(s, s.players[0])).toBe(6); // Panel 1, Mob 1, Triplets 3 (retired, keeps it), Volunteer 1 (member count = follower count, Nov 1)
+    expect(memberCount(s, s.players[0])).toBe(6); // Fairy Godmother 1, Mob 1, Triplets 3 (retired, keeps it), Volunteer 1 (member count = follower count, Nov 1)
     expect(followers(s, s.players[0])).toBe(7); // leader + printed bodies
     expect(mob.def.onGameEnd).toBeUndefined(); // Round End since Nov 4: it compares this count with each rival's
     expect(ctx.countMembersOfColor(s.players[0], 'red')).toBe(6);
   });
 
-  it('Panel save/load retains mode and exact swap targets without inherent action red', () => {
-    // Merchant (6) can promote to Mentor (8) but not to Mob (10)
+  it('Fairy Godmother save/load retains mode and exact swap targets without inherent action red', () => {
+    // Merchant (6) can promote to Governess (8) but not to Mob (10)
     let s = table(Q, { round: 3, members: [['red.panel', 'gold.merchant']], shop: ['red.mentor', 'red.mob'], queue: turns(0, 0) });
     s = move(s, `use:${uidIn(s, 'red.panel', 0)}`); // On Use, once per round (Cory, Nov 5)
-    expect(s.pending.prompt).toMatch(/Panel/);
+    expect(s.pending.prompt).toMatch(/Fairy Godmother/);
     expect(s.pending.options.map(o => o.id)).toContain('promote');
     const direct = move(s, 'promote'), reload = move(saved(s), 'promote');
     expect(reload).toEqual(direct);
@@ -120,7 +120,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(reload.pending.options.map(o => o.id)).not.toContain(pair(host, uidIn(reload, 'red.mob', 'shop')));
     expect(reload.pending.options.every(o => !o.value?.includes(panel))).toBe(true);
     expect(saved(reload).pending.options.every(o => !o.value?.includes(panel))).toBe(true);
-    expect(reload.players[0].res.red).toBe(0); // Panel itself pays no inherent red.
+    expect(reload.players[0].res.red).toBe(0); // Fairy Godmother itself pays no inherent red.
   });
 
   it('Greeters pays per ability, never for an effectless active acquisition or a gift', () => {
@@ -132,7 +132,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(actor.res.green).toBe(0);
   });
 
-  it('Panel exclusion survives a saved mode choice even if Panel has moved into the shop', () => {
+  it('Fairy Godmother exclusion survives a saved mode choice even if Fairy Godmother has moved into the shop', () => {
     let s = table(Q, { round: 3, members: [['red.panel', 'gold.merchant']], shop: ['red.mentor'], queue: turns(0, 0) });
     s = move(s, `use:${uidIn(s, 'red.panel', 0)}`);
     const panel = uidIn(s, 'red.panel', 0);
@@ -148,7 +148,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     s = move(take(s, 'red.take'), `card:${uidIn(s, 'echo.doppel', 'shop')}`);
     expect(s.players[0].res.green).toBe(1); // Doppelganger's choice is one Recruit ability.
     s = move(saved(s), `card:${uidIn(s, 'red.host', 0)}`);
-    // Doppelganger also does the copied Host's On Recruit (Cory, 2026-10-28): +1 red per 2 members, and Greeters
+    // Doppelganger also does the copied Tavern Keeper's On Recruit (Cory, 2026-10-28): +1 red per 2 members, and Greeters
     // pays once more for it, in Doppelganger's own color
     expect(s.players[0].res.green).toBe(2);
     expect(s.players[0].res.red).toBe(1 + Math.floor(memberCount(s, s.players[0]) / 2));
@@ -164,7 +164,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(s.pending?.kind).not.toBe('choose');
     if (target !== 'red.panel') {
       s.queue = [{ t: 'round', r: 3 }]; s = resume(s);
-      expect(s.players[0].res[target === 'red.host' ? 'red' : 'green']).toBe(target === 'red.host' ? 4 : 3); // Host's copy: Greeters 2 + Triplets 3 + Impostors 1 = 6 members, +3 red
+      expect(s.players[0].res[target === 'red.host' ? 'red' : 'green']).toBe(target === 'red.host' ? 4 : 3); // Tavern Keeper's copy: Greeters 2 + Triplets 3 + Impostors 1 = 6 members, +3 red
     }
   });
 
@@ -177,7 +177,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(s.players.map(p => p.bonus)).toEqual([0, 1, 1]);
   });
 
-  it('Loyalists blocks both players from swapping its cult, but does not invent theft immunity', () => {
+  it('Warden blocks both players from swapping its cult, but does not invent theft immunity', () => {
     const s = table(Q, { members: [['red.loyalists', 'red.twins'], ['red.volunteer']], shop: ['red.mentor'] });
     const ctx = contextFor(s), twins = uidIn(s, 'red.twins', 0), volunteer = uidIn(s, 'red.volunteer', 1);
     expect(ctx.canSwapMember(twins)).toBe(false);
@@ -188,7 +188,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(s.players[1].members).toContain(twins);
   });
 
-  it('two Loyalists (a Doppelganger copy) do not shield each other; they still shield the rest', () => {
+  it('two Warden (a Doppelganger copy) do not shield each other; they still shield the rest', () => {
     const s = table(Q, { members: [['red.loyalists', 'echo.doppel', 'red.twins'], ['red.volunteer']] });
     const doppel = uidIn(s, 'echo.doppel', 0);
     s.cards[doppel].copy = 'red.loyalists';
@@ -198,23 +198,23 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(ctx.canSwapMember(uidIn(s, 'red.twins', 0))).toBe(false);
   });
 
-  // Cory, 2026-10-28: Doppelganger does the copied member's On Recruit, so a copied Panel promotes or demotes once
-  it('a Doppelganger copying Panel adopts its body and can use Panel\'s Promote or Demote', () => {
+  // Cory, 2026-10-28: Doppelganger does the copied member's On Recruit, so a copied Fairy Godmother promotes or demotes once
+  it('a Doppelganger copying Fairy Godmother adopts its body and can use Fairy Godmother\'s Promote or Demote', () => {
     let s = table(Q, { round: 3, members: [['red.panel']], shop: ['echo.doppel', 'red.mentor'], queue: turns(0, 0) });
     s = move(take(s, 'red.take'), `card:${uidIn(s, 'echo.doppel', 'shop')}`);
     s = move(saved(s), `card:${uidIn(s, 'red.panel', 0)}`);
-    expect(s.pending.prompt).not.toBe('Panel: Promote or Demote?'); // Panel is On Use now (Cory, Nov 5): nothing on recruit
+    expect(s.pending.prompt).not.toBe('Fairy Godmother: Promote or Demote?'); // Fairy Godmother is On Use now (Cory, Nov 5): nothing on recruit
     s = pass(s);
     while (s.pending?.kind !== 'place' && s.pending) s = move(s, s.pending.options.find(o => o.id === 'pass' || o.id === 'done')?.id ?? s.pending.options[0].id);
     s = move(saved(s), `use:${uidIn(s, 'echo.doppel', 0)}`);
-    expect(s.pending.prompt).toBe('Panel: Promote or Demote?');
+    expect(s.pending.prompt).toBe('Fairy Godmother: Promote or Demote?');
     expect(s.queue.find(t => t.t === 'choose')?.data?.excludeUid).toBe(uidIn(s, 'echo.doppel', 0));
     expect(s.cards[uidIn(s, 'echo.doppel', 0)].copy).toBe('red.panel');
-    expect(memberCount(s, s.players[0])).toBe(2); // Panel and its copy, 1 member each (Panel rebased to 1, Cory Nov 12)
+    expect(memberCount(s, s.players[0])).toBe(2); // Fairy Godmother and its copy, 1 member each (Fairy Godmother rebased to 1, Cory Nov 12)
   });
 
-  it('Panel cannot swap itself after reload, while promoting another member into Doppelganger terminates normally', () => {
-    // the swaps below need Doppelganger within Promote's reach (up to 3 more) of Panel; its printed price moves with balance passes
+  it('Fairy Godmother cannot swap itself after reload, while promoting another member into Doppelganger terminates normally', () => {
+    // the swaps below need Doppelganger within Promote's reach (up to 3 more) of Fairy Godmother; its printed price moves with balance passes
     const dop = defById('echo.doppel'), was = { s: dop.s, w: dop.w };
     Object.assign(dop, { s: 4, w: 3 });
     // and Impostors at 5 or less, since Promote never reaches cheaper (Cory, Nov 4 night)
@@ -235,8 +235,8 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(s.players[0].members).toContain(doppel);
     expect(s.players[0].members).toContain(panel);
     expect(s.shop).toContain(impostor);
-    // the copied Panel is On Use (Cory, Nov 5): nothing fires on recruit, and the chain ends
-    expect(s.pending?.prompt).not.toBe('Panel: Promote or Demote?');
+    // the copied Fairy Godmother is On Use (Cory, Nov 5): nothing fires on recruit, and the chain ends
+    expect(s.pending?.prompt).not.toBe('Fairy Godmother: Promote or Demote?');
     for (let k = 0; k < 8 && s.pending?.kind === 'choose'; k++) {
       expect(s.pending.options.every(o => !(Array.isArray(o.value) && o.value.includes(doppel)))).toBe(true);
       s = move(saved(s), s.pending.options[0].id);

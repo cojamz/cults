@@ -86,7 +86,7 @@ describe('answer runs', () => {
     const id = st.pending.options[0].id;
     expect(() => applyMove(st, { player: st.pending.player, option: id, then: Array(g.toPick - 1).fill(id) })).not.toThrow();
   });
-  it('Early Traders / Trade Seeds: the swap card whole mix goes as one move', () => {
+  it('Dawn Traders / Trade Seeds: the swap card whole mix goes as one move', () => {
     const st = find(s => h(s) === 'yellow.swap' && s.pending.options.some(o => o.kind === 'swap'));
     expect(st).toBeTruthy();
     const p = st.players[st.pending.player], t = st.queue[0].data;

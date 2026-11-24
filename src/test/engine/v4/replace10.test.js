@@ -60,10 +60,10 @@ describe('REPLACE10: Bootlegger', () => {
     let s = table(['red', 'echo', 'trading', 'thieves'], { round: 2, members: [['echo.bootlegger', 'thieves.accomplice']], res: [{}, { red: 5 }] });
     const u = uidOf(s, 'echo.bootlegger', 0);
     s = move(s, `use:${u}`);
-    // Accomplice is the only other member with an On Recruit: asked anyway, so the choice is seen
+    // Bandit is the only other member with an On Recruit: asked anyway, so the choice is seen
     if (s.pending?.prompt?.startsWith('Bootlegger')) s = answer(s, s.pending.options[0].id);
-    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /Accomplice|steal/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
-    expect(s.players[1].res.red).toBe(2); // Accomplice's steal 3, again
+    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /Bandit|steal/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
+    expect(s.players[1].res.red).toBe(2); // Bandit's steal 3, again
     expect(s.cards[u].used).toBe(true);
     expect(s.pending.options.map(o => o.id)).not.toContain(`use:${u}`);
     expect(named(s, 'Bootlegger')).toContain('P1 uses Bootlegger.');
@@ -96,12 +96,12 @@ describe('REPLACE10: Inside Job (Stash\'s slot)', () => {
 
 // The pitched turns (pitches/D-*.md), set up and checked: the Lab's scripted scenarios.
 describe('REPLACE10: the pitched turns', () => {
-  it('Bootlegger: you own Roadie and Accomplice; each round you fire one again: Roadie\'s +1 green per green member', () => {
+  it('Bootlegger: you own Roadie and Bandit; each round you fire one again: Roadie\'s +1 green per green member', () => {
     let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 2, members: [['echo.bootlegger', 'echo.roadie', 'thieves.accomplice']] });
     const u = uidOf(s, 'echo.bootlegger', 0), g = s.players[0].res.green;
     s = move(s, `use:${u}`);
     expect(s.pending.prompt).toBe("Bootlegger: copy which member's On Recruit?");
-    expect(s.pending.options.map(o => o.label.split(':')[0]).sort()).toEqual(['Accomplice', 'Roadie']);
+    expect(s.pending.options.map(o => o.label.split(':')[0]).sort()).toEqual(['Bandit', 'Roadie']);
     s = answer(s, s.pending.options.find(o => o.label.startsWith('Roadie')).id);
     expect(s.players[0].res.green).toBe(g + 2); // two green members: Bootlegger and Roadie
   });
@@ -178,15 +178,15 @@ describe('REPLACE10: Almoner and Widows', () => {
     expect(me.bonus).toBe(b0 + 4);
     ctx.moveMember(uidOf(s, 'trading.widows', 0), me, s.players[1], { recruit: true });
     expect(me.bonus).toBe(b0 + 4);
-    expect(named(s, 'Widows')).toEqual(["P1's Widows: Accomplice left: +2 followers.", "P1's Widows: Roadie left: +2 followers."]);
+    expect(named(s, 'Widows')).toEqual(["P1's Widows: Bandit left: +2 followers.", "P1's Widows: Roadie left: +2 followers."]);
   });
 
-  it('Widows, the pitched turn: Ben\'s Kidnappers has you give a member at round end: +2', () => {
+  it('Widows, the pitched turn: Ben\'s Press Gang has you give a member at round end: +2', () => {
     let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 1, members: [['trading.widows', 'echo.roadie'], ['thieves.kidnappers'], ['echo.agents'], []], queue: [{ t: 'allPlaced' }] });
-    // Ben picks P1, who gives Roadie (Kidnappers, Nov 11: the rival chooses)
+    // Ben picks P1, who gives Roadie (Press Gang, Nov 11: the rival chooses)
     s = applyMove(s, { player: s.pending.player, option: 'player:0' });
     s = applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.label.startsWith('Roadie')).id });
-    expect(named(s, 'Kidnappers')).toEqual(["P2's Kidnappers: P1 gives Roadie to P2."]);
+    expect(named(s, 'Press Gang')).toEqual(["P2's Press Gang: P1 gives Roadie to P2."]);
     expect(named(s, 'Widows')).toEqual(["P1's Widows: Roadie left: +2 followers."]);
   });
 });

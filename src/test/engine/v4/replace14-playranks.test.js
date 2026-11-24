@@ -36,23 +36,23 @@ describe('REPLACE14: Ragpicker ("You may recruit the top member of the discard p
   });
 });
 
-describe('REPLACE14: Shoplifter, its color', () => {
+describe('REPLACE14: Cutpurse, its color', () => {
   it('recruiting a red member steals 1 red from each rival who has red', () => {
     let s = table(['red', 'thieves'], { n: 3, round: 2, res: [{ red: 9, magenta: 9 }, { red: 2 }, { blue: 2 }], members: [['thieves.shopcolor']], shop: ['red.mentor'] });
     s = answer(s, `slot:${slot(s, 'thieves', 'Lie Low')}`);
     while (s.pending?.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
     s = payAll(answer(s, `card:${uidIn(s, 'red.mentor', 'shop')}`));
-    expect(log(s)).toContain("P1's Shoplifter: took 1 red from P2.");
+    expect(log(s)).toContain("P1's Cutpurse: took 1 red from P2.");
     expect(log(s)).not.toContain('from P3.');
   });
 });
 
-describe('REPLACE14: Shoplifter, steal 2', () => {
+describe('REPLACE14: Cutpurse, steal 2', () => {
   it('recruiting a member starts a steal of 2', () => {
     let s = table(['red', 'thieves'], { n: 2, round: 2, res: [{ red: 9, magenta: 9 }, { gold: 5 }], members: [['thieves.shoptwo']], shop: ['thieves.crew'] });
     s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
     s = payAll(answer(s, `card:${uidIn(s, 'thieves.crew', 'shop')}`));
-    while (s.pending?.player === 0 && s.pending.prompt?.includes('Shoplifter')) s = answer(s, s.pending.options[0].id);
+    while (s.pending?.player === 0 && s.pending.prompt?.includes('Cutpurse')) s = answer(s, s.pending.options[0].id);
     expect(s.players[1].res.gold).toBe(3);
   });
 });

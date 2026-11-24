@@ -49,7 +49,7 @@ describe('REPLACE4: each card fires', () => {
     expect(named(s, 'Defectors')).toContain("P1's Defectors: P1's red members (Defectors) swap for P2's (Mob, Crowd-Pleaser).");
   });
 
-  it("Defectors: a rival's Loyalists keeps their other members; only Loyalists moves", () => {
+  it("Defectors: a rival's Warden keeps their other members; only Warden moves", () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.defectors'], ['red.mob', 'red.loyalists']], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidIn(s, 'red.defectors', 0)}`);
     s = answer(s, 'player:1');

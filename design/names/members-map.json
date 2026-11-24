@@ -1,0 +1,46 @@
+{
+ "red.js": {
+  "Host": "Tavern Keeper",
+  "Brethren": "Guild Master",
+  "Recruiter": "Ferryman",
+  "Panel": "Fairy Godmother",
+  "Headhunter": "Pied Piper",
+  "Loyalists": "Warden",
+  "Mentor": "Governess",
+  "Seat Filler": "Journeyman",
+  "Body Snatchers": "Swindler",
+  "Foster Parents": "Abbess",
+  "Assimilators": "Dyer",
+  "Clan": "Clan Chief"
+ },
+ "thieves.js": {
+  "Accomplice": "Bandit",
+  "Cat Burglars": "Night Thieves",
+  "Desperado": "Starveling",
+  "Bodyguards": "Thief-Takers",
+  "Heist Crew": "Highwayman",
+  "Crew": "Twins",
+  "Double Agent": "Changeling",
+  "Fixer": "Briber",
+  "Kidnappers": "Press Gang",
+  "Snitch": "Informer",
+  "Shoplifter": "Cutpurse"
+ },
+ "yellow.js": {
+  "Duty Collector": "Tithe Collector",
+  "Go-Between": "Barterer",
+  "Tourist": "Pilgrim",
+  "Tinker": "Haggler",
+  "Matchmaker": "Herald",
+  "Dyer": "Gilder",
+  "Early Traders": "Dawn Traders",
+  "Leveler": "Witch",
+  "Big Tent": "Jack-of-All-Trades",
+  "Caravan": "Peddlers",
+  "Spice Route": "Storekeeper",
+  "Exchange Students": "Hostages",
+  "Talent Scouts": "Benefactor",
+  "Cosmopolitans": "Harlequin",
+  "Guest Book": "Hostess"
+ }
+}

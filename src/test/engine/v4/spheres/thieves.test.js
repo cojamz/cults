@@ -164,7 +164,7 @@ describe('Magenta actions', () => {
     const card = uidOf(s, 'red.recruiter', 1);
     s = take(s, 'thieves.ransom');
     expect(s.pending.player).toBe(1);
-    expect(s.pending.prompt).toMatch(/keep Recruiter\?$/);
+    expect(s.pending.prompt).toMatch(/keep Ferryman\?$/);
     expect(card).toBeTruthy();
     expect(ids(s)).toEqual(['pay', 'let']);
     s = move(s, 'pay');
@@ -248,7 +248,7 @@ describe('Magenta members', () => {
     expect(R(s).map(r => [r.gold, r.red, r.magenta])).toEqual([[1, 0, 0], [1, 0, 0], [0, 2, 0]]);
   });
 
-  it('Accomplice: when recruited, steal 3 resources', () => {
+  it('Bandit: when recruited, steal 3 resources', () => {
     let s = scene({ res: [{ magenta: 2 }, { gold: 2 }, { red: 1 }], shop: ['thieves.accomplice', ...SHOP.slice(1)] });
     s = take(s, 'gold.rush');
     s = move(s, `card:${uidOf(s, 'thieves.accomplice', 'shop')}`);
@@ -282,8 +282,8 @@ describe('Magenta members', () => {
     expect(R(s)[0].gold).toBe(4);
   });
 
-  it('Desperado: while no one has fewer followers, steals take 2 more', () => {
-    // P1 (Desperado's 1 follower + 1) ties P2 for fewest
+  it('Starveling: while no one has fewer followers, steals take 2 more', () => {
+    // P1 (Starveling's 1 follower + 1) ties P2 for fewest
     let s = scene({ res: [{}, { gold: 9 }], bonus: [1, 2, 5], members: [['thieves.desperado']] });
     for (let k = 0; k < 5; k++) s = move(k ? s : take(placed(s, 0, 2), 'thieves.pickpocket'), 'take:1:gold');
     expect(s.pending?.kind).not.toBe('choose');
@@ -364,21 +364,21 @@ describe('Magenta members', () => {
   });
 
   // Cory, Nov 11 9:17pm: "Whenever a rival steals from you, steal 1 back from them." (no longer blocks)
-  it('Bodyguards: a rival steals from you; steal 1 back from them', () => {
+  it('Thief-Takers: a rival steals from you; steal 1 back from them', () => {
     let t = scene({ res: [{}, { gold: 3 }, { red: 1 }], members: [[], ['thieves.watchdog']] });
     t = take(t, 'thieves.pickpocket');
     expect(ids(t)).toEqual(['take:1:gold', 'take:2:red']);
     t = move(t, 'take:1:gold');
-    expect(R(t)[1]).toEqual({ ...Z, gold: 3 }); // stole 1 gold, then Bodyguards took 1 back
+    expect(R(t)[1]).toEqual({ ...Z, gold: 3 }); // stole 1 gold, then Thief-Takers took 1 back
     expect(R(t)[0].gold + R(t)[0].magenta).toBe(1);
   });
 
-  it('Crew: worth 2 followers', () => {
+  it('Twins: worth 2 followers', () => {
     const s = scene({ members: [['thieves.crew']] });
     expect(followers(s, s.players[0])).toBe(3);
   });
 
-  it('Double Agent: when recruited, swap it for any rival member', () => {
+  it('Changeling: when recruited, swap it for any rival member', () => {
     let s = scene({ res: [{ magenta: 5 }], members: [[], ['red.proselytizer']], shop: ['thieves.doubleagent', ...SHOP.slice(1)] });
     s = take(s, 'gold.rush');
     s = move(s, `card:${uidOf(s, 'thieves.doubleagent', 'shop')}`);

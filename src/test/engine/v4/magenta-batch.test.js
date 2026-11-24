@@ -25,10 +25,10 @@ describe('Magenta corrections retained through the redesign', () => {
     expect(s.log).toContain('P2 found nothing worth a heist.');
     expect(s.players[0].members).toHaveLength(1);
   });
-  it('adds Desperado and Sticky Fingers once to one theft', () => {
+  it('adds Starveling and Sticky Fingers once to one theft', () => {
     let s = table(Q, { n: 3, res: [{}, { gold: 9 }, { red: 9 }], members: [['thieves.sticky', 'thieves.desperado']], bonus: [0, 5, 5], shop });
     s = take(placed(s, 0, 2), 'thieves.pickpocket');
-    expect(s.pending.count.left).toBe(6); // 3+2+1 (Desperado +2, Cory, Nov 1, 2:27pm)
+    expect(s.pending.count.left).toBe(6); // 3+2+1 (Starveling +2, Cory, Nov 1, 2:27pm)
     s = move(s, 'take:2:red');
     expect(s.pending.count.left).toBe(5);
     for (let k = 0; k < 5; k++) s = move(s, 'take:2:red');
@@ -36,7 +36,7 @@ describe('Magenta corrections retained through the redesign', () => {
     expect(s.players[1].res.gold).toBe(9);
     expect(s.players[2].res.red).toBe(3);
   });
-  it('Collect Debts takes Desperado\'s 2 more from a selected rival', () => {
+  it('Collect Debts takes Starveling\'s 2 more from a selected rival', () => {
     let s = table(Q, { round: 2, left: 4, res: [{}, { gold: 9 }], members: [['thieves.desperado']], bonus: [0, 5], shop });
     s = move(take(s, 'gold.steal'), 'player:1');
     expect(s.pending.count.left).toBe(4);

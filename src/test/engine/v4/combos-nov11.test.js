@@ -68,7 +68,7 @@ describe('combo tester (Nov 11 spaces and members)', () => {
 
   it('Write-Off gives a member to a Grudge Holders owner\'s rival: a gift is not a take', () => {
     const { s } = go('writeoff-grudge', { quads: ['red', 'echo', 'yellow', 'trading'], turns: [0, 1], members: [['thieves.grudgeholders', 'red.clan'], []], res: [{}, { red: 6 }] },
-      [/Write-Off/, /Clan/, /P2/]);
+      [/Write-Off/, /Clan Chief/, /P2/]);
     expect(has(s, /Grudge Holders/)).toBe(false);
   });
 
@@ -77,18 +77,18 @@ describe('combo tester (Nov 11 spaces and members)', () => {
     expect(has(s, /Martyrs:/)).toBe(false);
   });
 
-  it('Buyout of Bodyguards\' owner: a purchase, not a steal', () => {
+  it('Buyout of Thief-Takers\' owner: a purchase, not a steal', () => {
     const { s } = go('buyout-bodyguards', { quads: ['red', 'echo', 'silver', 'trading'], turns: [0, 1], members: [[], ['thieves.watchdog', 'red.clan']], res: [{ silver: 12 }] },
-      [/Buyout/, /Clan/]);
-    expect(names(s, 0)).toContain('Clan');
+      [/Buyout/, /Clan Chief/]);
+    expect(names(s, 0)).toContain('Clan Chief');
   });
 
   // Bug, Nov 12 (Cory asked how a twice-done On Recruit works with copiers): a Doppelganger bought with Buyout became
   // a copy of the buyer's member but skipped its On Recruit, since the seller's copy had used its once-a-round stamp
   it('Buyout of a Doppelganger: it copies one of yours and does that On Recruit for you', () => {
-    // P2 recruits the Doppelganger this round (it copies Clan), then P1 buys it
+    // P2 recruits the Doppelganger this round (it copies Clan Chief), then P1 buys it
     const first = drive(scene({ quads: ['red', 'echo', 'silver', 'trading'], turns: [1, 0], shop: ['echo.doppel'], members: [['echo.evergreen'], ['red.clan']], res: [{ silver: 12 }, { green: 9 }] }),
-      [/Gather|Build Up/, /Doppelganger/, /Clan/]).s;
+      [/Gather|Build Up/, /Doppelganger/, /Clan Chief/]).s;
     const d = first.players[1].members.find(u => first.cards[u].def === 'echo.doppel');
     expect(first.cards[d].copy).toBe('red.clan');
     const green = first.players[0].res.green || 0;
@@ -108,8 +108,8 @@ describe('combo tester (Nov 11 spaces and members)', () => {
     const { s } = go('lateshift-fourth', { quads: ['red', 'echo', 'purple', 'trading'], turns: [0, 0, 0, 0, 1], shop: ['red.recruiter', 'red.panel'] },
       [/Gather/, /^pass$/, /Build Up/, /^pass$/, /Nest Egg/, /^pass$/, /Late Shift/]);
     const ids = s.pending.options.map(o => o.label).join(' | ');
-    expect(ids).toMatch(/Recruiter/);
-    expect(ids).not.toMatch(/Panel/);
+    expect(ids).toMatch(/Ferryman/);
+    expect(ids).not.toMatch(/Fairy Godmother/);
   });
 });
 
@@ -119,7 +119,7 @@ describe('combo tester, copies and member movement (Nov 11)', () => {
     const { s } = go('cover-offering-wallflower', { quads: Q, turns: [0, 1], members: [['yellow.gardener'], ['red.clan', 'echo.wallflower']],
       res: [{ red: 4, green: 4, yellow: 4 }, {}] }, [/Offering/, /^pass$/, /Cover/, /Offering/]);
     expect(s.players[1].res.yellow).toBe(10); // +5 doubled by Wallflower
-    expect(s.log).toContain("P2's Offering: P1 discards 2 red, 2 green."); // Clan red, Wallflower green
+    expect(s.log).toContain("P2's Offering: P1 discards 2 red, 2 green."); // Clan Chief red, Wallflower green
     expect(s.players[0].res).toMatchObject({ red: 2, green: 2, yellow: 9 });
   });
   // Greatest Hits copies only your own minions (Cory, Nov 11 11:20pm): P3's own Offering, never P1's Melting Pot
@@ -143,11 +143,11 @@ describe('combo tester, copies and member movement (Nov 11)', () => {
     const { s } = go('buskers-agents', { quads: Q, turns: [0, 1], members: [['echo.agents'], ['echo.songrequest']] }, [/Gather/, /^pass$/, /Late Shift/, /use:/]);
     expect(s.log).toContain("P2's Buskers: no rival action to copy (P1's Agents prevents copying Gather).");
   });
-  it('Buyout of Double Agent: its On Recruit fires for the buyer', () => {
+  it('Buyout of Changeling: its On Recruit fires for the buyer', () => {
     const { s } = go('buyout-doubleagent', { quads: ['red', 'echo', 'silver', 'trading'], n: 3, turns: [0, 1, 2], members: [[], ['thieves.doubleagent', 'red.bigfamily'], ['echo.wallflower']], res: [{ silver: 10 }] },
-      [/Buyout/, /Double Agent/, /Big Family/]); // costing up to 8 since Nov 11 (Clan costs 10)
+      [/Buyout/, /Changeling/, /Big Family/]); // costing up to 8 since Nov 11 (Clan Chief costs 10)
     expect(names(s, 0)).toEqual(['Big Family']);
-    expect(names(s, 1)).toEqual(['Double Agent']);
+    expect(names(s, 1)).toEqual(['Changeling']);
     expect(s.players[1].res.silver).toBe(10);
   });
   it('Buyout of a used Encore stays used', () => {
@@ -165,7 +165,7 @@ describe('combo tester, copies and member movement (Nov 11)', () => {
   });
   it('Write-Off to a rival, then that rival writes it back off: white each way', () => {
     const { s } = go('writeoff-pingpong', { quads: Q, turns: [0, 1, 0, 1], members: [['red.clan'], []] },
-      [/Write-Off/, /Clan/, /P2/, /^pass$/, /Farewell/, /Clan/]);
+      [/Write-Off/, /Clan Chief/, /P2/, /^pass$/, /Farewell/, /Clan Chief/]);
     expect(s.players[0].res.white).toBe(9);
     expect(followers(s, s.players[1])).toBe(9);
   });

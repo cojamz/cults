@@ -1,7 +1,7 @@
 // Godparent's "give which of your members to which rival?" was a wall of "Kingmakers (8) to bee" buttons, one per
 // member per rival (Cory, Nov 9: "this can be way better"). It's the gift card now: your members as pictures with
 // their cost, then the rivals' faces; tap a member, then a rival. The other walls (a grey member's color, Spoilsport's
-// contest, Heist Crew's pile) went to the card too.
+// contest, Highwayman's pile) went to the card too.
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import { scene, uidOf, move } from '../../engine/v4/helpers.js';

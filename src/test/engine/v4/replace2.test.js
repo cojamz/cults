@@ -37,19 +37,19 @@ describe('REPLACE2: the switch', () => {
 });
 
 describe('REPLACE2: each card fires', () => {
-  it('Body Snatchers: at round start, swap one of your members with a rival’s (or not)', () => {
+  it('Swindler: at round start, swap one of your members with a rival’s (or not)', () => {
     let s = table(['red', 'thieves', 'market', 'yellow'], { round: 1, members: [['red.bodysnatchers', 'red.recruitbonus'], ['red.movementpenalty']], queue: [{ t: 'round', r: 2 }] });
-    expect(s.pending.prompt).toMatch(/^Body Snatchers: swap one of your members/);
+    expect(s.pending.prompt).toMatch(/^Swindler: swap one of your members/);
     expect(s.pending.options.map(o => o.id)).toContain('none');
     const a = uidIn(s, 'red.recruitbonus', 0), b = uidIn(s, 'red.movementpenalty', 1);
     s = answer(s, `trade:${a}:${b}`);
     expect(owns(s, 0, 'red.movementpenalty')).toBe(true);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(true);
     expect(s.log).toContain("P1 swapped P1's Greeters and P2's Deprogrammers.");
-    expect(named(s, 'Body Snatchers')).toContain("P1's Body Snatchers: a swap at round start.");
+    expect(named(s, 'Swindler')).toContain("P1's Swindler: a swap at round start.");
   });
 
-  it('Body Snatchers reaches only a rival member costing up to 3 more than yours (Claude, under Cory\'s go-with-your-gut, Nov 23)', () => {
+  it('Swindler reaches only a rival member costing up to 3 more than yours (Claude, under Cory\'s go-with-your-gut, Nov 23)', () => {
     const s = table(['red', 'thieves', 'market', 'yellow'], { round: 1, members: [['red.bodysnatchers', 'red.recruitbonus'], ['red.movementpenalty', 'thieves.doubleagent']], queue: [{ t: 'round', r: 2 }] });
     const price = uid => { const d = s.cards[uid] && defById(s.cards[uid].def); return d.s + d.w; };
     const trades = s.pending.options.filter(o => o.kind === 'trade');
@@ -115,17 +115,17 @@ describe('REPLACE2: each card fires', () => {
     expect(s.pending.kind).toBe('place');
   });
 
-  it('Early Traders: at Round Start, swap up to 4, one for one (Cory, Nov 11: Night Traders at Round Start)', () => {
+  it('Dawn Traders: at Round Start, swap up to 4, one for one (Cory, Nov 11: Night Traders at Round Start)', () => {
     let s = table(['red', 'market', 'purple', 'yellow'], { round: 1, res: [{ blue: 7, purple: 2 }, { blue: 4 }], members: [['yellow.nightmarket']], queue: [{ t: 'round', r: 2 }] });
-    while (s.pending && !/^Early Traders/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
-    expect(s.pending.prompt).toMatch(/^Early Traders: swap one for one/);
+    while (s.pending && !/^Dawn Traders/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
+    expect(s.pending.prompt).toMatch(/^Dawn Traders: swap one for one/);
     s = answer(s, 'swap:blue:purple');
     s = answer(s, 'swap:blue:purple');
     s = answer(s, 'swap:blue:purple');
     s = answer(s, 'done');
     expect(s.players[0].res.blue).toBe(4);
     expect(s.players[0].res.purple).toBe(5);
-    expect(s.log.filter(l => /^P1's Early Traders: swapped 1 blue for 1 purple\.$/.test(l))).toHaveLength(3);
+    expect(s.log.filter(l => /^P1's Dawn Traders: swapped 1 blue for 1 purple\.$/.test(l))).toHaveLength(3);
   });
 
   it('Fundraisers: once per game, each rival +2 silver, then +1 follower per 2 silver rivals hold', () => {

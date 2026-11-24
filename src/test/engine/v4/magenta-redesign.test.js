@@ -69,9 +69,9 @@ describe('Magenta redesign edge cases', () => {
     expect(loaded.players[0].res).toMatchObject({ magenta: 1, gold: 5, red: 0 });
     expect(loaded.players[0].bonus).toBe(0);
   });
-  it('Desperado adds 2 to Help Yourself\'s 3 while tied for fewest followers', () => {
+  it('Starveling adds 2 to Help Yourself\'s 3 while tied for fewest followers', () => {
     let s = table(Q, { round: 1, res: [{}, { gold: 8 }], members: [['thieves.desperado']], bonus: [0, 1], shop });
-    s = take(placed(s, 0, 2, AV), 'thieves.pickpocket'); // the third minion: 3, and Desperado's 2
+    s = take(placed(s, 0, 2, AV), 'thieves.pickpocket'); // the third minion: 3, and Starveling's 2
     expect(s.pending.count.left).toBe(5);
     for (let k = 0; k < 5; k++) s = move(s, 'take:1:gold');
     expect(s.players[0].bonus).toBe(0);
@@ -79,7 +79,7 @@ describe('Magenta redesign edge cases', () => {
   });
   it('Heist offers only rivals with followers to steal, never a protected one, and takes 3 (Nov 13)', () => {
     let s = table(Q, { round: 2, n: 4, res: [{}, {}, {}, {}], bonus: [0, 5, 0, 6], shop });
-    s.players[3].hideout = s.round; // Lie Low (Bodyguards stopped blocking, Nov 11)
+    s.players[3].hideout = s.round; // Lie Low (Thief-Takers stopped blocking, Nov 11)
     s = take(s, 'thieves.rob');
     expect(ids(s)).toEqual(['player:1']);
     s = restored(s);

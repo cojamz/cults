@@ -8,7 +8,7 @@ import { makeTables } from './fuzz-tables-runner.js';
 // Count printed groups independently of the engine's memberCount helpers.
 // a member counts as its printed member count only, never its followers (Cory, 2026-10-29)
 const printed = def => def.n ?? 1;
-// Assimilators (Cory, Nov 12): "Your grey members count as members of your biggest color." Ties: each tied color.
+// Dyer (Cory, Nov 12): "Your grey members count as members of your biggest color." Ties: each tied color.
 const assim = (state, p) => p.members.some(u => { const c = state.cards[u]; return [c.def, c.copy, c.ability].includes('red.assimilators'); });
 const members = (state, p, color = null) => {
   const n = plain(state, p, color);

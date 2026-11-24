@@ -294,7 +294,7 @@ describe('Magenta takes members that carry state', () => {
     expect(R(s, 0).gold).toBe(0);
     expect(R(s, 1).gold).toBe(4);
   });
-  it('Double Agent swaps for a Lottery Winner that still works for its new owner', () => {
+  it('Changeling swaps for a Lottery Winner that still works for its new owner', () => {
     let s = scene({ quads: Q, round: 3, res: [{ gold: 9, red: 9, magenta: 9, blue: 9 }, { gold: 7 }], members: [[], ['gold.jackpot']], shop: ['thieves.doubleagent', ...SHOP.slice(1)] });
     s = take(s, 'gold.rush');
     s = play(s, `card:${uidOf(s, 'thieves.doubleagent', 'shop')}`, `card:${uidOf(s, 'gold.jackpot', 1)}`);
@@ -302,8 +302,8 @@ describe('Magenta takes members that carry state', () => {
     expect(defs(s, 1)).toEqual(['thieves.doubleagent']);
     expect(s.cards[uidOf(s, 'gold.jackpot', 0)].used).toBeFalsy(); // usable on P1's next buy
   });
-  // Loyalists reads "Your other members can’t be swapped." and Double Agent's text says swap (bots thread, 2026-10-29)
-  it('Double Agent can’t swap for a member that Loyalists guards; Loyalists itself is fair game', () => {
+  // Warden reads "Your other members can’t be swapped." and Changeling's text says swap (bots thread, 2026-10-29)
+  it('Changeling can’t swap for a member that Warden guards; Warden itself is fair game', () => {
     let s = scene({ quads: Q, round: 3, res: [{ gold: 9, red: 9, magenta: 9, blue: 9 }, { gold: 7 }], members: [[], ['gold.jackpot', 'red.loyalists']], shop: ['thieves.doubleagent', ...SHOP.slice(1)] });
     s = take(s, 'gold.rush');
     s = move(s, `card:${uidOf(s, 'thieves.doubleagent', 'shop')}`);
@@ -333,7 +333,7 @@ describe('Magenta takes members that carry state', () => {
     expect(s.cards[u]).toEqual({ uid: u, def: 'gold.investor' });
     expect(R(s, 0).gold).toBe(3 + 2 + 2); // set aside 3, Investor's colored part 2 (pinned), Climber 2
   });
-  it('Double Agent swapping for an Investor: the gold set aside stays with its old owner', () => {
+  it('Changeling swapping for an Investor: the gold set aside stays with its old owner', () => {
     let s = scene({ quads: Q, round: 2, res: [{ magenta: 8, gold: 8 }], members: [[], ['gold.investor']], shop: ['thieves.doubleagent', ...SHOP.slice(1)] });
     s.cards[uidOf(s, 'gold.investor', 1)].invested = 2;
     s = take(s, 'gold.rush');
@@ -399,7 +399,7 @@ describe('Lie Low against Gold’s Collect Debts and Shake Down', () => {
     expect(R(s, 0).gold).toBe(3); // stole 3, Lookout took 1 back
     expect(R(s, 2)).toMatchObject({ gold: 1, magenta: 0 }); // as gold: stolen resources keep their colors
   });
-  it('Neither Bodyguards nor Lie Low stops Red’s Swap Sides (Cory, Nov 1: they block steals, not swaps)', () => {
+  it('Neither Thief-Takers nor Lie Low stops Red’s Swap Sides (Cory, Nov 1: they block steals, not swaps)', () => {
     const T = ['gold', 'red', 'thieves', 'green'];
     let s = scene({ quads: T, n: 3, round: 2, members: [['red.intern'], ['thieves.watchdog', 'red.twins'], ['red.volunteer']] });
     s.players[2].hideout = 2; // P3 is lying low this round

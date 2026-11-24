@@ -56,9 +56,9 @@ describe('trade picker', () => {
     expect(container.querySelector('.gc-what').textContent).not.toContain('your');
   });
 
-  it('heads Body Snatchers with its own swap: one of yours for a rival’s (playtest, Nov 3)', () => {
+  it('heads Swindler with its own swap: one of yours for a rival’s (playtest, Nov 3)', () => {
     const { s, a, c } = scene();
-    s.pending = { ...s.pending, prompt: 'Body Snatchers: swap one of your members with a rival’s of the same cost?', options: [{ kind: 'trade', id: `trade:${a}:${c}`, value: [a, c] }] };
+    s.pending = { ...s.pending, prompt: 'Swindler: swap one of your members with a rival’s of the same cost?', options: [{ kind: 'trade', id: `trade:${a}:${c}`, value: [a, c] }] };
     expect(giftPick(s, s.pending).head).toBe('Swap one of yours for a rival’s of the same cost');
   });
 
@@ -67,8 +67,8 @@ describe('trade picker', () => {
     for (const title of ['Promote', 'Demote']) {
       s.pending = { ...s.pending, prompt: `${title}: swap a member with one in the shop`, options: [{ kind: 'trade', id: `trade:${a}:${c}`, value: [a, c] }] };
       expect(giftPick(s, s.pending).head).toBe(`Swap a member for one costing up to 3 ${title === 'Promote' ? 'more' : 'less'}`); // its rule, not its name again (picky bot, Nov 11)
-      // Panel asks in its own name (release QA, Oct 28: its Demote read "Swap any two equal-cost members")
-      s.pending = { ...s.pending, prompt: `Panel: ${title.toLowerCase()} another member` };
+      // Fairy Godmother asks in its own name (release QA, Oct 28: its Demote read "Swap any two equal-cost members")
+      s.pending = { ...s.pending, prompt: `Fairy Godmother: ${title.toLowerCase()} another member` };
       expect(giftPick(s, s.pending).head).toBe(`Swap a member for one costing up to 3 ${title === 'Promote' ? 'more' : 'less'}`); // its rule, not its name again (picky bot, Nov 11)
     }
     // ring II shows line 1 only: the limit and the red both live there (text audit, Nov 1)

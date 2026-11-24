@@ -42,8 +42,8 @@ describe('REPLACE10 second versions', () => {
     const acc = s.shop.find(x => s.cards[x].def === 'thieves.accomplice');
     contextFor(s).recruit(s.players[0], acc, { spend: contextFor(s).payChoices(s.players[0], acc, {})[0], how: {}, paid: true });
     s = resume(s);
-    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /steal|Accomplice/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
-    expect(named(s, 'Encore')).toContain("P1's Encore: Accomplice's On Recruit again.");
+    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /steal|Bandit/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
+    expect(named(s, 'Encore')).toContain("P1's Encore: Bandit's On Recruit again.");
     expect(s.players[0].encoreTurn).toBeUndefined();
   });
 

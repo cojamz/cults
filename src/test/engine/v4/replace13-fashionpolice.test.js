@@ -27,7 +27,7 @@ describe('REPLACE13=fashionpolice: Fashion Police', () => {
   it('after you recruit a red member, every red shop member goes to the discard pile, then the row refills', () => {
     let s = table(['market', 'red'], { n: 2, round: 1, members: [['market.fashionpolice']], res: [{ red: 9 }], shop: SHOP });
     s = go(s, slotOf(s, 'red', 'Gather'));
-    s = go(s, s.pending.options.find(o => o.label.startsWith('Recruiter')).id);
+    s = go(s, s.pending.options.find(o => o.label.startsWith('Ferryman')).id);
     while (s.pending?.prompt.includes('pay')) s = go(s, s.pending.options[0].id);
     const sent = ['Volunteer', 'Patriarch'];
     for (const n of sent) expect(s.shop.map(u => defById(s.cards[u].def).name)).not.toContain(n);

@@ -8,7 +8,7 @@ const Q = ['gold', 'red', 'thieves', 'yellow'];
 // Member count and follower count stay equal (Cory, 2026-11-01: "member count = follower count, for members"). Every live
 // member was rebased to worth 1 follower and 1 member (Cory, 2026-11-12: "we should rebase all members to 1. and then give
 // some back where we obviously should"). Kept: a card whose own text gives the number (Big Family "Worth 4 followers.",
-// Crew, Dabblers, Revelers, Ghost) and the ones given back (keepCount). Retired cards keep their old numbers (Triplets 3).
+// Twins, Dabblers, Revelers, Ghost) and the ones given back (keepCount). Retired cards keep their old numbers (Triplets 3).
 describe('A member counts as many members as its followers (Cory, 2026-11-01: "member count = follower count, for members")', () => {
   it('a live member is rebased to worth 1 follower and 1 member (Cory, Nov 12)', () => {
     for (const id of ['red.panel', 'red.mob', 'echo.agents', 'echo.mirror', 'market.snob', 'silver.highsociety']) {
@@ -100,7 +100,7 @@ describe('A member counts as many members as its followers (Cory, 2026-11-01: "m
     expect(s.players[0].turnRecruits).toBe(4);
     expect(s.recruits).toBe(4);
     expect(s.log.filter(l => l.includes('Pied Piper: +2 red'))).toHaveLength(1);
-    // Big Family cost 8 (Nov 5 night): +2 from Piper, not one hook per person; Recruiter +1 once (a shop recruit, Nov 1 3:59pm)
+    // Big Family cost 8 (Nov 5 night): +2 from Piper, not one hook per person; Ferryman +1 once (a shop recruit, Nov 1 3:59pm)
     expect(s.players[0].res.red).toBe(15);
   });
   it('a recruit counting 2 (Dabblers) crosses Pied Piper’s threshold once; recruit hooks fire once', () => {
@@ -110,7 +110,7 @@ describe('A member counts as many members as its followers (Cory, 2026-11-01: "m
     expect(s.players[0].turnRecruits).toBe(2);
     expect(s.recruits).toBe(2);
     expect(s.log.filter(l => l.includes('Pied Piper: +2 red'))).toHaveLength(1);
-    expect(s.log.filter(l => l.includes('Recruiter: +1 red'))).toHaveLength(1);
-    expect(s.players[0].res.red).toBe(18); // 20, minus Dabblers' price of 5 paid in red, plus Piper 2 and Recruiter 1
+    expect(s.log.filter(l => l.includes('Ferryman: +1 red'))).toHaveLength(1);
+    expect(s.players[0].res.red).toBe(18); // 20, minus Dabblers' price of 5 paid in red, plus Piper 2 and Ferryman 1
   });
 });

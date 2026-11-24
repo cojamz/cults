@@ -12,12 +12,12 @@ const acquire = (s, id) => contextFor(s).recruit(s.players[0], uidIn(s, id, 'sho
 
 describe('new Red member hooks', () => {
   it('deals exactly thirteen ordinary Red members, with the approved printed bodies and prices', () => {
-    expect(quadrant('red').members.filter(d => !CUT.has(d.id) && !d.retired)).toHaveLength(13); // Mob and Proselytizers out, Brethren and Purists in (Nov 11); Assimilators in for Deprogrammers (Nov 12)
+    expect(quadrant('red').members.filter(d => !CUT.has(d.id) && !d.retired)).toHaveLength(13); // Mob and Proselytizers out, Guild Master and Purists in (Nov 11); Dyer in for Deprogrammers (Nov 12)
     for (const [id, s, w, f] of [['volunteer', 0, 0, 1], ['bodysnatchers', 2, 2, 1], ['panel', 4, 2, 1], ['mob', 7, 4, 1], ['loyalists', 1, 1, 1]]) {
       expect(defById(`red.${id}`)).toMatchObject({ s: s + COLOR_PART, w: w + EXTRA_WILD - COLOR_PART, f }); // Nov 2: 1 of the wild is paid in the member's color
     }
     const s = fixture({ members: [['red.mob', 'red.panel']] });
-    expect(memberCount(s, s.players[0])).toBe(2); // Mob and Panel, each rebased to worth 1 and 1 member (Cory, Nov 12)
+    expect(memberCount(s, s.players[0])).toBe(2); // Mob and Fairy Godmother, each rebased to worth 1 and 1 member (Cory, Nov 12)
     expect(countMembersOfColor(s, s.players[0], 'red')).toBe(2);
     expect(typeof defById('red.mob').onRoundEnd).toBe('function'); // Round End since Nov 4 (cards-red covers what it pays)
   });
@@ -69,7 +69,7 @@ describe('new Red member hooks', () => {
     expect(c.followers(rival)).toBe(3); // both printed followers arrive in full
   });
 
-  it('Loyalists blocks swaps of its owner’s other members, not of itself, while theft remains possible (Cory, 2026-10-27)', () => {
+  it('Warden blocks swaps of its owner’s other members, not of itself, while theft remains possible (Cory, 2026-10-27)', () => {
     const s = fixture({ members: [['red.loyalists', 'red.twins'], ['gold.banker']], shop: ['red.volunteer'] });
     const c = contextFor(s), [p, rival] = s.players;
     expect(c.swapMembers(p, p.members[1], s.shop[0])).toBe(false);
@@ -78,8 +78,8 @@ describe('new Red member hooks', () => {
     expect(c.steal(rival, p, { uid: uidIn(s, 'red.twins', 0) })).toBe(1);
   });
 
-  it('Panel (On Use, once per round) promotes another member to Mentor, who recruits the cheapest member, without inherent action red', () => {
-    // Merchant (6) promotes to Mentor (8)
+  it('Fairy Godmother (On Use, once per round) promotes another member to Governess, who recruits the cheapest member, without inherent action red', () => {
+    // Merchant (6) promotes to Governess (8)
     let s = table(Q, { members: [['red.panel', 'gold.merchant']], shop: ['red.mentor', 'red.volunteer'] });
     const panel = uidIn(s, 'red.panel', 0), host = uidIn(s, 'gold.merchant', 0), mentor = uidIn(s, 'red.mentor', 'shop');
     s = move(s, `use:${panel}`);

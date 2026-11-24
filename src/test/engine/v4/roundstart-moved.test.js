@@ -9,7 +9,7 @@ const steals = s => named(s, 'Cutpurse').filter(l => /Cutpurse.* stole/.test(l))
 const answer = s => { let k = 0; while (s.pending?.kind === 'choose' && k++ < 20) s = applyMove(s, { player: s.pending.player, option: s.pending.options[0].id }); return s; };
 
 describe('Round Start: a member that changes cults mid-Round Start', () => {
-  // Kidnappers moved to Round End (Cory, Nov 11): no live member takes a rival's member at Round Start now; kept for
+  // Press Gang moved to Round End (Cory, Nov 11): no live member takes a rival's member at Round Start now; kept for
   // the core guard, skipped until one does
   it.skip('a Kidnapper taking the Cutpurse: it steals once, for the Kidnapper, and the old owner\'s queued steal does nothing', () => {
     // P1 Kidnapper; P2 has two 1-cost members (a choice) and Cutpurse; P3 holds 3 colors (Cutpurse's steal asks which)

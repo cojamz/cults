@@ -93,7 +93,7 @@ describe('Blue actions', () => {
     }
   });
   it('Out of Style (ring I, Nov 10): discard 3 shop members you pick, +1 of each one\'s color, +1 blue', () => {
-    let s = take(scene({ shop: S5 }), 'market.restock'); // Midas, Jackpot, Tycoon gold; Mentor, Proselytizers red
+    let s = take(scene({ shop: S5 }), 'market.restock'); // Midas, Jackpot, Tycoon gold; Governess, Proselytizers red
     expect(R(s).blue).toBe(1);
     s = move(s, card(s, 'gold.midas'));
     s = move(s, card(s, 'gold.jackpot'));

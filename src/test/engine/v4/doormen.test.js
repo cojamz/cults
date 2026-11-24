@@ -25,7 +25,7 @@ describe('Doormen', () => {
     expect(owns(s, 1, 'red.bigfamily')).toBe(false);
     expect(s.discard.at(-1)).toBe(fam);
     expect(s.shop).toContain(tycoon);
-    expect(s.log.join('\n')).toMatch(/P1's Doormen: sends P2's Big Family to the discard pile and gives P2 Host\./);
+    expect(s.log.join('\n')).toMatch(/P1's Doormen: sends P2's Big Family to the discard pile and gives P2 Tavern Keeper\./);
     expect(ids(s)).not.toContain(`use:${door}`);
   });
 

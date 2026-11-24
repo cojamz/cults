@@ -209,16 +209,16 @@ describe('REPLACE11: Gift Shop', () => {
     s = answer(s, `slot:${slot(s, 'Gift Shop')}`);
     expect(s.pending.prompt).toBe('Gift Shop: give which shop member?');
     s = answer(s, `card:${host}`);
-    expect(s.pending.prompt).toBe('Gift Shop: give Host to which rival?');
+    expect(s.pending.prompt).toBe('Gift Shop: give Tavern Keeper to which rival?');
     expect(s.pending.options.map(o => o.id).sort()).toEqual(['player:1', 'player:2']);
     s = answer(s, 'player:2');
     expect(s.players[2].members).toContain(host);
     expect(s.players[0].members).not.toContain(host);
     expect(s.shop).not.toContain(host);
     expect(s.shop.length).toBe(6); // round I's row, refilled
-    // Host's On Recruit ("+1 red per 2 members you have") doesn't fire on a gift
-    expect(s.log.join('\n')).not.toMatch(/P3's Host/);
-    expect(s.log.join('\n')).toContain("P1's Gift Shop: gives Host to P3.");
+    // Tavern Keeper's On Recruit ("+1 red per 2 members you have") doesn't fire on a gift
+    expect(s.log.join('\n')).not.toMatch(/P3's Tavern Keeper/);
+    expect(s.log.join('\n')).toContain("P1's Gift Shop: gives Tavern Keeper to P3.");
   });
 });
 

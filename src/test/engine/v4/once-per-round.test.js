@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Every "once per round" member resets its use at Round Start. Moneylender and Leveler shipped without the reset and
+// Every "once per round" member resets its use at Round Start. Moneylender and Witch shipped without the reset and
 // played as once per game (play judges caught it, Nov 4); this keeps a new card from doing the same.
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';

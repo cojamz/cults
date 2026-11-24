@@ -39,7 +39,7 @@ describe('Magenta actions', () => {
     expect(s.players[1].bonus).toBe(5);
     expect(s.log.some(l => l.includes('now magenta'))).toBe(false);
   });
-  it('Sticky Fingers +1 and Desperado +2 on base theft, separately from the inherent grant: 3+2+1 = 6', () => {
+  it('Sticky Fingers +1 and Starveling +2 on base theft, separately from the inherent grant: 3+2+1 = 6', () => {
     let s = table(Q, { res: [{}, { gold: 9 }], members: [['thieves.sticky', 'thieves.desperado']], bonus: [0, 9], shop: ROW });
     s = take(placed(s, 0, 2), 'thieves.pickpocket'); // third minion this round: steal 3
     while (s.pending?.kind === 'choose') s = move(s, 'take:1:gold');
@@ -47,16 +47,16 @@ describe('Magenta actions', () => {
     expect(R(s, 1).gold).toBe(3);
     expect(s.players[0].bonus).toBe(0);
     expect(named(s, 'Sticky Fingers').length).toBe(1);
-    expect(named(s, 'Desperado').length).toBe(1);
+    expect(named(s, 'Starveling').length).toBe(1);
   });
-  it('× Sticky Fingers and Desperado on Gold\'s Collect Debts: 3+2+1 = 6, and the log names both', () => {
+  it('× Sticky Fingers and Starveling on Gold\'s Collect Debts: 3+2+1 = 6, and the log names both', () => {
     let s = table(Q, { round: 2, left: 4, res: [{}, { gold: 9 }], members: [['thieves.sticky', 'thieves.desperado']], bonus: [0, 3], shop: ROW });
     s = take(s, 'gold.steal');
     while (s.pending?.kind === 'choose' && s.pending.options.some(o => o.id === 'player:1')) s = move(s, 'player:1');
     expect(R(s).gold).toBe(6);
     expect(R(s, 1).gold).toBe(3);
     expect(named(s, 'Sticky Fingers').length).toBe(1);
-    expect(named(s, 'Desperado').length).toBe(1);
+    expect(named(s, 'Starveling').length).toBe(1);
   });
 
   it.each([1, 2, 3])('Stash (Nov 10 stand-in): +3 magenta every round, inherent +1 included, no steal (round %i)', round => {
@@ -211,16 +211,16 @@ describe('Magenta members', () => {
   });
 
   // Cory, 2026-10-28: "On Recruit: steal 3 resources", cost 2
-  it('Accomplice: when recruited, steal 3 resources from any rivals', () => {
+  it('Bandit: when recruited, steal 3 resources from any rivals', () => {
     let s = table(Q, { n: 3, res: [{ magenta: 8 }, { gold: 1 }, { red: 3 }], shop: ['thieves.accomplice', ...ROW] });
     s = take(s, 'thieves.tipoff'); // Stash: +3 magenta
     s = move(s, cardOpt(s, 'thieves.accomplice', 'shop'));
     s = s.pending?.kind === 'pay' ? move(s, s.pending.options[0].id) : s;
-    expect(s.pending.prompt).toMatch(/^Accomplice: choose a resource to steal\. \(3 left/);
+    expect(s.pending.prompt).toMatch(/^Bandit: choose a resource to steal\. \(3 left/);
     s = move(move(move(s, 'take:1:gold'), 'take:2:red'), 'take:2:red');
     expect([R(s).gold, R(s).red, R(s, 1).gold, R(s, 2).red]).toEqual([1, 2, 0, 1]);
   });
-  it('× Poach: actively taking Accomplice triggers its On Recruit', () => {
+  it('× Poach: actively taking Bandit triggers its On Recruit', () => {
     let s = table(Q, { round: 3, left: 5, res: [{}, { gold: 3 }], members: [[], ['thieves.accomplice']], shop: ROW });
     s = move(take(s, 'thieves.heist'), cardOpt(s, 'thieves.accomplice', 1));
     expect(owns(s, 0, 'thieves.accomplice')).toBe(true);
@@ -247,12 +247,12 @@ describe('Magenta members', () => {
     expect(s.players[0].bonus).toBe(1);
     expect(named(s, 'Robin Hood').length).toBe(1);
   });
-  it('Snitch: whenever a rival steals from you, they lose 1 follower (named)', () => {
+  it('Informer: whenever a rival steals from you, they lose 1 follower (named)', () => {
     let s = table(Q, { res: [{}, { gold: 3 }], bonus: [4, 0], members: [[], ['thieves.snitch']], shop: ROW });
     s = play(take(placed(s, 0, 2), 'thieves.pickpocket'), 'take:1:gold', 'take:1:gold', 'take:1:gold');
     expect(R(s).gold).toBe(3);
     expect(s.players[0].bonus).toBe(3);
-    expect(named(s, 'Snitch').length).toBe(1);
+    expect(named(s, 'Informer').length).toBe(1);
   });
   it('× Poach: taking a member from the leader counts, even when it leaves them behind', () => {
     // P2 leads 4 to 2 only through Big Family (3 followers)
@@ -285,12 +285,12 @@ describe('Magenta members', () => {
     expect(R(s, 1).magenta).toBe(0); // Twins costs 5
   });
 
-  it('Light Fingers with Desperado: its 1 takes 2 more while its owner has the fewest followers (Cory, Nov 1 3:11pm)', () => {
+  it('Light Fingers with Starveling: its 1 takes 2 more while its owner has the fewest followers (Cory, Nov 1 3:11pm)', () => {
     let s = table(Q, { res: [{ red: 12 }], bonus: [5, 0], members: [[], ['thieves.lightfingers', 'thieves.desperado']], shop: ['red.patriarch', ...ROW.slice(1)] });
     s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.patriarch', 'shop'));
     s = s.pending?.kind === 'pay' ? move(s, s.pending.options[0].id) : s;
     expect((R(s, 1).red || 0) + (R(s, 1).magenta || 0)).toBe(3);
-    expect(s.log).toContain("P2's Light Fingers: takes 3, not 1 (P2's Desperado: +2).");
+    expect(s.log).toContain("P2's Light Fingers: takes 3, not 1 (P2's Starveling: +2).");
   });
 
   // Cory, 2026-10-28: a bigger Cutpurse
@@ -301,25 +301,25 @@ describe('Magenta members', () => {
     expect(named(s, 'Extortionist').length).toBe(1);
   });
 
-  it('Double Agent is a swap, not a steal: it reaches Bodyguards and Lie Low players (Cory, Nov 1)', () => {
+  it('Changeling is a swap, not a steal: it reaches Thief-Takers and Lie Low players (Cory, Nov 1)', () => {
     for (const guard of ['bodyguards', 'lielow']) {
       let s = table(Q, { res: [{ magenta: 6 }], members: [[], guard === 'bodyguards' ? ['thieves.watchdog', 'red.bigfamily'] : ['red.bigfamily']], shop: ['thieves.doubleagent', ...ROW] });
       if (guard === 'lielow') s.players[1].hideout = s.round;
       s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'thieves.doubleagent', 'shop'));
-      expect(s.pending.prompt).toMatch(/Double Agent/);
+      expect(s.pending.prompt).toMatch(/Changeling/);
       s = move(s, cardOpt(s, 'red.bigfamily', 1));
       expect(owns(s, 0, 'red.bigfamily')).toBe(true);
       expect(owns(s, 1, 'thieves.doubleagent')).toBe(true);
     }
   });
-  it('Double Agent: when recruited, swap it for any rival\'s member (named)', () => {
+  it('Changeling: when recruited, swap it for any rival\'s member (named)', () => {
     let s = table(Q, { res: [{ magenta: 6 }], members: [[], ['red.bigfamily']], shop: ['thieves.doubleagent', ...ROW] });
     s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'thieves.doubleagent', 'shop'));
-    expect(s.pending.prompt).toMatch(/Double Agent/);
+    expect(s.pending.prompt).toMatch(/Changeling/);
     s = move(s, cardOpt(s, 'red.bigfamily', 1));
     expect(owns(s, 0, 'red.bigfamily')).toBe(true);
     expect(owns(s, 1, 'thieves.doubleagent')).toBe(true);
-    expect(named(s, 'Double Agent').length).toBe(1);
+    expect(named(s, 'Changeling').length).toBe(1);
   });
 
   it('Safecracker: once per game, steal 2 resources from each rival (named; Nov 4)', () => {

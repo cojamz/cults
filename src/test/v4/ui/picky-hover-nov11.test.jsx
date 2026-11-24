@@ -14,7 +14,7 @@ const at = (s, name) => spaceOf(s, name).split('-').map(Number);
 const words = (s, name) => { const [q, i] = at(s, name); return youdWords(previewSpace(s, 0, q, i), s, quadrant(s.quadrants[q]).resource); };
 const card = (s, name) => { const [q, i] = at(s, name); cachedPreview(s, 0, q, i); return render(<SpaceCard state={s} me={0} spaceKey={`${q}-${i}`} />).container; };
 const youd = (s, name) => { const [q, i] = at(s, name); return renderToStaticMarkup(<YoudGet state={s} pid={0} q={q} i={i} now />).replace(/<[^>]+>/g, ''); };
-// three cults: P1 holds three red members, P2 an Accomplice ("On Recruit: steal 3 resources") and a Mentor, P3 a Seat Filler
+// three cults: P1 holds three red members, P2 an Bandit ("On Recruit: steal 3 resources") and a Governess, P3 a Journeyman
 const table = () => sceneQ({ quadrants: ['red', 'market', 'trading', 'thieves'], round: 2, n: 3,
   res: [{ red: 3, blue: 4, white: 2 }, { gold: 5, red: 4 }, { blue: 3, red: 2 }], bonus: [0, 6, 3],
   members: [['red.twins', 'red.bigfamily', 'red.intern'], ['thieves.accomplice', 'red.mentor'], ['red.seatfiller']] });
@@ -47,7 +47,7 @@ describe("You'd get (B5, W5, W18)", () => {
   });
 
   it('a steal the space doesn’t print names the member it brings in', () => {
-    expect(youd(table(), 'Swindle')).toContain('steal up to 3 in colors you pick (via Accomplice)');
+    expect(youd(table(), 'Swindle')).toContain('steal up to 3 in colors you pick (via Bandit)');
   });
 
   it('a card that counts as several members says so on itself', () => {
@@ -87,7 +87,7 @@ describe('target lines (W4, W18)', () => {
     const s = table();
     const [q, i] = at(s, 'Swindle');
     const line = targetLines(s, 0, previewSpace(s, 0, q, i).targets, '').find(l => l.k === 'Could take');
-    expect(line.text).toMatch(/Accomplice \(cost \d+\)/);
+    expect(line.text).toMatch(/Bandit \(cost \d+\)/);
   });
 });
 

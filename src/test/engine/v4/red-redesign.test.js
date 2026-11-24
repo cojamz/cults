@@ -168,7 +168,7 @@ describe('locked Red action progression', () => {
     expect(defs(s, 0)).toContain('echo.evergreen'); expect(s.shop).toContain(a);
     expect(s.recruits).toBe(1); expect(s.players[0].turnRecruits).toBe(1);
     expect(s.players[0].res.green).toBe(2); // Evergreen +2
-    expect(s.players[0].res.red).toBe(4); // Promote +3, Recruiter +1 (a swap you make is a recruit)
+    expect(s.players[0].res.red).toBe(4); // Promote +3, Ferryman +1 (a swap you make is a recruit)
     expect(s.players[0].bonus).toBe(1);
   });
 
@@ -180,7 +180,7 @@ describe('locked Red action progression', () => {
     expect([s.players[1].res.green, s.players[1].res.red, s.players[1].bonus, s.recruits]).toEqual([0, 0, 0, 0]);
   });
 
-  it('Demote swaps your member with a rival\'s, unless Loyalists keeps theirs (Cory, 2026-10-29)', () => {
+  it('Demote swaps your member with a rival\'s, unless Warden keeps theirs (Cory, 2026-10-29)', () => {
     let s = take(table(Q, { round: 2, members: [['red.volunteer'], ['red.twins']], shop: ROW }), 'red.trade');
     const mine = uidIn(s, 'red.volunteer', 0), theirs = uidIn(s, 'red.twins', 1);
     expect(s.pending.options.some(o => o.id === swapId(mine, theirs))).toBe(true);
@@ -198,7 +198,7 @@ describe('locked Red action progression', () => {
     expect(s.players[0].res.green).toBe(0);
   });
 
-  it('Bodyguards and Lie Low let swaps through (Cory, Nov 1: they block steals, not swaps)', () => {
+  it('Thief-Takers and Lie Low let swaps through (Cory, Nov 1: they block steals, not swaps)', () => {
     const s = take(table(['gold', 'red', 'thieves', 'echo'], { n: 3, round: 2, members: [['thieves.watchdog'], ['red.twins', 'thieves.crew'], ['red.intern']], shop: ROW }), 'red.hireup');
     const own = uidIn(s, 'thieves.watchdog', 0);
     expect(s.pending.options.some(o => o.value[0] === own)).toBe(true);
@@ -206,7 +206,7 @@ describe('locked Red action progression', () => {
     const a = uidIn(s, 'red.twins', 1), b = uidIn(s, 'gold.banker', 'shop');
     expect(ctx.swapMembers(s.players[0], a, b)).toBe(true);
     expect(s.players[1].members).not.toContain(a);
-    // a Bodyguards owner's member can be swapped too
+    // a Thief-Takers owner's member can be swapped too
     const t = take(table(['gold', 'red', 'thieves', 'echo'], { n: 3, round: 2, members: [['red.intern'], ['thieves.watchdog', 'red.twins'], []], shop: ROW }), 'red.hireup');
     expect(contextFor(t).swapMembers(t.players[0], uidIn(t, 'red.twins', 1), uidIn(t, 'gold.banker', 'shop'))).toBe(true);
   });
@@ -244,7 +244,7 @@ describe('active acquisition versus gifts', () => {
     expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([0, 0, 0]); // a gift is no recruit
     ctx.moveMember(uid, s.players[0], s.players[1]);
     expect(ctx.steal(s.players[0], s.players[1], { uid })).toBe(1);
-    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([1, 2, 1]); // Evergreen's On Recruit +2; Recruiter +1 (a steal is a recruit)
+    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([1, 2, 1]); // Evergreen's On Recruit +2; Ferryman +1 (a steal is a recruit)
   });
 
   it('a return-to-shop removes only an Extra Hand’s unplaced minion and reacquisition restores it once', () => {

@@ -67,7 +67,7 @@ const isWild = (ctx, card) => !!(ctx.defOf(card).everyColor || (card.copy && ctx
 function guestBook(ctx, owner, member, card = null) {
   if (!newColor(ctx, owner, member, { grey: true })) return;
   ctx.gain(owner, Y, 2);
-  ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Guest Book')}: a new member color, +2 yellow.`);
+  ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Hostess')}: a new member color, +2 yellow.`);
 }
 /** member is of a color none of owner's other members have (Guest Book, Matchmaker). Dabblers never blocks, and
  *  Dabblers itself is new while owner lacks any color on the table; Drifters reads as its chosen color. */
@@ -136,8 +136,8 @@ function exchangePairs(ctx, p) {
 }
 function matchmaker(ctx, owner) {
   owner.bonus += 3;
-  ctx.log(`${owner.name}'s Matchmaker: a yellow member, +3 followers.`);
-  pickColors(ctx, owner, 2, 'Matchmaker');
+  ctx.log(`${owner.name}'s Herald: a yellow member, +3 followers.`);
+  pickColors(ctx, owner, 2, 'Herald');
 }
 // every recruit of Drifters (a steal too) runs its On Recruit color pick, and the pick settles color-reading cards
 const unpickedDrifters = (ctx, member) => ctx.defOf(member).key === 'drifters';
@@ -404,13 +404,13 @@ export default {
   handlers: {
     poolFree: freeTake,
     exchange(ctx, p, value) {
-      if (!Array.isArray(value)) { ctx.log(`${p.name}'s Exchange Students: no swap.`); return; }
+      if (!Array.isArray(value)) { ctx.log(`${p.name}'s Hostages: no swap.`); return; }
       const [a, b] = value;
       if (!exchangePairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
       const names = [ctx.card(a).def.name, `${ctx.ownerOf(b).name}'s ${ctx.card(b).def.name}`];
       // said before the swap, so the log reads cause first: what the swap sets off (Matchmaker, the incoming member's On
       // Recruit, Deprogrammers) follows it (combo tester, Nov 12). The pair was checked swappable just above.
-      ctx.log(`${p.name}'s Exchange Students: swaps ${names[0]} for ${names[1]}.`);
+      ctx.log(`${p.name}'s Hostages: swaps ${names[0]} for ${names[1]}.`);
       ctx.swapMembers(p, a, b);
     },
     fair(ctx, p, k, data) {
@@ -546,7 +546,7 @@ export default {
       const [a, b] = value;
       if (!(p.res[a] > 0)) return;
       p.res[a] -= 1; p.res[b] += 1;
-      ctx.log(`${p.name}'s Go-Between: 1 ${a} becomes 1 ${b}.`);
+      ctx.log(`${p.name}'s Barterer: 1 ${a} becomes 1 ${b}.`);
     },
     sow(ctx, p, x, data) {
       // what was asked may have changed since (Puppeteers at the same Round Start): plant only what's still held
@@ -588,7 +588,7 @@ export default {
         const pool = colors(ctx).filter(c => c !== b && (o.res[c] || 0) > 0);
         if (!pool.length) continue;
         const top = Math.max(...pool.map(c => o.res[c]));
-        changeOne(ctx, p, o, pool.find(c => o.res[c] === top), b, 'Leveler', instance);
+        changeOne(ctx, p, o, pool.find(c => o.res[c] === top), b, 'Witch', instance);
         any = true;
       }
       if (any) tastemaker(ctx, p);
@@ -685,20 +685,20 @@ export default {
     // round I (paper 16 vs 10, Yellow's set 9 -> 16; blind play +0.34; trial on tables with Yellow: taken 28% vs 27%, owners
     // won 40% vs 35%). 3 yellow + 3 any as a player sees it. The recruited member's color, if you have a member of it
     // (Dabblers and Drifters count, as everywhere); automatic, on the rival's recruit.
-    m('dutycollector', 'Duty Collector', 2, 2, /* costs 7, was 8; stays in round III (Cory, Nov 12 7:05pm Eastern: "duty collector probably too expensive") */ 'Whenever a rival recruits a member in one of your members’ colors, +1 of that color.', { f: 3, round: 3, // worth 3 (Cory, Nov 12 10:31am Eastern)
+    m('dutycollector', 'Tithe Collector', 2, 2, /* costs 7, was 8; stays in round III (Cory, Nov 12 7:05pm Eastern: "duty collector probably too expensive") */ 'Whenever a rival recruits a member in one of your members’ colors, +1 of that color.', { f: 3, round: 3, // worth 3 (Cory, Nov 12 10:31am Eastern)
       onAnyRecruit(ctx, owner, card, by, recruited) {
         const c = colorOf(ctx, recruited);
         if (!c || by === owner || !(ctx.countMembersOfColor(owner, ctx.defOf(recruited).quadrant) > 0)) return;
         ctx.gain(owner, c, 1);
-        ctx.log(`${owner.name}'s Duty Collector: ${by.name} recruited ${ctx.defOf(recruited).name}, +1 ${c}.`);
+        ctx.log(`${owner.name}'s Tithe Collector: ${by.name} recruited ${ctx.defOf(recruited).name}, +1 ${c}.`);
       },
     }),
-    m('gobetween', 'Go-Between', 2, 1, 'Whenever a space gives you resources, you may change 1 of them to any color.', {
+    m('gobetween', 'Barterer', 2, 1, 'Whenever a space gives you resources, you may change 1 of them to any color.', {
       afterGain(ctx, owner, card, g) {
         if (!g.fromAction || !(g.n > 0) || card.gbTurn === ctx.turnKey()) return;
         card.gbTurn = ctx.turnKey();
         const a = g.color;
-        ctx.choose(owner, `Go-Between: change 1 ${a} to another color?`, [
+        ctx.choose(owner, `Barterer: change 1 ${a} to another color?`, [
           { id: 'keep', label: `Keep the ${a}`, kind: 'pass', value: null, hint: 0 },
           ...colors(ctx).filter(b => b !== a).map(b => ({ id: `color:${b}`, label: `1 ${a} → 1 ${b}`, kind: 'swap', value: [a, b], hint: (owner.res[a] || 0) - (owner.res[b] || 0) - 1.5 })),
         ], 'yellow.gobetween');
@@ -710,15 +710,15 @@ export default {
     // Tourist's place. The price rule is core.js priceParts (flag dutyFree, read with isNewColor, grey a color).
     ...add11(m('dutyfree', 'Duty Free', 3, 3, 'Members of a color none of your members have cost you 3 less.', { round: 1, dutyFree: true,
       ...see(i => endsAhead(i).length * 3.5) })), // BOTSEE: about one new-color recruit a round, 3 off, plus the member it makes room for (0 of 9 bought at 2 a round)
-    m('tourists', 'Tourist', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { ...old11('dutyfree'), now: true, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
+    m('tourists', 'Pilgrim', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { ...old11('dutyfree'), now: true, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
       onRoundStart(ctx, owner) {
         const k = held(ctx, owner).length;
-        if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Tourist: +${k} follower${k === 1 ? '' : 's'}.`); }
+        if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Pilgrim: +${k} follower${k === 1 ? '' : 's'}.`); }
       },
     }),
     // Cory, 2026-10-31: "make it 3 and add on recruit as well"
-    m('tinker', 'Tinker', 3, 2, 'On Recruit: swap up to 3 of your resources one for one. Round Start: swap up to 3 of your resources one for one.', { now: true,
-      onRoundStart(ctx, owner) { transmuteStep(ctx, owner, { who: 'Tinker', left: Math.min(3, total(ctx, owner)), done: 0 }); },
+    m('tinker', 'Haggler', 3, 2, 'On Recruit: swap up to 3 of your resources one for one. Round Start: swap up to 3 of your resources one for one.', { now: true,
+      onRoundStart(ctx, owner) { transmuteStep(ctx, owner, { who: 'Haggler', left: Math.min(3, total(ctx, owner)), done: 0 }); },
     }),
     // Cory, 2026-10-31: "needs to be more expensive" (was 4)
     // Seamstress takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
@@ -741,7 +741,7 @@ export default {
       botActivate: (ctx, owner) => { const k = setsOf(ctx, owner), r3 = ctx.state.round === 3; return k >= 3 || (r3 && k >= 2) || (k >= 1 && r3 && (owner.left || 0) <= 1); },
     }),
     // Cory, 2026-10-31: "also give followers… like side quests"; Nov 6: "any yellow member and should be 3 wild"
-    m('matchmaker', 'Matchmaker', 3, 2, 'Whenever you recruit a yellow member, +2 wild, +3 followers.', { // +2 wild, +3 followers (Cory, Nov 11 3:45pm: "yes to both")
+    m('matchmaker', 'Herald', 3, 2, 'Whenever you recruit a yellow member, +2 wild, +3 followers.', { // +2 wild, +3 followers (Cory, Nov 11 3:45pm: "yes to both")
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by !== owner || recruited.uid === card.uid || unpickedDrifters(ctx, recruited)) return;
         const d = ctx.defOf(recruited);
@@ -750,7 +750,7 @@ export default {
       onColorChosen(ctx, owner, card, member) { if (member.asColor === 'yellow') matchmaker(ctx, owner); },
     }),
     // Cory, 2026-10-31: "i dont like round end. i like on recruit and round start"
-    m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1, ...old5, ...old9('yellow.dyer'),
+    m('dyer', 'Gilder', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1, ...old5, ...old9('yellow.dyer'),
       onRoundStart(ctx, owner) { ctx.gain(owner, Y, held(ctx, owner).length); },
     }),
     // REPLACE9 bot test (Members C, Nov 4, batch bC2: paper 14 vs Dyer's 11, Yellow's set 14 -> 15): Dyer's place. 5 yellow
@@ -833,17 +833,17 @@ export default {
     // resources at the beginning of the round, like up to four of them": Early Traders, Night Traders' card and price
     // Cory, 2026-11-12 6:58pm Eastern: "early traders should give a couple yellow or something": +2 yellow first, so
     // the swap can move it too
-    m('nightmarket', 'Early Traders', 2, 0, 'Round Start: +2 yellow. Swap up to 4 of your resources for other colors, one for one.', {
+    m('nightmarket', 'Dawn Traders', 2, 0, 'Round Start: +2 yellow. Swap up to 4 of your resources for other colors, one for one.', {
       // BOTSEE: each round start still ahead, 2 yellow plus a few resources moved where the round's plan needs them
       ...see(i => [2, 3].filter(r => r > i.round).length * 3.5),
       // late (combo tester, Nov 12): it swaps what the round's other Round Start income gave (Caravan earlier in the row
       // left it "nothing to swap" with 4 resources in hand)
       onRoundStartLate(ctx, owner) {
         ctx.gain(owner, 'yellow', 2);
-        ctx.log(`${owner.name}'s Early Traders: +2 yellow.`);
+        ctx.log(`${owner.name}'s Dawn Traders: +2 yellow.`);
         const k = Math.min(4, total(ctx, owner));
-        if (!k) { ctx.log(`${owner.name}'s Early Traders: nothing to swap.`); return; }
-        transmuteStep(ctx, owner, { who: 'Early Traders', left: k, done: 0 });
+        if (!k) { ctx.log(`${owner.name}'s Dawn Traders: nothing to swap.`); return; }
+        transmuteStep(ctx, owner, { who: 'Dawn Traders', left: k, done: 0 });
       },
     }),
     // Cory, 2026-10-31 ("Drifters is good"; worth 2)
@@ -855,11 +855,11 @@ export default {
       },
     }),
     // Cory, 2026-10-31: "Make this Use Once Per Round"
-    m('leveler', 'Leveler', 4, 3, "On Use, once per round: choose a color; 1 of each rival's biggest color becomes it.", {
+    m('leveler', 'Witch', 4, 3, "On Use, once per round: choose a color; 1 of each rival's biggest color becomes it.", {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner) {
-        ctx.choose(owner, 'Leveler: change 1 of each rival\'s biggest color into which color?', colors(ctx).map(b => ({
+        ctx.choose(owner, 'Witch: change 1 of each rival\'s biggest color into which color?', colors(ctx).map(b => ({
           id: `color:${b}`, label: b, kind: 'color', value: b, hint: -Math.max(0, ...ctx.rivals(owner).map(o => o.res[b] || 0)),
         })), 'yellow.level');
       },
@@ -882,7 +882,7 @@ export default {
     }),
     // Cory, 2026-10-31 (in place of HR's "+3 per color you have 3 members of")
     // Cory, Nov 5: "1 to 3 members of" (was "exactly one member of"; most members count as 2 or more)
-    m('bigtent', 'Big Tent', 3, 3, 'Game End: +2 followers per color you have 1 to 3 members of.', {
+    m('bigtent', 'Jack-of-All-Trades', 3, 3, 'Game End: +2 followers per color you have 1 to 3 members of.', {
       // Dabblers never pushes a color past 3 (Cory, Nov 1: Dabblers and Drifters always work in the owner's favor)
       onGameEnd: (ctx, owner) => 2 * ctx.memberColorsWithGrey(owner, { wild: false }).filter(q => ctx.countMembersOfColor(owner, q, { wild: false }) <= 3).length, // grey is a color (Cory, Nov 13)
     }),
@@ -913,7 +913,7 @@ export default {
       },
       botActivate: (ctx, owner) => ctx.rivals(owner).some(o => ctx.membersOf(o).length > 0),
     })),
-    m('caravan', 'Caravan', 4, 2, /* costs 9, was 11 (Cory, Nov 12 7:02pm Eastern: "caravan is crazy expensive esp in 2 player") */ 'On Recruit: +1 of each color. Round Start: +1 of each color.', { f: 3, now: true, ...old9('yellow.caravan'), // every color, not only held (Cory, Nov 5 backlog yes)
+    m('caravan', 'Peddlers', 4, 2, /* costs 9, was 11 (Cory, Nov 12 7:02pm Eastern: "caravan is crazy expensive esp in 2 player") */ 'On Recruit: +1 of each color. Round Start: +1 of each color.', { f: 3, now: true, ...old9('yellow.caravan'), // every color, not only held (Cory, Nov 5 backlog yes)
       onRoundStart(ctx, owner) { for (const c of colors(ctx)) ctx.gain(owner, c, 1); },
     }),
     // REPLACE9 bot test (Members C, Nov 4): Caravan's place, reworded (plural, as it counts as 3). Same price. "Each color
@@ -938,24 +938,24 @@ export default {
       },
     }),
     // Cory, Nov 1 (in place of Agitator, 15-card deck only)
-    m('spiceroute', 'Spice Route', 3, 2, 'Game End: +1 follower per color you hold 3 or more of.', {
+    m('spiceroute', 'Storekeeper', 3, 2, 'Game End: +1 follower per color you hold 3 or more of.', {
       onGameEnd: (ctx, owner) => colors(ctx).filter(c => (owner.res[c] || 0) >= 3).length,
     }),
     // Yellow's artifact (Cory, 2026-10-31: "I think C is probably best"; replaces Farmer). Name: Claude's fill-in.
     // Cory, 2026-11-11 8:21pm Eastern: "You buy it, swap your members for arrivals that cost the same… mixing and matching
     // colors around… Costing the same might be a little restrictive, but that might keep it power balanced." A swap as
     // Body Snatchers' (Loyalists stop it; Bodyguards don't, Cory Nov 1: "blocks steals, not swaps"). Price is Claude's fill-in.
-    m('exchangestudents', 'Exchange Students', 2, 2, 'On Recruit: swap one of your members for a rival\u2019s member that costs the same.', {
+    m('exchangestudents', 'Hostages', 2, 2, 'On Recruit: swap one of your members for a rival\u2019s member that costs the same.', {
       onRecruited(ctx, owner) {
         const pairs = exchangePairs(ctx, owner);
         if (!pairs.length) {
           // a same-cost pair that Loyalists shields is not "no member costs the same" (combo tester, Nov 12)
           const same = ctx.membersOf(owner).some(a => ctx.rivals(owner).some(o => ctx.membersOf(o).some(b => hwCost(a) === hwCost(b))));
-          ctx.log(same ? `${owner.name}'s Exchange Students: no rival's member that costs the same as one of yours can be swapped.`
-            : `${owner.name}'s Exchange Students: no rival's member costs the same as one of yours.`);
+          ctx.log(same ? `${owner.name}'s Hostages: no rival's member that costs the same as one of yours can be swapped.`
+            : `${owner.name}'s Hostages: no rival's member costs the same as one of yours.`);
           return;
         }
-        ctx.choose(owner, 'Exchange Students: swap one of your members for a rival’s that costs the same?', pairs.map(([a, b]) => ({
+        ctx.choose(owner, 'Hostages: swap one of your members for a rival’s that costs the same?', pairs.map(([a, b]) => ({
           id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} ↔ ${ctx.ownerOf(b.uid).name}: ${b.def.name} (${hwCost(b)})`, kind: 'trade', value: [a.uid, b.uid],
           // bots take a member that adds a color they have none of, or is worth more
           hint: (b.def.f - a.def.f) + (ctx.countMembersOfColor(owner, ctx.defOf(b).quadrant) ? 0 : 1) - (a.uid === b.uid ? 9 : 0),
@@ -964,26 +964,26 @@ export default {
     }),
     // Cory, 2026-11-11 8:21pm Eastern: "On use once per game, recruiting a member costing up to 6 for free. That's pretty
     // good, actually." From the shop. Price is Claude's fill-in.
-    m('headhunters', 'Talent Scouts', 3, 2, /* Headhunters until Nov 11: Red has a Headhunter (Claude's stand-in name; Cory renames members later) */ 'On Use, once per game: recruit a member costing up to 7 for free.', { // up to 7 (Cory, Nov 12 7:07pm Eastern: "talent scouts should maybe be up to 7")
+    m('headhunters', 'Benefactor', 3, 2, /* Headhunters until Nov 11: Red has a Headhunter (Claude's stand-in name; Cory renames members later) */ 'On Use, once per game: recruit a member costing up to 7 for free.', { // up to 7 (Cory, Nov 12 7:07pm Eastern: "talent scouts should maybe be up to 7")
       activate: 'game',
       onActivate(ctx, owner, card) {
         const cap = 7 + richUp(ctx.state);
-        if (!freeAsk(ctx, owner, 'Talent Scouts', ctx.shopCards().filter(c => hwCost(c) <= cap), 'yellow.poolFree', `no shop member costs ${cap} or less`, cap)) card.used = false;
+        if (!freeAsk(ctx, owner, 'Benefactor', ctx.shopCards().filter(c => hwCost(c) <= cap), 'yellow.poolFree', `no shop member costs ${cap} or less`, cap)) card.used = false;
       },
       botActivate: (ctx, owner) => ctx.shopCards().some(c => hwCost(c) >= 5 && hwCost(c) <= 7 + richUp(ctx.state)),
     }),
     // Cory, 2026-11-11 8:31pm Eastern, his card: "Round end plus 1 follower for each color you have"; "do mine… It's good
     // for anybody". Grey is a color (Cory, Nov 13: "it should count for everything as a color"). Name and price are Claude's fill-ins.
-    m('cosmopolitans', 'Cosmopolitans', 2, 2, 'Round End: +1 follower per color among your members.', {
+    m('cosmopolitans', 'Harlequin', 2, 2, 'Round End: +1 follower per color among your members.', {
       onAllPlaced(ctx, owner) {
         const n = ctx.memberColorsWithGrey(owner).length; // grey is a color (Cory, Nov 13)
-        if (!n) { ctx.log(`${owner.name}'s Cosmopolitans: no colors among their members.`); return; }
+        if (!n) { ctx.log(`${owner.name}'s Harlequin: no colors among their members.`); return; }
         owner.bonus += n;
-        ctx.log(`${owner.name}'s Cosmopolitans: ${n} color${n === 1 ? '' : 's'} among their members, +${n} follower${n === 1 ? '' : 's'}.`);
+        ctx.log(`${owner.name}'s Harlequin: ${n} color${n === 1 ? '' : 's'} among their members, +${n} follower${n === 1 ? '' : 's'}.`);
       },
       ...see(info => 2.5 * endsAhead(info).length),
     }),
-    m('guestbook', 'Guest Book', 0, 0, 'Whenever you recruit a member of a color none of your members have, +2 yellow.', { artifact: true,
+    m('guestbook', 'Hostess', 0, 0, 'Whenever you recruit a member of a color none of your members have, +2 yellow.', { artifact: true,
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what.member || what.member.uid === card.uid) return;
         // Drifters has no color until its On Recruit pick lands: the pick checks Guest Book itself (drift)

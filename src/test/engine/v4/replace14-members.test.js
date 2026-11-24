@@ -152,13 +152,13 @@ describe('REPLACE14: Extortionist replacements (lane F paper passers)', () => {
   });
 });
 
-describe('REPLACE14: Misers (interest), Brokers (cash-out), Accomplice (per rival)', () => {
+describe('REPLACE14: Misers (interest), Brokers (cash-out), Bandit (per rival)', () => {
   it('each is dealt in its old card’s place', () => {
     expect(defById('trading.interest').name).toBe('Misers');
     expect(defById('trading.heirs').retired).toBe(true);
     expect(defById('trading.brokerage').name).toBe('Brokers');
     expect(defById('trading.broker').retired).toBe(true);
-    expect(defById('thieves.partners').name).toBe('Accomplice');
+    expect(defById('thieves.partners').name).toBe('Bandit');
     expect(defById('thieves.accomplice').retired).toBe(true);
   });
   it('Misers, Round Start: 9 white held gives +3; 2 held gives nothing', () => {
@@ -177,7 +177,7 @@ describe('REPLACE14: Misers (interest), Brokers (cash-out), Accomplice (per riva
     expect(s.players[0].bonus).toBe(b + 4);
     expect(log(s)).toContain("P1's Brokers: 2 white into 4 followers.");
   });
-  it('Accomplice: steal 3 split 1-1-1 across 3 rivals gives +3 followers', () => {
+  it('Bandit: steal 3 split 1-1-1 across 3 rivals gives +3 followers', () => {
     let s = table(['red', 'thieves'], { n: 4, round: 2, res: [{ magenta: 9, red: 9 }, { red: 3 }, { blue: 3 }, { gold: 3 }], shop: ['thieves.partners'] });
     s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
     s = answer(s, `card:${uidIn(s, 'thieves.partners', 'shop')}`);
@@ -185,6 +185,6 @@ describe('REPLACE14: Misers (interest), Brokers (cash-out), Accomplice (per riva
     const b = s.players[0].bonus;
     for (const c of ['red', 'blue', 'gold']) s = answer(s, s.pending.options.find(o => String(o.id).includes(c) && !o.disabled).id);
     expect(s.players[0].bonus).toBe(b + 3);
-    expect(log(s)).toContain("P1's Accomplice: +3 followers (3 rivals stolen from).");
+    expect(log(s)).toContain("P1's Bandit: +3 followers (3 rivals stolen from).");
   });
 });

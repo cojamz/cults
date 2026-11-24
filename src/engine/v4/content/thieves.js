@@ -568,7 +568,7 @@ const thieves = {
     secondStory(ctx, p, id) {
       const o = ctx.player(id);
       if (!o || !stealable(ctx, p, o)) return;
-      startSteal(ctx, p, 'Cat Burglars', 3 + stickyMore(ctx, p), { fromAction: false, only: [o.id] }); // a save asked under the old one-rival text
+      startSteal(ctx, p, 'Night Thieves', 3 + stickyMore(ctx, p), { fromAction: false, only: [o.id] }); // a save asked under the old one-rival text
     },
     ...handlers5({
       vulture(ctx, p, uid, data) {
@@ -584,7 +584,7 @@ const thieves = {
         const x = hoardPiles(ctx, p).find(y => y.owner === o && y.color === color);
         if (!x) return;
         const got = commit(ctx, p, o, { [color]: x.n }, false, false);
-        if (got) ctx.log(`${p.name}'s Heist Crew: took ${got} ${color} from ${o.name}.`);
+        if (got) ctx.log(`${p.name}'s Highwayman: took ${got} ${color} from ${o.name}.`);
       },
     ...handlers10({
       poach(ctx, p, uid) {
@@ -601,20 +601,20 @@ const thieves = {
       const v = ctx.ownerOf(uid);
       if (!v || v === p || !kidnapList(ctx, p).some(([, c]) => c.uid === uid)) return;
       const name = ctx.card(uid).def.name;
-      if (ctx.steal(p, v, { uid })) ctx.log(`${p.name}'s Kidnappers: stole ${v.name}'s ${name}.`);
+      if (ctx.steal(p, v, { uid })) ctx.log(`${p.name}'s Press Gang: stole ${v.name}'s ${name}.`);
     },
     // Cat Burglars' and Kidnappers' Round End, run when their owner's turn in the order comes (roundEndTurn)
     catBurglars(ctx, owner, _, data) {
       if (!holdsNow(owner, data)) return;
-      if (!ctx.rivals(owner).some(o => stealable(ctx, owner, o) > 0)) { ctx.log(`${owner.name}'s Cat Burglars: no rival to steal from.`); return; }
-      startSteal(ctx, owner, 'Cat Burglars', 3 + stickyMore(ctx, owner), { fromAction: false });
+      if (!ctx.rivals(owner).some(o => stealable(ctx, owner, o) > 0)) { ctx.log(`${owner.name}'s Night Thieves: no rival to steal from.`); return; }
+      startSteal(ctx, owner, 'Night Thieves', 3 + stickyMore(ctx, owner), { fromAction: false });
     },
     kidnapNow(ctx, owner, _, data) {
       if (!holdsNow(owner, data)) return;
       const list = ctx.rivals(owner).filter(o => ctx.membersOf(o).length);
-      if (!list.length) { ctx.log(`${owner.name}'s Kidnappers: no rival has a member.`); return; }
+      if (!list.length) { ctx.log(`${owner.name}'s Press Gang: no rival has a member.`); return; }
       if (list.length === 1) { kidnapAsk(ctx, owner, list[0]); return; }
-      ctx.choose(owner, 'Kidnappers: which rival gives you a member of their choice?', list.map(o => ({
+      ctx.choose(owner, 'Press Gang: which rival gives you a member of their choice?', list.map(o => ({
         id: `player:${o.id}`, label: `${o.name} (${ctx.membersOf(o).length} member${ctx.membersOf(o).length === 1 ? '' : 's'})`, kind: 'player', value: o.id,
         hint: Math.min(...ctx.membersOf(o).map(memberHint)),
       })), 'thieves.kidnapRival');
@@ -624,7 +624,7 @@ const thieves = {
       const owner = ctx.player(data.to);
       if (!owner || !giver.members.includes(uid)) return;
       const name = ctx.card(uid).def.name;
-      if (ctx.moveMember(uid, giver, owner, { actor: owner })) ctx.log(`${owner.name}'s Kidnappers: ${giver.name} gives ${name} to ${owner.name}.`);
+      if (ctx.moveMember(uid, giver, owner, { actor: owner })) ctx.log(`${owner.name}'s Press Gang: ${giver.name} gives ${name} to ${owner.name}.`);
     },
     heistSplit(ctx, p, vid, data) {
       const v = ctx.player(vid);
@@ -720,7 +720,7 @@ const thieves = {
       const v = ctx.ownerOf(uid), c = ctx.card(uid), price = cost(c);
       if (!v || (p.res.magenta || 0) < price || !ctx.steal(p, v, { uid })) return;
       p.res.magenta -= price;
-      ctx.log(`${p.name}'s Fixer: paid ${price} magenta for ${v.name}'s ${c.def.name}.`);
+      ctx.log(`${p.name}'s Briber: paid ${price} magenta for ${v.name}'s ${c.def.name}.`);
     },
     // Swindle: the member is stolen (Bodyguards, Lie Low and Fence see a steal), then you give the rival a shop member
     swindle(ctx, p, uid) {
@@ -753,7 +753,7 @@ const thieves = {
       // Snitch, Robin Hood) don't fire
       if (!v || !ctx.canSteal(p, v, 'swap') || !ctx.moveMember(uid, v, p, { recruit: true })) return;
       ctx.moveMember(data.uid, p, v);
-      ctx.log(`${p.name}'s Double Agent swaps sides: ${p.name} gets ${v.name}'s ${ctx.card(uid).def.name}.`);
+      ctx.log(`${p.name}'s Changeling swaps sides: ${p.name} gets ${v.name}'s ${ctx.card(uid).def.name}.`);
     },
   },
 
@@ -886,13 +886,13 @@ const thieves = {
       },
     }),
     // Cory, 2026-10-28: back as "On Recruit: steal 3 resources", "maybe a 2 cost?" (1 magenta + the +1 wild)
-    m('accomplice', 'Accomplice', 1, 1, 'On Recruit: steal 3 resources.', { ...old14('partners'),
-      onRecruited(ctx, owner) { startSteal(ctx, owner, 'Accomplice', 3 + stickyMore(ctx, owner), { fromAction: false }); },
+    m('accomplice', 'Bandit', 1, 1, 'On Recruit: steal 3 resources.', { ...old14('partners'),
+      onRecruited(ctx, owner) { startSteal(ctx, owner, 'Bandit', 3 + stickyMore(ctx, owner), { fromAction: false }); },
     }),
     // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-misers-accomplice.md, paper 15 vs 12; BOTSMART A/B of an
     // above-bar idea): Accomplice's place, same price. Spread the steal for followers, or focus it on one rival.
-    ...add14(m('partners', 'Accomplice', 1, 1, 'On Recruit: steal 3 resources. +1 follower per rival you stole from.', {
-      onRecruited(ctx, owner) { startSteal(ctx, owner, 'Accomplice', 3 + stickyMore(ctx, owner), { fromAction: false, perVictim: 1 }); },
+    ...add14(m('partners', 'Bandit', 1, 1, 'On Recruit: steal 3 resources. +1 follower per rival you stole from.', {
+      onRecruited(ctx, owner) { startSteal(ctx, owner, 'Bandit', 3 + stickyMore(ctx, owner), { fromAction: false, perVictim: 1 }); },
     })),
     m('grifter', 'Grifter', 2, 5, /* 6 (Cory, Oct 30) */ 'On Recruit: steal 1 resource per 2 members you have.', { ...old10('racketeer'),
       // first sentence only (Cory, 2026-10-18): the picks split freely among rivals, like any steal
@@ -923,14 +923,14 @@ const thieves = {
     // "what a weird name" on Second-Story Man). Same key and price. After the round's last placement, before contests
     // (core's allPlaced step), 3 picks from any rivals through the shared steal (Bodyguards answers, Lie Low and Hush
     // Money apply; Desperado and The Boss add). Stolen resources keep their color.
-    m('secondstory', 'Cat Burglars', 3, 2, 'Round End, before scoring: steal 3 resources.', { // a round I member as Sticky Fingers was
+    m('secondstory', 'Night Thieves', 3, 2, 'Round End, before scoring: steal 3 resources.', { // a round I member as Sticky Fingers was
       // BOTSEE: each round end still ahead, 3 resources taken, plus a quarter chance it swings a contest
       ...see(i => (i.rivals.some(o => Object.values(o.res).some(v => v > 0)) ? endsAhead(i).reduce((a, r) => a + 3 * resAt(r) * (1 + SEE_SPITE) + 0.25 * SEE_RING[r - 1], 0) : 0)),
       // queued, so each owner's Round End waits for the ones before it in turn order (Cory, Nov 4) and reads the table then
       onAllPlaced(ctx, owner, card) { roundEndTurn(ctx, owner, card, 'thieves.catBurglars'); },
     }),
     // +2 to every steal, spaces and members, no longer double (Cory, Nov 1, 2:27pm: "Yeah, number one is fine")
-    m('desperado', 'Desperado', 2, 2, 'While you have the fewest followers (ties count), your steals take 2 more resources.', { ...old2,
+    m('desperado', 'Starveling', 2, 2, 'While you have the fewest followers (ties count), your steals take 2 more resources.', { ...old2,
       stealMoreIf: (ctx, owner) => (fewestFollowers(ctx, owner) ? 2 : 0),
     }),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Desperado's place. 4 magenta + 2 any as a player sees it. A steal
@@ -988,14 +988,14 @@ const thieves = {
     // member) answers with 1 resource from that rival's biggest pile, through the shared steal (their Lie Low blocks it,
     // your Desperado adds). Price and worth 2 kept. A steal back never sets off the other side's Bodyguards (two of them
     // would trade 1 forever); any other reaction to it still runs.
-    m('watchdog', 'Bodyguards', 5, 2, 'Whenever a rival steals from you, steal 1 back from them.', { f: 2, keepCount: true, /* given back: costs 10+ */ ...old10('watchman'), ...old10('hoardbreaker'),
+    m('watchdog', 'Thief-Takers', 5, 2, 'Whenever a rival steals from you, steal 1 back from them.', { f: 2, keepCount: true, /* given back: costs 10+ */ ...old10('watchman'), ...old10('hoardbreaker'),
       onSteal(ctx, owner, card, info) {
         if (guarding || info.victim !== owner || !info.thief || info.thief === owner || !(info.n > 0 || info.uid !== undefined)) return;
         // one steal, one answer: a Heist's 4 follower picks and its resources share one steal id (as Fence pays once);
         // a steal back that found nothing waits for the rest of the same steal
         if (card.inst === info.instance) return;
         guarding = true;
-        try { if (autoSteal(ctx, owner, info.thief, 'Bodyguards', 1, true)) card.inst = info.instance; } finally { guarding = false; }
+        try { if (autoSteal(ctx, owner, info.thief, 'Thief-Takers', 1, true)) card.inst = info.instance; } finally { guarding = false; }
       },
       // BOTSEE: about 1 rival placement in 7 steals from you, and each gives 1 back
       ...see(i => [1, 2, 3].filter(r => r >= i.round).reduce((a, r) => a + i.rivalByRound[r] * 0.15 * resAt(r), 0)),
@@ -1011,19 +1011,19 @@ const thieves = {
     // Hoard Breaker: 6 magenta + 2 any. A rival's biggest pile (ties: you pick the color), half of it rounded down,
     // through the shared steal (Bodyguards and Lie Low block it; Sticky Fingers and Desperado add).
     // Big Score (Cory, Nov 5: "hoard breaker should be Big Score and it should be one time use"): in the deck for Grifter's slot
-    m('hoardbreaker', 'Heist Crew', 5, 1, "On Use, once per game: steal half of a rival's biggest pile, rounded down.", { n: 4, // counts as 4 members, price kept (Cory, Nov 6: "make it worth like 4 members. but keep current price")
+    m('hoardbreaker', 'Highwayman', 5, 1, "On Use, once per game: steal half of a rival's biggest pile, rounded down.", { n: 4, // counts as 4 members, price kept (Cory, Nov 6: "make it worth like 4 members. but keep current price")
       activate: 'game',
       onActivate(ctx, owner, card) {
         const list = hoardPiles(ctx, owner);
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Heist Crew: no rival pile of 2 or more to break.`); return; }
-        ctx.log(`${owner.name} uses Heist Crew.`);
-        ctx.choose(owner, 'Heist Crew: steal half of which pile?', list.map(x => ({
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Highwayman: no rival pile of 2 or more to break.`); return; }
+        ctx.log(`${owner.name} uses Highwayman.`);
+        ctx.choose(owner, 'Highwayman: steal half of which pile?', list.map(x => ({
           id: `pile:${x.owner.id}:${x.color}`, label: `${x.owner.name}'s ${x.color}: take ${x.n}`, kind: 'pile', value: [x.owner.id, x.color], hint: x.n,
         })), 'thieves.hoardBreak');
       },
       botActivate: (ctx, p) => hoardPiles(ctx, p).some(x => x.n >= 2),
     }),
-    m('crew', 'Crew', 1, 1, 'Worth 2 followers.', { f: 2, n: 2, ...old1 }), // 2 members (Cory, Oct 29)
+    m('crew', 'Twins', 1, 1, 'Worth 2 followers.', { f: 2, n: 2, ...old1 }), // 2 members (Cory, Oct 29)
     // REPLACE1 bot test (Nov 3, replacement batch 1): Crew's place. 4 magenta + 2 any as a player sees it. At round end,
     // for each contest a rival wins (tied winners each count), 2 of that contest's color from that rival, through the
     // shared steal (Bodyguards and Lie Low block it; Sticky Fingers and Desperado add). Round III's comes at game end.
@@ -1040,13 +1040,13 @@ const thieves = {
     })),
     // Cory, Nov 11 9:20pm: "On Recruit: swap this member for a rival's member costing up to 8." ("your rework is
     // clearer"): the rival keeps the Double Agent. Price kept (4 to 8, Cory Oct 29).
-    m('doubleagent', 'Double Agent', 3, 4, `On Recruit: swap this member for a rival’s member costing up to ${7 + MORE}.`, { ...old5,
+    m('doubleagent', 'Changeling', 3, 4, `On Recruit: swap this member for a rival’s member costing up to ${7 + MORE}.`, { ...old5,
       onRecruited(ctx, owner, card) {
         // a swap, so Loyalists' "Your other members can’t be swapped" holds (Claude, 2026-10-29, from the bots thread)
         // a swap, never a steal: Bodyguards and Lie Low let it through (Cory, 2026-11-01)
         const list = agentList(ctx, owner, card);
-        if (list.length) pickMember(ctx, owner, list, 'Double Agent: swap for which member?', 'thieves.doubleAgent', { uid: card.uid });
-        else ctx.log(`${owner.name}'s Double Agent: no rival member costing ${7 + MORE + richUp(ctx.state)} or less to swap for.`);
+        if (list.length) pickMember(ctx, owner, list, 'Changeling: swap for which member?', 'thieves.doubleAgent', { uid: card.uid });
+        else ctx.log(`${owner.name}'s Changeling: no rival member costing ${7 + MORE + richUp(ctx.state)} or less to swap for.`);
       },
     }),
     // REPLACE5 bot test (Nov 3, replacement batch 5): Double Agent's place. 5 magenta + 3 any as a player sees it. A rival's
@@ -1079,12 +1079,12 @@ const thieves = {
       botActivate: (ctx, owner) => ctx.rivals(owner).reduce((a, o) => a + Math.min(2, stealable(ctx, owner, o)), 0) >= 2 * ctx.rivals(owner).length,
     }),
     // Cory, 2026-10-24: Magenta's once per game (spend the magenta, not pay the rival: Claude's, his "ok"); name and price Claude's fill-in
-    m('fixer', 'Fixer', 3, 2, 'On Use, once per game: spend magenta equal to a rival’s member’s cost to steal it.', {
+    m('fixer', 'Briber', 3, 2, 'On Use, once per game: spend magenta equal to a rival’s member’s cost to steal it.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const list = takeable(ctx, owner, owner.res.magenta || 0);
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Fixer: not enough magenta for any rival member.`); return; }
-        pickMember(ctx, owner, list, 'Fixer: steal which member?', 'thieves.fixer');
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Briber: not enough magenta for any rival member.`); return; }
+        pickMember(ctx, owner, list, 'Briber: steal which member?', 'thieves.fixer');
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && takeable(ctx, owner, owner.res.magenta || 0).some(([, c]) => cost(c) >= 4 + MORE + richUp(ctx.state)),
     }),
@@ -1102,7 +1102,7 @@ const thieves = {
     // placement, before contests (as Talent Agents' Round End): the owner picks a rival with a member, that rival
     // picks which one. A gift, as Tithe Takers' is: not a steal or a swap (Bodyguards, Lie Low and Loyalists don't stop
     // it), an arrival for the owner, not their recruit.
-    m('kidnappers', 'Kidnappers', 5, 2, 'Round End: a rival you choose gives you a member of their choice.', { f: 2, keepCount: true, /* given back: costs 10+ */ ...old10('poacher'), ...old10('poacher5'),
+    m('kidnappers', 'Press Gang', 5, 2, 'Round End: a rival you choose gives you a member of their choice.', { f: 2, keepCount: true, /* given back: costs 10+ */ ...old10('poacher'), ...old10('poacher5'),
       // queued, as Cat Burglars': in turn order, and only if the owner still holds it then (Cory, Nov 4)
       onAllPlaced(ctx, owner, card) { roundEndTurn(ctx, owner, card, 'thieves.kidnapNow'); },
       // BOTSEE: each round end still ahead, a rival's least wanted member, about 3 followers' worth
@@ -1124,41 +1124,41 @@ const thieves = {
       },
     })),
     // Cory's yes, Oct 21: a counter in Bait's shape, and a weak card for "magenta doesn't gain enough"
-    m('snitch', 'Snitch', 2, 1, 'Whenever a rival steals from you, they lose 1 follower.', {
+    m('snitch', 'Informer', 2, 1, 'Whenever a rival steals from you, they lose 1 follower.', {
       onSteal(ctx, owner, card, info) {
         if (info.victim !== owner || info.thief === owner || ctx.followers(info.thief) <= 0) return;
         // once per steal (Cory, Oct 29: "once per steal instance"): a Heist's picks share one steal id, as Fence and Bodyguards
         if (info.instance !== undefined && card.snitched === info.instance) return;
         card.snitched = info.instance;
-        info.thief.bonus -= 1; ctx.log(`${owner.name}'s Snitch: ${info.thief.name} loses 1 follower.`);
+        info.thief.bonus -= 1; ctx.log(`${owner.name}'s Informer: ${info.thief.name} loses 1 follower.`);
       },
     }),
     // Cory's #26 "Steal when you buy a member - should be essential to magenta" (Cory's yes, Oct 21)
-    m('shoplifter', 'Shoplifter', 3, 3, // 7 (Cory, Oct 30: balance run)
+    m('shoplifter', 'Cutpurse', 3, 3, // 7 (Cory, Oct 30: balance run)
       'Whenever you recruit, steal 1 resource.', { ...old5, ...old14('shopcolor'), ...old14('shoptwo'),
       onRecruit(ctx, owner, card, by, what) {
-        if (by === owner && what.member?.uid !== card.uid) startSteal(ctx, owner, 'Shoplifter', 1 + stickyMore(ctx, owner), { fromAction: false });
+        if (by === owner && what.member?.uid !== card.uid) startSteal(ctx, owner, 'Cutpurse', 1 + stickyMore(ctx, owner), { fromAction: false });
       },
     }),
     // REPLACE14 bot tests (Members E lane, Nov 4; quality/pitches/E-redo1.md and E-batch2.md, paper 18 vs 17; play A/Bs under
     // "paper filters, play ranks"): Shoplifter's place, same price. Members only (a follower buy isn't one); a grey member
     // has no color, so nothing.
-    ...add14(m('shopcolor', 'Shoplifter', 3, 3, 'Whenever you recruit a member, steal 1 of its color from each rival.', {
+    ...add14(m('shopcolor', 'Cutpurse', 3, 3, 'Whenever you recruit a member, steal 1 of its color from each rival.', {
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what.member || what.member.uid === card.uid) return;
         const q = ctx.defOf(what.member).quadrant, i = ctx.state.quadrants.indexOf(q), color = i >= 0 ? ctx.state.resources[i] : null;
-        if (!color) { ctx.log(`${owner.name}'s Shoplifter: ${ctx.defOf(what.member).name} has no color.`); return; }
+        if (!color) { ctx.log(`${owner.name}'s Cutpurse: ${ctx.defOf(what.member).name} has no color.`); return; }
         const n = ctx.stealCount(owner, 1, { say: true });
         for (const o of ctx.rivals(owner)) {
           if (!(o.res[color] > 0)) continue;
           const got = commit(ctx, owner, o, { [color]: Math.min(n, o.res[color]) }, false, false);
-          if (got) ctx.log(`${owner.name}'s Shoplifter: took ${got} ${color} from ${o.name}.`);
+          if (got) ctx.log(`${owner.name}'s Cutpurse: took ${got} ${color} from ${o.name}.`);
         }
       },
     })),
-    ...add14(m('shoptwo', 'Shoplifter', 3, 3, 'Whenever you recruit a member, steal 2 resources.', {
+    ...add14(m('shoptwo', 'Cutpurse', 3, 3, 'Whenever you recruit a member, steal 2 resources.', {
       onRecruit(ctx, owner, card, by, what) {
-        if (by === owner && what.member && what.member.uid !== card.uid) startSteal(ctx, owner, 'Shoplifter', 2 + stickyMore(ctx, owner), { fromAction: false });
+        if (by === owner && what.member && what.member.uid !== card.uid) startSteal(ctx, owner, 'Cutpurse', 2 + stickyMore(ctx, owner), { fromAction: false });
       },
     })),
     // REPLACE5 bot test (Nov 3, replacement batch 5): Shoplifter's place. 4 magenta + 2 any as a player sees it. Once per
@@ -1223,7 +1223,7 @@ function roundEndTurn(ctx, owner, card, handler) {
 const holdsNow = (owner, data) => !data?.held || owner.members.includes(data.uid);
 /** Kidnappers: the rival o picks which of their members to give the owner. */
 function kidnapAsk(ctx, owner, o) {
-  ctx.choose(o, `Kidnappers: give which of your members to ${owner.name}?`, ctx.membersOf(o).map(c => ({
+  ctx.choose(o, `Press Gang: give which of your members to ${owner.name}?`, ctx.membersOf(o).map(c => ({
     id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'member', value: c.uid,
     // a hint for quick reads, as Tithe Takers': the card worth least to keep, Old Maid first
     hint: -((c.def.f || 1) * 1.5 + cost(c) * 0.5 + (c.used || c.def.vanilla ? 0 : 1)) + (c.def.onJoined ? 5 : 0),

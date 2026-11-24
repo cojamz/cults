@@ -98,7 +98,7 @@ describe('hard combos (Nov 5)', () => {
   it('Barker + Spree: a follower buy after each of the three recruits', () => {
     let s0 = scene({ quads: Q, members: [['trading.barker']], shop: ['red.volunteer'], pileFirst: ['red.host', 'red.recruiter'], res: [{ blue: 30, red: 30 }] });
     s0.discard = s0.pile.splice(0, 2);
-    const r = drive(s0, [/Spree/, /Host/, /^pay:/, /tier:small/, /^pay:/, /Recruiter/, /^pay:/, /tier:small/, /^pay:/, /Volunteer/, /tier:small/]);
+    const r = drive(s0, [/Spree/, /Tavern Keeper/, /^pay:/, /tier:small/, /^pay:/, /Ferryman/, /^pay:/, /tier:small/, /^pay:/, /Volunteer/, /tier:small/]);
     const s = r.s; // Spree recruits two from the discard pile now (Cory, Nov 10), then the turn's own recruit
     expect(s.log.filter(l => /bought 1 follower/.test(l))).toHaveLength(3);
     expect(s.pending.player).toBe(1);
