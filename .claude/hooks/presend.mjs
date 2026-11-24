@@ -99,6 +99,11 @@ if (missing.length) problems.push(`Card text missing. Quote each card in full, n
   const g = spawnSync('node', [join(root, '.claude/hooks/pitch-gate.mjs'), '--why'], { input: JSON.stringify({ tool_input: { text } }), encoding: 'utf8' });
   if (g.stdout.trim()) problems.push(g.stdout.trim());
 }
+// Cory, Nov 24: "i dont want to have to manually fix your bad ideas for every member": never pitch a name he turned down.
+{
+  const nc = spawnSync('node', [join(root, '.claude/hooks/name-check.mjs')], { input: text, encoding: 'utf8' });
+  if (nc.status === 1) problems.push(nc.stdout.trim() + '\nPick names with .claude/rules/member-names.md, then send again.');
+}
 if (/\bguests\b|\bguest members?\b/i.test(prose)) problems.push('Say "grey" for the neutral members, never "Guests" (Cory, Nov 1).');
 
 // Cory, Nov 7 (said many times): no drawing from the top of the pile, no randomness, all public information.
