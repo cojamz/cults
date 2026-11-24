@@ -1,7 +1,7 @@
 // Display helpers. No rules here: everything is read off engine state.
 import { quadrant, cardDef, defById, roman, TIERS, RING_VALUE, memberCount, followers as engineFollowers, applyMove, contestTable, roundWorkers, WORKERS, allQuadrantIds, turnRail, roundOrder, spacesOf } from '../engine/v4/index.js';
 import { contextFor, logSince } from '../engine/v4/core.js';
-import { defaultEmoji } from './art/emojis.js';
+import { defaultEmoji, liveEmoji } from './art/emojis.js';
 import { usableNow, memberAsks, secondBuyGiver, onLoan } from './game/memberUse.js';
 export { onLoan };
 import { panelWords } from './game/panelText.js';
@@ -14,7 +14,7 @@ export const PLAYER_COLORS = ['#9c845a', '#48c8d4', '#fca2a8', '#eac0fc', '#00e8
 export const SEAT_SIGILS = ['circle', 'triangle', 'square', 'star', 'diamond', 'cross'];
 export const seatSigil = id => SEAT_SIGILS[id % SEAT_SIGILS.length];
 /** The emoji a player picked (their minions, and the emblem on their leader), or the seat's default. */
-export const seatEmoji = (state, id) => (state && state.players[id] && state.players[id].emoji) || defaultEmoji(id);
+export const seatEmoji = (state, id) => liveEmoji((state && state.players[id] && state.players[id].emoji) || defaultEmoji(id));
 /** A question or button's player names as their seat emoji ("Green (P1 & P3 lead)" → "Green (🦊 & 🐸 lead)"): the table
  *  knows players by their minion's emoji (Cory, Nov 9, on Spoilsport's buttons: "just show the emojis here"). */
 export function seatNames(state, text) {

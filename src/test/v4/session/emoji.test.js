@@ -14,8 +14,8 @@ const IDS = emojiIds();
 const distinct = list => new Set(list).size === list.length;
 
 describe('emoji picks (pure)', () => {
-  it('has the 20 drawn emojis to offer', () => {
-    expect(IDS.length).toBe(20);
+  it('has the 24 drawn emojis to offer', () => {
+    expect(IDS.length).toBe(24);
     expect(distinct(IDS)).toBe(true);
   });
   it('a random free emoji is never one someone holds, reaches every free one, and is null when none is left', () => {

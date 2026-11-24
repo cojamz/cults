@@ -90,7 +90,7 @@ try {
   await page.click('[data-home="local"]');
   await page.waitForSelector('[data-start]');
   await shot('02-setup');
-  // Pick your emoji (Cory, 2026-10-14): seat 1's button opens a grid of all 20 pixel emojis; pick the Wizard. Every
+  // Pick your emoji (Cory, 2026-10-14): seat 1's button opens a grid of all 24 pixel emojis; pick the Wizard. Every
   // seat shows one, none twice; in the game the Wizard is on your leader's robe (checked below).
   const PICK = 'wizard';
   {
@@ -99,7 +99,7 @@ try {
     // pixel runs: a <rect> each, or a subpath each of a colour's <path> (art/index.js pixelPaths)
     const cells = await page.$$eval('[data-emoji-grid] [data-pick] svg rect, [data-emoji-grid] [data-pick] svg path', els => els.reduce((n, e) => n + (e.tagName === 'path' ? (e.getAttribute('d').match(/M/g) || []).length : 1), 0));
     const n = await page.$$eval('[data-emoji-grid] [data-pick]', els => els.length);
-    if (n !== 20 || cells < 20 * 10) errors.push(`emoji picker: ${n} emojis (want 20), drawn with ${cells} pixels`);
+    if (n !== 24 || cells < 24 * 10) errors.push(`emoji picker: ${n} emojis (want 24), drawn with ${cells} pixels`);
     await shot('02-setup-emoji');
     await page.click(`[data-emoji-grid] [data-pick="${PICK}"]`);
     await page.waitForSelector('[data-emoji-grid]', { state: 'detached', timeout: 2000 }).catch(() => errors.push('the emoji picker stayed open after a pick'));

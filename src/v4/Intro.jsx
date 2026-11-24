@@ -56,11 +56,11 @@ export function IntroGate() {
 
 const reducedMotion = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// ---------- the cast: your cult wears pizza (Cory: cheerful, and it reads on the 8×8 medallion); rivals cheerful too ----------
+// ---------- the cast: your cult wears the pig (cheerful, and it reads on the 8×8 medallion; was pizza until the old village, Nov 24); rivals cheerful too ----------
 function cast() {
   const emo = emojiIds();
-  const you = ['pizza', 'cactus'].find(id => emo.includes(id)) || emo[0] || null;
-  const rest = ['frog', 'robot', 'unicorn', 'bee', 'crab', 'santa'].filter(id => emo.includes(id) && id !== you);
+  const you = ['pig', 'pumpkin'].find(id => emo.includes(id)) || emo[0] || null;
+  const rest = ['frog', 'raven', 'goat', 'bee', 'rat', 'scarecrow'].filter(id => emo.includes(id) && id !== you);
   const more = emo.filter(id => id !== you && !rest.includes(id));
   const [a, b, c] = [...rest, ...more];
   return { you, a: a || null, b: b || null, c: c || null };

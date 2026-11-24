@@ -5,12 +5,18 @@ import SETS from './icons/index.js';
 import { withOutline, NEUTRALS, pixelPaths } from './index.js';
 
 const EMOJIS = SETS.filter(i => i.kind === 'emoji');
+// The old village (Cory, 2026-11-24: "Stuff like Santa or Surfer etc dont make sense"): 11 minions left for village
+// ones. A saved game, room or picker choice that still names an old one wears its stand-in.
+const RETIRED = { santa: 'scarecrow', unicorn: 'goat', surfer: 'fox', alien: 'owl', robot: 'raven', octopus: 'spider', cactus: 'hedgehog', pizza: 'pig', dino: 'rooster', ninja: 'bat', crab: 'rat' };
+const live = id => RETIRED[id] || id;
+/** An old minion's id → its village stand-in (any other id unchanged). */
+export const liveEmoji = live;
 /** The emoji ids drawn so far, in the order a picker should offer them. */
 export const emojiIds = () => EMOJIS.map(e => e.id);
 /** { id, name, emoji } for an id, or null. */
-export const emojiInfo = id => { const e = EMOJIS.find(x => x.id === id); return e ? { id: e.id, name: e.name, emoji: e.emoji } : null; };
+export const emojiInfo = id => { id = live(id); const e = EMOJIS.find(x => x.id === id); return e ? { id: e.id, name: e.name, emoji: e.emoji } : null; };
 // A seat that hasn't picked one wears a default, so seats are always told apart by shape.
-const DEFAULTS = ['cat', 'robot', 'frog', 'ghost'];
+const DEFAULTS = ['cat', 'raven', 'frog', 'ghost'];
 export const defaultEmoji = seat => { const ids = emojiIds(); const d = DEFAULTS[seat % DEFAULTS.length]; return ids.includes(d) ? d : ids[seat % Math.max(1, ids.length)] || null; };
 
 const runs = (px, pal, outline) => {
@@ -20,6 +26,7 @@ const runs = (px, pal, outline) => {
 };
 const cache = new Map();
 const art = (id, which) => {
+  id = live(id);
   const k = `${id}|${which}`;
   if (cache.has(k)) return cache.get(k);
   const e = EMOJIS.find(x => x.id === id);
