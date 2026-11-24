@@ -22,3 +22,16 @@ Method: each color's theme comes from its spaces and contest (live-board.mjs, 12
 Considered and dropped: Red as family (fits Foster Parents and Clan, but not Promote, Demote, Late Shift); Blue as the dating scene (the discard pile as exes is funny, but every Blue space is a shopping word); Purple as clocks and timekeepers (too literal, no people).
 Wingman and Warden (his yes) don't sit inside the office theme; asked whether they stay as they are.
 Verdict: send (themes only; names follow his answer)
+
+## Round 2 (Cory, 12:18pm Eastern)
+His words: "Yellow could be more like, kumbaya types. should be more related to benefits from multiple types. rest look ok. Grey doesn't really need a theme, they can be more random. i def dont like drifters. Red ok. shoppers is kind of eh bc you arent really shopping.... color actions can use renames too."
+Taken as: Red the office, Green show business, Magenta the underworld, Purple after hours, White simple living, Silver high society stand. Yellow becomes kumbaya types: the more kinds of people the better (his direction, built as said). Grey: no theme, names chosen one by one. Wheel spaces get renamed inside their color's theme too, after the members.
+
+Blue redo. What Blue really does (live, 12:20pm): takes members out of the shop into the discard pile (Test Drive, Out of Style, Window Shopper, Restockers) and recruits from the discard pile (Markdown, Recruit Twice, Spree, Thrift Hunters, Repeat Customers), contest most members. The thing a table sees: the cult that takes in everyone the others passed over, and the biggest headcount.
+| Theme | Why it fits | Example people | Recruit test |
+|---|---|---|---|
+| Second chances (default) | the discard pile is the people nobody kept; Blue takes them in and wins on headcount | Has-Been, Dropout, Comeback Kid, Reject, Ex-Con | "You recruited a Comeback Kid, and of course they pull someone back from the discard pile." |
+| The sports team | recruit, cut, pick up off waivers, the biggest roster | Scout, Benchwarmer, Walk-On, Free Agent | "You recruited a Scout, and of course they turn the shop over looking for talent." |
+| The dating scene | the discard pile as exes, getting back together, plus-ones | Serial Dater, Rebound, Plus-One, Ex | "You recruited a Rebound, and of course they come back from the discard pile." |
+Dropped: talent agency or HR (that is Red's office); a lost and found (things, not people).
+Verdict: send (themes only)
