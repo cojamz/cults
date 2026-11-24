@@ -225,7 +225,7 @@ describe('Silver gifts with Guest and Kickback', () => {
 describe('Blue’s out-of-buy recruits with Pied Piper and Proselytizers', () => {
   const Q = ['gold', 'red', 'market', 'green'];
   const rich = { gold: 9, red: 9, blue: 9, green: 9 };
-  // Recruit Twice (Nov 10): "Recruit a member from the discard pile now. +5 blue." The turn's own recruit still follows.
+  // Recruit Twice (Nov 24): "Recruit a member from the discard pile now. +3 blue." The turn's own recruit still follows.
   it('Recruit Twice: a discard pile recruit, then the turn\'s own: Drive pays, Proselytizers pays twice', () => {
     let s = scene({ quads: Q, round: 2, res: [rich, { blue: 30 }], members: [['red.drive', 'red.proselytizer']] });
     s = toDiscard(s, ['red.intern']);

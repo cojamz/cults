@@ -174,7 +174,7 @@ describe('Thrift Hunters ("Whenever you recruit from the discard pile, +2 follow
     expect(lines(s, /Thrift Hunters/)).toEqual(["P1's Thrift Hunters: Repeat Customers from the discard pile, +2 followers.", "P1's Thrift Hunters: Triplets from the discard pile, +2 followers."]);
     expect(s.log).toContain("P1's Repeat Customers: +3 blue.");
     expect(bonusOf(s, 0)).toBe(4);
-    expect(s.players[0].res).toMatchObject({ blue: 20 + 5 - 7 + 3 - 3, red: 20 - 1 - 2 });
+    expect(s.players[0].res).toMatchObject({ blue: 20 + 3 - 7 + 3 - 3, red: 20 - 1 - 2 });
     cleanLog(s);
   });
 

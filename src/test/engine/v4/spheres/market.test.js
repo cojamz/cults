@@ -111,12 +111,12 @@ describe('Blue actions', () => {
     expect(ids(s)).toContain(`card:${top[1]}`);
     expect(ids(s)).not.toContain(`card:${s.pile[4]}`);
   });
-  it('Recruit Twice (ring II, Nov 10): +5 blue and a member from the discard pile now, then the turn\'s own recruit', () => {
+  it('Recruit Twice (ring II, Nov 24): +3 blue and a member from the discard pile now, then the turn\'s own recruit', () => {
     expect(() => take(scene({ round: 1, shop: SHOP }), 'market.clearance')).toThrow();
     let s = scene({ round: 2, res: [{ red: 10, gold: 8 }], shop: CHEAP.slice(1) });
     s.discard = [s.pile.splice(s.pile.findIndex(u => s.cards[u].def === 'red.intern'), 1)[0]];
     s = take(s, 'market.clearance');
-    expect(R(s).blue).toBe(5);
+    expect(R(s).blue).toBe(3);
     s = move(s, `card:${s.discard[0]}`);
     expect(has(s, 'red.intern')).toBe(true);
     expect(s.pending.kind).toBe('buy');
@@ -180,19 +180,19 @@ describe('Blue members', () => {
   it('Connoisseurs: whenever you recruit a blue member, +1 blue', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9, blue: 1 }], members: [['market.connoisseur']], shop: ['market.recluse', ...SHOP.slice(0, 5)] }), 'market.clearance');
     s = move(s, card(s, 'market.recluse'));
-    expect(R(s).gold).toBe(9); // the 1 blue held and Recruit Twice's 5 (Nov 10) pay Recluse in blue, no gold
-    expect(R(s).blue).toBe(6 - 3 + 1);
+    expect(R(s).gold).toBe(9); // the 1 blue held and Recruit Twice's 3 (Nov 24) pay Recluse in blue, no gold
+    expect(R(s).blue).toBe(4 - 3 + 1);
     let t = take(scene({ round: 2, res: [{ red: 9 }], members: [['market.connoisseur']], shop: CHEAP }), 'market.clearance');
     t = move(t, card(t, 'red.twins'));
-    // Recruit Twice's 5 blue (Nov 10) are kept (Blue scores held blue since Oct 20, like Red's held red), Twins is all red,
+    // Recruit Twice's 3 blue (Nov 24) are kept (Blue scores held blue since Oct 20, like Red's held red), Twins is all red,
     // and no +1 comes back for a red member
-    expect(R(t)).toMatchObject({ red: 7, blue: 5 });
+    expect(R(t)).toMatchObject({ red: 7, blue: 3 });
   });
   it('Reseller: whenever you recruit, +1 of that member’s color', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9 }], members: [['market.reseller']], shop: SHOP }), 'market.clearance');
     s = move(s, card(s, 'gold.tycoon'));
-    // Recruit Twice's 5 blue (Nov 10): 1 blue and 3 gold pay Tycoon's 4, Reseller's +1 gold back.
-    expect(R(s)).toEqual({ gold: 7, red: 0, blue: 4, green: 0 });
+    // Recruit Twice's 3 blue (Nov 24): 1 blue and 3 gold pay Tycoon's 4, Reseller's +1 gold back.
+    expect(R(s)).toEqual({ gold: 7, red: 0, blue: 2, green: 0 });
   });
   it('Curator: round start, +1 blue per other blue member', () => {
     expect(R(start([['market.curator', 'market.stylist', 'market.planner', 'gold.midas']])).blue).toBe(2); // Stylist, Planner

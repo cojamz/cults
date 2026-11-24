@@ -81,7 +81,7 @@ const P = {
     restock: { verb: 'Discard 3 shop members', second: '+1 of each one’s color', note: '+1 blue' },
     // line 2 was too long and dropped whole at the wheel's bottom, taking the blue with it (round I review, Oct 25)
     showroom: r => ({ main: `+${r + 2} blue`, second: 'peek at the top 4', note: run(n => `+${n + 2}`, 'blue: ') }), // +3/+4/+5 (Nov 5)
-    clearance: { verb: '+5 blue, recruit from the discard pile' },
+    clearance: { verb: '+3 blue, recruit from the discard pile' },
     pricecheck: { verb: 'Bury a shop member for half its cost in blue', note: '+1 blue' },
     spree: { verb: '+7 blue, recruit 2 from the discard pile' },
   },

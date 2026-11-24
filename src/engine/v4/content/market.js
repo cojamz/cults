@@ -464,9 +464,11 @@ const market = {
     {
       // Cory, Nov 10 2:57pm, the ladder: "Recruit a member from the discard pile now. +5 blue." (was "+3 blue. Recruit an
       // extra time this turn."); the turn's own recruit still comes at turn end
-      key: 'clearance', ring: 2, name: 'Recruit Twice', text: 'Recruit a member from the discard pile now. +5 blue.', copyDoesIt: true,
-      estimate: (ctx, p) => 5 + discardBest(ctx, p, {}) * 0.6,
-      resolve(ctx, p) { ctx.gain(p, B, 5, { fromAction: true }); discardOffer(ctx, p, { why: 'Recruit Twice', how: {}, left: 1 }); },
+      // Claude, under Cory's over-2-days rule, Nov 24 (his Nov 14 "+5 blue recruit twice is a little too much maybe?",
+      // pitched +3 and unanswered): +3 blue, own +1 included
+      key: 'clearance', ring: 2, name: 'Recruit Twice', text: 'Recruit a member from the discard pile now. +3 blue.', copyDoesIt: true,
+      estimate: (ctx, p) => 3 + discardBest(ctx, p, {}) * 0.6,
+      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); discardOffer(ctx, p, { why: 'Recruit Twice', how: {}, left: 1 }); },
     },
     // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md), one at a time in Bury's place.
     // Dumpster Dive: the bottom 3 members of the pile (the last ones sent down), one recruited free if it costs 6 or less;

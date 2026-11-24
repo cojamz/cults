@@ -130,11 +130,11 @@ describe('Blue actions', () => {
     for (const u of top) expect(ids(s)).not.toContain(`card:${u}`);
   });
 
-  it('Recruit Twice (Nov 10): +5 blue, recruit a member from the discard pile now, then the turn\'s own recruit', () => {
+  it('Recruit Twice (Nov 24): +3 blue, recruit a member from the discard pile now, then the turn\'s own recruit', () => {
     let s = table(Q, { round: 2, res: [{ gold: 4 }], shop: ROW5 });
     const [twins] = onDiscard(s, ['gold.banker']);
     s = take(s, 'market.clearance');
-    expect(R(s).blue).toBe(5);
+    expect(R(s).blue).toBe(3);
     expect(s.pending.prompt).toBe('Recruit Twice: recruit which member from the discard pile?');
     expect(ids(s)).toEqual([`card:${twins}`, 'none']);
     s = pickPay(move(s, `card:${twins}`), 'gold');
@@ -244,8 +244,8 @@ describe('Blue members', () => {
     s = pickPay(move(take(s, 'market.clearance'), `card:${recluse}`), 'blue');
     s = move(s, card(s, 'market.curator'));
     expect(owns(s, 0, 'market.recluse') && owns(s, 0, 'market.curator')).toBe(true);
-    // 8, Recruit Twice's 5 (Nov 10), two members at 4 blue each, Connoisseurs' 1 twice, Curator's own 3 (Connoisseurs, Recluse)
-    expect(R(s).blue).toBe(8 + 5 - 8 + 2 + 3); // Curator now counts Connoisseurs as 2 (worth 2 followers since Nov 1 balance; member count = follower count)
+    // 8, Recruit Twice's 3 (Nov 24), two members at 4 blue each, Connoisseurs' 1 twice, Curator's own 3 (Connoisseurs, Recluse)
+    expect(R(s).blue).toBe(8 + 3 - 8 + 2 + 3); // Curator now counts Connoisseurs as 2 (worth 2 followers since Nov 1 balance; member count = follower count)
     expect(named(s, 'Connoisseurs').length).toBe(2);
   });
 
@@ -261,7 +261,7 @@ describe('Blue members', () => {
     s.discard = [];
     s = move(take(s, 'market.clearance'), card(s, 'benders.frontrunner'));
     expect(owns(s, 0, 'benders.frontrunner')).toBe(true);
-    expect(Object.values(R(s)).reduce((a, b) => a + b, 0)).toBe(5); // only Recruit Twice's 5 blue (Nov 10)
+    expect(Object.values(R(s)).reduce((a, b) => a + b, 0)).toBe(3); // only Recruit Twice's 3 blue (Nov 24)
     expect(named(s, 'Reseller')).toEqual([]);
   });
 
