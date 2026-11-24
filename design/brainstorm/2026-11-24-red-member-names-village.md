@@ -277,3 +277,192 @@ Verdict: send
 8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
 9. Biggest case: unchanged rule; up to 3 round starts a game, each trading up to a member costing up to 3 more for free (about 3 to 9 resources in all), the same as Seat Filler today, against a winner's 70 to 110 followers.
 Verdict: send
+
+## Fourth round (Cory 2:05pm)
+
+Cory: "tavern keeper ok. Guild master ok. gatekeeper eh. Tailor is eh. Maybe like weaver? seamstress? idk. wingman and temp are bad. Something more along te lines of like apprentice + mentor, but more old timey. Body snatchers, clan, and foster parents all should change. getting the vibe yet?"
+Read: Tavern Keeper and Guild Master in. The vibe: plain old-timey village folk, ranks and roles of the time (apprentice, journeyman, master), no modern words (Wingman, Temp), no storybook characters. Two choices for each of the seven open slots. Matron cut (refused before as a Red name, cut before sending, and Silver Matrons refused); Regent cut (royalty, not village); Changeling not resent (fairy); Mountebank cut (too obscure).
+
+## Idea: Puritan
+
+1. Printed text: unchanged, "Round End: if your members have 2 or fewer colors, +3 followers." Replaces the name Purists.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the plain-dressed Puritan wants no show of color: keep to 2 colors and get 3 followers a round.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Puritan, and of course they frown on color: +3 followers each round your members keep to 2 colors or fewer." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; 3 rounds at most, so 9 followers, the same as Purists today, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Dowager
+
+1. Printed text: unchanged, "Round End: if your members have 2 or fewer colors, +3 followers." Replaces the name Purists.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the old lady of the manor who won't stand for mixing company.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Dowager, and of course she disapproves of mixing: +3 followers each round your members keep to 2 colors or fewer." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; 3 rounds at most, so 9 followers, the same as Purists today, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Seamstress
+
+1. Printed text: unchanged, "Your grey members count as members of your biggest color." Replaces the name Assimilators.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: his own suggestion ("Maybe like weaver? seamstress? idk."); she makes clothes in your main color for the plain grey members.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Seamstress, and of course she sews your grey members into your biggest color." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; with 3 grey members in round III it adds 3 to your biggest color for the Red contest (4/6/10 followers), the same as Assimilators today.
+Source: Cory, 2026-11-24 2:05pm: "Maybe like weaver? seamstress? idk."
+Verdict: send
+
+## Idea: Weaver
+
+1. Printed text: unchanged, "Your grey members count as members of your biggest color." Replaces the name Assimilators.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: his own suggestion; the weaver works plain grey thread into your main color.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Weaver, and of course they weave your grey members into your biggest color." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; with 3 grey members in round III it adds 3 to your biggest color for the Red contest (4/6/10 followers), the same as Assimilators today.
+Source: Cory, 2026-11-24 2:05pm: "Maybe like weaver? seamstress? idk."
+Verdict: send
+
+## Idea: Schoolmaster
+
+1. Printed text: unchanged, "On Recruit: recruit the cheapest member in the shop." Replaces the name Mentor (named Wingman).
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the mentor half of his "apprentice + mentor, but more old timey": the village schoolmaster comes with a pupil in tow.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Schoolmaster, and of course a pupil follows him in: the cheapest member in the shop joins too." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; once, when it joins: one free member costing about 3 to 5 resources and worth 1 follower, the same as Mentor today, against a winner's 70 to 110 followers.
+Verdict: send
+
+## Idea: Governess
+
+1. Printed text: unchanged, "On Recruit: recruit the cheapest member in the shop." Replaces the name Mentor (named Wingman).
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: an old-timey mentor who never arrives without her charge: the cheapest member in the shop.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Governess, and of course a child comes with her: the cheapest member in the shop joins too." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; once, when it joins: one free member costing about 3 to 5 resources and worth 1 follower, the same as Mentor today, against a winner's 70 to 110 followers.
+Verdict: send
+
+## Idea: Journeyman
+
+1. Printed text: unchanged, "Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free." Replaces the name Seat Filler (named Temp).
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the apprentice half of his "apprentice + mentor": the old guild rank between apprentice and master, a worker who travels from post to post; back in the shop they can be hired and move on again, so it makes sense every round.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Journeyman, and of course they only stay a while: at round start they move on, and a member costing up to 3 more takes their place, free." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; up to 3 round starts a game, each trading up to a member costing up to 3 more for free (about 3 to 9 resources in all), the same as Seat Filler today, against a winner's 70 to 110 followers.
+Verdict: send
+
+## Idea: Lodger
+
+1. Printed text: unchanged, "Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free." Replaces the name Seat Filler (named Temp).
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: a lodger rents the room until someone better takes it; they can lodge again elsewhere, so it makes sense every round.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Lodger, and of course at round start they can move out, and someone costing up to 3 more moves in, free." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; up to 3 round starts a game, each trading up to a member costing up to 3 more for free (about 3 to 9 resources in all), the same as Seat Filler today, against a winner's 70 to 110 followers.
+Verdict: send
+
+## Idea: Swindler
+
+1. Printed text: unchanged, "Round Start: swap one of your members with a rival's member costing up to 3 more." Replaces the name Body Snatchers.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the village swindler always gets the better end of a trade: each round one of your members goes to a rival for one of theirs up to 3 dearer.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Swindler, and of course each round they trade one of your people for a rival's better one." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; up to 3 round starts, each a member up to 3 dearer taken from a rival (about 3 to 9 resources of value, and a rival's color group down by 1 before the Red contest's 4/6/10), the same as Body Snatchers today.
+Verdict: send
+
+## Idea: Cardsharp
+
+1. Printed text: unchanged, "Round Start: swap one of your members with a rival's member costing up to 3 more." Replaces the name Body Snatchers.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: sleight of hand: a swap the rival didn't ask for, up to 3 dearer.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Cardsharp, and of course each round they slip one of your people into a rival's hand and take a better one back." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; up to 3 round starts, each a member up to 3 dearer taken from a rival (about 3 to 9 resources of value, and a rival's color group down by 1 before the Red contest's 4/6/10), the same as Body Snatchers today.
+Verdict: send
+
+## Idea: Matriarch
+
+1. Printed text: unchanged, "Round End: +1 follower per member in your biggest group of one color (grey is its own color)." Replaces the name Clan.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the head of the biggest family in the village: the bigger your largest same-color group, the more followers.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Matriarch, and of course she counts her biggest family: +1 follower per member in your biggest group of one color, each round." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; with 6 members of one color in round III it pays 6 that round and about 12 over a game, the same as Clan today, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Shepherd
+
+1. Printed text: unchanged, "Round End: +1 follower per member in your biggest group of one color (grey is its own color)." Replaces the name Clan.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the shepherd counts the flock every evening; a cult's flock, a slight dark edge.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Shepherd, and of course they count the biggest flock: +1 follower per member in your biggest group of one color, each round." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; with 6 members of one color in round III it pays 6 that round and about 12 over a game, the same as Clan today, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Smuggler
+
+1. Printed text: unchanged, "Whenever a member joins your cult from a rival's, +2 followers." Replaces the name Foster Parents.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: a smuggler gets people across the border: each member that comes over from a rival pays 2 followers.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited a Smuggler, and of course they're paid for everyone brought over: +2 followers whenever a member joins your cult from a rival's." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; about 3 to 5 members taken from rivals in a swapping game, so 6 to 10 followers, the same as Foster Parents today, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Abbess
+
+1. Printed text: unchanged, "Whenever a member joins your cult from a rival's, +2 followers." Replaces the name Foster Parents.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the abbey took in those cast out elsewhere: each member that comes over from a rival pays 2 followers.
+5. Not refused: not a live member or space name, not in design/cuts.md as a name he refused, not one of the refused Red names; an ordinary old-timey village person.
+6. Judged: recruit test: "You recruited an Abbess, and of course she takes in anyone a rival lets go: +2 followers whenever a member joins your cult from a rival's." It reads in one pass, old-timey village, playful with a slight dark edge, and still makes sense each time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; about 3 to 5 members taken from rivals in a swapping game, so 6 to 10 followers, the same as Foster Parents today, against a winner's 70 to 110.
+Verdict: send
