@@ -246,3 +246,34 @@ Verdict: send
 8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
 9. Biggest case: unchanged rule; with 3 grey members in round III it adds 3 to your biggest color for the Red contest (4/6/10 followers), the same as Assimilators today.
 Verdict: send
+
+## Third round (Cory 1:47pm)
+
+Cory: "Fairy Godmother is good. Ferrymen is eh but ok. Ok now this is TOO fairy tale/nursery rhyme maybe... frog prince is eh bc doesnt make sense that the frog prince would still exist and could do the same the next round" and "Bridge troll makes no sense. Rumpelstiltskin makes no sense. youve moved too far from general old village times".
+Read: ordinary village people of old times first; a folk figure only where it is the clearest fit; the name must make sense every time the effect can happen. Hansel, Mother Goose, Frog Prince, Bridge Troll, Rumpelstiltskin refused. Changeling not answered and not resent (a fairy creature, the far side he just named).
+
+## Idea: Midwife
+
+1. Printed text: unchanged, "On Recruit: recruit the cheapest member in the shop." Replaces the name Mentor (named Wingman). A swap for Wingman only if he wants one; keeping Wingman is the default.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the village midwife arrives with a newborn: the cheapest member in the shop comes along.
+5. Not refused: not a live member or space name, not in design/cuts.md, not one of the refused Red names; an ordinary person of old village times.
+6. Judged: recruit test: "You recruited the Midwife, and of course she brings a little one with her: the cheapest member in the shop joins too." It reads in one pass, plain old village, playful with a slight dark edge, and still makes sense the next time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; once, when it joins: one free member costing about 3 to 5 resources and worth 1 follower, the same as Mentor today, against a winner's 70 to 110 followers.
+Verdict: send
+
+## Idea: Hired Hand
+
+1. Printed text: unchanged, "Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free." Replaces the name Seat Filler (named Temp). A swap for Temp only if he wants one; keeping Temp is the default.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: a hired hand works for whoever hires them and moves on; in the shop they can be hired again and move on again, so the name still makes sense every round (his Frog Prince test).
+5. Not refused: not a live member or space name, not in design/cuts.md, not one of the refused Red names; an ordinary person of old village times.
+6. Judged: recruit test: "You recruited a Hired Hand, and of course they only stay until someone better comes along: at round start, swap them for a shop member costing up to 3 more, free." It reads in one pass, plain old village, playful with a slight dark edge, and still makes sense the next time it happens.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; up to 3 round starts a game, each trading up to a member costing up to 3 more for free (about 3 to 9 resources in all), the same as Seat Filler today, against a winner's 70 to 110 followers.
+Verdict: send
