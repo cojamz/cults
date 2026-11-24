@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.783 — 2026-11-24
+
+- Test Drive: a once per game member only goes to the discard pile; its effect is not used
+
 ## v0.99.782 — 2026-11-24
 
 - Yellow: Dye Job replaces Makeover (+4 yellow, turn up to 8 of rivals' resources into yellow)
