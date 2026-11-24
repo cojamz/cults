@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.785 — 2026-11-24
+
+- Polish: +3 silver, turn all your silver into one other color, each rival +1 silver
+
 ## v0.99.784 — 2026-11-24
 
 - Kidnappers and Dabblers: clearer card words, same rules
