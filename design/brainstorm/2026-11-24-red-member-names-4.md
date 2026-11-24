@@ -85,3 +85,11 @@ Verdict: send
 8. Color interactions: none: a name change on a single-color card, no tie to another color.
 9. Biggest case: unchanged rule; once a game it moves one rival member costing up to 10 and can swing Red's 10-follower contest, the same as Headhunter today, against a winner's 70 to 110 followers.
 Verdict: send
+
+## Recruit test (added after sending, coordinator's check)
+- Landlord: you recruited a landlord, and of course they charge everyone rent: +1 red per 2 members each round. Pass.
+- Frat Brother: you recruited a frat brother, and of course he cheers each new pledge of a color you already have: +1 follower. Pass, a little loose.
+- Interior Decorator: you recruited a decorator, and of course they reward a two-color scheme: +3 followers at 2 or fewer member colors. Weak: members aren't decor.
+- Hypnotist: you recruited a hypnotist, and of course your grey members act as your biggest color. Pass.
+- Pawnbroker: you recruited a pawnbroker, and of course once a round they trade one of your members in for one worth a bit more or less. Pass.
+- Home Wrecker: you recruited a home wrecker, and of course once a game they lure a member out of a rival's cult, and the rival rebounds with someone from the shop. Pass.
