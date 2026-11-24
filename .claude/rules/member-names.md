@@ -11,6 +11,9 @@ An old village, long ago (Cory 1:00pm: "I like old village. It doesn't have to b
 ## The test
 "You recruited a ___, and of course they ___ (the card's effect)." The role's everyday business must be the card, read naturally, in one pass. It must still make sense the next time the effect happens. A member that counts as 2 gets a plural name (a pair or a group). No name another live member already has, or one a player would mix up with it (Warden and Watchmen).
 
+## Action names (the wheel's spaces)
+Cory, 4:19pm: "and the action names. BIG overhaul." and 4:23pm: "remember the action names are something the cult leader is doing in theory". An action name is what the cult leader does on that space, a verb or a deed in the same old village world ("Poach", "Stash" are the shape), and it says the space's effect as plainly as a member's name says its card. Never a person, place or thing; never the same word as a member's name (Swindler and Swindle).
+
 ## His yeses, and why they work
 - **Tavern Keeper** (+1 red per 2 members): a fuller house takes in more.
 - **Guild Master** (+1 follower for recruiting a color you have): more of the same trade.
