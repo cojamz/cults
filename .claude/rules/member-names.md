@@ -2,11 +2,14 @@
 
 Cory, Nov 24 4:11pm, after Red took five rounds of one-at-a-time fixes: "this is too slow. you aren't getting it. do better, i dont want to have to manually fix your bad ideas for every member". The verdicts behind this guide: design/pitch-ledger.md (tag names), design/brainstorm/2026-11-24-red-member-names-village.md.
 
+## The goal (Cory, 4:17pm)
+"Goal is more very accurate name for the ability/member rather than thematic link." The name tells a first-time player what the card does before they read it. Accuracy beats theme: a clever village link that needs explaining loses to a plain name that says the ability. A current name that is already accurate and not modern can stay.
+
 ## The world
-An old village, long ago (Cory 1:00pm: "I like old village. It doesn't have to be modern"). Every member is an ordinary person of old village times, a trade, a rank or a social role, whom you recruit into your cult. A folk figure only when it is the clearest fit (Fairy Godmother, Pied Piper, Ferryman). Playful, 5 to 10 percent dark.
+An old village, long ago (Cory 1:00pm: "I like old village. It doesn't have to be modern"). Members are people of old village times: a trade, a rank, a social role. Folklore and fairy tale where they name the ability best (Fairy Godmother, Pied Piper, Changeling), but not everywhere (Cory 4:17pm: "Some dipping into fairytale/folklore stuff is fine. Just doesnt have to be literally everything."). Playful, 5 to 10 percent dark.
 
 ## The test
-"You recruited a ___, and of course they ___ (the card's effect)." The role's everyday business must be the card, read naturally, in one pass. It must still make sense the next time the effect happens.
+"You recruited a ___, and of course they ___ (the card's effect)." The role's everyday business must be the card, read naturally, in one pass. It must still make sense the next time the effect happens. A member that counts as 2 gets a plural name (a pair or a group). No name another live member already has, or one a player would mix up with it (Warden and Watchmen).
 
 ## His yeses, and why they work
 - **Tavern Keeper** (+1 red per 2 members): a fuller house takes in more.
@@ -33,6 +36,6 @@ An old village, long ago (Cory 1:00pm: "I like old village. It doesn't have to b
 1. Read this file and the color's live cards (`node .claude/skills/brainstorm/scripts/live-board.mjs <color> --members`).
 2. For each member write at least five candidates, then score each against the test and the nos above; cut any that matches a "no" shape.
 3. Send one best name per member for the whole color at once, in a picture with each card's text and its "of course" line; flag at most two you're least sure of, with one backup each.
-4. Before sending, a fresh agent given only this file, the cards and the list cuts anything weak; replace those, then send.
+4. Judges pick (Cory 4:17pm: "use judges to review based on the principles we've talked about or that are implied"): three fresh agents, given only this file, the cards, every live member name and all the candidates, each score every candidate; send the best average per member, flag the closest calls.
 5. Log his verdicts in design/pitch-ledger.md and add each new yes or no to this file the same turn.
 `node .claude/hooks/name-check.mjs` (presend runs it) refuses a message that pitches a name he already turned down.
