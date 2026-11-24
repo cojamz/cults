@@ -1,0 +1,37 @@
+<title>Largesse Numbers</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: one narrow column, a short lead, one table that scrolls sideways on a phone */
+:root{--bg:#f6f5f2;--fg:#1f1d1a;--muted:#6a655d;--line:#dcd7ce;--silver:#7d8796;--hi:#e9e4d8;
+--body:"Inter",system-ui,sans-serif;--head:"Space Grotesk",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181b;--fg:#ecebe8;--muted:#a19d95;--line:#33353a;--silver:#aeb7c4;--hi:#24262b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17181b;--fg:#ecebe8;--muted:#a19d95;--line:#33353a;--silver:#aeb7c4;--hi:#24262b;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--head);font-size:1.6rem;margin:0 0 4px;text-wrap:balance}
+.card{color:var(--silver);font-weight:600}
+p{margin:8px 0;max-width:65ch}
+.tbl{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr.today td{background:var(--hi)}
+.small{color:var(--muted);font-size:.85rem}
+</style>
+<div class="wrap">
+<h1>Largesse numbers</h1>
+<p class="card">Largesse (Silver, round III): "Give rivals 12 silver from the bank, split as you choose. +10 followers."</p>
+<p>At the table today: in 1 game of every 5, other players copy Largesse in round III (Cover, Echo, Fan Club and the like), so it happens 4 to 6 times in one round. That is 40 to 60 followers and 48 to 72 silver handed out in a single round. Even so, the player who takes it first usually loses: they hand rivals 12 silver, and rivals turn it into members and followers.</p>
+<p>At 6 followers, players stop copying it. It happens once, at most three times.</p>
+<div class="tbl"><table>
+<thead><tr><th>Setting</th><th>Games where it happened 4+ times in round III</th><th>Most times in one game</th><th>First player to take it won</th><th>Winner's followers</th></tr></thead>
+<tbody>
+<tr class="today"><td>Today: give 12 silver, +10 followers</td><td>9 of 39</td><td>6 (60 followers)</td><td>7 of 39 (18%)</td><td>93</td></tr>
+<tr><td>Give 12 silver, +6 followers</td><td>0 of 38</td><td>3</td><td>6 of 38 (16%)</td><td>87</td></tr>
+<tr><td>Give 8 silver, +6 followers</td><td>0 of 35</td><td>2</td><td>4 of 35 (11%)</td><td>86</td></tr>
+<tr><td>Give 6 silver, +6 followers</td><td>0 of 35</td><td>3</td><td>7 of 32 (22%)</td><td>85</td></tr>
+</tbody></table></div>
+<p>An even share is 25%: one winner among 4 players. With about 35 games per row, a gap under 10 points can be chance, so the three 6-follower rows win about the same. How much silver it gives did not clearly change anything.</p>
+<p>A second, larger run (65 games, the same deals twice) checked 10 against 8 followers: the first player to take it won 25% at 10 and 22% at 8, ending with 81 and 77 followers.</p>
+<p class="small">How it was played: Hard computer players, 4 players, 10-card deck, Silver dealt at every table, each row playing the same deals. Nov 24.</p>
+</div>
