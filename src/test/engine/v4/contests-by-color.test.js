@@ -158,7 +158,7 @@ describe('Cory, Nov 13 8:12pm: "Red contest is supposed to be #members not #card
     expect(y.score(ctx, s.players[0])).toBe(2); // red and grey
     expect(y.score(ctx, s.players[1])).toBe(2); // red, and Dabblers as one more table color
   });
-  it('Purists ("2 or fewer colors") counts grey: red + blue + grey misses, red + grey pays', async () => {
+  it('Bannermen ("2 or fewer colors") counts grey: red + blue + grey misses, red + grey pays', async () => {
     const { table } = await import('./cards-helpers-b.js');
     const d = defById('red.purists');
     for (const [members, gets] of [[['red.purists', 'market.stylist', 'benders.squatter'], 0], [['red.purists', 'benders.squatter'], 3]]) {

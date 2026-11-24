@@ -40,7 +40,7 @@ it('flies only the closing move\'s own followers, from their own sources, before
   // takes back a follower the closing recruit flew in, a closing this check doesn't model either
   // seed 14 for 7 since bots count Borrow's member as discarded at round end (Nov 12): seed 7's round I closing has no round-end line now
   // seed 13 for 9 since Call to Arms took Trending's place (Nov 11): seed 9's round I now closes on a Borrow discard, as seed 5's did
-  // seed 15 for 10 since Guild Master and Purists (Nov 11): seed 10's round II closing has no round-end line now
+  // seed 15 for 10 since Guild Master and Bannermen (Nov 11): seed 10's round II closing has no round-end line now
   for (const seed of [1, 13, 3, 4, 11, 6, 14, 15]) {
     for (const { prev, next } of closings(seed)) {
       const line = newLogLines(prev, next).filter(isRoundEnd).pop();

@@ -50,7 +50,7 @@ describe('Purple: Last Callers', () => {
   });
 });
 
-describe('Red: Guild Master and Purists (Cory, Nov 11 9:14pm)', () => {
+describe('Red: Guild Master and Bannermen (Cory, Nov 11 9:14pm)', () => {
   it('print his text; Proselytizers and Mob leave the deck', () => {
     expect(defById('red.brethren').text).toBe('Whenever you recruit a member of a color you already have, +1 follower.');
     expect(defById('red.purists').text).toBe('Round End: if your members have 2 or fewer colors, +3 followers.');
@@ -66,7 +66,7 @@ describe('Red: Guild Master and Purists (Cory, Nov 11 9:14pm)', () => {
     expect(run('gold.tycoon', 'gold.banker')).toEqual([1, 1]);
     expect(run('gold.tycoon', 'thieves.snitch')).toEqual([0, 0]);
   });
-  it('Purists: +3 at Round End with 2 colors, nothing with 3', () => {
+  it('Bannermen: +3 at Round End with 2 colors, nothing with 3', () => {
     const ctx = s => contextFor(s);
     let s = table(['gold', 'red', 'trading', 'thieves'], { members: [['red.purists', 'gold.tycoon']] });
     defById('red.purists').onRoundEnd(ctx(s), s.players[0]);

@@ -730,12 +730,12 @@ export default {
     // Cory, 2026-11-11 9:14pm Eastern: "put in purists if you have two or less", in Mob's slot. Grey is a color (Cory, Nov 13); Dabblers
     // never counts against its owner. 2 red + 1 any, a round I member (Cory, Nov 11 10:55pm: "it's ok round 1. if it can't even pay for its own flat cost
     // what's the point").
-    m('purists', 'Purists', 2, 1, 'Round End: if your members have 2 or fewer colors, +3 followers.', {
+    m('purists', 'Bannermen', 2, 1, 'Round End: if your members have 2 or fewer colors, +3 followers.', {
       onRoundEnd(ctx, owner) {
         const k = ctx.memberColorsWithGrey(owner, { wild: false }).length; // grey is a color (Cory, Nov 13)
         if (k > 2) return;
         owner.bonus += 3;
-        ctx.log(`${owner.name}'s Purists: members of ${k} color${k === 1 ? '' : 's'}: +3 followers.`);
+        ctx.log(`${owner.name}'s Bannermen: members of ${k} color${k === 1 ? '' : 's'}: +3 followers.`);
       },
       ...see(i => endsAhead(i).length * 3 * 0.6), // BOTSEE: about 3 rounds in 5 kept to 2 colors
     }),

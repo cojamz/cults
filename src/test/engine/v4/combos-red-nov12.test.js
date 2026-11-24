@@ -1,10 +1,10 @@
 // @vitest-environment node
 // Combo tester, Red's Nov 11 members (Cory, Nov 11 9:14pm; built 9:50pm): Guild Master ("Whenever you recruit a member of a
-// color you already have, +1 follower.") and Purists ("Round End: if your members have 2 or fewer colors, +3
+// color you already have, +1 follower.") and Bannermen ("Round End: if your members have 2 or fewer colors, +3
 // followers."), played against grey and every-color members, swaps, gifts, free and discard-pile recruits, copies and
 // the other Round End members. Each scene checks the outcome against the printed text and the logged calls
 // (design/decisions.md, Nov 11 9:50pm: "a color you already have" reads as Gather the Kin does, grey counts, not its own
-// arrival; grey has no color for Purists, Dabblers never counts against its owner). Harness: combos-magenta-nov12's.
+// arrival; grey has no color for Bannermen, Dabblers never counts against its owner). Harness: combos-magenta-nov12's.
 import { describe, it, expect } from 'vitest';
 import { createGame, resume, followers, applyMove } from '../../../engine/v4/core.js';
 import { stray } from './stray.js';
@@ -58,7 +58,7 @@ const BUY = [{ t: 'buy', p: 0 }];
 const END = [{ t: 'allPlaced' }, { t: 'endRound' }];
 const RICH = { red: 30, magenta: 30, blue: 30, yellow: 30, green: 30 };
 const B = 'Guild Master';
-const P = 'Purists';
+const P = 'Bannermen';
 
 describe('Guild Master: "Whenever you recruit a member of a color you already have, +1 follower."', () => {
   it('prints his text', () => {
@@ -225,48 +225,48 @@ describe('Guild Master: "Whenever you recruit a member of a color you already ha
   });
 });
 
-describe('Purists: "Round End: if your members have 2 or fewer colors, +3 followers."', () => {
-  it('Purists alone (red only): +3', () => {
+describe('Bannermen: "Round End: if your members have 2 or fewer colors, +3 followers."', () => {
+  it('Bannermen alone (red only): +3', () => {
     const { s } = go('pu-alone', { quads: QR, round: 2, queue: END, members: [['red.purists']] }, []);
-    expect(lines(s, /Purists/)).toEqual(["P1's Purists: members of 1 color: +3 followers."]);
+    expect(lines(s, /Bannermen/)).toEqual(["P1's Bannermen: members of 1 color: +3 followers."]);
     expect(bonusOf(s, 0)).toBe(3);
     cleanLog(s);
   });
 
   it('grey is a color (Cory, Nov 13): red and grey is 2 colors: +3; red, magenta and grey is 3: nothing', () => {
     const { s } = go('pu-2', { quads: QR, round: 2, queue: END, members: [['red.purists', 'benders.tiebreaker', 'benders.scout'], ['red.purists', 'thieves.snitch', 'benders.squatter']] }, []);
-    expect(lines(s, /Purists/)).toEqual(["P1's Purists: members of 2 colors: +3 followers."]);
+    expect(lines(s, /Bannermen/)).toEqual(["P1's Bannermen: members of 2 colors: +3 followers."]);
     expect([bonusOf(s, 0), bonusOf(s, 1)]).toEqual([3, 0]);
   });
 
   it('Dabblers never counts against its owner: red, magenta and Dabblers is 2 colors: +3', () => {
     const { s } = go('pu-dab', { quads: QR, round: 2, queue: END, members: [['red.purists', 'thieves.snitch', 'benders.dabblers']] }, []);
-    expect(lines(s, /Purists/)).toEqual(["P1's Purists: members of 2 colors: +3 followers."]);
+    expect(lines(s, /Bannermen/)).toEqual(["P1's Bannermen: members of 2 colors: +3 followers."]);
   });
 
   it('Drifters set to red counts as red: red, magenta and Drifters (red) is 2 colors: +3', () => {
     const { s } = go('pu-drift', { quads: QR, round: 2, queue: END, members: [['red.purists', 'thieves.snitch', 'yellow.drifters']],
       prep: st => { st.cards[st.players[0].members[2]].asColor = 'red'; } }, []);
-    expect(lines(s, /Purists/)).toEqual(["P1's Purists: members of 2 colors: +3 followers."]);
+    expect(lines(s, /Bannermen/)).toEqual(["P1's Bannermen: members of 2 colors: +3 followers."]);
   });
 
-  it('own Press Gang takes a blue member before Purists counts: 3 colors, nothing', () => {
+  it('own Press Gang takes a blue member before Bannermen counts: 3 colors, nothing', () => {
     const { s } = go('pu-kid-own', { quads: QR, round: 2, queue: END, members: [['red.purists', 'thieves.kidnappers'], ['market.repeatcustomers']] }, [/Homecomers/]);
-    expect(names(s, 0)).toEqual(['Purists', 'Press Gang', 'Homecomers']);
-    expect(has(s, /Purists:/)).toBe(false);
+    expect(names(s, 0)).toEqual(['Bannermen', 'Press Gang', 'Homecomers']);
+    expect(has(s, /Bannermen:/)).toBe(false);
     expect(bonusOf(s, 0)).toBe(0);
   });
 
-  it("a rival's Press Gang takes the Purists owner's only blue member: down to 2 colors before the count: +3", () => {
+  it("a rival's Press Gang takes the Bannermen owner's only blue member: down to 2 colors before the count: +3", () => {
     const { s } = go('pu-kid-rival', { quads: QR, round: 2, queue: END, members: [['red.purists', 'thieves.snitch', 'market.repeatcustomers'], ['thieves.kidnappers']] }, [/Homecomers/]);
     expect(names(s, 1)).toEqual(['Press Gang', 'Homecomers']);
-    expect(lines(s, /Purists/)).toEqual(["P1's Purists: members of 2 colors: +3 followers."]);
+    expect(lines(s, /Bannermen/)).toEqual(["P1's Bannermen: members of 2 colors: +3 followers."]);
   });
 
-  it('Doppelganger (green) copying Purists: red and green, both pay: +6', () => {
-    const { s } = go('pu-doppel', { quads: QE, round: 3, queue: [...BUY, ...END], res: [RICH], shop: ['echo.doppel'], members: [['red.purists']] }, [/Doppelganger/, /pay:/, /Purists/]);
-    expect(s.log).toContain("P1's Doppelganger becomes a copy of Purists.");
-    expect(lines(s, /Purists:/)).toEqual(["P1's Purists: members of 2 colors: +3 followers.", "P1's Purists: members of 2 colors: +3 followers."]);
+  it('Doppelganger (green) copying Bannermen: red and green, both pay: +6', () => {
+    const { s } = go('pu-doppel', { quads: QE, round: 3, queue: [...BUY, ...END], res: [RICH], shop: ['echo.doppel'], members: [['red.purists']] }, [/Doppelganger/, /pay:/, /Bannermen/]);
+    expect(s.log).toContain("P1's Doppelganger becomes a copy of Bannermen.");
+    expect(lines(s, /Bannermen:/)).toEqual(["P1's Bannermen: members of 2 colors: +3 followers.", "P1's Bannermen: members of 2 colors: +3 followers."]);
     expect(bonusOf(s, 0)).toBe(6 + 4 * 10); // and the four round III contests, P2 holding nothing
   });
 
@@ -281,14 +281,14 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
     cleanLog(s);
   });
 
-  it('Try Out ("Discard a shop member. Use its effect now. +1 blue.") on Purists with 2 colors: +3; with 3: nothing', () => {
-    const run = mine => go('pu-td', { quads: QR, round: 1, turns: [0], shop: ['red.purists'], members: [mine] }, [/Try Out/, /Purists/]).s;
+  it('Try Out ("Discard a shop member. Use its effect now. +1 blue.") on Bannermen with 2 colors: +3; with 3: nothing', () => {
+    const run = mine => go('pu-td', { quads: QR, round: 1, turns: [0], shop: ['red.purists'], members: [mine] }, [/Try Out/, /Bannermen/]).s;
     const a = run(['red.twins', 'market.thrifthunters']);
-    expect(a.log).toContain("P1's Try Out: sends Purists to the discard pile and uses its effect.");
-    expect(lines(a, /Purists:/)).toEqual(["P1's Purists: members of 2 colors: +3 followers."]);
+    expect(a.log).toContain("P1's Try Out: sends Bannermen to the discard pile and uses its effect.");
+    expect(lines(a, /Bannermen:/)).toEqual(["P1's Bannermen: members of 2 colors: +3 followers."]);
     expect(bonusOf(a, 0)).toBe(3);
     const b = run(['red.twins', 'market.thrifthunters', 'thieves.snitch']);
-    expect(has(b, /Purists:/)).toBe(false);
+    expect(has(b, /Bannermen:/)).toBe(false);
     cleanLog(a);
   });
 
@@ -303,23 +303,23 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
   });
 
   // OPEN QUESTION: with no members at all, "your members have 2 or fewer colors" is true (0 colors); only reachable by
-  // Try Out (Purists itself is red). Asserts what the code does now: +3.
-  it('Try Out on Purists with no members: 0 colors, +3 today (open question)', () => {
-    const { s } = go('pu-td0', { quads: QR, round: 1, turns: [0], shop: ['red.purists'] }, [/Try Out/, /Purists/]);
-    expect(lines(s, /Purists:/)).toEqual(["P1's Purists: members of 0 colors: +3 followers."]);
+  // Try Out (Bannermen itself is red). Asserts what the code does now: +3.
+  it('Try Out on Bannermen with no members: 0 colors, +3 today (open question)', () => {
+    const { s } = go('pu-td0', { quads: QR, round: 1, turns: [0], shop: ['red.purists'] }, [/Try Out/, /Bannermen/]);
+    expect(lines(s, /Bannermen:/)).toEqual(["P1's Bannermen: members of 0 colors: +3 followers."]);
     expect(bonusOf(s, 0)).toBe(3);
   });
 
-  it('4 players: each Purists owner in turn order, after every Night Thieves (Round End members finish first)', () => {
+  it('4 players: each Bannermen owner in turn order, after every Night Thieves (Round End members finish first)', () => {
     const { s } = go('pu-4p', { quads: QR, n: 4, round: 2, queue: END, res: [{}, { red: 3 }, {}, {}],
       members: [['red.purists'], ['red.purists', 'thieves.snitch', 'market.repeatcustomers'], ['red.purists', 'thieves.secondstory'], ['red.purists', 'benders.dabblers', 'yellow.exchangestudents']] },
       [/take:1:red/, /take:1:red/, /take:1:red/]);
-    expect(lines(s, /Purists/)).toEqual([
-      "P1's Purists: members of 1 color: +3 followers.",
-      "P3's Purists: members of 2 colors: +3 followers.",
-      "P4's Purists: members of 2 colors: +3 followers.",
+    expect(lines(s, /Bannermen/)).toEqual([
+      "P1's Bannermen: members of 1 color: +3 followers.",
+      "P3's Bannermen: members of 2 colors: +3 followers.",
+      "P4's Bannermen: members of 2 colors: +3 followers.",
     ]);
-    const iCat = s.log.findIndex(l => /Night Thieves/.test(l)), iPu = s.log.findIndex(l => /Purists:/.test(l));
+    const iCat = s.log.findIndex(l => /Night Thieves/.test(l)), iPu = s.log.findIndex(l => /Bannermen:/.test(l));
     expect(iCat).toBeGreaterThanOrEqual(0);
     expect(iCat).toBeLessThan(iPu);
     expect(s.log).toContain('Round II ends. Most red: P3 +6');

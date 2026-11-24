@@ -203,7 +203,7 @@ const M = {
   gardeners: ['🌻', '🌙 +1 follower per minion you have on Green spaces'],
   druids: ['🌳', '🏁 Most green members: +6 followers'],
   'guild-master': ['🫂', '♾️ You recruit a member of a color you already have: +1 follower'], // Nov 11: Red
-  purists: ['🧼', '🌙 Your members have 2 or fewer colors: +3 followers'],
+  bannermen: ['🚩', '🌙 Your members have 2 or fewer colors: +3 followers'],
   dyer: ['🖌️', '♾️ Your greys count as your biggest color'], // Nov 12: Red
   'last-callers': ['🔔', '🔁 Take the Goes Last token'], // Nov 11: Purple
   usher: ['🪑', '🌅 Choose your place in the turn order'], // Nov 12: Purple

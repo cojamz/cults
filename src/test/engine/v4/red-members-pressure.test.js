@@ -90,7 +90,7 @@ describe('Green exact action targets alongside Red recruitment', () => {
 });
 
 describe('Red members: bounded acquisition and body invariants', () => {
-  it('the normal Red deck contains thirteen approved members (Swindler in Triplets’ place, Nov 3; Journeyman in Volunteer’s, Nov 5; Clan Chief in Patriarch’s, Nov 11; Guild Master in Proselytizers’ and Purists in Mob’s, Nov 11; Dyer in for Deprogrammers, Nov 12), all priced at twelve or less (Mob 12, Cory Oct 24)', () => {
+  it('the normal Red deck contains thirteen approved members (Swindler in Triplets’ place, Nov 3; Journeyman in Volunteer’s, Nov 5; Clan Chief in Patriarch’s, Nov 11; Guild Master in Proselytizers’ and Bannermen in Mob’s, Nov 11; Dyer in for Deprogrammers, Nov 12), all priced at twelve or less (Mob 12, Cory Oct 24)', () => {
     const s = createGame({ seats: [{}, {}], quadrants: ['red', 'echo'], rules: { cull: true, guests: false } });
     const red = Object.values(s.cards).map(c => defById(c.def)).filter(d => d.quadrant === 'red');
     expect(red.map(d => d.key).sort()).toEqual(['host', 'loyalists', 'mentor', 'purists', 'assimilators', 'panel', 'clan', 'brethren', 'fosterparents', 'recruiter', 'bodysnatchers', 'seatfiller', 'headhunter'].sort());

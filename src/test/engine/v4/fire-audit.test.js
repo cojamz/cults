@@ -136,7 +136,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'trading.pawnbroker', // under 3 holds when Victors left the grey deck (Nov 6) moved the games; replace12c and member-use cover it
       'echo.impersonators', // under 3 holds once every member cost 4 more (Nov 5 evening) moved the games; cards-market-concepts and replace3 cover it
       'trading.reinvestor', // under 3 holds when Matchmaker and Dowry-Givers moved to White (Nov 11) moved the games; cards-trading (Reinvestor) covers it
-      'trading.godparents', // Dowry-Givers: under 3 holds when Guild Master and Purists (Nov 11) moved the games; cards-trading and silver tests cover it
+      'trading.godparents', // Dowry-Givers: under 3 holds when Guild Master and Bannermen (Nov 11) moved the games; cards-trading and silver tests cover it
       'trading.appraiser', // cut; under 3 holds when Mourners, Connoisseurs and Last Callers (Nov 11) moved the games; cards-trading (Appraiser) covers it
       'market.swapshoppers', 'trading.heiress', // under 3 holds when Nov 11's Blue, Green and White members moved the games; blue-new-members (Old-Clothes Dealers) and cards-trading cover them (Heiresses is cut)
       'market.repeatcustomers', // under 3 holds (2, named in 1) when every member was rebased to worth 1 (Cory, Nov 12) moved the games; blue-new-members and barker cover it
@@ -252,7 +252,7 @@ const ALLOW = {
   // Mourners, Connoisseurs and Last Callers (Nov 11) moved the seeded games: recruited in 8 games where its Normal-bot
   // holders never took the use (they weigh it against the round's other uses)
   'red.panel': 'pays only when used, and Normal bots rarely take it (red-recruit-chain: Fairy Godmother)',
-  // Guild Master and Purists (Nov 11) moved the seeded games: recruited once, never used before the game ended
+  // Guild Master and Bannermen (Nov 11) moved the seeded games: recruited once, never used before the game ended
   'gold.speculator': 'pays only when used; recruited once in the sample (interactions: Gambler)',
 };
 
