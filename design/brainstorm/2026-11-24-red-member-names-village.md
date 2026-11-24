@@ -466,3 +466,60 @@ Verdict: send
 8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
 9. Biggest case: unchanged rule; about 3 to 5 members taken from rivals in a swapping game, so 6 to 10 followers, the same as Foster Parents today, against a winner's 70 to 110.
 Verdict: send
+
+## Fifth round (Cory 2:58pm)
+
+Cory: "Governess is good. Weaver is fine. Maybe something more related to dye or coloring? Journeyman is ok. Swindler is good. Matriarch and Shepherd both bad. Abbess is good". Purists (Puritan / Dowager) not answered; asked again with Puritan as the default.
+Cut before sending: Chieftain (the same shape as Matriarch, head of a family or tribe), Herald (heraldry reads obscure), Dye Maker (clunky beside Dyer), Choirmaster (no tie to color).
+
+## Idea: Dyer
+
+1. Printed text: unchanged, "Your grey members count as members of your biggest color." Replaces the name Assimilators.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the village dyer colors plain grey cloth; here plain grey members come out in your main color. The live Yellow member Dyer ("On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.") would get a new village name when Yellow is renamed.
+5. Not refused: not a live Red name, not in design/cuts.md as a refused name, not one of the refused Red names; an ordinary old-timey village person, toward his "something more related to dye or coloring" for Assimilators.
+6. Judged: recruit test: "You recruited a Dyer, and of course they dye your grey members your biggest color." It reads in one pass, old-timey village, and still makes sense every round.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; with 3 grey members in round III it adds 3 to your biggest color for the Red contest (4/6/10 followers), the same as Assimilators today.
+Verdict: send
+
+## Idea: Painter
+
+1. Printed text: unchanged, "Your grey members count as members of your biggest color." Replaces the name Assimilators.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: a village painter puts your main color on anything plain, grey members included.
+5. Not refused: not a live Red name, not in design/cuts.md as a refused name, not one of the refused Red names; an ordinary old-timey village person, toward his "something more related to dye or coloring" for Assimilators.
+6. Judged: recruit test: "You recruited a Painter, and of course they paint your grey members your biggest color." It reads in one pass, old-timey village, and still makes sense every round.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; with 3 grey members in round III it adds 3 to your biggest color for the Red contest (4/6/10 followers), the same as Assimilators today.
+Verdict: send
+
+## Idea: Standard-Bearer
+
+1. Printed text: unchanged, "Round End: +1 follower per member in your biggest group of one color (grey is its own color)." Replaces the name Clan.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the one who carries the banner counts everyone marching under the main color.
+5. Not refused: not a live Red name, not in design/cuts.md as a refused name, not one of the refused Red names; an ordinary old-timey village person, toward his "something more related to dye or coloring" for Assimilators.
+6. Judged: recruit test: "You recruited a Standard-Bearer, and of course the more who march under your biggest color, the more followers: +1 per member of it, each round." It reads in one pass, old-timey village, and still makes sense every round.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; with 6 members of one color in round III it pays 6 that round and about 12 over a game, the same as Clan today, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Captain of the Guard
+
+1. Printed text: unchanged, "Round End: +1 follower per member in your biggest group of one color (grey is its own color)." Replaces the name Clan.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the captain counts the biggest company in one uniform.
+5. Not refused: not a live Red name, not in design/cuts.md as a refused name, not one of the refused Red names; an ordinary old-timey village person, toward his "something more related to dye or coloring" for Assimilators.
+6. Judged: recruit test: "You recruited a Captain of the Guard, and of course they muster the biggest company: +1 follower per member in your biggest group of one color, each round." It reads in one pass, old-timey village, and still makes sense every round.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; with 6 members of one color in round III it pays 6 that round and about 12 over a game, the same as Clan today, against a winner's 70 to 110.
+Verdict: send
