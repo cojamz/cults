@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.789 — 2026-11-24
+
+- New member names for Red, Magenta and Yellow (Tavern Keeper, Fairy Godmother, Bandit, Highwayman, Herald, Witch and more); card text unchanged
+
 ## v0.99.788 — 2026-11-24
 
 - Minions fit the old village: 24 now (raven, goat, rat, owl, pig, rooster, bat, snail, hedgehog, fox, spider, moth, scarecrow, candle, sheep are new), each with its own sound
