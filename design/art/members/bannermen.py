@@ -1,19 +1,21 @@
 from kit import *
 from yel import legs, head
 def bannermen():
-    v=V(); legs(v,ramp='dark')
-    v.poly([(13,19),(27,19),(28,40),(12,40)],'red'); v.rect(12,31,28,32,'brown',flat=True); v.px(20,31,v.col('gold',0))
-    # tabard with the lord's mark, holding his banner high in two colors
-    v.rect(17,22,23,30,'white',flat=True); v.ell(20,26,1.6,1.6,'red',flat=True)
-    v.rect(33,0,34,44,'brown'); v.ell(33.5,0,1.4,1.2,'gold')
-    v.poly([(35,2),(46,2),(46,16),(41,13),(35,16)],'red'); v.rect(35,7,46,10,'gold',flat=True)
-    v.poly([(27,20),(33,22),(33,25),(27,24)],'red'); v.ell(33,23.5,2,2,'skin')
-    v.poly([(27,26),(32,30),(31,32),(27,29)],'red') if False else None
-    v.poly([(13,20),(9,26),(11,29),(14,24)],'red'); v.ell(10,29,2,2,'skin')
-    head(v,mouth=False)
-    for x in range(18,23): v.px(x,14,v.col('skin',3))
-    for x in (15,16,17): v.px(x,8,v.col('hair',2))
-    for x in (23,24,25): v.px(x,8,v.col('hair',2))
-    v.ell(20,5,8,4.4,'grey',clip=lambda x,y:y<=6); v.rect(11,6,29,7,'dark'); v.rect(20,7,20,11,'dark',flat=True); v.px(17,3,hx('#ffffff')); v.px(18,2,hx('#ffffff'))
-    v.inner('red','skin'); v.inner('red','white')
+    v=V()
+    # sworn man in his lord's two colors, marching behind a big hanging banner held up on a crossbar
+    v.rect(20,0,21,46,'brown') if False else None
+    legs(v,x1=13,x2=22,ramp='white',boot='dark')
+    v.poly([(13,26),(27,26),(28,40),(12,40)],'red'); v.rect(20,26,28,40,'white',flat=True); v.poly([(20,26),(27,26),(28,40),(20,40)],'white')
+    v.rect(12,34,28,35,'brown',flat=True)
+    v.rect(4,2,36,3,'brown'); v.ell(4,2.5,1.2,1.2,'gold'); v.ell(36,2.5,1.2,1.2,'gold')
+    v.rect(6,4,20,17,'red'); v.rect(20,4,34,17,'white')
+    for x in range(6,35,4): v.px(x,18,v.col('red' if x<20 else 'white',1)); v.px(x+1,18,v.col('red' if x<20 else 'white',1))
+    v.ell(20,10,3,3,'gold')
+    v.poly([(13,27),(7,20),(6,15),(9,15),(12,21)],'red'); v.ell(7.5,15,2,2,'skin')
+    v.poly([(27,27),(33,20),(34,15),(31,15),(28,21)],'white'); v.ell(32.5,15,2,2,'skin')
+    v.rect(17,23,23,26,'skin')
+    v.face(20,15,11,10,ey=19,mouth=False,blush=True)
+    for x in range(18,23): v.px(x,23,v.col('skin',3))
+    v.ell(20,16,6,2.4,'grey',clip=lambda x,y:y<=17); v.rect(14,17,26,17,'dark',flat=True)
+    v.inner('red','skin'); v.inner('red','white'); v.inner('white','skin')
     return v.thick()
