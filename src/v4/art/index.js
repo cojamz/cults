@@ -6,6 +6,7 @@ import SETS from './icons/index.js';
 import PORTRAITS from './portraits/index.js';
 import { portraitRuns } from './portrait.js';
 import PORTRAITS4 from './portraits4/index.js';
+import MEMBERS48 from './members48/index.js';
 
 const TABLE = '#101817';
 export const NEUTRALS = { k: '#0a0f0e', d: '#3c4946', m: '#8e9b96', l: '#ece6d6' };
@@ -213,6 +214,9 @@ for (const [id, name, source] of [
   if (!art || PORTRAIT.has(id) || BY_ID.has(id)) continue;
   (PORTRAIT.has(source) ? PORTRAIT : BY_ID).set(id, { ...art, id, name });
 }
+// The 48-pixel member figures (Cory, Nov 24: "these are good enough. use this for all") win over every older picture:
+// a whole person on a clear ground, drawn in its card's color
+for (const i of MEMBERS48) PORTRAIT.set(i.id, { ...i, portrait: true, scene: true, figure: true });
 export function iconFor(id, kind = 'member') {
   const ids = Array.isArray(id) ? id : [id];
   const hit = (kind !== 'action' && ids.map(x => PORTRAIT.get(x)).find(Boolean)) || ids.map(x => BY_ID.get(x)).find(Boolean);

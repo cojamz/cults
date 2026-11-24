@@ -57,11 +57,13 @@ export const Sprite = memo(function Sprite({ id, sphere = 'colorless', size = 48
   const src = spriteUrl(icon, sphere, rectsFor(icon, sphere), look);
   // a portrait is 32 pixels: drawn a third bigger than the 24-pixel size asked for, whole pixels at 32/64/96
   // a scene is 64 pixels: whole pixels only at 32/64/128
-  if (icon.scene) size = size <= 40 ? 32 : size <= 72 ? 64 : 128;
+  // a member figure is 48 pixels: whole pixels at 48/96 (24 for the smallest places)
+  if (icon.figure) size = size <= 30 ? 24 : size <= 72 ? 48 : 96;
+  else if (icon.scene) size = size <= 40 ? 32 : size <= 72 ? 64 : 128;
   else if (icon.portrait) size = size <= 40 ? 32 : size <= 72 ? 64 : 96;
   const m = HALO[look] ? (HALO[look] * size) / icon.px.length : 0;
   return (
-    <img className={`sprite${icon.scene ? ' scene' : ''}${drawn ? '' : ' template'}${m ? ` halo-${look}` : ''}${className ? ` ${className}` : ''}`} src={src} width={size + 2 * m} height={size + 2 * m} draggable={false}
+    <img className={`sprite${icon.scene ? ' scene' : ''}${icon.figure ? ' figure' : ''}${drawn ? '' : ' template'}${m ? ` halo-${look}` : ''}${className ? ` ${className}` : ''}`} src={src} width={size + 2 * m} height={size + 2 * m} draggable={false}
       style={m ? { margin: `${-m}px` } : undefined}
       alt={title || ''} title={title || undefined} aria-hidden={title ? undefined : 'true'} data-sprite={drawn ? icon.id : `template:${kind}`} decoding="sync" />
   );
