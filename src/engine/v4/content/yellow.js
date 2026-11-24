@@ -227,6 +227,25 @@ function moneyDone(ctx, p, data) {
   if (next.length) moneyAsk(ctx, p, { ...data, o: next[0], n: 0, next: next.slice(1) });
 }
 
+// Dye Job (Nov 24, Makeover's slot): rivals' resources turn into yellow one at a time, up to DYE_MAX in all, any rivals.
+const DYE_MAX = 8;
+const dyeTargets = (ctx, p) => touchable(ctx, p).flatMap(o => colors(ctx).filter(c => c !== Y && (o.res[c] || 0) > 0).map(c => [o, c]));
+function dyeAsk(ctx, p, data) {
+  const list = data.n < DYE_MAX ? dyeTargets(ctx, p) : [];
+  if (!list.length) { dyeDone(ctx, p, data); return; }
+  const opts = list.map(([o, c]) => ({
+    id: `dye:${o.id}:${c}`, label: `${o.name}'s 1 ${c} becomes yellow`, kind: 'choice', value: `${o.id}:${c}`,
+    // bots hit the leader's biggest color, never a rival's silver (fewer silver helps them win Silver's contest)
+    hint: 0.2 + 0.05 * o.res[c] + 0.02 * ctx.followers(o) - (c === 'silver' ? 1 : 0),
+  }));
+  opts.push({ id: 'done', label: data.n ? 'Done' : 'Turn nothing', kind: 'done', value: 'done', hint: 0 });
+  ctx.choose(p, `Dye Job: turn which rival's resource into yellow? (${data.n} of up to ${DYE_MAX} so far)`, opts, 'yellow.dyeStep', data);
+}
+function dyeDone(ctx, p, data) {
+  ctx.log(data.n ? `${p.name}'s Dye Job: ${data.n} of rivals' resources turned into yellow.` : `${p.name}'s Dye Job: turns nothing.`);
+  if (data.n) tastemaker(ctx, p);
+}
+
 export default {
   id: 'yellow',
   name: 'Yellow',
@@ -332,9 +351,17 @@ export default {
       // Cory, 2026-10-30: "let's stick with launderers effect round III", "+3 or +4 yellow". Name: Claude's fill-in.
       // Nov 2: "oh no i like makeover as is" (the per-contest follower version was live briefly in v0.99.505)
       // Nov 11: "Makeover could be RII": round II, in Housewarming's slot; Offering takes round III
-      key: 'makeover', ring: 2, name: 'Makeover', text: '+4 yellow. Then rearrange your resources into any colors.',
-      estimate: () => 5,
-      resolve(ctx, p) { ctx.gain(p, Y, ACT.has('makeover1') ? 1 : 4, { fromAction: true }); startLaunder(ctx, p, 'Makeover'); },
+      // Cory, Nov 24 11:45am: "Dye job is cool, +6 probably too much" (Nov 13: "Makeover being bad is definitely a
+      // problem"): Dye Job takes Makeover's slot, his Oct 30 "turn up to 8 rival resources into yellow… spread it across
+      // rivals". +4 (own +1 included) is Claude's number under his go-with-your-gut. Key kept for old saves and records.
+      key: 'makeover', ring: 2, name: 'Dye Job', copyDoesIt: true,
+      text: "+4 yellow. Turn up to 8 of rivals' resources into yellow, split as you choose.",
+      estimate: (ctx, p) => 4 + Math.min(DYE_MAX, dyeTargets(ctx, p).reduce((a, [o, c]) => a + o.res[c], 0)) * 0.25,
+      resolve(ctx, p) {
+        ctx.gain(p, Y, 4, { fromAction: true });
+        if (!dyeTargets(ctx, p).length) { ctx.log(`${p.name}'s Dye Job: no rival holds a resource to turn, so only the yellow.`); return; }
+        dyeAsk(ctx, p, { n: 0, instance: newChange(ctx) });
+      },
     },
     swap14(swap14({
       // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 5: "melting pot should give 1 color for each
@@ -392,6 +419,13 @@ export default {
       fairStep(ctx, p, { left: data.left.slice(1), n: data.n + n });
     },
     // Swap Meet / Small Change (pool 3)
+    dyeStep(ctx, p, value, data) {
+      if (value === 'done') { dyeDone(ctx, p, data); return; }
+      const [oid, c] = String(value).split(':'), o = ctx.player(Number(oid));
+      if (!o || !(o.res[c] > 0) || c === Y) { dyeAsk(ctx, p, data); return; }
+      changeOne(ctx, p, o, c, Y, 'Dye Job', data.instance);
+      dyeAsk(ctx, p, { ...data, n: data.n + 1 });
+    },
     moneyWith(ctx, p, oid, data) { if (ctx.player(oid)) moneyAsk(ctx, p, { ...data, o: oid, n: 0 }); },
     moneyStep(ctx, p, value, data) {
       if (value === 'done') { moneyDone(ctx, p, data); return; }

@@ -69,10 +69,10 @@ describe('Yellow actions', () => {
     expect(named(s, 'New Blood')).toContain("P1's New Blood: +3 yellow for recruiting a member of a new color.");
   });
   // Cory, Nov 11: Makeover moves to round II in Housewarming's slot; Offering takes round III
-  it('round II holds Makeover and Melting Pot, round III Offering; Housewarming is off the wheel', async () => {
+  it('round II holds Dye Job (Makeover's slot, Nov 24) and Melting Pot, round III Offering; Housewarming is off the wheel', async () => {
     const { quadrant } = await import('../../../engine/v4/content/index.js');
     const acts = quadrant('yellow').actions, ring = n => acts.filter(a => a.ring === n).map(a => a.name);
-    expect(ring(2)).toEqual(expect.arrayContaining(['Makeover', 'Melting Pot']));
+    expect(ring(2)).toEqual(expect.arrayContaining(['Dye Job', 'Melting Pot']));
     expect(ring(3)).toEqual(['Offering']);
     expect(acts.map(a => a.name)).not.toContain('Housewarming');
   });
@@ -97,10 +97,22 @@ describe('Yellow actions', () => {
     expect(R(s)).toMatchObject({ red: 1, gold: 1, yellow: 1, green: 1 });
     expect(s.players[0].bonus).toBe(4);
   });
-  it('Makeover (round III): +4 yellow, then rearrange everything', () => {
-    let s = take(sc({ round: 3, res: [{ gold: 2, red: 2 }] }), 'yellow.makeover');
-    s = move(s, 'color:red');
-    expect(R(s)).toEqual({ gold: 0, red: 8, yellow: 0, green: 0 });
+  it('Dye Job (Nov 24, Makeover\'s slot): +4 yellow, then up to 8 of rivals\' resources turn into yellow, one at a time', () => {
+    let s = take(sc({ round: 2, res: [{}, { red: 6, gold: 4 }] }), 'yellow.makeover');
+    expect(R(s).yellow).toBe(4);
+    for (let i = 0; i < 6; i++) s = move(s, 'dye:1:red');
+    expect(s.pending.prompt).toMatch(/6 of up to 8/);
+    s = move(move(s, 'dye:1:gold'), 'dye:1:gold');
+    expect(s.players[1].res).toMatchObject({ red: 0, gold: 2, yellow: 8 });
+    expect(s.log).toContain("P1's Dye Job: 8 of rivals' resources turned into yellow.");
+  });
+  it('Dye Job: Turn nothing keeps rivals as they are; with nothing to turn it is just the yellow', () => {
+    let s = take(sc({ round: 2, res: [{}, { red: 2 }] }), 'yellow.makeover');
+    s = move(s, 'done');
+    expect(s.players[1].res.red).toBe(2);
+    const t = take(sc({ round: 2, res: [{}, {}] }), 'yellow.makeover');
+    expect(R(t).yellow).toBe(4);
+    expect(t.log.some(l => /Dye Job: no rival holds a resource to turn/.test(l))).toBe(true);
   });
 });
 
