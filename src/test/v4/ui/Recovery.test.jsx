@@ -97,8 +97,8 @@ describe('crash recovery screen', () => {
     // a real game on screen first, so the session has tracked its state
     const { container } = render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Play on this device' }));
-    fireEvent.click(screen.getAllByRole('radio', { name: 'Empty' })[2]);
-    fireEvent.click(screen.getAllByRole('radio', { name: 'Empty' })[3]);
+    fireEvent.click(screen.getAllByRole('button', { name: /^Remove / })[3]);
+    fireEvent.click(screen.getAllByRole('button', { name: /^Remove / })[2]);
     fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     expect(container.querySelector('.app.game')).toBeTruthy();
     cleanup();

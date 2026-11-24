@@ -19,7 +19,8 @@ import { playCall } from '../sound.js';
 import { SPEEDS, SPEED_NAMES, motionSpeed, setMotionSpeed } from '../motion.js';
 import { memberLook, setMemberLook, LOOK_OFFERED } from '../memberLook.js';
 
-const KINDS = [['human', 'Person'], ['bot', 'Bot'], ['empty', 'Empty']];
+// a seat is a person or a bot; an unwanted seat is removed, not left "Empty" (Cory, Nov 24: "Add player instead of 4-6 inherent slots")
+const KINDS = [['human', 'Person'], ['bot', 'Bot']];
 const NAME_MAX = 14;
 // count what a person sees as characters (an emoji or accented letter is one), not UTF-16 units
 const graphemes = str => (typeof Intl !== 'undefined' && Intl.Segmenter ? [...new Intl.Segmenter().segment(str)].length : [...str].length);
@@ -252,11 +253,13 @@ export function MemberLookPick() {
   return <div className="seat" data-member-look={v}><span>Members look</span>
     <Seg label="Members look" value={v} options={LOOK_OPTS} onChange={x => { setV(x); setMemberLook(x); }} /></div>;
 }
-export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
+const TABLE_OPTS = [['classic', 'Classic', 'The standard colors'], ['random', 'Random', 'A random set of colors; press again for another'], ['custom', 'Custom', 'Pick the colors yourself']];
+export function TablePicker({ value, onChange, readOnly = false, n = 4, bare = false }) {
   const { mode, quadrants } = value;
   const setMode = m => {
     if (m === 'classic') onChange({ mode: m, quadrants: [...CLASSIC] });
-    else if (m === 'random') onChange({ mode: m, quadrants: randomTable() });
+    // pressing Random again deals a new table (Cory, Nov 24: "we dont need reroll button because perssing Random already doesn that")
+    else if (m === 'random') { let t; do { t = randomTable(); } while (mode === 'random' && sameTable(t.slice(0, n), quadrants)); onChange({ mode: m, quadrants: t }); }
     else onChange({ mode: m, quadrants: [...quadrants] });
   };
   // a fifth sphere with four picked swaps in for the last one picked, in its place on the wheel, and says so quietly
@@ -276,15 +279,15 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
   const problem = quadrants.length === n ? tableProblem(quadrants, null) : '';
   return (
     <div className={`table-pick${readOnly ? '' : ' editable'}`} data-table={quadrants.join(',')}>
+      {/* "Random", not "Random 4": the count is implied (Cory, Nov 24) */}
+      {bare && !readOnly ? <Seg label="Colors" value={mode} options={TABLE_OPTS} onChange={setMode} /> : (
       <div className="seat">
         <SetName name="Table" />
-        {readOnly ? <span className="hint">{mode === 'random' ? `Random ${n}` : mode === 'custom' ? 'Custom' : 'Classic'}</span>
-          : <Seg label="Table" value={mode} options={[['classic', 'Classic'], ['random', `Random ${n}`], ['custom', 'Custom']]} onChange={setMode} />}
-      </div>
+        {readOnly ? <span className="hint">{mode === 'random' ? 'Random' : mode === 'custom' ? 'Custom' : 'Classic'}</span>
+          : <Seg label="Table" value={mode} options={TABLE_OPTS} onChange={setMode} />}
+      </div>)}
       {mode !== 'custom' || readOnly ? (
         <div className="table-chips">
-          {/* Reroll first, so it stays under the pointer while the names after it change width (w2b #33) */}
-          {mode === 'random' && !readOnly && <button type="button" className="btn ghost" data-reroll onClick={() => { let t; do { t = randomTable(); } while (sameTable(t.slice(0, n), quadrants)); onChange({ mode, quadrants: t }); }}>Reroll</button>}
           {quadrants.map(id => <TableChip key={id} id={id} />)}
         </div>
       ) : (
@@ -354,7 +357,6 @@ function TableChip({ id }) {
 
 // Every seat wears an emoji, none twice: the first person starts with the one this browser picked last, everyone
 // else (bots too) with a random free one. People outrank bots: picking a bot's emoji makes the bot take another.
-const padSeats = seats => [...seats, ...Array.from({ length: Math.max(0, MAX_SEATS - seats.length) }, (_, k) => ({ kind: 'empty', name: `P${seats.length + k + 1}` }))];
 function dressSeats(seats) {
   const first = seats.findIndex(s => s.kind === 'human');
   const wish = lastEmoji();
@@ -364,10 +366,11 @@ function dressSeats(seats) {
 }
 
 export function LocalSetup({ initial, onStart, onBack }) {
-  // four seats play by default; P5 and P6 wait empty (Cory, 2026-10-22: five and six players)
-  const [seats, setSeats] = useState(() => dressSeats(padSeats(initial?.seats || [
+  // four seats by default; Add player takes it to five or six (Cory, 2026-10-22: five and six players; Nov 24: "Add
+  // player instead of 4-6 inherent slots")
+  const [seats, setSeats] = useState(() => dressSeats((initial?.seats || [
     { kind: 'human', name: 'P1' }, { kind: 'bot', name: 'P2' }, { kind: 'bot', name: 'P3' }, { kind: 'bot', name: 'P4' },
-  ])));
+  ]).filter(s => s.kind !== 'empty')));
   // one speed (Quick / Steady / Relaxed): the bots' pace and how moves play out, the same setting as the ☰ menu's
   const [speed, setSpeed] = useState(motionSpeed);
   const [level, setLevel] = useState(initial?.level || DEFAULT_BOT_LEVEL);
@@ -376,14 +379,17 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const [econ, setEcon] = useState(ECON_VALUES.includes(initial?.econ) ? initial.econ : 'today');
   const [plus1, setPlus1] = useState(initial?.plus1 === 'every' ? 'every' : 'game');
   // Shop, Member deck and Round III members rows cut (Cory, Nov 4: "drop the piles modes. drop 15 members. drop 'wait for round III'")
-  const filled = seats.filter(s => s.kind !== 'empty');
-  // one sphere per player (Cory, 2026-10-15): the table follows the seats as they're filled or emptied
+  const filled = seats;
+  // one sphere per player (Cory, 2026-10-15): the table follows the seats as they're added or removed
   const nSph = sphereCount(filled.length);
   const fitted = fitTable(table, filled.length);
   const tableOk = !tableProblem(fitted.quadrants, nSph);
   const short = nSph - fitted.quadrants.length;
-  const startWhy = filled.length < 2 ? 'Needs at least 2 seats' : short > 0 ? `Pick ${short} more sphere${short === 1 ? '' : 's'}` : tableOk ? '' : tableProblem(fitted.quadrants, nSph);
+  const startWhy = filled.length < 2 ? 'Needs at least 2 players' : short > 0 ? `Pick ${short} more color${short === 1 ? '' : 's'}` : tableOk ? '' : tableProblem(fitted.quadrants, nSph);
   const set = (i, patch) => setSeats(settleEmojis(seats.map((s, k) => (k === i ? { ...s, ...patch } : s))));
+  // a removed seat closes the gap; the seats after it keep their own names, and a default name follows its new place
+  const remove = i => setSeats(settleEmojis(seats.filter((_, k) => k !== i).map((s, k) => (/^P\d+$/.test(s.name) ? { ...s, name: `P${k + 1}` } : s))));
+  const add = () => setSeats(dressSeats([...seats, { kind: 'bot', name: `P${seats.length + 1}` }]));
   const pickEmoji = (i, id) => {
     const next = takeEmoji(seats, i, id);
     if (!next) return;
@@ -398,43 +404,51 @@ export function LocalSetup({ initial, onStart, onBack }) {
   // pointer: P4's name box sat right under Play and took the focus (blind panel)
   const born = useRef(typeof performance !== 'undefined' ? performance.now() : 0);
   const carried = e => { if (performance.now() - born.current < 400 && e.target.closest && e.target.closest('input')) e.preventDefault(); };
+  // three columns, each under its own title, all starting on one line (Cory, Nov 24: "Each columb should give the sense
+  // its aligned with the others. Each should have a title... Player Settings Colors")
   return (
-    <div className="app narrow">
-      <div className="dialog page" onMouseDownCapture={carried}>
-        <h2>Play on this device</h2>
-        <p className="hint">Everyone plays on this screen. Bots fill the other seats.</p>
-        {seats.map((s, i) => (
-          <div className="seat" key={i} style={{ '--pc': playerColor(i) }} data-seat-row={i}>
-            {s.kind === 'human'
-              ? <EmojiButton value={s.emoji} label={`${s.name.trim() || `P${i + 1}`}’s emoji`} taken={holders(i, 'human')} bots={holders(i, 'bot')} onPick={id => pickEmoji(i, id)} />
-              : <EmojiFace id={s.kind === 'bot' ? s.emoji : null} title={s.kind === 'bot' ? `${emojiName(s.emoji)}: a random one for this bot. Pick it for a person and the bot takes another.` : null} />}
-            <label className="namebox">
-              <input aria-label={`Seat ${i + 1} name`} value={s.name === `P${i + 1}` ? '' : s.name} placeholder={`P${i + 1}`} disabled={s.kind === 'empty'} onChange={e => set(i, { name: clip(e.target.value, NAME_MAX) })} />
-              {/* the count only near the limit (w2a #48: "4/14" was noise) */}
-              {graphemes(s.name) >= NAME_MAX - 3 && <small className={`count num${graphemes(s.name) >= NAME_MAX ? ' full' : ''}`} aria-hidden="true">{graphemes(s.name)}/{NAME_MAX}</small>}
-            </label>
-            <Seg label={`Seat ${i + 1}`} value={s.kind} options={KINDS} onChange={v => set(i, { kind: v })} />
-          </div>
-        ))}
-        {/* the settings stand in their own column between the seats and the table on a laptop (Cory, Nov 4: "settings
-            could be brought over to a third column here"); narrower, they stack under the seats */}
-        <div className="setup-settings" data-setup-settings>
-          {/* each switch says what its choice does in one line under it (picky bot, Nov 4: "Swap card", "By color" and
-              "Very Hard" went unexplained; the words were only in hover titles) */}
-          <div className="seat"><SetName name="Bots" /><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
-          <small className="set-hint" data-set-hint="bots">{(BOT_LEVEL_INFO.find(l => l.level === level) || {}).blurb}</small>
-          <div className="seat"><SetName name="Speed" /><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
-          <small className="set-hint" data-set-hint="speed">{SPEED_HINT[speed] ? `${SPEED_HINT[speed]}.` : null}</small>
-          {SWAP_OFFERED && <SwapPick value={swapCard} onChange={setSwapCard} />}
-          {SWAP_OFFERED && <small className="set-hint" data-set-hint="swap">{swapCard ? 'A recruit option: pay 2 resources to swap one of your members for a shop or rival member costing up to 2 more or less.' : 'No swap card.'}</small>}
-          <EconPick value={econ} onChange={setEcon} />
-          <small className="set-hint" data-set-hint="econ">{ECON_HINT[econ]}</small>
-          <Plus1Pick value={plus1} onChange={setPlus1} />
-          <small className="set-hint" data-set-hint="plus1">{PLUS1_HINT[plus1]}</small>
-          {LOOK_OFFERED && <MemberLookPick />}
-          {LOOK_OFFERED && <small className="set-hint" data-set-hint="look">How members look to you. The rules are the same.</small>}
+    <div className="app narrow setup-wide">
+      <div className="dialog page setup-page" onMouseDownCapture={carried}>
+        <div className="setup-cols">
+          <section className="setup-col" data-col="players" aria-labelledby="setup-players">
+            <h3 className="col-title" id="setup-players">Players</h3>
+            {seats.map((s, i) => (
+              <div className="seat player-row" key={i} style={{ '--pc': playerColor(i) }} data-seat-row={i}>
+                {s.kind === 'human'
+                  ? <EmojiButton value={s.emoji} label={`${s.name.trim() || `P${i + 1}`}’s emoji`} taken={holders(i, 'human')} bots={holders(i, 'bot')} onPick={id => pickEmoji(i, id)} />
+                  : <EmojiFace id={s.emoji} title={`${emojiName(s.emoji)}: a random one for this bot. Pick it for a person and the bot takes another.`} />}
+                <label className="namebox">
+                  <input aria-label={`Player ${i + 1} name`} value={s.name === `P${i + 1}` ? '' : s.name} placeholder={`P${i + 1}`} onChange={e => set(i, { name: clip(e.target.value, NAME_MAX) })} />
+                  {/* the count only near the limit (w2a #48: "4/14" was noise) */}
+                  {graphemes(s.name) >= NAME_MAX - 3 && <small className={`count num${graphemes(s.name) >= NAME_MAX ? ' full' : ''}`} aria-hidden="true">{graphemes(s.name)}/{NAME_MAX}</small>}
+                </label>
+                <Seg label={`Player ${i + 1}`} value={s.kind} options={KINDS} onChange={v => set(i, { kind: v })} />
+                <button type="button" className="seat-x" data-remove-seat aria-label={`Remove ${s.name.trim() || `P${i + 1}`}`} title="Remove this player" disabled={seats.length <= 2} onClick={() => remove(i)}>×</button>
+              </div>
+            ))}
+            {seats.length < MAX_SEATS && <button type="button" className="btn ghost add-player" data-add-player onClick={add}>+ Add player</button>}
+          </section>
+          <section className="setup-col setup-settings" data-setup-settings aria-labelledby="setup-settings">
+            <h3 className="col-title" id="setup-settings">Settings</h3>
+            {/* each setting: its name, its switch, and what the choice does in one quiet line under it */}
+            <div className="set-row"><div className="seat"><SetName name="Bots" /><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
+              <small className="set-hint" data-set-hint="bots">{(BOT_LEVEL_INFO.find(l => l.level === level) || {}).blurb}</small></div>
+            <div className="set-row"><div className="seat"><SetName name="Speed" /><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
+              <small className="set-hint" data-set-hint="speed">{SPEED_HINT[speed] ? `${SPEED_HINT[speed]}.` : null}</small></div>
+            {SWAP_OFFERED && <div className="set-row"><SwapPick value={swapCard} onChange={setSwapCard} />
+              <small className="set-hint" data-set-hint="swap">{swapCard ? 'A recruit option: pay 2 resources to swap one of your members for a shop or rival member costing up to 2 more or less.' : 'No swap card.'}</small></div>}
+            <div className="set-row"><EconPick value={econ} onChange={setEcon} />
+              <small className="set-hint" data-set-hint="econ">{ECON_HINT[econ]}</small></div>
+            <div className="set-row"><Plus1Pick value={plus1} onChange={setPlus1} />
+              <small className="set-hint" data-set-hint="plus1">{PLUS1_HINT[plus1]}</small></div>
+            {LOOK_OFFERED && <div className="set-row"><MemberLookPick />
+              <small className="set-hint" data-set-hint="look">How members look to you. The rules are the same.</small></div>}
+          </section>
+          <section className="setup-col" data-col="colors" aria-labelledby="setup-colors">
+            <h3 className="col-title" id="setup-colors">Colors</h3>
+            <TablePicker value={fitted} n={nSph} onChange={setTable} bare />
+          </section>
         </div>
-        <TablePicker value={fitted} n={nSph} onChange={setTable} />
         <div className="row-btns">
           {/* why Start is off, said beside it (RC1 #8: it dimmed at 3 of 4 with nothing near it) */}
           {startWhy && <span className="hint start-why" data-start-why>{startWhy}</span>}

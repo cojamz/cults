@@ -37,8 +37,12 @@ await page.waitForSelector('[data-home="local"]');
 await page.click('[data-home="local"]');
 await page.waitForSelector('[data-start]');
 // seats
-for (let i = 0; i < 6; i++) {
-  const want = { P: 'Person', B: 'Bot' }[seatSpec[i]] || 'Empty';
+// four seats to start: add or remove seats to match, then set each one Person or Bot
+const nWant = [...seatSpec.slice(0, 6)].filter(c => c === 'P' || c === 'B').length;
+for (let n = 4; n < nWant; n++) await page.click('[data-add-player]');
+for (let n = 4; n > nWant; n--) await page.click(`[data-seat-row="${n - 1}"] [data-remove-seat]`);
+for (let i = 0; i < nWant; i++) {
+  const want = { P: 'Person', B: 'Bot' }[seatSpec[i]];
   await page.locator(`[data-seat-row="${i}"]`).locator('button', { hasText: new RegExp('^' + want + '$') }).click();
 }
 await page.locator('[aria-label="Bot level"] button', { hasText: new RegExp('^' + level + '$') }).click();

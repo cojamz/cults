@@ -57,11 +57,11 @@ async function play(t) {
     await page.goto(`${base}/?botDelay=30&intro=0${t.how === 'url' ? `&table=${t.url || t.ids.join(',')}` : ''}`);
     await page.click('[data-home="local"]');
     await page.waitForSelector('[data-start]');
-    // fewer players: empty the last seats; the table follows the seats (one sphere each)
-    for (let i = 3; i >= (t.seats || 4); i--) await page.click(`[data-seat-row="${i}"] [role="radio"]:has-text("Empty")`);
+    // fewer players: remove the last seats; the table follows the seats (one sphere each)
+    for (let i = 3; i >= (t.seats || 4); i--) await page.click(`[data-seat-row="${i}"] [data-remove-seat]`);
     if (t.seats) {
-      const hint = await page.$eval('.table-pick', e => e.textContent).catch(() => '');
-      if (!hint.includes(`Random ${t.seats}`)) err(`the picker doesn't offer "Random ${t.seats}" with ${t.seats} seats: ${hint.slice(0, 120)}`);
+      const n = await page.$eval('[data-table]', e => e.getAttribute('data-table').split(',').filter(Boolean).length);
+      if (n !== t.seats) err(`the table has ${n} colors with ${t.seats} players`);
     }
     if (t.how === 'click') {
       // wave f4 (blind panel): the click that opened setup focused P4's name box under the pointer; the page held one
@@ -69,14 +69,14 @@ async function play(t) {
       if (await page.evaluate(() => document.activeElement && document.activeElement.tagName === 'INPUT')) err('opening setup put the focus in a name box');
       const box = () => page.evaluate(() => { const d = document.querySelector('.dialog.page').getBoundingClientRect(), s = document.querySelector('[data-start]').getBoundingClientRect(); return { w: Math.round(d.width), left: Math.round(d.left), start: [Math.round(s.left), Math.round(s.top)] }; });
       const sizes = [await box()];
-      // Classic by default; Random 4 offers a fresh table on Reroll; Custom picks by clicks, in wheel order.
+      // Classic by default; Random deals a fresh table each time it's pressed (Cory, Nov 24: no Reroll button); Custom picks by clicks, in wheel order.
       const classic = await page.$eval('[data-table]', e => e.getAttribute('data-table'));
       // Classic (Cory, 2026-10-31): Blue, Red, Yellow, Purple; Gold is off the picker
       if (classic !== 'market,red,yellow,purple') err(`default table is ${classic}`);
-      await page.click('.table-pick [role="radio"]:has-text("Random 4")');
+      await page.click('.table-pick [role="radio"]:has-text("Random")');
       sizes.push(await box());
       const r1 = await page.$eval('[data-table]', e => e.getAttribute('data-table'));
-      await page.click('[data-reroll]');
+      await page.click('.table-pick [role="radio"]:has-text("Random")');
       const r2 = await page.$eval('[data-table]', e => e.getAttribute('data-table'));
       if (r1 === r2 || r1.split(',').length !== 4 || r2.split(',').length !== 4) err(`random/reroll gave ${r1} then ${r2}`);
       await page.click('.table-pick [role="radio"]:has-text("Custom")');

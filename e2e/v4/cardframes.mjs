@@ -90,7 +90,7 @@ for (let g = 0; g < GAMES; g++) {
   await page.goto(`${URL}?intro=0&sound=off&speed=steady`);
   await page.click('[data-home="local"]'); await page.waitForSelector('[data-start]');
   const np = g % 2 ? 3 : 4;
-  for (let i = 3; i >= np; i--) await page.click(`[data-seat-row="${i}"] .seg button:has-text("Empty")`).catch(() => {});
+  for (let i = 3; i >= np; i--) await page.click(`[data-seat-row="${i}"] [data-remove-seat]`).catch(() => {});
   await page.waitForTimeout(300); await page.click('[data-start]');
   await page.waitForSelector('.app.game');
   const t0 = Date.now(); let n = g;

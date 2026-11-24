@@ -11,8 +11,8 @@ describe('v4 app', () => {
     const { container } = render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Play on this device' }));
     // turn P3 and P4 off: 2 seats
-    fireEvent.click(screen.getAllByRole('radio', { name: 'Empty' })[2]);
-    fireEvent.click(screen.getAllByRole('radio', { name: 'Empty' })[3]);
+    fireEvent.click(screen.getAllByRole('button', { name: /^Remove / })[3]);
+    fireEvent.click(screen.getAllByRole('button', { name: /^Remove / })[2]);
     fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     // two chairs at the table hold a cult; the other two stay empty
     expect(container.querySelectorAll('.lt-seat[data-pid]')).toHaveLength(2);
@@ -25,10 +25,15 @@ describe('v4 app', () => {
     await waitFor(() => expect(container.querySelector('[data-prompt]').textContent).not.toMatch(/draft.*resource/i), { timeout: 10000 });
   });
 
-  it('needs at least 2 seats to start', () => {
+  it('keeps at least 2 players, and Add player goes up to the most seats', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Play on this device' }));
-    for (const b of screen.getAllByRole('radio', { name: 'Empty' }).slice(1)) fireEvent.click(b);
-    expect(screen.getByRole('button', { name: 'Start' }).disabled).toBe(true);
+    fireEvent.click(screen.getAllByRole('button', { name: /^Remove / })[3]);
+    fireEvent.click(screen.getAllByRole('button', { name: /^Remove / })[2]);
+    expect(screen.getAllByRole('button', { name: /^Remove / }).every(b => b.disabled)).toBe(true);
+    expect(screen.getByRole('button', { name: 'Start' }).disabled).toBe(false);
+    for (let i = 0; i < 4; i++) fireEvent.click(screen.getByRole('button', { name: '+ Add player' }));
+    expect(screen.getAllByRole('button', { name: /^Remove / })).toHaveLength(6);
+    expect(screen.queryByRole('button', { name: '+ Add player' })).toBeNull();
   });
 });
