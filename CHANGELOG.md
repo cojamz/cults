@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.792 — 2026-11-24
+
+- Every wheel action has a new name for the old village: each says what your cult leader does there (Gather the Kin, Pilfer, Make Haste, Grease a Palm, Melt Down…); what each action does is unchanged
+
 ## v0.99.791 — 2026-11-24
 
 - Minions redrawn at the members' finer pixel size; gnome, hare, goose and badger join, the cat turns black
