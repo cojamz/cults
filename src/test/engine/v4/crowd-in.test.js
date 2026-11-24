@@ -1,15 +1,15 @@
 // @vitest-environment node
-// Overtime (Purple, round III; Cory, 2026-10-28): "+5 purple and gain a minion this round". Replaces placing on taken
-// spaces, which copied too much with Greatest Hits. Extra minions stop when the round's spare spaces run out.
+// Burn the Candle (Purple, round III; Cory, 2026-10-28): "+5 purple and gain a minion this round". Replaces placing on taken
+// spaces, which copied too much with Replay All. Extra minions stop when the round's spare spaces run out.
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove } from '../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { quadrant } from '../../../engine/v4/index.js';
 
-describe('Overtime', () => {
+describe('Burn the Candle', () => {
   it('round III: +3 purple and one more minion this round; no taken spaces opened; not open before round III', () => {
-    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 2, quadrants: ['gold', 'red', 'purple', 'echo'] }); // seed 2 since Green's Nov 11 members (seed 1 since Right Away +2/3/4, Nov 6; 6 before)
+    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 2, quadrants: ['gold', 'red', 'purple', 'echo'] }); // seed 2 since Green's Nov 11 members (seed 1 since Make Haste +2/3/4, Nov 6; 6 before)
     const rand = seededRandom(2);
     const q = s.quadrants.indexOf('purple'), i = quadrant('purple').actions.findIndex(a => a.key === 'crowdin');
     while (!(s.round === 2 && s.pending?.kind === 'place')) s = applyMove(s, chooseBotMove(s, rand));
@@ -20,9 +20,9 @@ describe('Overtime', () => {
     s = applyMove(s, { player: who, option: `slot:${q}-${i}` });
     expect(s.players[who].res.purple).toBe(before + 4); // +4 (Cory, Nov 5)
     expect(s.players[who].squatAll).not.toBe(3); // no longer opens taken spaces
-    // "Take the Goes Last token: that minion is placed after everyone else's." (Cory, Nov 6: "Overtime is good")
+    // "Take the Goes Last token: that minion is placed after everyone else's." (Cory, Nov 6: "Burn the Candle is good")
     expect(s.goesLast).toEqual({ round: 3, pid: who });
-    expect(s.log.join(' ')).toMatch(/Overtime: P\d takes the Goes Last token/);
+    expect(s.log.join(' ')).toMatch(/Burn the Candle: P\d takes the Goes Last token/);
     // the minion just placed is spent, the new one takes its place
     expect(s.players[who].left).toBe(left);
     // every minion left, the new one included, gets placed, on open spaces only

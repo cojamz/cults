@@ -32,7 +32,7 @@ describe('v4 previewSpace', () => {
           }
           const me0 = s.players[pid], me = t.players[pid];
           // the space was the round's last placement and the real path ran on through the round's end: rivals' round-end
-          // members (Straggler doing Kickback for you) are in t, and no space preview covers them
+          // members (Straggler doing Grease a Palm for you) are in t, and no space preview covers them
           const pastRound = t.over || t.round !== s.round || t.log.slice(s.log.length).some(l => /^Round \S+ ends\./.test(l));
           // a card from the face-down pile (Walk-In): the preview doesn't look at it (it runs as a blank, picky bot Nov 4),
           // so its worth and On Recruit are the real path's alone; it never names it either

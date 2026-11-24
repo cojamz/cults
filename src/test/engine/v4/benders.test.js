@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Rule-benders (guest members) and the Release base rule: each one alone, then with Purple extra turns,
-// Echo copies, Doppelganger and Magenta theft.
+// Follow Suit copies, Doppelganger and Magenta theft.
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, resume, followers, contextFor, cardDef, releaseRefund } from '../../../engine/v4/core.js';
 import { defById, EXTRA_WILD } from '../../../engine/v4/content/index.js';
@@ -112,17 +112,17 @@ describe('Trespasser: Once per game, the next minion may go on a space a rival a
     s = move(s, `squat:${JV}`); s = pickAny(s);
     expect(onBoard(contextFor(s), s.players[0])).toBe(1);
   });
-  it('Echo can copy a space that was joined: the copy gives what the space gives', () => {
+  it('Follow Suit can copy a space that was joined: the copy gives what the space gives', () => {
     const Q = ['gold', 'red', 'echo', 'purple'];
     let s = scene({ quadrants: Q, members: [['benders.squatter']], queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
-    s = move(s, `slot:${RUSH}`); s = passBuys(pickAny(s)); // P2 takes Golden Years (+2 gold)
+    s = move(s, `slot:${RUSH}`); s = passBuys(pickAny(s)); // P2 takes Let It Grow (+2 gold)
     s = move(s, `use:${uidOf(s, 'benders.squatter', 0)}`);
     s = move(s, `squat:${RUSH}`); s = passBuys(pickAny(s)); // P1 joins it
     expect(R(s, 0).gold).toBe(2);
     expect(Object.values(s.echo.now).filter(e => e.name === actionName('gold.rush')).map(e => e.p).sort()).toEqual([0, 1]);
-    s = move(s, 'slot:2-1'); // P2 takes Echo
+    s = move(s, 'slot:2-1'); // P2 takes Follow Suit
     expect(s.pending.kind).toBe('choose');
-    expect(s.pending.options.filter(o => o.label.startsWith(actionName('gold.rush'))).map(o => o.label)).toEqual(['Golden Years (P1): +2 gold']);
+    expect(s.pending.options.filter(o => o.label.startsWith(actionName('gold.rush'))).map(o => o.label)).toEqual(['Let It Grow (P1): +2 gold']);
     s = choose(s, o => o.label.startsWith(actionName('gold.rush')));
     expect(R(s, 1).gold).toBe(4);
   });
@@ -236,7 +236,7 @@ describe('Straggler: after the last worker is placed, your last minion may move 
     let s = scene({ round: 2, members: [['benders.straggler']], res: [{ gold: 3 }], slots: { [JV]: 0 }, queue: [{ t: 'allPlaced' }] });
     expect(s.pending.kind).toBe('choose');
     s = choose(s, o => o.value === RUSH); // only where to: the minion is your last one (Cory, 2026-10-15)
-    expect(R(s).gold).toBe(3 + 4); // Golden Years in round II
+    expect(R(s).gold).toBe(3 + 4); // Let It Grow in round II
     expect(s.slots[JV]).toBeUndefined();
     expect(s.slots[RUSH]).toBe(0);
     expect(s.pending).toBe(null); // no buy
@@ -283,7 +283,7 @@ describe('Release (base rule): once per round, release a member for its colored 
     expect(s.pending.kind).toBe('buy');
     expect(ids(s).some(i => i.startsWith('release:'))).toBe(false);
   });
-  it('refills a shop left short by an empty pile with the released member, as Farewell does (Claude, Oct 28)', () => {
+  it('refills a shop left short by an empty pile with the released member, as Bid Farewell does (Claude, Oct 28)', () => {
     const id = 'red.bigfamily';
     let s = scene({ members: [[id]], queue: [{ t: 'turn', p: 0 }] });
     s = move(s, `slot:${RUSH}`);
@@ -351,7 +351,7 @@ describe('Release (base rule): once per round, release a member for its colored 
   });
 });
 
-describe('Release with once-per-game members, just-bought members and Echo copies', () => {
+describe('Release with once-per-game members, just-bought members and Follow Suit copies', () => {
   const payFirst = s => { while (s.pending?.kind === 'pay') s = move(s, s.pending.options.find(o => o.id !== 'back').id); return s; };
   // Cory (2026-10-15): "if you activate a member, you can no longer sell them for money". Before that call a used
   // once-per-game member could be released for its colored part in the same buy step.
@@ -405,9 +405,9 @@ describe('Release with once-per-game members, just-bought members and Echo copie
     expect(ids(s)).toContain(`release:${u}`);
   });
   // Cory (2026-10-15): a member you've activated can't be released for its refund (it used to be, right after).
-  it('an Echo copy made with Tribute Band keeps its gains, and the used Tribute Band can no longer be released', () => {
+  it('an Follow Suit copy made with Tribute Band keeps its gains, and the used Tribute Band can no longer be released', () => {
     const Q = ['gold', 'red', 'echo', 'purple'];
-    // Tribute Band plays a rival's actions (Cory, 2026-10-28): P2 takes Golden Years first
+    // Tribute Band plays a rival's actions (Cory, 2026-10-28): P2 takes Let It Grow first
     let s = scene({ quadrants: Q, members: [['echo.dejavu']], queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
     s = move(s, `slot:${RUSH}`); s = passBuys(pickAny(s));
     s = move(s, `slot:${JV}`); s = pickAny(s);

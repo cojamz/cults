@@ -1,7 +1,7 @@
 // @vitest-environment node
 // What you just did happens now, even past a skip you already have (Cory, 2026-10-29: a copied "Take another turn
-// right after this one" after Last Call gave him two turns in a row at the round's end instead; "what would be
-// intuitive?"). Sleep In already worked that way; Last Call pushed the moved-up turn back to the end.
+// right after this one" after Bide Your Time gave him two turns in a row at the round's end instead; "what would be
+// intuitive?"). Lie Abed already worked that way; Bide Your Time pushed the moved-up turn back to the end.
 import { describe, it, expect } from 'vitest';
 import { take, move } from './helpers.js';
 import { sceneQ, settle, passBuys } from './cards-helpers.js';
@@ -17,28 +17,28 @@ const scene = () => sceneQ({ quadrants: ['purple', 'echo', 'gold', 'red'], n: 3,
   queue: [1, 0, 2, 2, 0, 1, 1, 0, 2].map(p => ({ t: 'turn', p })).concat({ t: 'allPlaced' }) });
 
 describe('a turn moved up beats a skip you already have', () => {
-  it('Last Call, then Tribute Band copies a rival’s Right Away: you place right away, then go last', () => {
+  it('Bide Your Time, then Tribute Band copies a rival’s Make Haste: you place right away, then go last', () => {
     let s = scene();
-    s = passBuys(settle(take(s, 'purple.again'))); // P2 Right Away
+    s = passBuys(settle(take(s, 'purple.again'))); // P2 Make Haste
     s = plain(s); // P2's turn right after
     expect(s.pending.player).toBe(0);
-    s = settle(take(s, 'purple.lastcall')); // P1 Last Call: goes last
-    s = settle(move(s, `use:${uidOf(s, 'echo.dejavu', 0)}`)); // Tribute Band: P2's actions, Right Away among them
-    expect(s.log).toContain("P1's Right Away: P1 takes their next turn now.");
+    s = settle(take(s, 'purple.lastcall')); // P1 Bide Your Time: goes last
+    s = settle(move(s, `use:${uidOf(s, 'echo.dejavu', 0)}`)); // Tribute Band: P2's actions, Make Haste among them
+    expect(s.log).toContain("P1's Make Haste: P1 takes their next turn now.");
     s = passBuys(s);
     expect(s.pending).toMatchObject({ kind: 'place', player: 0 });
     s = plain(s);
-    // and then Last Call holds: every rival places before P1 again
+    // and then Bide Your Time holds: every rival places before P1 again
     const order = [];
     while (s.pending?.kind === 'place') { order.push(s.pending.player); s = plain(s); }
     expect(order.indexOf(0)).toBe(order.length - order.filter(p => p === 0).length);
   });
 
-  it('Sleep In, then a copied Right Away: the copy comes now and the skip passes the turn after', () => {
+  it('Lie Abed, then a copied Make Haste: the copy comes now and the skip passes the turn after', () => {
     let s = scene();
-    s = passBuys(settle(take(s, 'purple.again'))); // P2 Right Away
+    s = passBuys(settle(take(s, 'purple.again'))); // P2 Make Haste
     s = plain(s);
-    s = settle(take(s, 'purple.skip')); // P1 Sleep In: skips their next turn
+    s = settle(take(s, 'purple.skip')); // P1 Lie Abed: skips their next turn
     s = settle(move(s, `use:${uidOf(s, 'echo.dejavu', 0)}`));
     s = passBuys(s);
     expect(s.pending).toMatchObject({ kind: 'place', player: 0 });

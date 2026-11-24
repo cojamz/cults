@@ -198,7 +198,7 @@ describe('Purple candidates', () => {
   it('Ushers\' Cut: taking the Goes Last token steals 1 resource from each rival', () => {
     let s = sceneQ({ quadrants: Q, n: 3, members: [['purple.usherscut']], res: [{}, { blue: 3, white: 1 }, { yellow: 2 }],
       queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'turn', p: 0 }] });
-    s = take(s, 'purple.skip'); // Sleep In: take the Goes Last token
+    s = take(s, 'purple.skip'); // Lie Abed: take the Goes Last token
     expect(s.players[1].res.blue).toBe(2);
     expect(s.players[2].res.yellow).toBe(1);
     expect(s.players[0].res.blue).toBe(1);

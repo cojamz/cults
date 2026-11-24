@@ -13,39 +13,39 @@ export default {
 
   actions: [
     {
-      key: 'jv', ring: 1, name: 'Kickback', text: '+3 gold, and +1 gold to a rival you choose.',
+      key: 'jv', ring: 1, name: 'Grease a Palm', text: '+3 gold, and +1 gold to a rival you choose.',
       estimate: () => 3.3,
       resolve(ctx, p) {
         ctx.gain(p, 'gold', 3, { fromAction: true });
         const rivals = ctx.rivals(p);
-        ctx.choose(p, 'Kickback: give 1 gold to…', rivals.map(o => ({
+        ctx.choose(p, 'Grease a Palm: give 1 gold to…', rivals.map(o => ({
           id: `player:${o.id}`, label: o.name, kind: 'player', value: o.id, hint: -ctx.followers(o),
         })), 'gold.jvGift');
       },
     },
     {
-      key: 'rush', ring: 1, name: 'Golden Years', text: '+2 gold in round I, +4 in round II, +6 in round III.',
+      key: 'rush', ring: 1, name: 'Let It Grow', text: '+2 gold in round I, +4 in round II, +6 in round III.',
       byRound: { lines: ['+2 gold', '+4 gold', '+6 gold'] },
       estimate: ctx => 2 * ctx.state.round,
       resolve(ctx, p) { ctx.gain(p, 'gold', 2 * ctx.state.round, { fromAction: true }); },
     },
     {
-      key: 'discount', ring: 1, name: 'Intro Offer', text: 'Your next member costs 4 less, off any part of its cost.',
+      key: 'discount', ring: 1, name: 'Bargain Down', text: 'Your next member costs 4 less, off any part of its cost.',
       estimate: ctx => (ctx.shopCards().some(c => c.def.s + c.def.w >= 6 + MORE + richUp(ctx.state)) ? 2.4 : 1.2),
-      resolve(ctx, p) { ctx.discount(p, 4, 'Intro Offer'); ctx.log(p.discount > 4 ? `Intro Offer stacks: ${p.name}'s next member costs ${p.discount} less.` : `${p.name}'s next member costs 4 less.`); },
+      resolve(ctx, p) { ctx.discount(p, 4, 'Bargain Down'); ctx.log(p.discount > 4 ? `Bargain Down stacks: ${p.name}'s next member costs ${p.discount} less.` : `${p.name}'s next member costs 4 less.`); },
     },
     {
-      key: 'steal', ring: 2, name: 'Collect Debts', text: 'Steal up to 3 gold from rivals, split as you choose.',
+      key: 'steal', ring: 2, name: 'Call In Debts', text: 'Steal up to 3 gold from rivals, split as you choose.',
       estimate: (ctx, p) => Math.min(3, ctx.rivals(p).filter(o => ctx.canSteal(p, o)).reduce((s, o) => s + o.res.gold, 0)) * 1.4,
       resolve(ctx, p) { stealStep(ctx, p, { left: ctx.stealCount(p, 3, { say: true }), picked: {}, unit: ctx.stealCount(p, 1) - ctx.stealCount(p, 0) }); },
     },
     {
-      key: 'windfall', ring: 2, name: 'Tithe', text: '+1 gold per member you have.',
+      key: 'windfall', ring: 2, name: 'Pass the Plate', text: '+1 gold per member you have.',
       estimate: (ctx, p) => ctx.memberCount(p),
       resolve(ctx, p) { ctx.gain(p, 'gold', ctx.memberCount(p), { fromAction: true }); },
     },
     {
-      key: 'strike', ring: 3, name: 'Double Down', text: 'Double your gold.',
+      key: 'strike', ring: 3, name: 'Multiply', text: 'Double your gold.',
       estimate: (ctx, p) => p.res.gold,
       resolve(ctx, p) { ctx.gain(p, 'gold', p.res.gold, { fromAction: true }); },
     },
@@ -196,7 +196,7 @@ function stealStep(ctx, p, data) {
   if (data.left > 0 && targets.length) {
     // the count rides on the task (1 of 3 taken), so a reload mid-split shows the same progress
     const taken = Object.values(data.picked).reduce((a, b) => a + b, 0);
-    ctx.choose(p, `Collect Debts: take ${Math.min(data.unit || 1, data.left)} gold from… (${data.left} left)`, targets.map(o => ({
+    ctx.choose(p, `Call In Debts: take ${Math.min(data.unit || 1, data.left)} gold from… (${data.left} left)`, targets.map(o => ({
       id: `player:${o.id}`, label: `${o.name} · ${left(o)} gold`, kind: 'player', value: o.id, hint: left(o),
       take: Math.min(data.unit || 1, data.left, left(o)),
       target: { pid: o.id, res: 'gold' }, // their gold stack is what you click (the seat selector)

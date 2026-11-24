@@ -375,12 +375,12 @@ const trading = {
       // Cory, 2026-11-11 10:33am Eastern: "Modest means is good. I like." Allowance's slot; name Claude's fill-in.
       // 10:51am: "No modest means = +2 white. +1 white per rival with more members than you." 
       // Counts members as White's contest does (memberCount: a card that counts as 2 counts 2).
-      key: 'modestmeans', copyDoesIt: true, ring: 1, name: 'Modest Means', text: '+2 white. +1 white per rival with more members than you.',
+      key: 'modestmeans', copyDoesIt: true, ring: 1, name: 'Live Simply', text: '+2 white. +1 white per rival with more members than you.',
       estimate: (ctx, p) => 2 + ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length,
       resolve(ctx, p) {
         const k = ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length;
         ctx.gain(p, W, 2 + k, { fromAction: true });
-        ctx.log(`${p.name}'s Modest Means: ${k} rival${k === 1 ? '' : 's'} with more members, +${2 + k} white.`);
+        ctx.log(`${p.name}'s Live Simply: ${k} rival${k === 1 ? '' : 's'} with more members, +${2 + k} white.`);
       },
     },
     // Allowance left the wheel Nov 11 (Modest Means took its slot); kept for old saves and its tests.
@@ -397,7 +397,7 @@ const trading = {
       },
     }]),
     swap11({
-      key: 'splurge', copyDoesIt: true, ring: 1, name: 'Splurge', text: '+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).', // +2 white (Cory, Nov 6: "just buff those by +1 white"); members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
+      key: 'splurge', copyDoesIt: true, ring: 1, name: 'Spend Freely', text: '+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).', // +2 white (Cory, Nov 6: "just buff those by +1 white"); members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
       byRound: { lines: ['+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay.', '+2 white. If you recruit a member this turn: +1 follower for every 1 resource you pay.', '+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay.'] },
       estimate: (ctx, p) => 2 + Math.floor(Math.min(totalRes(p) + 1, 7) / (ctx.state.round === 2 ? 1 : 2)) * fv(ctx) * 0.8,
       resolve(ctx, p) {
@@ -416,9 +416,9 @@ const trading = {
     }),
     {
       // Cory, 2026-11-11 10:57am Eastern: "yeah lets just plug in +3 white for now." (Exchange's slot; a stand-in, name Claude's fill-in)
-      key: 'nestegg', copyDoesIt: true, ring: 1, name: 'Nest Egg', text: '+3 white.',
+      key: 'nestegg', copyDoesIt: true, ring: 1, name: 'Put By', text: '+3 white.',
       estimate: () => 3,
-      resolve(ctx, p) { ctx.gain(p, W, 3, { fromAction: true }); ctx.log(`${p.name}'s Nest Egg: +3 white.`); },
+      resolve(ctx, p) { ctx.gain(p, W, 3, { fromAction: true }); ctx.log(`${p.name}'s Put By: +3 white.`); },
     },
     // Exchange left the wheel Nov 11 (Cory: "I don't like Exchange"); kept for old saves and its tests.
     swap11(swap11(swap14({
@@ -432,16 +432,16 @@ const trading = {
       },
     }, PAWN_SHOP), WHITE_EXCHANGE), LOAN),
     {
-      key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Discard a member for its cost in followers. +1 white.', // "cast out": Cory, 2026-10-24
+      key: 'farewell', copyDoesIt: true, ring: 2, name: 'Bid Farewell', text: 'Discard a member for its cost in followers. +1 white.', // "cast out": Cory, 2026-10-24
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, fv(ctx)))),
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
-        buryChoice(ctx, p, 'Farewell', 'followers');
+        buryChoice(ctx, p, 'Bid Farewell', 'followers');
       },
     },
     // Write-Off took Estate Sale's slot (Cory, 2026-11-11 1:30pm Eastern: "Maybe like Write-Off. and yeah i like switching
     // it to the give to a rival"): Bequest's give without its +3 followers. Estate Sale stays for old saves and its tests.
-    giveDef('writeoff', 'Write-Off', 'Give a member to a rival for its cost in white. +1 white.', 1, 0),
+    giveDef('writeoff', 'Give Away', 'Give a member to a rival for its cost in white. +1 white.', 1, 0),
     swap11({
       pool: true,
       key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'Discard a member for its cost in white. +1 white.',
@@ -452,16 +452,16 @@ const trading = {
       },
     }, swap11(YARD_SALE, CASH_OUT)),
     {
-      key: 'cashin', copyDoesIt: true, ring: 3, name: 'Cash In', text: 'Turn all your white into followers. +1 white.',
+      key: 'cashin', copyDoesIt: true, ring: 3, name: 'Redeem', text: 'Turn all your white into followers. +1 white.',
       estimate: (ctx, p) => (p.res[W] || 0) * fv(ctx) + 1,
       resolve(ctx, p) {
         const n = p.res[W] || 0;
         if (n) {
           p.res[W] = 0;
           actionFollowers(ctx, p, n);
-          ctx.log(`${p.name}'s Cash In: ${n} white became ${plural(n, 'follower')}.`);
+          ctx.log(`${p.name}'s Redeem: ${n} white became ${plural(n, 'follower')}.`);
           turned(ctx, p);
-        } else ctx.log(`${p.name}'s Cash In: no white to turn into followers.`);
+        } else ctx.log(`${p.name}'s Redeem: no white to turn into followers.`);
         ctx.gain(p, W, 1, { fromAction: true });
       },
     },

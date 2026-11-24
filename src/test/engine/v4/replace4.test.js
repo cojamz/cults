@@ -75,10 +75,10 @@ describe('REPLACE4: each card fires', () => {
 
   it("Opening Act: a rival's first minion of the round; you do that action too, and only that one", () => {
     let s = table(['red', 'echo', 'market', 'yellow'], { round: 2, members: [['echo.openingact']], queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
-    s = take(s, 'red.turnout'); // Gather: +3 red in round II
+    s = take(s, 'red.turnout'); // Gather the Kin: +3 red in round II
     expect(s.players[1].res.red).toBe(3);
     expect(s.players[0].res.red).toBe(3);
-    expect(named(s, 'Opening Act').some(l => l.includes('Gather'))).toBe(true);
+    expect(named(s, 'Opening Act').some(l => l.includes('Gather the Kin'))).toBe(true);
     while (s.pending.player === 1 && s.pending.kind === 'buy') s = move(s, 'pass');
     s = take(s, 'echo.encore');
     while (s.pending.player === 0 && s.pending.kind !== 'place') s = move(s, s.pending.options.find(o => o.kind === 'pass')?.id || s.pending.options[0].id);

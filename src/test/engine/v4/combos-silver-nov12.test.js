@@ -68,7 +68,7 @@ describe('Paupers: "Round End: if you hold no silver, +3 followers."', () => {
     // P2 recruits Hostages and swaps their Good Samaritans for P1's Paupers (both cost 6)
     const { s } = go('paupers-exchange', { quads: Q, turns: [1], queue: [{ t: 'turn', p: 1 }, { t: 'allPlaced' }], shop: ['yellow.exchangestudents'],
       members: [['silver.paupers'], ['silver.kingmakers']], res: [{ silver: 0 }, { yellow: 9, red: 9 }] },
-      [/Gather/, /Hostages/, /Paupers/]);
+      [/Gather the Kin/, /Hostages/, /Paupers/]);
     expect(names(s, 1)).toContain('Paupers');
     expect(names(s, 0)).toContain('Good Samaritans');
     expect(has(s, /P2's Paupers: no silver, \+3 followers\./)).toBe(true);
@@ -95,7 +95,7 @@ describe('Paupers and Good Samaritans at Round End (both "Round End")', () => {
 describe('Camp Followers: "Whenever any player buys followers with silver, +1 follower."', () => {
   it('4 players, two Camp Followers owners: a third player\'s silver buy pays both', () => {
     const { s } = go('toll-4p', { quads: Q, n: 4, turns: [2], members: [['silver.tollcollectors'], ['silver.tollcollectors'], [], []],
-      res: [{}, {}, { silver: 5 }, {}] }, [/Gather/, /tier:small|^1 follower|small/]);
+      res: [{}, {}, { silver: 5 }, {}] }, [/Gather the Kin/, /tier:small|^1 follower|small/]);
     expect(s.players[0].bonus).toBe(1);
     expect(s.players[1].bonus).toBe(1);
     expect(s.log).toContain("P1's Camp Followers: P3 paid silver for followers, +1 follower.");
@@ -105,7 +105,7 @@ describe('Camp Followers: "Whenever any player buys followers with silver, +1 fo
 
   it('Indulgence Seller turning in silver for followers is not a followers buy: Camp Followers pays nothing (question for the report)', () => {
     const { s } = go('toll-bookies', { quads: Q, turns: [1], members: [['silver.tollcollectors'], []], shop: ['silver.bookies'], res: [{}, { silver: 9, red: 9 }] },
-      [/Gather/, /Indulgence Seller/, /n:4/]);
+      [/Gather the Kin/, /Indulgence Seller/, /n:4/]);
     expect(s.players[1].res.silver).toBeLessThan(9);
     expect(has(s, /P2's Indulgence Seller: turns in 4 silver, \+8 followers\./)).toBe(true);
     expect(has(s, /Camp Followers/)).toBe(false);
@@ -114,7 +114,7 @@ describe('Camp Followers: "Whenever any player buys followers with silver, +1 fo
 
   it('Wastrels\' extra followers buy paid with silver pays Camp Followers', () => {
     const { s } = go('toll-splurgers', { quads: Q, turns: [1], members: [['silver.tollcollectors'], ['silver.splurgers']], shop: ['silver.kingmakers'], res: [{}, { silver: 9 }] },
-      [/Gather/, /Good Samaritans/, /tier:small/, /pay:1-0-0-0/]);
+      [/Gather the Kin/, /Good Samaritans/, /tier:small/, /pay:1-0-0-0/]);
     expect(names(s, 1)).toContain('Good Samaritans');
     expect(s.players[0].bonus).toBe(1);
     expect(s.log).toContain("P1's Camp Followers: P2 paid silver for followers, +1 follower.");
@@ -133,17 +133,17 @@ describe('Wastrels: "Whenever you recruit a silver member, you may also buy foll
     expect(extra(s)).toBe(false);
   });
 
-  it('a silver member recruited free with Initiation: no extra buy (Barker\'s logged reading), the turn\'s own buy still comes', () => {
+  it('a silver member recruited free with Induct: no extra buy (Barker\'s logged reading), the turn\'s own buy still comes', () => {
     const { s } = go('splurgers-initiation', { quads: Q, turns: [0], members: [['silver.splurgers']], shop: ['silver.bookies'], res: [{ red: 9 }] },
-      [/Initiation/, /Indulgence Seller/]);
+      [/Induct/, /Indulgence Seller/]);
     expect(names(s, 0)).toContain('Indulgence Seller');
     expect(s.pending.kind).toBe('buy');
     expect(extra(s)).toBe(false);
   });
 
-  it('a silver member bought with Buyout: no extra buy (Barker\'s logged reading)', () => {
+  it('a silver member bought with Hire Away: no extra buy (Barker\'s logged reading)', () => {
     const { s } = go('splurgers-buyout', { quads: Q, turns: [0], members: [['silver.splurgers'], ['silver.paupers']], res: [{ silver: 9, red: 9 }] },
-      [/Buyout/, /Paupers/]);
+      [/Hire Away/, /Paupers/]);
     expect(names(s, 0)).toContain('Paupers');
     expect(s.players[1].res.silver).toBe(6);
     expect(extra(s)).toBe(false);
@@ -151,7 +151,7 @@ describe('Wastrels: "Whenever you recruit a silver member, you may also buy foll
 
   it('recruiting a second Wastrels: the first one gives an extra followers buy, the new one not for itself', () => {
     const { s, trail } = go('splurgers-second', { quads: Q, turns: [0], members: [['silver.splurgers']], shop: ['silver.splurgers'], res: [{ red: 20, silver: 20 }] },
-      [/Gather/, /Wastrels/, /tier:small/]);
+      [/Gather the Kin/, /Wastrels/, /tier:small/]);
     expect(names(s, 0)).toEqual(['Wastrels', 'Wastrels']);
     expect(trail.join('\n')).toContain('tier:small (+1 followers) @ P1: recruit followers again (Wastrels), or pass');
     expect(s.log.filter(l => /P1 bought 1 follower/.test(l)).length).toBe(1);
@@ -163,7 +163,7 @@ describe('Wastrels: "Whenever you recruit a silver member, you may also buy foll
   // and with Barker beside it, Wastrels' buy is logged as "P1 uses Barker."
   it('Wastrels\' extra buy is named in the log: "P1 uses Wastrels."', () => {
     const { s } = go('splurgers-uses', { quads: Q, turns: [0], members: [['silver.splurgers']], shop: ['silver.paupers'], res: [{ red: 20, silver: 20 }] },
-      [/Gather/, /Paupers/, /tier:small/]);
+      [/Gather the Kin/, /Paupers/, /tier:small/]);
     expect(s.log).toContain('P1 uses Wastrels.');
   });
 
@@ -171,14 +171,14 @@ describe('Wastrels: "Whenever you recruit a silver member, you may also buy foll
   // and "everything stacks", but a silver member with Barker and Wastrels both brings one extra buy, not two.
   it('Wastrels with Barker: a silver member brings two extra followers buys, one from each card', () => {
     const { s, trail } = go('splurgers-barker', { quads: Q, turns: [0], members: [['silver.splurgers', 'trading.barker']], shop: ['silver.paupers'], res: [{ red: 20, silver: 20 }] },
-      [/Gather/, /Paupers/, /tier:small/, /tier:small/]);
+      [/Gather the Kin/, /Paupers/, /tier:small/, /tier:small/]);
     expect(names(s, 0)).toContain('Paupers');
     expect(s.log.filter(l => /P1 bought 1 follower/.test(l)).length).toBe(2);
   });
 
   it('a red member brings no extra buy; passing the extra buy keeps the followers bought nowhere', () => {
     const { s } = go('splurgers-pass', { quads: Q, turns: [0], members: [['silver.splurgers']], shop: ['silver.paupers'], res: [{ red: 20, silver: 20 }] },
-      [/Gather/, /Paupers/, /^pass$/]);
+      [/Gather the Kin/, /Paupers/, /^pass$/]);
     expect(names(s, 0)).toContain('Paupers');
     expect(has(s, /bought/)).toBe(false);
     cleanLog(s);
@@ -216,7 +216,7 @@ describe('Pawnbrokers: "On Use, once per round: swap up to 5 of your silver for 
     const st = scene({ quads: Q, turns: [1], members: [['silver.loanofficers'], ['echo.songrequest']], shop: ['yellow.exchangestudents'], res: [{ silver: 5 }, { yellow: 9, red: 9, silver: 5, magenta: 5 }] });
     const u = uidOf(st, 0, 'silver.loanofficers');
     st.cards[u].used = true;
-    const { s, trail } = drive(st, [/Gather/, /Hostages/, /Pawnbrokers/]);
+    const { s, trail } = drive(st, [/Gather the Kin/, /Hostages/, /Pawnbrokers/]);
     if (DUMP) dump('loan-exchange-used', s, trail);
     expect(s.players[1].members).toContain(u);
     expect(s.cards[u].used).toBe(true);
@@ -233,22 +233,22 @@ describe('Pawnbrokers: "On Use, once per round: swap up to 5 of your silver for 
 });
 
 describe('Indulgence Seller: "On Recruit: turn in up to 4 silver for 2 followers each."', () => {
-  it('with no silver (recruited free with Initiation): no choice, one plain log line', () => {
-    const { s, trail } = go('bookies-zero', { quads: Q, turns: [0], shop: ['silver.bookies'], res: [{ red: 9 }] }, [/Initiation/, /Indulgence Seller/]);
+  it('with no silver (recruited free with Induct): no choice, one plain log line', () => {
+    const { s, trail } = go('bookies-zero', { quads: Q, turns: [0], shop: ['silver.bookies'], res: [{ red: 9 }] }, [/Induct/, /Indulgence Seller/]);
     expect(names(s, 0)).toContain('Indulgence Seller');
     expect(trail.join('\n')).not.toMatch(/Indulgence Seller: turn in/);
     expect(s.log).toContain("P1's Indulgence Seller: no silver to turn in.");
   });
 
-  it('with 2 silver (recruited free with Initiation): offers 2, 1 or 0', () => {
-    const { s } = go('bookies-two', { quads: Q, turns: [0], shop: ['silver.bookies'], res: [{ red: 9, silver: 2 }] }, [/Initiation/, /Indulgence Seller/]);
+  it('with 2 silver (recruited free with Induct): offers 2, 1 or 0', () => {
+    const { s } = go('bookies-two', { quads: Q, turns: [0], shop: ['silver.bookies'], res: [{ red: 9, silver: 2 }] }, [/Induct/, /Indulgence Seller/]);
     expect(s.pending.prompt).toBe('Indulgence Seller: turn in how much silver? 2 followers each (you have 2)');
     expect(s.pending.options.map(o => o.id)).toEqual(['n:2', 'n:1', 'n:0']);
   });
 
-  it('recruited free with Initiation holding 3 silver: turns in all 3', () => {
+  it('recruited free with Induct holding 3 silver: turns in all 3', () => {
     const { s } = go('bookies-initiation', { quads: Q, turns: [0], shop: ['silver.bookies'], res: [{ silver: 3 }] },
-      [/Initiation/, /Indulgence Seller/, /n:3/]);
+      [/Induct/, /Indulgence Seller/, /n:3/]);
     expect(names(s, 0)).toContain('Indulgence Seller');
     expect(s.players[0].res.silver).toBe(0);
     expect(s.log).toContain("P1's Indulgence Seller: turns in 3 silver, +6 followers.");
@@ -256,7 +256,7 @@ describe('Indulgence Seller: "On Recruit: turn in up to 4 silver for 2 followers
 
   it('Impersonator copying a rival\'s Indulgence Seller does its On Recruit with the copier\'s silver', () => {
     const { s } = go('bookies-impersonator', { quads: ['silver', 'red', 'echo', 'thieves'], turns: [0], members: [[], ['silver.bookies']], shop: ['echo.impersonators'], res: [{ red: 9, green: 9, silver: 7 }, { silver: 5 }] },
-      [/Gather/, /Impersonator/, /Indulgence Seller/, /n:3/]);
+      [/Gather the Kin/, /Impersonator/, /Indulgence Seller/, /n:3/]);
     expect(s.log).toContain("P1's Indulgence Seller: turns in 3 silver, +6 followers.");
     expect(s.players[0].res.silver).toBe(4); // 7, less 3 turned in (Impersonator was paid in red and green)
     expect(s.players[0].bonus).toBe(6);
@@ -266,7 +266,7 @@ describe('Indulgence Seller: "On Recruit: turn in up to 4 silver for 2 followers
 
   it('Changeling swapped for a rival\'s Indulgence Seller: does Indulgence Seller\' On Recruit fire for the new holder?', () => {
     const { s, trail } = go('bookies-doubleagent', { quads: Q, turns: [0], members: [[], ['silver.bookies']], shop: ['thieves.doubleagent'], res: [{ red: 20, magenta: 9, silver: 3 }, {}] },
-      [/Gather/, /Changeling/, /Indulgence Seller/, /n:3/]);
+      [/Gather the Kin/, /Changeling/, /Indulgence Seller/, /n:3/]);
     expect(names(s, 0)).toContain('Indulgence Seller');
     expect(names(s, 1)).toContain('Changeling');
     expect(has(s, /P1's Indulgence Seller: turns in 3 silver, \+6 followers\./)).toBe(true);
@@ -275,7 +275,7 @@ describe('Indulgence Seller: "On Recruit: turn in up to 4 silver for 2 followers
 
 describe('Purse-Switchers: "On Recruit: swap all your silver with a rival’s."', () => {
   it('both hold 0 silver: the swap changes nothing and the log reads 0 for 0', () => {
-    const { s } = go('hustlers-zero', { quads: Q, turns: [0], shop: ['silver.hustlers'], res: [{ red: 9 }, {}] }, [/Initiation/, /Purse-Switchers/, /player:1/]);
+    const { s } = go('hustlers-zero', { quads: Q, turns: [0], shop: ['silver.hustlers'], res: [{ red: 9 }, {}] }, [/Induct/, /Purse-Switchers/, /player:1/]);
     expect(s.players[0].res.silver).toBe(0);
     expect(s.players[1].res.silver).toBe(0);
     expect(s.log).toContain("P1's Purse-Switchers: swaps silver with P2 (0 for 0).");
@@ -283,7 +283,7 @@ describe('Purse-Switchers: "On Recruit: swap all your silver with a rival’s."'
 
   it('4 players: only the chosen rival\'s silver moves; the silver paid for Purse-Switchers is gone before the swap', () => {
     const { s } = go('hustlers-4p', { quads: Q, n: 4, turns: [0], shop: ['silver.hustlers'], res: [{ silver: 6 }, { silver: 1 }, { silver: 10 }, { silver: 3 }] },
-      [/Gather/, /Purse-Switchers/, /player:2/]);
+      [/Gather the Kin/, /Purse-Switchers/, /player:2/]);
     const paid = 6 - Number((s.log.find(l => /P1's Purse-Switchers/.test(l)) || '').match(/\((\d+) for/)?.[1]);
     expect(paid).toBeGreaterThanOrEqual(0);
     expect(s.players[0].res.silver).toBe(10);
@@ -295,14 +295,14 @@ describe('Purse-Switchers: "On Recruit: swap all your silver with a rival’s."'
 
   it('Thief-Takers do not stop it (a swap, not a steal)', () => {
     const { s } = go('hustlers-bodyguards', { quads: Q, turns: [0], shop: ['silver.hustlers'], members: [[], ['thieves.watchdog']], res: [{ red: 9 }, { silver: 8 }] },
-      [/Initiation/, /Purse-Switchers/, /player:1/]);
+      [/Induct/, /Purse-Switchers/, /player:1/]);
     expect(s.players[0].res.silver).toBe(8);
     expect(s.players[1].res.silver).toBe(0);
   });
 
   it('then Paupers at Round End: the rival who got your 0 silver is paid', () => {
     const { s } = go('hustlers-paupers', { quads: Q, queue: [{ t: 'turn', p: 0 }, { t: 'allPlaced' }], shop: ['silver.hustlers'], members: [[], ['silver.paupers']], res: [{ red: 9 }, { silver: 8 }] },
-      [/Initiation/, /Purse-Switchers/, /player:1/, /^pass$/]);
+      [/Induct/, /Purse-Switchers/, /player:1/, /^pass$/]);
     expect(s.players[1].res.silver).toBe(0);
     expect(s.log).toContain("P2's Paupers: no silver, +3 followers.");
   });
@@ -311,7 +311,7 @@ describe('Purse-Switchers: "On Recruit: swap all your silver with a rival’s."'
 describe('more combos (Nov 12)', () => {
   it('Camp Followers: 5 followers paid with 1 silver and 4 red still pays +1, not +5', () => {
     const { s } = go('toll-mixed', { quads: Q, turns: [1], members: [['silver.tollcollectors'], []], res: [{}, { silver: 1, red: 1 }] },
-      [/Gather/, /tier:mid/, /pay:1-4-0-0/]);
+      [/Gather the Kin/, /tier:mid/, /pay:1-4-0-0/]);
     expect(s.log).toContain('P2 bought 5 followers (1 silver, 4 red).');
     expect(s.players[0].bonus).toBe(1);
   });
@@ -328,7 +328,7 @@ describe('more combos (Nov 12)', () => {
 
   it('Pawnbrokers hands a Paupers owner silver: no +3 for them at Round End', () => {
     const { s } = go('loan-paupers', { quads: Q, queue: [{ t: 'turn', p: 0 }, { t: 'allPlaced' }], members: [['silver.loanofficers'], ['silver.paupers']], res: [{ silver: 2 }, { red: 4 }] },
-      [/use:/, /swap:1:red/, /^done$/, /Gather/, /^pass$/]);
+      [/use:/, /swap:1:red/, /^done$/, /Gather the Kin/, /^pass$/]);
     expect(s.players[1].res.silver).toBe(1);
     expect(has(s, /Paupers/)).toBe(false);
   });
@@ -337,7 +337,7 @@ describe('more combos (Nov 12)', () => {
 
   it('Impersonator copying a rival\'s Purse-Switchers: swaps the copier\'s silver with a rival\'s', () => {
     const { s } = go('hustlers-impersonator', { quads: ['silver', 'red', 'echo', 'thieves'], n: 3, turns: [0], members: [[], ['silver.hustlers'], []], shop: ['echo.impersonators'],
-      res: [{ red: 9, green: 9 }, { silver: 2 }, { silver: 9 }] }, [/Gather/, /Impersonator/, /Purse-Switchers/, /player:2/]);
+      res: [{ red: 9, green: 9 }, { silver: 2 }, { silver: 9 }] }, [/Gather the Kin/, /Impersonator/, /Purse-Switchers/, /player:2/]);
     expect(s.log).toContain("P1's Purse-Switchers: swaps silver with P3 (0 for 9).");
     expect(s.players[0].res.silver).toBe(9);
     expect(s.players[2].res.silver).toBe(0);

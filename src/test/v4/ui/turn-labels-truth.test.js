@@ -17,7 +17,7 @@ const planned = s => (s.turns || []).length + s.queue.filter(t => t.t === 'turn'
 const earlyN = s => (s.early && s.early.round === s.round ? s.early.moves.length : 0);
 /** Who really places next (the next turn the engine starts this round), or undefined when the plan changed on the way
  *  (an extra turn granted, turns taken early) so no label could have known it; null when the round ends first. */
-/** A turn skipped or moved up on the way (Hold Up on a turn already last, Right Away next to its own turn) changes the
+/** A turn skipped or moved up on the way (Hold Up on a turn already last, Make Haste next to its own turn) changes the
  *  plan without moving any count above: read it from the log lines since s (the log is capped, so from s's last line). */
 // lines since s: by position while the log isn't capped yet (a repeated line, "P3's Pardoner: +1 gold.", fooled lastIndexOf)
 const since = (s, t) => (t.log.length >= s.log.length && t.log[s.log.length - 1] === s.log.at(-1) ? t.log.slice(s.log.length) : t.log.slice(t.log.lastIndexOf(s.log.at(-1)) + 1));
@@ -38,21 +38,21 @@ const TABLES = [
   { n: 3, q: ['gold', 'red', 'purple', 'green'] },
   { n: 4, q: ['gold', 'red', 'purple', 'green'] },
   { n: 2, q: ['purple', 'red', 'gold', 'green'] },
-  // whoever can, takes Crunch Time at once (its turns moved up close the gaps between the others' turns: #98, #99)
+  // whoever can, takes Flurry at once (its turns moved up close the gaps between the others' turns: #98, #99)
   { n: 3, q: ['gold', 'red', 'purple', 'green'], crunch: true },
   { n: 4, q: ['gold', 'red', 'purple', 'green'], crunch: true },
 ];
-/** The bot's move, or Crunch Time when the table forces it and it's open. */
+/** The bot's move, or Flurry when the table forces it and it's open. */
 function nextMove(s, rand, crunch) {
   if (crunch && s.pending?.kind === 'place') {
-    const o = s.pending.options.find(x => x.kind === 'slot' && actionAt(s, x.q, x.i).name === 'Crunch Time');
+    const o = s.pending.options.find(x => x.kind === 'slot' && actionAt(s, x.q, x.i).name === 'Flurry');
     if (o) return { player: s.pending.player, option: o.id };
   }
   return chooseBotMove(s, rand);
 }
 
 /** A bot move that leaves Purple's other turn-moving spaces alone when anything else is open (so the round's shape
- *  is Crunch Time's alone). */
+ *  is Flurry's alone). */
 const MOVES = ['skip', 'holdup', 'again', 'lastcall', 'crowdin'];
 function plainBot(s, rand) {
   const m = chooseBotMove(s, rand);
@@ -65,7 +65,7 @@ function plainBot(s, rand) {
 describe('turn labels agree with the engine', () => {
   // gaps closed per table, over its six seeds: which seed closes one moves with prices and bot buys (2026-10-18)
   const closedBy = {};
-  for (const tb of TABLES) for (let seed = 1; seed <= 6; seed++) it(`${tb.n} players${tb.crunch ? ', Crunch Time taken' : ''}, seed ${seed}`, () => {
+  for (const tb of TABLES) for (let seed = 1; seed <= 6; seed++) it(`${tb.n} players${tb.crunch ? ', Flurry taken' : ''}, seed ${seed}`, () => {
     let s = createGame({ seats: Array.from({ length: tb.n }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed, quadrants: tb.q });
     const rand = seededRandom(seed * 7 + 1);
     let checked = 0, closedSeen = 0, viewSeen = 0;
@@ -98,7 +98,7 @@ describe('turn labels agree with the engine', () => {
           // (from last round's end: an extra turn first, like Early Riser', is logged before "Round … begins")
           const since = s.log.slice(Math.max(0, s.log.findLastIndex(l => /^Round \S+ ends\./.test(l))));
           const nm = s.players[pend.player].name;
-          // (Overtime's minion, placed after everyone else's, is an extra turn too: Nov 5, seed 6 of 3 players)
+          // (Burn the Candle's minion, placed after everyone else's, is an extra turn too: Nov 5, seed 6 of 3 players)
           // (the log says "+1 minion" since Oct 29: "P1's Night Owls: P1 gets 1 more minion, placed now.", Early Riser "1 more minion, placed first.")
           const hadExtra = since.some(l => l.startsWith(`${nm} gets`) && /more minions?, placed now/.test(l) || l.startsWith(`${nm}'s`) && /: (\S+ gets )?(1 more minion|\d+ more minions), placed (now|first)/.test(l) || l.startsWith(`${nm}'s`) && l.endsWith(`${nm} gets 1 more minion this round.`));
           // (so is a seat that took its own turns early: its last turns moved up, so its k-th turn isn't its k-th planned)
@@ -148,21 +148,21 @@ describe('turn labels agree with the engine', () => {
     }
     expect(checked).toBeGreaterThan(20);
     closedBy[tb.n + (tb.crunch ? 'c' : '')] = (closedBy[tb.n + (tb.crunch ? 'c' : '')] || 0) + closedSeen;
-    if (tb.crunch) expect(viewSeen, 'a Crunch Time move is drawn mid-animation at least once').toBeGreaterThan(0);
+    if (tb.crunch) expect(viewSeen, 'a Flurry move is drawn mid-animation at least once').toBeGreaterThan(0);
   });
-  for (const tb of TABLES.filter(t => t.crunch)) it(`${tb.n} players, Crunch Time taken: a forced Crunch Time table closes a gap at least once`, () => {
+  for (const tb of TABLES.filter(t => t.crunch)) it(`${tb.n} players, Flurry taken: a forced Flurry table closes a gap at least once`, () => {
     expect(closedBy[tb.n + 'c'] || 0).toBeGreaterThan(0);
   });
 });
 
-describe('a gap closed by Crunch Time is said as such (Cory #98, #99)', () => {
-  it('3 players, round III: A takes Crunch Time first, so B places twice in a row: never "snake order"', () => {
+describe('a gap closed by Flurry is said as such (Cory #98, #99)', () => {
+  it('3 players, round III: A takes Flurry first, so B places twice in a row: never "snake order"', () => {
     // a seeded bot game with the A A A B C C B A A B C C B B C shape (seed 15 since Victors left the grey deck, Nov 6; seed 14 since Even Swap's +2 red (Oct 25) changed what bots buy)
     let s = createGame({ seats: Array.from({ length: 3 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 15, quadrants: ['gold', 'red', 'purple', 'green'] });
     const rand = seededRandom(15);
     while (!(s.round === 3 && s.pending?.kind === 'place')) s = applyMove(s, plainBot(s, rand));
     const [A, B] = s.order;
-    s = applyMove(s, nextMove(s, rand, true)); // A takes Crunch Time: A A A B C C B A A B C C B B C, give or take extra turns
+    s = applyMove(s, nextMove(s, rand, true)); // A takes Flurry: A A A B C C B A A B C C B B C, give or take extra turns
     // walk the round by what the turn record says, not by fixed turn numbers (bots' buys shift extra turns around)
     const step = () => { s = applyMove(s, plainBot(s, rand)); };
     const placing = () => s.round === 3 && s.pending?.kind === 'place';
@@ -179,14 +179,14 @@ describe('a gap closed by Crunch Time is said as such (Cory #98, #99)', () => {
         if (s.current === B && seq[k + 1]?.pid === B && seq[k + 1]?.closed) {
           // B's first of the pair: A's last two turns moved up, closing B's gap
           expect(turnPlaces(s, B).places[B]).toMatchObject({ label: 'now', twice: true });
-          expect(turnPlaces(s, B).places[B].title).toMatch(new RegExp(`Back to back because ${s.players[A].name} took turns early with Crunch Time\\.`));
+          expect(turnPlaces(s, B).places[B].title).toMatch(new RegExp(`Back to back because ${s.players[A].name} took turns early with Flurry\\.`));
           expect(turnPlaces(s, B).places[B].title).not.toMatch(/snake order/);
           expect(turnPlaces(s, s.order[2]).places[B].title).toMatch(new RegExp(`because ${s.players[A].name} took turns early`));
-          expect(turnPlaces(s, A).places[B].title).toMatch(/because you took turns early with Crunch Time/);
+          expect(turnPlaces(s, A).places[B].title).toMatch(/because you took turns early with Flurry/);
           do step(); while (!placing() && s.round === 3);
           expect(s.current).toBe(B);
-          expect(promptFor(s, false).text).toBe(`${s.players[B].name} again (${s.players[A].name} took turns early with Crunch Time)`);
-          expect(promptFor(s, true).lead).toBe(`Your turn again (${s.players[A].name} took turns early with Crunch Time) — `);
+          expect(promptFor(s, false).text).toBe(`${s.players[B].name} again (${s.players[A].name} took turns early with Flurry)`);
+          expect(promptFor(s, true).lead).toBe(`Your turn again (${s.players[A].name} took turns early with Flurry) — `);
           pairSeen = true;
           break;
         }

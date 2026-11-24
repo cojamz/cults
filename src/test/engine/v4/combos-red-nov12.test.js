@@ -3,7 +3,7 @@
 // color you already have, +1 follower.") and Purists ("Round End: if your members have 2 or fewer colors, +3
 // followers."), played against grey and every-color members, swaps, gifts, free and discard-pile recruits, copies and
 // the other Round End members. Each scene checks the outcome against the printed text and the logged calls
-// (design/decisions.md, Nov 11 9:50pm: "a color you already have" reads as Gather does, grey counts, not its own
+// (design/decisions.md, Nov 11 9:50pm: "a color you already have" reads as Gather the Kin does, grey counts, not its own
 // arrival; grey has no color for Purists, Dabblers never counts against its owner). Harness: combos-magenta-nov12's.
 import { describe, it, expect } from 'vitest';
 import { createGame, resume, followers, applyMove } from '../../../engine/v4/core.js';
@@ -108,7 +108,7 @@ describe('Guild Master: "Whenever you recruit a member of a color you already ha
   });
 
   // OPEN QUESTION: Dabblers ("Counts as 2 wild members.") is red too, and Guild Master's owner already has red; the code reads
-  // it as Gather does (a wild member is "new" while any color is missing), so no follower. Cory's Nov 1 "Dabblers always
+  // it as Gather the Kin does (a wild member is "new" while any color is missing), so no follower. Cory's Nov 1 "Dabblers always
   // works in the owner's favor" would pay +1. Asserts what the code does now.
   it('recruiting Dabblers while holding red: nothing today (open question: "works in the owner\'s favor" would pay +1)', () => {
     const { s } = go('br-dabblers-in', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['benders.dabblers'], members: [['red.brethren']] }, [/Dabblers/, /pay:/]);
@@ -176,8 +176,8 @@ describe('Guild Master: "Whenever you recruit a member of a color you already ha
     expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Triplets is a color they already have: +1 follower."]);
   });
 
-  it('Initiation ("Recruit a shop member costing 9 or less, for free. +1 red.") taking a red member: +1', () => {
-    const { s } = go('br-init', { quads: QR, round: 3, turns: [0], shop: ['red.bigfamily'], members: [['red.brethren']] }, [/Initiation/, /Big Family/]);
+  it('Induct ("Recruit a shop member costing 9 or less, for free. +1 red.") taking a red member: +1', () => {
+    const { s } = go('br-init', { quads: QR, round: 3, turns: [0], shop: ['red.bigfamily'], members: [['red.brethren']] }, [/Induct/, /Big Family/]);
     expect(names(s, 0)).toContain('Big Family');
     expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Big Family is a color they already have: +1 follower."]);
   });
@@ -190,9 +190,9 @@ describe('Guild Master: "Whenever you recruit a member of a color you already ha
     expect(bonusOf(s, 0)).toBe(1);
   });
 
-  it('Spree ("Recruit two members from the discard pile now. +7 blue."): Informer (new magenta) then Thief-Takers (magenta, now held), then a red shop member: +1, +1', () => {
+  it('Salvage ("Recruit two members from the discard pile now. +7 blue."): Informer (new magenta) then Thief-Takers (magenta, now held), then a red shop member: +1, +1', () => {
     const { s } = go('br-spree', { quads: QR, round: 3, turns: [0], res: [RICH], shop: ['red.intern'], members: [['red.brethren']], prep: disc('thieves.snitch', 'thieves.watchdog') },
-      [/Spree/, /Informer/, /pay:/, /Thief-Takers/, /pay:/, /Intern/, /pay:/]);
+      [/Salvage/, /Informer/, /pay:/, /Thief-Takers/, /pay:/, /Intern/, /pay:/]);
     expect(names(s, 0)).toEqual(['Guild Master', 'Informer', 'Thief-Takers', 'Intern']);
     expect(lines(s, /Guild Master/)).toEqual([
       "P1's Guild Master: Thief-Takers is a color they already have: +1 follower.",
@@ -270,21 +270,21 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
     expect(bonusOf(s, 0)).toBe(6 + 4 * 10); // and the four round III contests, P2 holding nothing
   });
 
-  // AI game, Nov 12: Test Drive on Journeyman asked which member to take, then gave nothing (the card had to be held).
-  // Cory, Nov 10, reviewing Test Drive's strongest uses: "Journeyman is fine", so the free recruit happens.
-  it('Test Drive on Journeyman ("Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free."): recruits the pick for free', () => {
-    const { s } = go('sf-td', { quads: QR, round: 1, turns: [0], shop: ['red.seatfiller', 'market.thrifthunters'] }, [/Test Drive/, /Journeyman/, /Scavengers/]);
-    expect(s.log).toContain("P1's Test Drive: sends Journeyman to the discard pile and uses its effect.");
+  // AI game, Nov 12: Try Out on Journeyman asked which member to take, then gave nothing (the card had to be held).
+  // Cory, Nov 10, reviewing Try Out's strongest uses: "Journeyman is fine", so the free recruit happens.
+  it('Try Out on Journeyman ("Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free."): recruits the pick for free', () => {
+    const { s } = go('sf-td', { quads: QR, round: 1, turns: [0], shop: ['red.seatfiller', 'market.thrifthunters'] }, [/Try Out/, /Journeyman/, /Scavengers/]);
+    expect(s.log).toContain("P1's Try Out: sends Journeyman to the discard pile and uses its effect.");
     expect(names(s, 0)).toEqual(['Scavengers']);
     expect(has(s, /recruits Scavengers for free/)).toBe(true);
     expect(s.discard.map(u => defById(s.cards[u].def).name)).toContain('Journeyman');
     cleanLog(s);
   });
 
-  it('Test Drive ("Discard a shop member. Use its effect now. +1 blue.") on Purists with 2 colors: +3; with 3: nothing', () => {
-    const run = mine => go('pu-td', { quads: QR, round: 1, turns: [0], shop: ['red.purists'], members: [mine] }, [/Test Drive/, /Purists/]).s;
+  it('Try Out ("Discard a shop member. Use its effect now. +1 blue.") on Purists with 2 colors: +3; with 3: nothing', () => {
+    const run = mine => go('pu-td', { quads: QR, round: 1, turns: [0], shop: ['red.purists'], members: [mine] }, [/Try Out/, /Purists/]).s;
     const a = run(['red.twins', 'market.thrifthunters']);
-    expect(a.log).toContain("P1's Test Drive: sends Purists to the discard pile and uses its effect.");
+    expect(a.log).toContain("P1's Try Out: sends Purists to the discard pile and uses its effect.");
     expect(lines(a, /Purists:/)).toEqual(["P1's Purists: members of 2 colors: +3 followers."]);
     expect(bonusOf(a, 0)).toBe(3);
     const b = run(['red.twins', 'market.thrifthunters', 'thieves.snitch']);
@@ -292,20 +292,20 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
     cleanLog(a);
   });
 
-  // Claude, under Cory's go-with-your-gut, Nov 24 (Cory, Nov 13: "test drive is probably a bit too good"): Test Drive
+  // Claude, under Cory's go-with-your-gut, Nov 24 (Cory, Nov 13: "test drive is probably a bit too good"): Try Out
   // ("Discard a shop member. Use its effect now, unless it is once per game. +1 blue.") sends a once per game member
   // to the discard pile without using it; Benefactor ("On Use, once per game: recruit a member costing up to 7 for free.")
-  it('Test Drive on Benefactor (once per game): discarded, effect not used', () => {
-    const { s } = go('td-opg', { quads: QR, round: 1, turns: [0], shop: ['yellow.headhunters', 'red.purists'] }, [/Test Drive/, /Benefactor/]);
-    expect(s.log).toContain("P1's Test Drive: sends Benefactor to the discard pile.");
+  it('Try Out on Benefactor (once per game): discarded, effect not used', () => {
+    const { s } = go('td-opg', { quads: QR, round: 1, turns: [0], shop: ['yellow.headhunters', 'red.purists'] }, [/Try Out/, /Benefactor/]);
+    expect(s.log).toContain("P1's Try Out: sends Benefactor to the discard pile.");
     expect(s.discard.map(u => defById(s.cards[u].def).name)).toContain('Benefactor');
     expect(s.players[0].members.length).toBe(0);
   });
 
   // OPEN QUESTION: with no members at all, "your members have 2 or fewer colors" is true (0 colors); only reachable by
-  // Test Drive (Purists itself is red). Asserts what the code does now: +3.
-  it('Test Drive on Purists with no members: 0 colors, +3 today (open question)', () => {
-    const { s } = go('pu-td0', { quads: QR, round: 1, turns: [0], shop: ['red.purists'] }, [/Test Drive/, /Purists/]);
+  // Try Out (Purists itself is red). Asserts what the code does now: +3.
+  it('Try Out on Purists with no members: 0 colors, +3 today (open question)', () => {
+    const { s } = go('pu-td0', { quads: QR, round: 1, turns: [0], shop: ['red.purists'] }, [/Try Out/, /Purists/]);
     expect(lines(s, /Purists:/)).toEqual(["P1's Purists: members of 0 colors: +3 followers."]);
     expect(bonusOf(s, 0)).toBe(3);
   });

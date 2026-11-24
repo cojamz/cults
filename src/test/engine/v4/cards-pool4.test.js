@@ -17,7 +17,7 @@ describe('Stagehands (Purple)', () => {
   const turns = [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }];
   it('Whenever you take the Goes Last token, recruit: an extra recruit this turn', () => {
     let s = sceneQ({ quadrants: Q, members: [['purple.stagehands']], res: [RICH], queue: turns });
-    s = take(s, 'purple.skip'); // Sleep In: take the Goes Last token
+    s = take(s, 'purple.skip'); // Lie Abed: take the Goes Last token
     expect(named(s, 'Stagehands')).toEqual(["P1's Stagehands: P1 recruits an extra time."]);
     s = move(s, s.pending.options.find(o => o.kind === 'card').id);
     expect(cardBuys(s)).toBe(true); // a second recruit

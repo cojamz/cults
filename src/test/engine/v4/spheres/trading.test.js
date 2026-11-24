@@ -78,7 +78,7 @@ describe('White actions', () => {
     }
   });
 
-  it('Splurge: +2 white, then +1 follower per 2 resources paid for the turn\'s first recruited member', () => {
+  it('Spend Freely: +2 white, then +1 follower per 2 resources paid for the turn\'s first recruited member', () => {
     let s = take(scene({ res: [{ gold: 4 }], shop: ['gold.midas'] }), 'trading.splurge');
     expect(R(s).white).toBe(2);
     expect(s.players[0].perSpend).toBe(true);
@@ -86,25 +86,25 @@ describe('White actions', () => {
     expect(has(s, 'gold.midas')).toBe(true);
     expect(B(s)).toBe(2); // floor(5 / 2)
     expect(s.players[0].perSpend).toBeUndefined();
-    expect(s.log.join('\n')).toContain("P1's Splurge: +2 followers for spending.");
+    expect(s.log.join('\n')).toContain("P1's Spend Freely: +2 followers for spending.");
   });
 
-  it('Splurge in round II: +1 follower per resource paid (Cory, Nov 1 1:39pm)', () => {
+  it('Spend Freely in round II: +1 follower per resource paid (Cory, Nov 1 1:39pm)', () => {
     let s = take(scene({ round: 2, res: [{ gold: 4 }], shop: ['gold.midas'] }), 'trading.splurge');
     const b0 = B(s);
     s = move(s, pick(s, 'gold.midas', 'shop')); // Midas 3+2: pays 5
     expect(B(s) - b0).toBe(5);
-    expect(s.log.join('\n')).toContain("P1's Splurge: +5 followers for spending.");
+    expect(s.log.join('\n')).toContain("P1's Spend Freely: +5 followers for spending.");
   });
 
-  it('Splurge pays on members only: buying followers gets nothing extra', () => {
+  it('Spend Freely pays on members only: buying followers gets nothing extra', () => {
     let s = take(scene({ res: [{ red: 6 }] }), 'trading.splurge');
-    s = move(s, 'tier:mid'); // spends 5 → +5 bought, no Splurge
+    s = move(s, 'tier:mid'); // spends 5 → +5 bought, no Spend Freely
     expect(B(s)).toBe(5);
     expect(s.log.join('\n')).not.toContain('for spending');
   });
 
-  it('Splurge wears off at the next turn when nothing was recruited', () => {
+  it('Spend Freely wears off at the next turn when nothing was recruited', () => {
     let s = take(scene({ n: 2 }), 'trading.splurge');
     expect(s.players[0].perSpend).toBe(true);
     s.queue = [{ t: 'turn', p: 0 }]; s.pending = null;
@@ -135,7 +135,7 @@ describe('White actions', () => {
     expect([R(u).red, B(u)]).toEqual([2, 2]);
   });
 
-  it('Farewell (ring II): +1 white, send a member to the discard pile, followers equal to its cost', () => {
+  it('Bid Farewell (ring II): +1 white, send a member to the discard pile, followers equal to its cost', () => {
     expect(() => take(scene({ members: [['gold.midas']] }), 'trading.farewell')).toThrow();
     let s = take(scene({ round: 2, members: [['red.bigfamily', 'red.twins']] }), 'trading.farewell');
     const u = uidOf(s, 'red.bigfamily', 0);
@@ -150,7 +150,7 @@ describe('White actions', () => {
     expect([none.pending.kind, R(none).white]).toEqual(['buy', 1]);
   });
 
-  it('Farewell refills a shop left short by an empty pile with the member it sent to the discard pile (QA, Oct 28)', () => {
+  it('Bid Farewell refills a shop left short by an empty pile with the member it sent to the discard pile (QA, Oct 28)', () => {
     const s0 = scene({ round: 2, members: [['red.bigfamily']] });
     s0.pile = []; s0.shop = s0.shop.slice(0, shopSize(s0) - 1);
     let s = take(s0, 'trading.farewell');
@@ -167,7 +167,7 @@ describe('White actions', () => {
     expect([R(s).white, B(s), has(s, 'red.bigfamily')]).toEqual([5, 0, false]); // 2+2, +1
   });
 
-  it('Cash In (ring III): turn all your white into followers, then +1 white', () => {
+  it('Redeem (ring III): turn all your white into followers, then +1 white', () => {
     expect(() => take(scene({ round: 2, res: [{ white: 4 }] }), 'trading.cashin')).toThrow();
     let s = take(scene({ round: 3, res: [{ white: 6, red: 2 }] }), 'trading.cashin');
     expect([B(s), R(s).white, R(s).red]).toEqual([6, 1, 2]);
@@ -284,7 +284,7 @@ describe('White members', () => {
   it('Martyrs: whenever this member is discarded, +4 white and +4 followers', () => {
     let s = take(scene({ round: 2, members: [['trading.martyr']] }), 'trading.farewell');
     s = move(s, `card:${uidOf(s, 'trading.martyr', 0)}`);
-    expect(B(s)).toBe(6); // Farewell 2, Martyrs 4
+    expect(B(s)).toBe(6); // Bid Farewell 2, Martyrs 4
     s = take(scene({ round: 2, members: [['trading.martyr']] }), 'trading.estatesale');
     s = move(s, `card:${uidOf(s, 'trading.martyr', 0)}`);
     expect([R(s).white, B(s)]).toEqual([7, 4]); // Estate Sale's white 3, Martyrs +4 white and +4 followers

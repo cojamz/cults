@@ -25,14 +25,14 @@ describe('picky words on hovers (Nov 4)', () => {
   });
 
   it('a lone flat gain after the rule reads as yours, without a period (W7)', () => {
-    const a = quadrant('red').actions.find(x => x.key === 'gather'); // Gather (Nov 10, Walk-In's slot) ends "+1 red."
+    const a = quadrant('red').actions.find(x => x.key === 'gather'); // Gather the Kin (Nov 10, Walk-In's slot) ends "+1 red."
     const { container } = render(<RuleText def={a} lines />);
     const lines = [...container.querySelectorAll('[data-effect-line]')].map(l => l.textContent);
     expect(lines[lines.length - 1]).toMatch(/^You also get \+1/);
     expect(lines[lines.length - 1]).not.toMatch(/\.$/);
   });
 
-  it('Walk-In, Party Gifts and Largesse faces say whose gain and per what (W20, W21)', () => {
+  it('Walk-In, Hand Out Gifts and Throw Coins faces say whose gain and per what (W20, W21)', () => {
     expect(panelText('red', { key: 'hire' }).second).toBe('+1 red, rivals +1');
     // in line 1 since Nov 11 (picky bot: a tight ring dropped line 2 and showed only the giving)
     expect(panelText('silver', { key: 'partygifts' }).verb).toBe('Give rivals up to 3 silver, +2 @f per silver given');
@@ -51,12 +51,12 @@ describe('picky words on hovers (Nov 4)', () => {
     expect(nothingToCopy(quadrant('echo').actions.find(x => x.key === 'refrain').text)).toBe('Nothing yet: only its +1 green');
   });
 
-  it("Survey has no color pick to list; Gather says its followers if you recruit a color you have (W27, W28)", () => {
+  it("Count Heads has no color pick to list; Gather the Kin says its followers if you recruit a color you have (W27, W28)", () => {
     const s = start(['yellow', 'red', 'silver', 'trading']);
     const pid = s.pending.player;
     const tax = previewSpace(s, pid, ...space(s, 'yellow', 'transmute'));
-    expect(tax.colorPays).toBe(null); // Survey (Nov 5): no pick, its yellow is in "You'd get"
-    // Gather (Nov 10): "+3 red. If you recruit a member this turn of a color you already have: +4 followers. +1 red."
+    expect(tax.colorPays).toBe(null); // Count Heads (Nov 5): no pick, its yellow is in "You'd get"
+    // Gather the Kin (Nov 10): "+3 red. If you recruit a member this turn of a color you already have: +4 followers. +1 red."
     const gather = previewSpace(s, pid, ...space(s, 'red', 'gather'));
     expect(gather.ifRecruit).toEqual({ followers: 4, per: 0, sameColor: true });
     expect(ifRecruitWords(gather.ifRecruit)).toBe('+4 followers if you recruit a member this turn of a color you already have');

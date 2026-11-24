@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Sleep In (Purple, round I; Cory, 2026-10-22): "+4 purple, skip your next turn". Cory's example: round I, 4 players,
+// Lie Abed (Purple, round I; Cory, 2026-10-22): "+4 purple, skip your next turn". Cory's example: round I, 4 players,
 // A takes it first; the snake comes back D C B, A is passed over, the next turn is A's anyway; B C D place their
 // last; A still has a minion, so the snake carries on and A places it. A places all 3 minions.
 import { describe, it, expect } from 'vitest';
@@ -8,9 +8,9 @@ import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { quadrant } from '../../../engine/v4/index.js';
 
-// seed 3 (was 2) since Sleep In grew to +4 / +5 / +6 (Oct 28): other seeds' bots pile skips onto A
-describe('Sleep In', () => {
-  it("Cory's round I example, Nov 10 rule: A takes Sleep In, A's other two minions are placed after everyone else's", () => {
+// seed 3 (was 2) since Lie Abed grew to +4 / +5 / +6 (Oct 28): other seeds' bots pile skips onto A
+describe('Lie Abed', () => {
+  it("Cory's round I example, Nov 10 rule: A takes Lie Abed, A's other two minions are placed after everyone else's", () => {
     let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 8, quadrants: ['gold', 'red', 'purple', 'echo'] }); // reseeded when the deck changes (Oct 28; seed 3 since every member cost 1 more, Nov 5; 4 since the Nov 5 replacements; 6 since Night Watch left, 7 since Sleepyheads and Hurriers joined, 8 since Victors left, Nov 6)
     const rand = seededRandom(8);
     while (!(s.round === 1 && s.pending?.kind === 'place')) s = applyMove(s, chooseBotMove(s, rand));

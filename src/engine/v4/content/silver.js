@@ -183,9 +183,9 @@ function charmPick(ctx, p, left) {
 /** Polish (Nov 24): after the turn, each rival +1 silver from the bank (a gift, so Silver Cloak hears it). */
 function polishGift(ctx, p) {
   giveAll(ctx, p, S, 1);
-  ctx.log(`${p.name}'s Polish: +1 silver to everyone else.`);
+  ctx.log(`${p.name}'s Melt Down: +1 silver to everyone else.`);
 }
-function polishPick(ctx, p, left, who = 'Polish') {
+function polishPick(ctx, p, left, who = 'Melt Down') {
   // any color, silver included (Cory, Nov 4 1:14pm: "yeah allow silver i guess"; the words already said "any colors")
   ctx.choose(p, `${who}: +1 of which color? (${left} to pick)`, ctx.state.resources.map(c => ({
     id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0) - (c === S ? 5 : 0), // silver back for silver is rarely the pick; the sheet's suggestion and bots skip it
@@ -403,7 +403,7 @@ export const silverActions = [
     // copyDoesIt: a copy gifts the rivals too, so the copier's Silver Cloak pays (Cory, Nov 6: "yes.")
     // Cory, Nov 11 10:26am: "i dont like Toast scaling so crazily. We should set it to a baseline. Maybe +4 (+2 to
     // everyone else) +1 silver", then "that feels a bit better to me"
-    key: 'toast', copyDoesIt: true, ring: 1, name: 'Toast', text: '+4 silver. Each rival +2 silver. +1 silver.',
+    key: 'toast', copyDoesIt: true, ring: 1, name: 'Raise a Glass', text: '+4 silver. Each rival +2 silver. +1 silver.',
     estimate: ctx => 5 - spillCost(ctx, 2),
     resolve(ctx, p) {
       const got = hostGain(ctx, p, 4);
@@ -416,7 +416,7 @@ export const silverActions = [
   swap11(swap11({
     // Cory, Nov 11 12:24-12:29am: "+3 silver, turn your silver into other colors… maybe make it all one other color",
     // "would be pretty good as a round I even", then "yeah 1. simpler also" (all of it, not "any of it"). Name kept.
-    key: 'polish', copyDoesIt: true, noPlus1: true, ring: 1, name: 'Polish', text: '+3 silver. Turn all your silver into one other color. Each rival +1 silver.',
+    key: 'polish', copyDoesIt: true, noPlus1: true, ring: 1, name: 'Melt Down', text: '+3 silver. Turn all your silver into one other color. Each rival +1 silver.',
     // Cory, Nov 24 4:13pm: "lets do #2 but make it +3" "instead of +2": each rival +1 silver in place of the trailing
     // +1 silver, so you end at 0 silver and every rival holds some (Fewest silver). No printed +1 of its own now.
     estimate: ctx => 3.5 - spillCost(ctx, 1),
@@ -424,16 +424,16 @@ export const silverActions = [
       hostGain(ctx, p, 3);
       const n = p.res[S] || 0, opts = otherColors(ctx);
       if (!n || !opts.length) { polishGift(ctx, p); return; }
-      ctx.choose(p, n === 1 ? `Polish: turn your 1 silver into which color?` : `Polish: turn all ${n} of your silver into which color?`, opts.map(c => ({
+      ctx.choose(p, n === 1 ? `Melt Down: turn your 1 silver into which color?` : `Melt Down: turn all ${n} of your silver into which color?`, opts.map(c => ({
         id: `color:${c}`, label: `${n} silver → ${n} ${c}`, kind: 'color', value: c, spend: { silver: n, [c]: -n },
         hint: 1 - 0.3 * (p.res[c] || 0),
       })), 'silver.polishAll');
     },
   }, GIFT_SHOP), OPEN_BAR),
   {
-    key: 'partygifts', ring: 1, name: 'Party Gifts', copyDoesIt: true, text: 'Give rivals up to 3 silver from the bank. +2 followers per silver given.',
+    key: 'partygifts', ring: 1, name: 'Hand Out Gifts', copyDoesIt: true, text: 'Give rivals up to 3 silver from the bank. +2 followers per silver given.',
     estimate: ctx => 2 * 6 - spillCost(ctx, 1) * 3,
-    resolve(ctx, p) { shareStep(ctx, p, { who: 'Party Gifts', max: 3, per: 2 }); },
+    resolve(ctx, p) { shareStep(ctx, p, { who: 'Hand Out Gifts', max: 3, per: 2 }); },
   },
   // Sweet Nothings takes Potluck's place (Cory, Nov 6: "yeah 1"; Potluck had rivals choose on your turn). Potluck stays
   // in code, off the wheel; REPLACE11=favors puts it back for a comparison.
@@ -473,23 +473,23 @@ export const silverActions = [
     // Cory, Nov 11 12:31am: "thats pretty good. lets try it." (Sweet Talk's slot; name Claude's fill-in). You pick the
     // rival and the member; its cost is its price as a player sees it, all paid in silver to that rival; it is a recruit
     // (its On Recruit fires, as Poach's does) and doesn't use your turn's recruit. A purchase, not a steal or a gift.
-    key: 'buyout', copyDoesIt: true, ring: 2, name: 'Buyout', text: 'Recruit a rival’s member, paying them its cost in silver. +1 silver.',
+    key: 'buyout', copyDoesIt: true, ring: 2, name: 'Hire Away', text: 'Recruit a rival’s member, paying them its cost in silver. +1 silver.',
     estimate: (ctx, p) => { const l = buyoutList(ctx, p); return l.length ? Math.max(...l.map(([, c]) => memberValue(c))) : 0.5; },
     resolve(ctx, p) {
       const list = buyoutList(ctx, p);
-      if (list.length) ctx.choose(p, `Buyout: recruit which rival's member? (you have ${p.res[S] || 0} silver)`, list.map(([o, c]) => ({
+      if (list.length) ctx.choose(p, `Hire Away: recruit which rival's member? (you have ${p.res[S] || 0} silver)`, list.map(([o, c]) => ({
         id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${cost(c)} silver)`, kind: 'card', value: c.uid, hint: memberValue(c),
       })).concat({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: 0 }), 'silver.buyout');
-      else ctx.log(`${p.name}'s Buyout: no rival's member costs ${p.res[S] || 0} silver or less.`);
+      else ctx.log(`${p.name}'s Hire Away: no rival's member costs ${p.res[S] || 0} silver or less.`);
       ctx.gain(p, S, 1, { fromAction: true });
     },
   },
   {
     // Cory, Nov 6: "Largesse should have to give 12. And give 10 followers." All 12 must go; followers flat.
     // Cory, Nov 24: "Let's make it +7 give 10 for now." (bot games: copied 4-6 times in one round III at +10 and +8)
-    key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Give rivals 10 silver from the bank, split as you choose. +7 followers.',
+    key: 'largesse', copyDoesIt: true, ring: 3, name: 'Throw Coins', text: 'Give rivals 10 silver from the bank, split as you choose. +7 followers.',
     estimate: ctx => 10 + LG.flat - spillCost(ctx, 1) * LG.max,
-    resolve(ctx, p) { shareStep(ctx, p, { who: 'Largesse', max: LG.max, per: 0, flat: LG.flat, must: true }); },
+    resolve(ctx, p) { shareStep(ctx, p, { who: 'Throw Coins', max: LG.max, per: 0, flat: LG.flat, must: true }); },
   },
 ];
 
@@ -669,7 +669,7 @@ const silver = {
       },
     }),
     polish(ctx, p, c, data) {
-      const who = data.who || 'Polish';
+      const who = data.who || 'Melt Down';
       ctx.gain(p, c, 1);
       ctx.log(`${p.name}'s ${who}: +1 ${c}.`);
       if (data.left > 1) polishPick(ctx, p, data.left - 1, who);
@@ -678,17 +678,17 @@ const silver = {
       const n = p.res[S] || 0;
       if (n && c !== S && ctx.state.resources.includes(c)) {
         p.res[S] = 0; ctx.gain(p, c, n, { unscaled: true }); // a copy's Wallflower doubles the silver gained, not the turn (Cory, Nov 11)
-        ctx.log(`${p.name}'s Polish: ${n} silver into ${n} ${c}.`);
+        ctx.log(`${p.name}'s Melt Down: ${n} silver into ${n} ${c}.`);
       }
       polishGift(ctx, p);
     },
     buyout(ctx, p, uid) {
-      if (uid == null) { ctx.log(`${p.name}'s Buyout: recruits nothing.`); return; }
+      if (uid == null) { ctx.log(`${p.name}'s Hire Away: recruits nothing.`); return; }
       const hit = buyoutList(ctx, p).find(([, c]) => c.uid === uid);
       if (!hit) return;
       const [o, c] = hit, k = cost(c);
       p.res[S] -= k; o.res[S] = (o.res[S] || 0) + k;
-      if (ctx.moveMember(uid, o, p, { recruit: true })) ctx.log(`${p.name}'s Buyout: recruits ${o.name}'s ${c.def.name}, paying ${o.name} ${k} silver.`);
+      if (ctx.moveMember(uid, o, p, { recruit: true })) ctx.log(`${p.name}'s Hire Away: recruits ${o.name}'s ${c.def.name}, paying ${o.name} ${k} silver.`);
     },
     turn(ctx, p, value, data) {
       if (value === 'done') return;

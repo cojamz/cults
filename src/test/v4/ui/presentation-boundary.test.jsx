@@ -25,7 +25,7 @@ it('keeps old phase/lights through a flight but refuses clicks from that obsolet
     subscribe: fn => { listeners.add(fn); return () => listeners.delete(fn); }, submit: vi.fn(), canUndo: () => false };
   const view = render(<GameScreen session={session} />);
   await act(async () => vi.advanceTimersByTimeAsync(10000));
-  const key = spaceOf(initial, 'Golden Years');
+  const key = spaceOf(initial, 'Let It Grow');
   const after = applyMove(initial, { player: 0, option: `slot:${key}` }, { effects: true });
   expect(after.pending.kind).toBe('buy');
   await act(async () => { current = after; for (const fn of listeners) fn(after); });
@@ -49,7 +49,7 @@ it('rejects held gift clicks before creating animations that would extend the co
   vi.useFakeTimers();
   vi.stubGlobal('matchMedia', q => ({ matches: q.includes('min-width: 861px'), addEventListener() {}, removeEventListener() {} }));
   const placing = sceneQ({ quadrants: ['gold', 'red', 'silver'], n: 3, res: [{ gold: 5 }, {}, {}] });
-  let current = applyMove(placing, { player: 0, option: `slot:${spaceOf(placing, 'Kickback')}` }, { effects: true });
+  let current = applyMove(placing, { player: 0, option: `slot:${spaceOf(placing, 'Grease a Palm')}` }, { effects: true });
   current.players[0].kind = 'human';
   expect(current.pending.kind).toBe('choose');
   const initial = current, id = initial.pending.options[0].id;

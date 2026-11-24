@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Actions lane, requalified under "paper filters, play ranks" (Nov 4): Duty Free (Pilgrim's place), Blue Bloods disdain
-// (Blue Bloods' place), Open Bar (Polish's place). Each by its own REPLACE11 key.
+// (Blue Bloods' place), Open Bar (Melt Down's place). Each by its own REPLACE11 key.
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE11 = 'dutyfree,snobs3,openbar';
@@ -32,10 +32,10 @@ describe('REPLACE11: Blue Bloods (disdain)', () => {
 });
 
 describe('REPLACE11: Open Bar', () => {
-  it("is on the wheel in Polish's place and pays when a rival takes a Silver space", () => {
+  it("is on the wheel in Melt Down's place and pays when a rival takes a Silver space", () => {
     const names = quadrant('silver').actions.map(a => a.name);
     expect(names).toContain('Open Bar');
-    expect(names).not.toContain('Polish');
+    expect(names).not.toContain('Melt Down');
     let s = table(['silver', 'red'], { n: 2, round: 1 });
     const q = s.quadrants.indexOf('silver');
     const mover = s.pending.player, first = 1 - mover;

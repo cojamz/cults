@@ -151,7 +151,7 @@ describe('Yellow candidates', () => {
     let s = still({ members: [['yellow.sightseers']], res: [RICH] });
     give(s, 0, 'red');
     const g = faceUp(s, 'gold');
-    s = take(go(s, turn(0, 1)), 'Gather');
+    s = take(go(s, turn(0, 1)), 'Gather the Kin');
     s = move(s, `card:${g}`);
     expect(named(s, 'Sightseers').some(l => /new color, recruit an extra time/.test(l))).toBe(true);
     expect(s.pending.kind).toBe('buy');
@@ -161,7 +161,7 @@ describe('Yellow candidates', () => {
     let s = still({ members: [['yellow.sightseers']], res: [RICH] });
     give(s, 0, 'red');
     const r = faceUp(s, 'red');
-    s = take(go(s, turn(0, 1)), 'Gather');
+    s = take(go(s, turn(0, 1)), 'Gather the Kin');
     s = move(s, `card:${r}`);
     expect(named(s, 'Sightseers')).toHaveLength(0);
   });
@@ -169,19 +169,19 @@ describe('Yellow candidates', () => {
     let s = still({ members: [['yellow.souvenirhunters']], res: [RICH] });
     give(s, 0, 'red');
     const g = faceUp(s, 'gold');
-    s = take(go(s, turn(0, 1)), 'Gather');
+    s = take(go(s, turn(0, 1)), 'Gather the Kin');
     const sb = s.players[0].bonus;
     s = move(s, `card:${g}`);
-    const gath = x => +((x.log.join('\n').match(/Gather: \+(\d+) follower/) || [0, 0])[1]);
+    const gath = x => +((x.log.join('\n').match(/Gather the Kin: \+(\d+) follower/) || [0, 0])[1]);
     expect(gath(s)).toBeGreaterThan(0);
-    expect(s.players[0].bonus - sb).toBe(3 + gath(s)); // yellow, red, gold; and Gather's +1 per 3 paid
+    expect(s.players[0].bonus - sb).toBe(3 + gath(s)); // yellow, red, gold; and Gather the Kin's +1 per 3 paid
     let t = still({ members: [['yellow.souvenirhunters']], res: [RICH] });
     give(t, 0, 'red');
     const r = faceUp(t, 'red');
-    t = take(go(t, turn(0, 1)), 'Gather');
+    t = take(go(t, turn(0, 1)), 'Gather the Kin');
     const tb = t.players[0].bonus;
     t = move(t, `card:${r}`);
-    expect(t.players[0].bonus).toBe(tb + gath(t)); // Gather's only
+    expect(t.players[0].bonus).toBe(tb + gath(t)); // Gather the Kin's only
     expect(named(s, 'Souvenir Hunters')[0]).toMatch(/\+3 followers \(3 colors\)/);
   });
 });

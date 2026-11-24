@@ -360,7 +360,7 @@ describe('local session: undo never crosses a hand-off', () => {
   });
 });
 
-// Peek left the wheel Nov 10 (Markdown took its slot) and no live space shows the pile now; it stays for old saves,
+// Peek left the wheel Nov 10 (Buy Secondhand took its slot) and no live space shows the pile now; it stays for old saves,
 // so the undo guard keeps its test with Peek back in its old slot.
 describe('local session: undo after hidden cards', () => {
   useRetired(['market.showroom']);
@@ -370,7 +370,7 @@ describe('local session: undo after hidden cards', () => {
     const pre = s.getState();
     const slot = name => pre.pending.options.find(o => o.kind === 'slot' && o.label === name).id;
     // a placement that shows nothing new: undo is there
-    await s.submit({ option: slot('Golden Years') });
+    await s.submit({ option: slot('Let It Grow') });
     expect(s.canUndo()).toBe(true);
     expect(s.undo()).toBe(true);
     // Peek shows the top of the pile: undoing it would leak the deck

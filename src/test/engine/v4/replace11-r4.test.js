@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Actions lane r4 batch (Nov 4): Crowd and Royalties (Build Up's place), White Exchange (Exchange's), Blind Date and
+// Actions lane r4 batch (Nov 4): Draw a Crowd and Royalties (Flock Together's place), White Exchange (Exchange's), Blind Date and
 // No Thanks (Walk-In's), each by its own REPLACE11 key.
 import { describe, it, expect } from 'vitest';
 
@@ -19,15 +19,15 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 
 describe('REPLACE11 r4 spaces', () => {
   it('are on the wheel in place of the old ones', () => {
-    expect(quadrant('echo').actions.map(a => a.name)).toContain('Crowd');
-    expect(quadrant('echo').actions.map(a => a.name)).not.toContain('Build Up');
+    expect(quadrant('echo').actions.map(a => a.name)).toContain('Draw a Crowd');
+    expect(quadrant('echo').actions.map(a => a.name)).not.toContain('Flock Together');
     expect(quadrant('trading').actions.map(a => a.name)).toContain('White Exchange');
     expect(quadrant('red').actions.map(a => a.name)).toContain('Blind Date');
   });
-  it('Crowd: +2 in round I plus 1 per minion on Green spaces, its own included', () => {
+  it('Draw a Crowd: +2 in round I plus 1 per minion on Green spaces, its own included', () => {
     let s = table(['echo', 'red'], { n: 2, round: 1 });
     const me = s.pending.player, g0 = s.players[me].res.green || 0;
-    s = answer(s, slotOf(s, 'echo', 'Crowd'));
+    s = answer(s, slotOf(s, 'echo', 'Draw a Crowd'));
     expect(s.players[me].res.green - g0).toBe(3);
   });
   it('White Exchange: 1 white into 3 followers, white only', () => {

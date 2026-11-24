@@ -80,7 +80,7 @@ describe('REPLACE10: lane D requalified cards', () => {
     expect(Object.values(s.players[0].res).reduce((a, b) => a + b, 0)).toBe(1);
   });
 
-  it('Big Finish: once per game, copies every action you have a minion on (Build Up alone on Green: its 2 green again, Nov 10)', () => {
+  it('Big Finish: once per game, copies every action you have a minion on (Flock Together alone on Green: its 2 green again, Nov 10)', () => {
     let s = table(Q, { n: 2, round: 2, left: 4, members: [['echo.bigfinish']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
     s = done(take(s, 'echo.chant'));
     s = done(take(s, 'red.turnout'));
@@ -94,7 +94,7 @@ describe('REPLACE10: lane D requalified cards', () => {
   it('Cover Band: once per round, copies the previous action', () => {
     let s = table(Q, { n: 2, round: 2, left: 4, members: [['echo.coverband']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
     s = done(take(s, 'red.turnout'));
-    s = done(take(s, 'echo.chant')); // P2 on Build Up, the one minion on Green: +2 green (Nov 10)
+    s = done(take(s, 'echo.chant')); // P2 on Flock Together, the one minion on Green: +2 green (Nov 10)
     const u = uidOf(s, 'echo.coverband', 0);
     const g = s.players[0].res.green || 0;
     s = move(s, `use:${u}`);

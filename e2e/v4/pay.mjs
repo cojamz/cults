@@ -10,7 +10,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //       price takes all 3): the sheet asks (with no lost-lead prose since Cory's #32, 2026-10-17), and Cancel goes back
 //       with nothing paid.
 //  ((g1)-(g3), Good Deed on the gift card, went with Good Deed in Silver's Oct 31 rework.)
-//  (c1) Polish's color (Goody Bags' until Silver's Oct 31 rework) and (c2) Cheap Seats' "pay 1 for 1 follower" on the card at the space (Cory, 2026-10-15:
+//  (c1) Melt Down's color (Goody Bags' until Silver's Oct 31 rework) and (c2) Cheap Seats' "pay 1 for 1 follower" on the card at the space (Cory, 2026-10-15:
 //       choices come to where you act), not on your seat's stacks: the engine's colors and ids, Cheap Seats' counts,
 //       "N left" and its Done/Trade nothing; a pick answers, Cheap Seats' card stays at the space until Done.
 //  (w1) Promote on the same card (Even Swap's until the round I rework): your members are the first row; one picked, the shop members it pairs with light
@@ -260,7 +260,7 @@ try {
     if (await page.$('.lt-seat .cs-stack.pick-on, .lt-seat .cs-pick-seat, .seat-pick.docked')) errors.push(`(${tag}) the seats or the header still take the pick`);
     const chips = await page.$$eval('.pick-key, .prompt.choice .opts .btn', els => els.filter(e => e.getBoundingClientRect().width > 2).length);
     if (chips) errors.push(`(${tag}) ${chips} chips show`);
-    // Polish's 4 coins are picked whole on the split card, like a payment (Harvest's picker, Cory Nov 4: "all the other
+    // Melt Down's 4 coins are picked whole on the split card, like a payment (Harvest's picker, Cory Nov 4: "all the other
     // purchasing selectors are solid and elegant"): a stack per engine color, Take answers the engine's four questions
     const want = st.pending.options.filter(o => o.target).map(o => o.target.res);
     const stacks = await page.$$eval('.gift-card [data-split-stack]', els => els.map(e => e.dataset.splitStack));
@@ -268,7 +268,7 @@ try {
     const title = await page.$eval('.gift-card .gc-title', e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
     const head = await page.$eval('.gift-card .gc-what', e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
     await page.screenshot({ path: `${SHOTS}/${tag}-card.png` });
-    if (title !== 'Polish' || head !== '+4 in colors you choose') errors.push(`(c1) the card reads "${title}" / "${head}"`);
+    if (title !== 'Melt Down' || head !== '+4 in colors you choose') errors.push(`(c1) the card reads "${title}" / "${head}"`);
     const pick = want.includes('red') ? 'red' : want[0];
     const before = st.players[0].res[pick] || 0;
     for (let k = 0; k < 4; k++) await click(page, `.gift-card [data-split-add="${pick}"]`);
@@ -324,7 +324,7 @@ try {
   // (k1) the keyboard list: only for the keyboard
   {
     // (a member pick on the seats: steals now ask on the card by the space, whose own buttons take the keyboard; Shake
-    // Down left the wheel Nov 10, and Swindle, in its slot, starts with the same pick of a rival's member)
+    // Down left the wheel Nov 10, and Sleight of Hand, in its slot, starts with the same pick of a rival's member)
     const save = stealSave('swindle');
     const { ctx, page } = await open('k1', save, '.seat-pick.docked');
     if (await page.$('.pick-key')) errors.push('(k1) the list is in the page before any Tab');

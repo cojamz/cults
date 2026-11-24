@@ -57,7 +57,7 @@ describe('Silver Tongues: "Everyone\'s silver pays for any color. Whenever a riv
     const s = sc({ n: 3, res: [{}, { silver: 3 }], members: [['silver.caterer']], shop: ['red.volunteer'], queue: [{ t: 'buy', p: 1 }] });
     expect(canBuy(s, /Volunteer/)).toBe(false);
   });
-  it('the pitched turn: you Toast (each rival +2), then Ben pays a red part with that silver: +1', () => {
+  it('the pitched turn: you Raise a Glass (each rival +2), then Ben pays a red part with that silver: +1', () => {
     let s = sc({ n: 4, round: 2, members: [['silver.tongues']], shop: ['red.volunteer'], queue: [{ t: 'turn', p: 0 }, { t: 'buy', p: 1 }] });
     s = take(s, 'silver.toast');
     if (s.pending?.player === 0) s = pass(s);

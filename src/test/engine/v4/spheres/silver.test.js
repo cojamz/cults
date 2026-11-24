@@ -62,7 +62,7 @@ describe('Silver scoring: most silver', () => {
 });
 
 describe('Silver actions', () => {
-  it('Toast (flat since Nov 11): +4 silver, everyone else +2 silver, +1 silver, in every round', () => {
+  it('Raise a Glass (flat since Nov 11): +4 silver, everyone else +2 silver, +1 silver, in every round', () => {
     let s = take(scene({ res: [{}, { gold: 2 }] }), 'silver.toast');
     expect(R(s)).toEqual({ ...Z, silver: 5 });
     expect(R(s, 1)).toEqual({ ...Z, gold: 2, silver: 2 });
@@ -72,15 +72,15 @@ describe('Silver actions', () => {
     expect(R(s, 1).silver).toBe(2);
   });
 
-  it('rings: Polish and Party Gifts open in round I, Flaunt and Buyout in round II, Largesse in round III', () => {
+  it('rings: Melt Down and Hand Out Gifts open in round I, Flaunt and Hire Away in round II, Throw Coins in round III', () => {
     const names = s => s.pending.options.map(o => o.label);
-    expect(names(scene())).toEqual(expect.arrayContaining(['Toast', 'Polish', 'Party Gifts']));
-    expect(names(scene())).not.toContain('Buyout');
-    expect(names(scene({ round: 2 }))).toEqual(expect.arrayContaining(['Flaunt', 'Buyout']));
+    expect(names(scene())).toEqual(expect.arrayContaining(['Raise a Glass', 'Melt Down', 'Hand Out Gifts']));
+    expect(names(scene())).not.toContain('Hire Away');
+    expect(names(scene({ round: 2 }))).toEqual(expect.arrayContaining(['Flaunt', 'Hire Away']));
     expect(names(scene({ round: 2 }))).not.toContain('Sweet Nothings'); // off the wheel since Nov 11 (Flaunt)
     expect(names(scene({ round: 2 }))).not.toContain('Sweet Talk'); // off the wheel since Nov 11
-    expect(names(scene({ round: 2 }))).not.toContain('Largesse');
-    expect(names(scene({ round: 3 }))).toContain('Largesse');
+    expect(names(scene({ round: 2 }))).not.toContain('Throw Coins');
+    expect(names(scene({ round: 3 }))).toContain('Throw Coins');
   });
 });
 
@@ -106,7 +106,7 @@ describe('Silver members', () => {
 
   it('Almsgiver: whenever you gift silver, +2 silver (once per gift, not per player)', () => {
     let s = take(scene({ members: [['silver.caterer']] }), 'silver.toast');
-    expect(R(s).silver).toBe(7); // Toast's 5, the Silver Cloak +2 (Cory, Nov 7)
+    expect(R(s).silver).toBe(7); // Raise a Glass's 5, the Silver Cloak +2 (Cory, Nov 7)
     s = move(move(move(take(scene({ members: [['silver.caterer']] }), 'silver.partygifts'), 'player:1'), 'player:2'), 'done');
     expect(R(s).silver).toBe(2);
   });
@@ -188,7 +188,7 @@ describe('Silver members', () => {
     let s = take(scene({ round: 2, members: [['silver.grandhost']] }), 'silver.toast');
     expect(R(s).silver).toBe(10); // +4 and +1, each doubled
     expect(R(s, 1).silver).toBe(2);
-    s = take(scene({ members: [['silver.grandhost']] }), 'silver.polish'); // Polish's +3 is the space's own silver: doubled
+    s = take(scene({ members: [['silver.grandhost']] }), 'silver.polish'); // Melt Down's +3 is the space's own silver: doubled
     expect(s.pending.prompt).toMatch(/all 6/);
     s = take(scene({ members: [['silver.grandhost'], ['silver.guest']] }), 'silver.toast');
     expect(R(s).silver).toBe(10);

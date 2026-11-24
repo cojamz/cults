@@ -109,7 +109,7 @@ describe('Green candidates', () => {
   it('Stage Door: moves one of your other minions to an open Green space and does that space\'s action; +1 green', () => {
     let s = go(still({ round: 2 }), turn(0, 1, 0));
     s = pass(take(s, 'gold.rush'));
-    s = pass(take(s, 'Gather'));
+    s = pass(take(s, 'Gather the Kin'));
     const gold = spaceOf(s, 'gold.rush'), build = spaceOf(s, 'echo.chant');
     s = take(s, 'echo.stagedoor');
     expect(s.players[0].res.green).toBe(1);
@@ -118,7 +118,7 @@ describe('Green candidates', () => {
     s = move(s, `to:${build}`);
     expect(s.slots[build]).toBe(0);
     expect(s.slots[gold]).toBeUndefined(); // open again for the rivals
-    expect(s.players[0].res.green).toBe(1 + 3); // Build Up: Stage Door's minion and the moved one on Green, +1
+    expect(s.players[0].res.green).toBe(1 + 3); // Flock Together: Stage Door's minion and the moved one on Green, +1
     expect(named(s, 'Stage Door').some(l => /moves a minion from/.test(l))).toBe(true);
   });
   it('Stage Door: never moves the Stage Door minion itself; with no other minion, just +1 green', () => {
@@ -138,7 +138,7 @@ describe('Green candidates', () => {
     expect(s.pending.prompt).toMatch(/^Medley: copy every action on which color/);
     expect(s.pending.options.map(o => o.id)).not.toContain('color:echo');
     s = move(s, 'color:gold');
-    expect(s.players[0].res.green).toBe(1); // Green's Build Up is not copied
+    expect(s.players[0].res.green).toBe(1); // Green's Flock Together is not copied
     expect(s.players[0].res.gold || 0).toBeGreaterThan(gold);
     expect(named(s, 'Medley').some(l => /copies every action on Gold/.test(l))).toBe(true);
   });

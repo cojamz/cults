@@ -158,7 +158,7 @@ describe('White, Red, Green and Blue candidates', () => {
     s = take(s, 'echo.remix');
     expect(s.players[0].res.green).toBe(1);
     s = move(s, 'color:gold');
-    expect(s.players[0].res.gold).toBe(6); // Golden Years in round III; Double Down left out
+    expect(s.players[0].res.gold).toBe(6); // Let It Grow in round III; Multiply left out
     expect(named(s, 'Remix').some(l => /but the round III one/.test(l))).toBe(true);
   });
   it('Bargain Hunters: once per turn, sending shop members to the discard pile gives an extra recruit', () => {

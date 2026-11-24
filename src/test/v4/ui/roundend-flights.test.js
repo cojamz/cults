@@ -35,11 +35,11 @@ const flown = plan => {
 it('flies only the closing move\'s own followers, from their own sources, before the Reckoning (never the prizes)', () => {
   let checked = 0, multiWinner = 0, buggy = 0, streamed = 0;
   // seed 9 for 2 since every member cost 4 more (Nov 5 evening): seed 2's round II now closes on a Sore Loser pick after the
-  // round-end line, a closing this check doesn't model; seed 10 for 8 since Gather pays per 3 spent (Nov 9), same reason
+  // round-end line, a closing this check doesn't model; seed 10 for 8 since Gather the Kin pays per 3 spent (Nov 9), same reason
   // seed 11 for 5 since Borrow (Nov 10): seed 5's round II closes with a borrowed member discarded at round end, which
   // takes back a follower the closing recruit flew in, a closing this check doesn't model either
   // seed 14 for 7 since bots count Borrow's member as discarded at round end (Nov 12): seed 7's round I closing has no round-end line now
-  // seed 13 for 9 since Late Shift took Trending's place (Nov 11): seed 9's round I now closes on a Borrow discard, as seed 5's did
+  // seed 13 for 9 since Call to Arms took Trending's place (Nov 11): seed 9's round I now closes on a Borrow discard, as seed 5's did
   // seed 15 for 10 since Guild Master and Purists (Nov 11): seed 10's round II closing has no round-end line now
   for (const seed of [1, 13, 3, 4, 11, 6, 14, 15]) {
     for (const { prev, next } of closings(seed)) {

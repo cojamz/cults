@@ -23,7 +23,7 @@ describe('REPLACE9: Night Watch (any player)', () => {
     expect([d.s, d.w, d.f]).toEqual([o.s, o.w, 1]); // worth 1: a live member is rebased to 1, while the retired card keeps its old worth (Cory, Nov 12)
     expect(o.retired).toBe(true);
   });
-  it('a rival takes the token with Last Call: +1 follower per minion on it', () => {
+  it('a rival takes the token with Bide Your Time: +1 follower per minion on it', () => {
     const s = take(sceneQ({ quadrants: Q, round: 2, left: 3, members: [[], ['purple.nightwatch9']], queue: [...turns(0, 1, 0, 1, 0, 1), { t: 'allPlaced' }] }), 'purple.lastcall');
     expect(s.players[1].bonus).toBe(2);
     expect(named(s, 'Night Watch')).toHaveLength(1);

@@ -23,8 +23,8 @@ const targetsAt = (s, key, pid = 0) => { const [q, i] = spot(s, key); return pre
 const sorted = a => [...a].sort((x, y) => x - y);
 
 describe('space targets', () => {
-  // Gather took Walk-In's slot (Cory, Nov 10): its bonus rides on whatever you recruit, so no shop member lights
-  it('Gather: lights no shop member, since any recruit of a color you have pays', () => {
+  // Gather the Kin took Walk-In's slot (Cory, Nov 10): its bonus rides on whatever you recruit, so no shop member lights
+  it('Gather the Kin: lights no shop member, since any recruit of a color you have pays', () => {
     const s = table(Q, { shop: ['gold.tycoon', 'red.bigfamily', 'red.intern', 'gold.taxman'] });
     expect(targetsAt(s, 'gather')).toBe(null);
   });
@@ -41,12 +41,12 @@ describe('space targets', () => {
       [intern, twins],
     ].map(key).sort());
   });
-  it('Initiation: every face-up member costing 11 or less (8 on Oct 25; up with the price since Nov 5)', () => {
+  it('Induct: every face-up member costing 11 or less (8 on Oct 25; up with the price since Nov 5)', () => {
     const s = table(Q, { round: 3, shop: ['gold.tycoon', 'red.intern', 'red.bigfamily', 'gold.taxman', 'red.sponsor'] });
     const t = targetsAt(s, 'take');
     expect(sorted(t.shop)).toEqual(sorted(['red.intern', 'red.bigfamily', 'gold.taxman'].map(d => uidIn(s, d, 'shop'))));
   });
-  it('Test Drive and Out of Style: no member is lit up front, since the player picks which go to the discard pile', () => {
+  it('Try Out and Clear Out: no member is lit up front, since the player picks which go to the discard pile', () => {
     const defs = ['gold.tycoon', 'red.intern', 'red.bigfamily'];
     expect(targetsAt(table(Q, { shop: defs }), 'testdrive')).toBe(null);
     expect(targetsAt(table(Q, { shop: defs }), 'restock')).toBe(null);

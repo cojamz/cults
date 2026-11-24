@@ -243,7 +243,7 @@ function heistPick(ctx, p, left, first = true, instance = undefined) {
   if (!list.length) { if (first) ctx.log(`${p.name} found no rival with followers to steal.`); return; }
   if (left < 1) return;
   const top = Math.max(...ctx.state.players.map(o => ctx.followers(o)));
-  ctx.choose(p, `Heist: steal a follower from which rival? (${left} left)`, list.map(o => ({
+  ctx.choose(p, `Plunder: steal a follower from which rival? (${left} left)`, list.map(o => ({
     id: `player:${o.id}`, kind: 'player', value: o.id, label: `${o.name} (${ctx.followers(o)} followers)`,
     hint: 2 + (ctx.followers(o) === top ? 1 : 0) + 0.01 * ctx.followers(o),
   })), 'thieves.heistSplit', { left, instance });
@@ -343,10 +343,10 @@ const thieves = {
       // Cory, 2026-10-27: "steal 3/4/5", split among rivals as you choose; the follower steal is gone
       // Cory, Nov 10 3:13pm: "Steal 1 resource per minion you've placed this round, this one included. +1 magenta." ("then
       // there's competition to cap it"; was "Steal 3/4/5 resources", no magenta). A steal splits among rivals as you choose.
-      key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 1 resource per minion you’ve placed this round. +1 magenta.',
+      key: 'pickpocket', ring: 1, name: 'Pilfer', text: 'Steal 1 resource per minion you’ve placed this round. +1 magenta.',
       estimate: (ctx, p) => 1 + estimateSteal(ctx, p, ctx.stealCount(p, placedCount(ctx, p) + (onBoardNow(ctx, p) ? 0 : 1))),
       resolve(ctx, p) {
-        startSteal(ctx, p, 'Help Yourself', ctx.stealCount(p, placedCount(ctx, p), { say: true }));
+        startSteal(ctx, p, 'Pilfer', ctx.stealCount(p, placedCount(ctx, p), { say: true }));
       },
     },
     // REPLACE10 bot test (Nov 4, quality loop lane D): Stash's slot (Cory cut Stash Oct 31; it stays live until a pick).
@@ -417,12 +417,12 @@ const thieves = {
     {
       // Cory, Nov 10 3:44pm: Catch Up takes an open round I slot, to try ("lets just try it as +2"); Lie Low's slot (his
       // 3:25pm ask for it: "Maybe we need something that just gives magenta?"). Rivals counted by all the resources they hold.
-      key: 'catchup', ring: 1, name: 'Catch Up', text: '+2 magenta per rival with more resources than you. +1 magenta.',
+      key: 'catchup', ring: 1, name: 'Beg', text: '+2 magenta per rival with more resources than you. +1 magenta.',
       estimate: (ctx, p) => 1 + 2 * ctx.rivals(p).filter(o => holding(o) > holding(p)).length,
       resolve(ctx, p) {
         const k = ctx.rivals(p).filter(o => holding(o) > holding(p)).length;
         if (k) ctx.gain(p, 'magenta', 2 * k, { fromAction: true });
-        ctx.log(`${p.name}'s Catch Up: ${k} rival${k === 1 ? '' : 's'} with more resources, +${2 * k} magenta.`);
+        ctx.log(`${p.name}'s Beg: ${k} rival${k === 1 ? '' : 's'} with more resources, +${2 * k} magenta.`);
       },
     },
     {
@@ -445,11 +445,11 @@ const thieves = {
       // Cory, Nov 10 3:46pm: "Steal 4 followers and 4 resources. +1 magenta." ("maybe it should be steal 4 followers and 4any
       // from rivals for the round II?"). The followers first, then the resources, each split among rivals as you choose.
       // Cory, Nov 13 12:36am Eastern: "Heist is for sure to strong. Should maybe go to 3 and 3"
-      key: 'rob', ring: 2, name: 'Heist', text: 'Steal 3 followers and 3 resources. +1 magenta.',
+      key: 'rob', ring: 2, name: 'Plunder', text: 'Steal 3 followers and 3 resources. +1 magenta.',
       estimate: (ctx, p) => Math.min(3, heistTargets(ctx, p).reduce((a, o) => a + o.bonus, 0)) * 2 + estimateSteal(ctx, p, ctx.stealCount(p, 3)),
       // one Heist is one steal (Cory, Oct 29: "once per steal instance"): every follower pick and the resources share one id,
       // so Fence and the Magenta Cloak pay once (picky bot, Nov 11: a copied Heist paid the cloak 6 times)
-      resolve(ctx, p) { const instance = ctx.stealInstance(); heistPick(ctx, p, 3, true, instance); startSteal(ctx, p, 'Heist', ctx.stealCount(p, 3, { say: true }), { instance }); },
+      resolve(ctx, p) { const instance = ctx.stealInstance(); heistPick(ctx, p, 3, true, instance); startSteal(ctx, p, 'Plunder', ctx.stealCount(p, 3, { say: true }), { instance }); },
     },
     {
       // Retired Nov 10 (Swindle took its slot); kept for old saves.
@@ -475,7 +475,7 @@ const thieves = {
       // Cory, Nov 10 3:37pm: "Steal a rival's member costing up to 7; give them a shop member of your choice in its place.
       // +1 magenta." (Shake Down's slot; 7 Claude's pick of his "6 or 7"; no cap on the member given: "no"); 3:38pm "call it
       // Swindle". The member you give comes from the shop, which refills.
-      key: 'swindle', ring: 2, name: 'Swindle', text: `Steal a rival’s member costing up to ${6 + MORE}; give them a shop member of your choice in its place. +1 magenta.`,
+      key: 'swindle', ring: 2, name: 'Sleight of Hand', text: `Steal a rival’s member costing up to ${6 + MORE}; give them a shop member of your choice in its place. +1 magenta.`,
       estimate: (ctx, p) => {
         const l = takeable(ctx, p, 6 + MORE + richUp(ctx.state)), shop = ctx.shopCards();
         if (!l.length || !shop.length) return 0;
@@ -483,9 +483,9 @@ const thieves = {
       },
       resolve(ctx, p) {
         const list = takeable(ctx, p, 6 + MORE + richUp(ctx.state));
-        if (!list.length) { ctx.log(`${p.name}'s Swindle: no rival's member costs ${6 + MORE + richUp(ctx.state)} or less.`); return; }
-        if (!ctx.shopCards().length) { ctx.log(`${p.name}'s Swindle: the shop is empty, so there's nothing to give in its place.`); return; }
-        pickMember(ctx, p, list, 'Swindle: steal which member?', 'thieves.swindle');
+        if (!list.length) { ctx.log(`${p.name}'s Sleight of Hand: no rival's member costs ${6 + MORE + richUp(ctx.state)} or less.`); return; }
+        if (!ctx.shopCards().length) { ctx.log(`${p.name}'s Sleight of Hand: the shop is empty, so there's nothing to give in its place.`); return; }
+        pickMember(ctx, p, list, 'Sleight of Hand: steal which member?', 'thieves.swindle');
       },
     },
     // Lane F (Nov 4, bot games only): three candidates for Shake Down's slot, no choice on a rival's part (turn flow)
@@ -630,14 +630,14 @@ const thieves = {
       const v = ctx.player(vid);
       if (!v || !ctx.canSteal(p, v)) return;
       const n = ctx.steal(p, v, { followers: 1, ...(data.instance !== undefined ? { instance: data.instance } : {}) });
-      ctx.log(n ? `${p.name}'s Heist: stole 1 follower from ${v.name}.` : `${p.name}'s Heist: ${v.name} had no follower to steal.`);
+      ctx.log(n ? `${p.name}'s Plunder: stole 1 follower from ${v.name}.` : `${p.name}'s Plunder: ${v.name} had no follower to steal.`);
       heistPick(ctx, p, data.left - 1, false, data.instance);
     },
     heistFollowers(ctx, p, vid) {
       const v = ctx.player(vid);
       if (!v || !ctx.canSteal(p, v)) return;
       const n = ctx.steal(p, v, { followers: 3 });
-      ctx.log(n ? `${p.name}'s Heist: stole ${n} follower${n > 1 ? 's' : ''} from ${v.name}.` : `${p.name}'s Heist: ${v.name} had no followers to steal.`);
+      ctx.log(n ? `${p.name}'s Plunder: stole ${n} follower${n > 1 ? 's' : ''} from ${v.name}.` : `${p.name}'s Plunder: ${v.name} had no followers to steal.`);
     },
     ...handlers13({
       cleanOut(ctx, p, [vid, color]) {
@@ -726,10 +726,10 @@ const thieves = {
     swindle(ctx, p, uid) {
       const v = ctx.ownerOf(uid), c = ctx.card(uid);
       if (!v || !ctx.steal(p, v, { uid })) return;
-      ctx.log(`${p.name}'s Swindle: took ${v.name}'s ${c.def.name}.`);
+      ctx.log(`${p.name}'s Sleight of Hand: took ${v.name}'s ${c.def.name}.`);
       const shop = ctx.shopCards();
-      if (!shop.length) { ctx.log(`${p.name}'s Swindle: the shop is empty, so ${v.name} gets nothing in its place.`); return; }
-      ctx.choose(p, `Swindle: give ${v.name} which shop member in its place?`, shop.map(m => ({
+      if (!shop.length) { ctx.log(`${p.name}'s Sleight of Hand: the shop is empty, so ${v.name} gets nothing in its place.`); return; }
+      ctx.choose(p, `Sleight of Hand: give ${v.name} which shop member in its place?`, shop.map(m => ({
         id: `card:${m.uid}`, label: `${m.def.name} (${cost(m)})`, kind: 'card', value: m.uid, hint: -memberHint(m),
       })), 'thieves.swindleGive', { vid: v.id });
     },
@@ -737,7 +737,7 @@ const thieves = {
       const v = ctx.player(data.vid);
       if (!ctx.state.shop.includes(uid)) return;
       ctx.giveFromShop(v, uid, p);
-      ctx.log(`${p.name}'s Swindle: gave ${v.name} ${ctx.card(uid).def.name} from the shop.`);
+      ctx.log(`${p.name}'s Sleight of Hand: gave ${v.name} ${ctx.card(uid).def.name} from the shop.`);
       // Cory, Nov 10 10:42pm: "if you give them a member that doesnt count as an on recruit" (no On Recruit for the rival)
     },
     heist(ctx, p, uid) {

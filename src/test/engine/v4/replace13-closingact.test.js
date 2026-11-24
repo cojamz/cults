@@ -28,7 +28,7 @@ describe('REPLACE13=closingact: Closing Act', () => {
     let s = table(['purple', 'red'], { n: 2, round, members: [['purple.closingact']], shop: SHOP, left: 1 });
     s.players[1].left = 0;
     const before = s.players[0].bonus || 0;
-    s = go(s, slotOf(s, 'red', 'Gather'));
+    s = go(s, slotOf(s, 'red', 'Gather the Kin'));
     expect((s.players[0].bonus || 0) - before).toBe(n);
   });
 });

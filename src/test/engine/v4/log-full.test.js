@@ -1,7 +1,7 @@
 // @vitest-environment node
 // The log keeps its last 300 lines. Late in a game (round III) a new line can repeat the line before it
-// ("P2's Cover: +1 green." twice), and reading "what's new" by the last line's text then saw nothing new: the log
-// audit flagged silent changes (Squanderer's recruit, Melting Pot's +1 blue, Oct 31) and the engine's own
+// ("P2's Imitate: +1 green." twice), and reading "what's new" by the last line's text then saw nothing new: the log
+// audit flagged silent changes (Squanderer's recruit, Hold a Fair's +1 blue, Oct 31) and the engine's own
 // "say every change" pass could say a change twice. What's new is counted (logN), not matched by text.
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, logCount, logSince } from '../../../engine/v4/core.js';

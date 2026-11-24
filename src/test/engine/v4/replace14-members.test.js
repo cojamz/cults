@@ -27,7 +27,7 @@ describe('REPLACE14: Big Spenders', () => {
   });
   it('silver paid for a member goes to rivals you choose, all of it, +1 follower each', () => {
     let s = table(['red', 'silver'], { n: 3, round: 2, res: [{ silver: 6 }], members: [['silver.bigspenders']], shop: ['silver.toastmaster'] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     const u = uidIn(s, 'silver.toastmaster', 'shop');
     s = answer(s, `card:${u}`);
     while (s.pending && s.pending.prompt?.includes('pay')) s = answer(s, s.pending.options[0].id);
@@ -37,7 +37,7 @@ describe('REPLACE14: Big Spenders', () => {
     for (let i = 0; i < paid; i++) s = answer(s, i % 2 ? 'player:2' : 'player:1');
     expect(s.players[1].res.silver + s.players[2].res.silver).toBe(paid);
     expect(log(s)).toContain(`then +${paid} followers.`);
-    expect(s.players[0].bonus).toBe(paid + Math.floor(paid / 3)); // + Gather's +1 per 3 paid
+    expect(s.players[0].bonus).toBe(paid + Math.floor(paid / 3)); // + Gather the Kin's +1 per 3 paid
   });
 });
 
@@ -73,24 +73,24 @@ describe('REPLACE14: Charmers ("Whenever you gift silver to rivals, +1 of any co
     expect(defById('silver.charmers').name).toBe('Charmers');
     expect(defById('silver.smoothtalker').retired).toBe(true);
   });
-  it('Toast: each of 3 rivals +2 silver, so +6 of any colors, picked one at a time (flat Toast, Nov 11)', () => {
+  it('Raise a Glass: each of 3 rivals +2 silver, so +6 of any colors, picked one at a time (flat Raise a Glass, Nov 11)', () => {
     let s = table(['red', 'silver', 'market'], { n: 4, round: 1, members: [['silver.charmers']] });
-    s = answer(s, `slot:${slot(s, 'silver', 'Toast')}`);
+    s = answer(s, `slot:${slot(s, 'silver', 'Raise a Glass')}`);
     expect(log(s)).toContain("P1's Charmers: 6 silver gifted, +6 of any colors.");
     for (const c of ['red', 'red', 'red', 'red', 'blue', 'blue']) s = answer(s, `color:${c}`);
     expect(s.players[0].res).toMatchObject({ red: 4, blue: 2, silver: 5 });
     expect([1, 2, 3].map(i => s.players[i].res.silver)).toEqual([2, 2, 2]);
   });
-  it('Party Gifts giving 2: +2 of any colors on top of its 4 followers; silver a rival gives you pays nothing', () => {
+  it('Hand Out Gifts giving 2: +2 of any colors on top of its 4 followers; silver a rival gives you pays nothing', () => {
     let s = table(['red', 'silver'], { n: 3, round: 1, members: [['silver.charmers']] });
-    s = answer(s, `slot:${slot(s, 'silver', 'Party Gifts')}`);
+    s = answer(s, `slot:${slot(s, 'silver', 'Hand Out Gifts')}`);
     s = answer(s, 'player:1'); s = answer(s, 'player:2'); s = answer(s, 'done');
     expect(log(s)).toContain("P1's Charmers: 2 silver gifted, +2 of any colors.");
     s = answer(s, 'color:silver'); s = answer(s, 'color:red');
     expect(s.players[0].res).toMatchObject({ silver: 1, red: 1 });
     expect(s.players[0].bonus).toBe(4);
     let t = table(['red', 'silver'], { n: 2, round: 1, members: [[], ['silver.charmers']] });
-    t = answer(t, `slot:${slot(t, 'silver', 'Toast')}`);
+    t = answer(t, `slot:${slot(t, 'silver', 'Raise a Glass')}`);
     expect(log(t)).not.toContain('Charmers');
   });
 });
@@ -128,23 +128,23 @@ describe('REPLACE14: Extortionist replacements (lane F paper passers)', () => {
     expect(defById('thieves.mobboss').name).toBe('Mob Boss');
     expect(defById('thieves.extortionist').retired).toBe(true);
   });
-  it('The Boss with 2 other Magenta members: Help Yourself as the first minion takes 1 + 2 (Help Yourself since Nov 10: 1 per minion placed this round)', () => {
+  it('The Boss with 2 other Magenta members: Pilfer as the first minion takes 1 + 2 (Pilfer since Nov 10: 1 per minion placed this round)', () => {
     let s = table(Q, { n: 2, round: 1, res: [{}, { gold: 9 }], members: [['thieves.boss', 'thieves.fence', 'thieves.secondstory']] });
-    s = answer(s, `slot:${slot(s, 'thieves', 'Help Yourself')}`);
+    s = answer(s, `slot:${slot(s, 'thieves', 'Pilfer')}`);
     let k = 0;
     while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('gold')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('gold')).id); k++; }
     expect(9 - s.players[1].res.gold).toBe(3);
   });
   it('The Boss alone: no other Magenta member, no extra', () => {
     let s = table(Q, { n: 2, round: 1, res: [{}, { gold: 9 }], members: [['thieves.boss']] });
-    s = answer(s, `slot:${slot(s, 'thieves', 'Help Yourself')}`);
+    s = answer(s, `slot:${slot(s, 'thieves', 'Pilfer')}`);
     let k = 0;
     while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('gold')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('gold')).id); k++; }
     expect(9 - s.players[1].res.gold).toBe(1);
   });
   it('Mob Boss with 1 other Magenta member: On Recruit steals 2 from each rival', () => {
     let s = table(Q, { n: 3, round: 2, res: [{ magenta: 9, gold: 9 }, { red: 5 }, { blue: 5 }], members: [['thieves.fence']], shop: ['thieves.mobboss'] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = answer(s, `card:${uidIn(s, 'thieves.mobboss', 'shop')}`);
     while (s.pending && s.pending.player === 0 && s.pending.prompt?.includes('pay')) s = answer(s, s.pending.options[0].id);
     expect(log(s)).toContain("P1's Mob Boss: took 2 from P2.");
@@ -179,7 +179,7 @@ describe('REPLACE14: Misers (interest), Preachers (cash-out), Bandit (per rival)
   });
   it('Bandit: steal 3 split 1-1-1 across 3 rivals gives +3 followers', () => {
     let s = table(['red', 'thieves'], { n: 4, round: 2, res: [{ magenta: 9, red: 9 }, { red: 3 }, { blue: 3 }, { gold: 3 }], shop: ['thieves.partners'] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = answer(s, `card:${uidIn(s, 'thieves.partners', 'shop')}`);
     while (s.pending && s.pending.player === 0 && s.pending.prompt?.includes('pay')) s = answer(s, s.pending.options[0].id);
     const b = s.players[0].bonus;

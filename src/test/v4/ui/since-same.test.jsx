@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { saysSame } from '../../../v4/game/SinceStrip.jsx';
 
-// picky bot, Nov 6: "P3 Build Up: +3 green (+3 green)" said the gain twice
+// picky bot, Nov 6: "P3 Flock Together: +3 green (+3 green)" said the gain twice
 describe('since strip: board words in brackets only when they add something', () => {
   it('drops them when the gain says the same', () => {
     expect(saysSame('+3 green', '+3 green')).toBe(true);

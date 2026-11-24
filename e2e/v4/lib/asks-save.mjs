@@ -1,5 +1,5 @@
 // Saved hot-seat games stopped where one of P1's members asks something of P1 (blind testers, 2026-10-15: a member
-// you can use must glow on your seat and carry its control). P1 is the only person, on an Echo table:
+// you can use must glow on your seat and carry its control). P1 is the only person, on an Follow Suit table:
 //  askSave('bigspender'): P1's second buy of the turn (Squanderer used), also holding Translator (a switch, off).
 //  askSave('straggler'):  after the last minion is placed, Straggler asks where P1's last minion goes.
 // Used by the asks gate (e2e/v4/asks.mjs) and the before/after shots in design/eval/member-asks/.

@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Actions lane r4 batch (Nov 4): Rally (Gather's place), Clearance (Savings'), Patron (Splurge's).
+// Actions lane r4 batch (Nov 4): Rally (Gather the Kin's place), Clearance (Savings'), Patron (Spend Freely's).
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE11 = 'rally,clearancesale,patron';

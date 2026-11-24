@@ -1,5 +1,5 @@
 // The "since your last turn" strip says who got what (picky bot, Nov 4, first-time readers): "P4 Walk-In: you +1 red ·
-// +1 red" read as yours twice, "P2 Heist: +1 magenta +3 followers" never said from whom, and Potluck's "P2 took 1 of
+// +1 red" read as yours twice, "P2 Plunder: +1 magenta +3 followers" never said from whom, and Potluck's "P2 took 1 of
 // your blue" came after the reader chose to give it.
 import { describe, expect, it } from 'vitest';
 import { applyMove, actionAt } from '../../../engine/v4/index.js';
@@ -25,6 +25,6 @@ describe('strip lines name who got what', () => {
   });
   it('followers taken say whose they were', () => {
     const st = rivalTurn({ quadrants: ['silver', 'thieves', 'market', 'red'], round: 2, bonus: [0, 0, 5] }, 'thieves.rob');
-    expect(st.lines[0]).toMatch(/^\+1 magenta \+3 followers from P3$/); // Heist steals 3 followers since Nov 13 (and 3 resources: nobody holds any here)
+    expect(st.lines[0]).toMatch(/^\+1 magenta \+3 followers from P3$/); // Plunder steals 3 followers since Nov 13 (and 3 resources: nobody holds any here)
   });
 });

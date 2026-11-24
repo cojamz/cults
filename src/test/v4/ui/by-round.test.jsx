@@ -18,7 +18,7 @@ const everything = () => [
 describe('rules that grow by round', () => {
   it('every space and member whose rule grows by round has its three lines', () => {
     const found = everything().filter(([, d]) => GROWS.test(d.text || ''));
-    expect(found.length).toBeGreaterThanOrEqual(6); // Allowance left; Toast, Harvest and New Blood went flat (Nov 11)
+    expect(found.length).toBeGreaterThanOrEqual(6); // Allowance left; Raise a Glass, Harvest and Welcome Strangers went flat (Nov 11)
     for (const [id, d] of found) {
       expect(d.byRound, id).toBeTruthy();
       expect(d.byRound.lines, id).toHaveLength(3);
@@ -31,11 +31,11 @@ describe('rules that grow by round', () => {
       const a = quadrant(qid).actions.find(x => x.key === key);
       for (const r of [1, 2, 3]) expect(num(a.byRound.lines[r - 1]), `${qid}.${key} round ${r}`).toBe(a.estimate({ state: { round: r } }));
     }
-    // Sleep In (Nov 10): +4/+5/+6 purple, then the Goes Last token in the rest
+    // Lie Abed (Nov 10): +4/+5/+6 purple, then the Goes Last token in the rest
     const g = quadrant('purple').actions.find(x => x.key === 'skip');
     for (const r of [1, 2, 3]) expect(g.byRound.lines[r - 1].match(/\d+/g).map(Number), `purple.skip round ${r}`).toEqual([r + 3]);
     expect(g.byRound.rest).toMatch(/Goes Last token/);
-    // Build Up stopped growing by round (Nov 10: +1 green per minion on Green spaces), so it has no lines
+    // Flock Together stopped growing by round (Nov 10: +1 green per minion on Green spaces), so it has no lines
     expect(quadrant('echo').actions.find(x => x.key === 'chant').byRound).toBeUndefined();
   });
 
@@ -74,11 +74,11 @@ describe('rules that grow by round', () => {
 
 // Each separate effect gets its own line in the hover cards (Cory, 2026-10-23: "the +1 resource should be its own line").
 describe('one effect per line', () => {
-  it('splits a rule at its sentences, and a scaling space reads as its three rounds, then the rest (Sleep In)', async () => {
+  it('splits a rule at its sentences, and a scaling space reads as its three rounds, then the rest (Lie Abed)', async () => {
     const { effectLines } = await import('../../../v4/game/Info.jsx');
     expect(effectLines('Swap any 2 members of equal cost. +1 red.')).toEqual(['Swap any 2 members of equal cost.', '+1 red.']);
     expect(effectLines('+3 gold, and +1 gold to a rival you choose.')).toHaveLength(1);
-    // Help Yourself stopped growing by round (Nov 10), so Sleep In is the scaling space here
+    // Pilfer stopped growing by round (Nov 10), so Lie Abed is the scaling space here
     const sleep = quadrant('purple').actions.find(a => a.key === 'skip');
     const { container } = render(<RuleText def={sleep} round={2} lines />);
     expect(container.textContent).toMatch(/^\+4\/\+5\/\+6 /); // the color is its icon

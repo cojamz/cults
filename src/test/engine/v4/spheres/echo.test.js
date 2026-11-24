@@ -34,69 +34,69 @@ const chooseTarget = (s, id) => play(s, target(id));
 
 describe('Green table action boundaries', () => {
   // Cory, Nov 10: +1 green per minion on Green spaces, this one included, +1 green (was 3 / 4 / 5 by round)
-  it.each([1, 2, 3])('Build Up alone in round %i pays 2 green', round => {
+  it.each([1, 2, 3])('Flock Together alone in round %i pays 2 green', round => {
     expect(R(go(scene({ round }), 'echo.chant')).green).toBe(2);
   });
-  it('Build Up taken last on a full Green round I pays 4', () => {
+  it('Flock Together taken last on a full Green round I pays 4', () => {
     let s = scene({ n: 3, turns: [1, 2, 0] });
     s = go(s, 'echo.echo'); s = go(s, 'echo.refrain'); // nothing earlier to copy
     s = go(s, 'echo.chant');
     expect(R(s).green).toBe(4); // three minions on Green, +1
   });
-  it('Echo can copy your immediately previous action on a consecutive turn', () => {
+  it('Follow Suit can copy your immediately previous action on a consecutive turn', () => {
     let s = scene({ turns: [1, 0, 0] });
     s = go(s, 'echo.chant'); s = go(s, 'gold.rush');
     s = go(s, 'echo.echo', target('gold.rush'));
     expect(R(s)).toEqual({ ...Z, gold: 4, green: 1 });
   });
-  it('Echo uses only the immediately previous action, including when that action is a copy', () => {
+  it('Follow Suit uses only the immediately previous action, including when that action is a copy', () => {
     let s = scene({ round: 2, turns: [1, 1, 0] });
     s = go(s, 'gold.rush');
     s = go(s, 'echo.refrain', target('gold.rush'));
     s = take(s, 'echo.echo');
     expect(s.pending.options).toHaveLength(1);
-    expect(s.pending.options[0].label).toMatch(/^Reprise /);
+    expect(s.pending.options[0].label).toMatch(/^Do It Again /);
     s = move(s, s.pending.options[0].id);
-    // A fresh Reprise by P1 has no prior own action to choose, and cannot revisit Echo. Echo +1, the copied Reprise +1.
+    // A fresh Do It Again by P1 has no prior own action to choose, and cannot revisit Follow Suit. Follow Suit +1, the copied Do It Again +1.
     expect(s.pending.kind).not.toBe('choose');
     expect(R(s)).toEqual({ ...Z, green: 2 });
   });
-  // Echo and Reprise give +1 green (Cory, Oct 28), Sample and Greatest Hits +1
+  // Follow Suit and Do It Again give +1 green (Cory, Oct 28), Sample and Replay All +1
   it.each([['echo.echo', 1], ['echo.encore', 1], ['echo.refrain', 1], ['echo.eternity', 1]])('%s still gives inherent green with no copy target', (action, green) => {
     const s = go(scene({ round: 3 }), action);
     expect(R(s)).toEqual({ ...Z, green });
   });
-  // Greatest Hits is Medley's rule since Nov 10 (choose a color other than Green, copy every action with a minion on it).
-  // A copy of Greatest Hits hands over its chip, so it never runs Greatest Hits again: seeded games looped on copy chains.
-  it('Echo copying Greatest Hits takes its chip and never runs Greatest Hits again', () => {
-    // Greatest Hits copies only your own minions (Cory, Nov 11 11:20pm): P2's own Gold Rush
+  // Replay All is Medley's rule since Nov 10 (choose a color other than Green, copy every action with a minion on it).
+  // A copy of Replay All hands over its chip, so it never runs Replay All again: seeded games looped on copy chains.
+  it('Follow Suit copying Replay All takes its chip and never runs Replay All again', () => {
+    // Replay All copies only your own minions (Cory, Nov 11 11:20pm): P2's own Gold Rush
     let s = scene({ round: 3, turns: [1, 1, 0] });
     s = go(s, 'gold.rush');
     const before = R(s).gold;
     s = go(s, 'echo.eternity', 'color:gold');
     s = take(s, 'echo.echo');
-    if (s.pending?.kind === 'choose' && s.pending.player === 0) s = move(s, s.pending.options.find(o => o.label.startsWith('Greatest Hits')).id);
+    if (s.pending?.kind === 'choose' && s.pending.player === 0) s = move(s, s.pending.options.find(o => o.label.startsWith('Replay All')).id);
     s = pass(s);
-    expect(s.log).toContain("P1 copied Greatest Hits (P2's): +1 green, +6 gold.");
-    expect(s.log.some(l => /^P1's Greatest Hits/.test(l))).toBe(false);
+    expect(s.log).toContain("P1 copied Replay All (P2's): +1 green, +6 gold.");
+    expect(s.log.some(l => /^P1's Replay All/.test(l))).toBe(false);
     expect(R(s)).toEqual({ ...Z, gold: before + 6, green: 2 });
   });
-  it('Greatest Hits never copies a rival\'s minion on the color (Cory, Nov 11 11:20pm: "Let\'s put it on your own")', () => {
+  it('Replay All never copies a rival\'s minion on the color (Cory, Nov 11 11:20pm: "Let\'s put it on your own")', () => {
     let s = scene({ round: 3, turns: [0, 1] });
     s = go(s, 'gold.rush');
     s = take(s, 'echo.eternity');
-    expect(s.log).toContain("P2's Greatest Hits: no color has an action to copy.");
+    expect(s.log).toContain("P2's Replay All: no color has an action to copy.");
   });
   it('the original owner’s passive bonuses never enter the chip', () => {
     let s = scene({ turns: [1, 0], res: [{ gold: 9 }], members: [[], ['gold.prospector', 'gold.underdog']] });
     s = go(s, 'gold.rush');
     expect(R(s, 1).gold).toBe(5);
     s = take(s, 'echo.echo');
-    expect(s.pending.options[0].label).toBe('Golden Years (P2): +2 gold');
+    expect(s.pending.options[0].label).toBe('Let It Grow (P2): +2 gold');
     s = pass(move(s, s.pending.options[0].id));
     expect(R(s)).toEqual({ ...Z, gold: 11, green: 1 });
   });
-  it('copying Kickback copies the printed self-gain without giving a second gift', () => {
+  it('copying Grease a Palm copies the printed self-gain without giving a second gift', () => {
     let s = scene({ turns: [1, 0] });
     s = go(s, 'gold.jv', 'player:0');
     s = go(s, 'echo.echo', target('gold.jv'));
@@ -107,8 +107,8 @@ describe('Green table action boundaries', () => {
     s = go(s, 'gold.steal', 'player:0');
     s = pass(play(s, 'player:2', 'player:2'));
     s = take(s, 'echo.echo');
-    if (!/Collect Debts/.test(s.pending.prompt)) s = chooseTarget(s, 'gold.steal');
-    expect(s.pending.prompt).toMatch(/Collect Debts/);
+    if (!/Call In Debts/.test(s.pending.prompt)) s = chooseTarget(s, 'gold.steal');
+    expect(s.pending.prompt).toMatch(/Call In Debts/);
     s = pass(play(s, 'player:1', 'player:1', 'player:1'));
     expect([R(s).gold, R(s, 1).gold, R(s, 2).gold]).toEqual([3, 0, 2]);
   });
@@ -117,14 +117,14 @@ describe('Green table action boundaries', () => {
     let s = scene({ round: 3, turns: [1, 1, 0, 0], res: [{}, { gold: 5 }], members: [[], ['red.intern', 'red.twins', 'red.volunteer']] });
     s = go(s, 'gold.windfall'); s = go(s, 'gold.strike'); s = go(s, 'echo.chant');
     s = pass(take(s, 'echo.encore'));
-    expect(R(s)).toEqual({ ...Z, green: 3 }); // Build Up alone (+1, +1) and Sample's own +1
+    expect(R(s)).toEqual({ ...Z, green: 3 }); // Flock Together alone (+1, +1) and Sample's own +1
     expect(s.log.some(l => /no rival's member has an On Recruit/.test(l))).toBe(true);
   });
-  it('Reprise copies an own action and leaves a rival’s actions unavailable', () => {
+  it('Do It Again copies an own action and leaves a rival’s actions unavailable', () => {
     let s = scene({ round: 2, turns: [0, 1, 0] });
     s = go(s, 'gold.rush'); s = go(s, 'echo.chant');
     s = take(s, 'echo.refrain');
-    expect(s.pending.options.map(o => o.label)).toEqual(['Golden Years (P1): +4 gold']);
+    expect(s.pending.options.map(o => o.label)).toEqual(['Let It Grow (P1): +4 gold']);
     s = pass(chooseTarget(s, 'gold.rush'));
     expect(R(s)).toEqual({ ...Z, gold: 8, green: 1 });
   });
@@ -134,7 +134,7 @@ describe('Green table action boundaries', () => {
     s.round = 2; s.slots = {}; s.queue = [{ t: 'turn', p: 0 }]; s = resume(s);
     s = go(s, 'gold.rush');
     expect(Object.keys(ledger(s).now)).toEqual(['0-1']);
-    expect(Object.values(ledger(s).last).map(e => [e.name, e.res])).toEqual([['Build Up', { green: 2 }]]);
+    expect(Object.values(ledger(s).last).map(e => [e.name, e.res])).toEqual([['Flock Together', { green: 2 }]]);
   });
   // Walk-In (Cory, 2026-10-27): recruit the top member of the deck, each rival +1 red. A copy does it again: the
   // copier recruits the deck's new top member, free, and the copy's rivals get their +1 red
@@ -155,7 +155,7 @@ describe('Green table action boundaries', () => {
     let s = scene({ round: 2, turns: [1, 1, 0], res: [{ gold: 1 }] });
     s = go(s, 'gold.steal', 'player:0'); s = go(s, 'gold.discount');
     s = take(s, 'echo.echo');
-    if (s.pending?.kind === 'choose' && s.pending.options.some(o => o.label.startsWith('Intro Offer') || o.label.includes('discount'))) s = pass(move(s, s.pending.options[0].id));
+    if (s.pending?.kind === 'choose' && s.pending.options.some(o => o.label.startsWith('Bargain Down') || o.label.includes('discount'))) s = pass(move(s, s.pending.options[0].id));
     else s = pass(s);
     expect(s.players[0].discount).toBe(4);
     expect(R(s)).toEqual({ ...Z, green: 1 });

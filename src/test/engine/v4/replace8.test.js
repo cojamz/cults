@@ -117,7 +117,7 @@ describe('Socialites (+1 by default, Nov 4): "Whenever a rival recruits paying s
     if (v.pending?.player === 0 && v.pending.kind === 'choose') v = move(v, v.pending.options[0].id);
     expect(v.players[0].bonus).toBe(1); // the follower bought, nothing from Socialites
   });
-  it('the pitched turn: you Toast (each rival +2 silver), then Ben buys a follower card paying silver: +1', () => {
+  it('the pitched turn: you Raise a Glass (each rival +2 silver), then Ben buys a follower card paying silver: +1', () => {
     let s = sc({ n: 4, round: 2, members: [['silver.socialites']], queue: [{ t: 'turn', p: 0 }, { t: 'buy', p: 1 }] });
     s = take(s, 'silver.toast');
     if (s.pending?.player === 0) s = pass(s);

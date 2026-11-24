@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Card quality loop, lane D2 (Nov 4; /mnt/project-files/quality/evals/gate/requalified/D2.md): the REPLACE12 cards that
 // requalified under "paper filters, play ranks". Turncoat in Deprogrammers' place, and rewords of the live card in its
-// own place (Deprogrammers, Bury, Right Away). Set before the engine loads (dynamic imports), then cleared.
+// own place (Deprogrammers, Bury, Make Haste). Set before the engine loads (dynamic imports), then cleared.
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE12 = 'turncoat,buryfull,rightaway2,snobsup';
@@ -56,7 +56,7 @@ describe('Bury, reworded: "...Gain blue equal to its cost. +1 blue."', () => {
   });
 });
 
-describe('Right Away, reworded: "+2 purple in round I, +3 in round II, +4 in round III. ..."', () => {
+describe('Make Haste, reworded: "+2 purple in round I, +3 in round II, +4 in round III. ..."', () => {
   it('round I pays 2 purple, round III 4', () => {
     const at = round => take(table(['purple', 'red', 'market', 'yellow'], { round, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] }), 'purple.again').players[0].res.purple;
     expect(at(1)).toBe(2);

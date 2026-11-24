@@ -176,14 +176,14 @@ describe('"You\'d get" on a space (the engine\'s dry run)', () => {
     const pid = s.pending.player;
     const echo = s.quadrants.indexOf('echo'), chant = quadrant('echo').actions.findIndex(a => a.key === 'chant');
     const one = render(<YoudGet state={s} pid={pid} q={echo} i={chant} />);
-    // Build Up with no minion on Green yet: +1 for this one, plus its own +1 (Nov 10)
+    // Flock Together with no minion on Green yet: +1 for this one, plus its own +1 (Nov 10)
     expect(Object.keys(s.slots).filter(k => k.startsWith(`${echo}-`))).toEqual([]);
     await waitFor(() => expect(one.container.querySelector('[data-youd-get]').dataset.youdGet).toBe('+2 green'));
     cleanup();
     const gold = s.quadrants.indexOf('gold'), jv = quadrant('gold').actions.findIndex(a => a.key === 'jv');
     const two = render(<YoudGet state={s} pid={pid} q={gold} i={jv} />);
     await waitFor(() => expect(two.container.querySelector('[data-youd-get]').dataset.youdGet).toBe('+3 gold'));
-    // the rival's +1 gold (Kickback's gift) shows too, as a gold pip
+    // the rival's +1 gold (Grease a Palm's gift) shows too, as a gold pip
     expect(two.container.querySelector('.youd-others').textContent).toMatch(/rivals \+1/);
     expect(two.container.querySelector('.youd-others .pip').getAttribute('aria-label')).toBe('gold');
     // who gets the gift doesn't change what you get: no "you choose how" note (the rule above says it; design pod)
@@ -234,11 +234,11 @@ describe('shop discount origin', () => {
   it('opens a named breakdown on tap, with an honest fallback for legacy discounts', () => {
     const { s } = marketState();
     s.players[0].discount = 6;
-    s.players[0].discountSources = [{ name: 'Intro Offer', n: 4 }, { name: 'Planner', n: 2 }];
+    s.players[0].discountSources = [{ name: 'Bargain Down', n: 4 }, { name: 'Planner', n: 2 }];
     const { getByRole } = render(<ShopCards state={s} me={0} mySeats={[0]} optionFor={none} onPick={() => {}} />);
     fireEvent.click(getByRole('button', { name: 'Discount sources' }));
     const body = document.querySelector('[data-tip-body]');
-    expect(body.textContent).toContain('Intro Offer: next member −4');
+    expect(body.textContent).toContain('Bargain Down: next member −4');
     expect(body.textContent).toContain('Planner: next member −2');
   });
 });

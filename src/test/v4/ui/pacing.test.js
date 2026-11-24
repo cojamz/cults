@@ -85,7 +85,7 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // 2200 (Claude, Nov 4 night): Promote and Demote giving only your own member, Tryout's copiers and Stallholder moved the
     // seeded turns (p50 3.48s at Steady); content, not slower motion
     expect(h3p50).toBeLessThanOrEqual(2200 * K);
-    // 3100 (Claude, Nov 1): the Nov 1 balance numbers and Greatest Hits copying rivals' round I spaces moved the seeded turns; content, not slower motion
+    // 3100 (Claude, Nov 1): the Nov 1 balance numbers and Replay All copying rivals' round I spaces moved the seeded turns; content, not slower motion
     // 3500, 7000 and 19000 (Claude, Nov 4, under Cory's "make judgement calls" after "Things are still going too fast to
     // make sense of"): a rival's move lands in full, then holds 1s before the next (MO.rivalRead). Measured: rival turn
     // p50 1.36s to 2.52s, p95 4.28s to 5.51s; the usual wait 7.4s to 10.7s; the longest run of six 24.9s to 30.0s
@@ -97,7 +97,7 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // 14s (Claude, 2026-10-29): members counting their printed number moved a seeded run of six to 13.76s; same shows, longer chain
     // free recruit, a Robbers steal of 5, an Meddler swap and three recruits (21.2s vs 21.1s); content, not slower motion
     // 14.1s (Claude, Nov 1): the Nov 1 balance numbers moved a seeded run of six by 24 ms
-    // 15s (Claude, Nov 1): Tryout's +2 red, Ferryman and Last Call moved seed 2's round II run of six (seat 0) into a
+    // 15s (Claude, Nov 1): Tryout's +2 red, Ferryman and Bide Your Time moved seed 2's round II run of six (seat 0) into a
     // Tryout on Treasurer plus two Meddler swaps, a Taskmaster and a Governess protégé (14.95s); content, not slower motion
     // 15.5s (Claude, Nov 4): recruits play one step at a time, coins in, then to the middle, then to the buyer (Cory's
     // "yes" to the audit's pick): seed 2's run of six holds three recruits, 21.5s to 24.9s at Steady; slower by his call
@@ -115,7 +115,7 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     const pair = pct(steady.map((x, i) => relaxed[i] / x).filter(Number.isFinite), 0.5);
     console.log(`[pacing] the same turn, Relaxed/Steady p50 ${pair.toFixed(2)}`);
     // Relaxed ×6 against Steady ×1.62 (Cory, Nov 4: "the slowest speed is way too fast"); fixed holds and floors keep it under 3.7
-    // 2.7 (Claude, Nov 11): Late Shift in Trending's place changed these seeded games' turn mix and the per-turn ratio
+    // 2.7 (Claude, Nov 11): Call to Arms in Trending's place changed these seeded games' turn mix and the per-turn ratio
     // fell from 2.8+ to 2.72 with no motion code changed; content, not faster Relaxed
     // 2.6 (Claude, Nov 12): Gossip cut and Dyer in moved the same seeded games to 2.65, motion code unchanged
     expect(pair).toBeGreaterThanOrEqual(2.6);

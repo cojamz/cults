@@ -31,21 +31,21 @@ describe('Yellow', () => {
   it('Late Bloomers on recruit: excludes itself when checking tied for fewest', () => {
     const Q = ['gold', 'red', 'yellow', 'trading'];
     let s = table(Q, { res: [{ yellow: 7 }], shop: ['yellow.latebloomer', ...ROW] });
-    s = take(s, 'yellow.transmute'); // Survey: +1 for its own minion on yellow, +1 yellow (New Blood's followers would break the tie, Nov 4)
+    s = take(s, 'yellow.transmute'); // Count Heads: +1 for its own minion on yellow, +1 yellow (Welcome Strangers's followers would break the tie, Nov 4)
     expect(followers(s, s.players[0])).toBe(followers(s, s.players[1])); // 1 v 1: tied for fewest
     s = move(s, `card:${uidIn(s, 'yellow.latebloomer', 'shop')}`);
     expect(s.players[0].members.length).toBe(1);
     // The two followers from the card do not stop the recruit income.
-    expect(R(s)).toEqual({ gold: 1, red: 1, yellow: 3, white: 1 }); // Survey's 2 yellow, less the price
+    expect(R(s)).toEqual({ gold: 1, red: 1, yellow: 3, white: 1 }); // Count Heads's 2 yellow, less the price
   });
 
   // Cory, Nov 11: "(including a wild for grey)": a grey member is a color whose resource is your pick
-  it('Melting Pot: a grey member counts as a color: +1 follower and 1 of any color', () => {
+  it('Hold a Fair: a grey member counts as a color: +1 follower and 1 of any color', () => {
     const Q = ['gold', 'red', 'yellow', 'trading']; // no purple: Front-runner leans purple
     let s = table(Q, { round: 2, members: [['benders.frontrunner', 'yellow.explorer']], shop: ROW });
     s = take(s, 'yellow.meltingpot');
     // Explorer is yellow: +1 yellow; Lord of the Manor is grey: 1 of any color, picked
-    expect(s.pending.prompt).toMatch(/Melting Pot: \+1 of which color/);
+    expect(s.pending.prompt).toMatch(/Hold a Fair: \+1 of which color/);
     s = move(s, 'color:red');
     expect(R(s)).toEqual({ gold: 0, red: 1, yellow: 1, white: 0 });
     expect(s.players[0].bonus).toBe(2);
@@ -53,13 +53,13 @@ describe('Yellow', () => {
 });
 
 describe('Magenta', () => {
-  it('Robin Hood: Help Yourself robs one of two tied leaders: +1', () => {
+  it('Robin Hood: Pilfer robs one of two tied leaders: +1', () => {
     const Q = ['gold', 'red', 'thieves', 'trading'];
     let s = table(Q, { n: 4, round: 2, res: [{}, { gold: 2 }, {}, {}], bonus: [3, 3, 3, 0], members: [['thieves.robinhood']], shop: ROW });
     // P1 4+1(Robin Hood)=5 followers? Robin Hood is worth 1: P1 = 1+3+1 = 5. Make P2, P3 equal at 5.
     s.players[1].bonus = 4; s.players[2].bonus = 4;
     expect([0, 1, 2].map(i => followers(s, s.players[i]))).toEqual([5, 5, 5]);
-    // Help Yourself on the fourth minion steals 4, split among rivals (no followers since 2026-10-27)
+    // Pilfer on the fourth minion steals 4, split among rivals (no followers since 2026-10-27)
     s = take(placed(s, 0, 3), 'thieves.pickpocket');
     s = play(s, 'take:1:gold', 'take:1:gold'); // P2 holds the only resources: emptied, the steal ends
     expect(s.pending?.kind).not.toBe('choose');
@@ -67,8 +67,8 @@ describe('Magenta', () => {
   });
 });
 
-describe('Robin Hood through Gold’s Collect Debts', () => {
-  it('two tied leaders robbed in one Collect Debts: +1 each', () => {
+describe('Robin Hood through Gold’s Call In Debts', () => {
+  it('two tied leaders robbed in one Call In Debts: +1 each', () => {
     const Q = ['gold', 'red', 'thieves', 'trading'];
     let s = table(Q, { n: 4, round: 2, res: [{}, { gold: 2 }, { gold: 2 }, { gold: 2 }], bonus: [3, 4, 4, 0], members: [['thieves.robinhood']], shop: ROW });
     s = take(s, 'gold.steal');

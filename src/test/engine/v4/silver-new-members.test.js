@@ -72,7 +72,7 @@ describe('Indulgence Seller: "On Recruit: turn in up to 4 silver for 2 followers
   const slot = (s, q, name) => `${s.quadrants.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.name === name)}`;
   it('on recruit, turns in up to 4 silver for 2 followers each', () => {
     let s = table(['red', 'silver'], { n: 2, round: 2, res: [{ red: 0, silver: 20 }], members: [[]], shop: ['silver.bookies'] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     while (s.pending && s.pending.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
     s = answer(s, `card:${uidIn(s, 'silver.bookies', 'shop')}`);
     while (s.pending && s.pending.player === 0 && !String(s.pending.prompt).startsWith('Indulgence Seller')) s = answer(s, s.pending.options[0].id);
@@ -90,7 +90,7 @@ describe('Wastrels and Camp Followers (Cory, Nov 11 7:47pm and 7:48pm)', async (
   const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
   const slot = (s, q, name) => `${s.quadrants.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.name === name)}`;
   const payAll = s => { while (s.pending && s.pending.kind !== 'buy' && s.pending.player === 0 && s.pending.kind !== 'place') s = answer(s, s.pending.options[0].id); return s; };
-  const gather = s => answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+  const gather = s => answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
   it('Wastrels: after recruiting a silver member, the owner may also buy followers', () => {
     let s = table(['red', 'silver'], { n: 2, round: 2, res: [{ red: 9, silver: 9 }], members: [['silver.splurgers']], shop: ['silver.kingmakers', 'red.recruiter'] });
     s = gather(s);
@@ -130,7 +130,7 @@ describe('Purse-Switchers: "On Recruit: swap all your silver with a rival’s." 
   const slot = (s, q, name) => `${s.quadrants.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.name === name)}`;
   it('on recruit, your silver and the chosen rival’s change places', () => {
     let s = table(['red', 'silver'], { n: 3, round: 2, res: [{ red: 20, silver: 5 }, { silver: 9 }, { silver: 4 }], members: [[]], shop: ['silver.hustlers'] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     while (s.pending && s.pending.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
     s = answer(s, `card:${uidIn(s, 'silver.hustlers', 'shop')}`);
     while (s.pending && s.pending.player === 0 && !String(s.pending.prompt).startsWith('Purse-Switchers')) s = answer(s, s.pending.options[0].id);

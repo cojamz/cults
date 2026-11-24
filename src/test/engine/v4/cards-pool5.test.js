@@ -36,8 +36,8 @@ describe('Middlemen (Magenta)', () => {
   it('Whenever a rival steals from you, steal the same number from another rival (you pick which)', () => {
     let s = sceneQ({ quadrants: ['thieves', 'red', 'market', 'yellow'], n: 4, members: [[], ['thieves.middlemen']],
       res: [{}, { red: 5 }, { blue: 4 }, { yellow: 4 }], queue: [{ t: 'turn', p: 0 }] });
-    s = take(placed(s, 0, 2), 'thieves.pickpocket'); // Help Yourself's third minion this round: steal 3
-    for (let k = 0; k < 3 && s.pending?.prompt?.startsWith('Help Yourself'); k++) s = move(s, s.pending.options.find(o => o.id.startsWith('take:1:')).id);
+    s = take(placed(s, 0, 2), 'thieves.pickpocket'); // Pilfer's third minion this round: steal 3
+    for (let k = 0; k < 3 && s.pending?.prompt?.startsWith('Pilfer'); k++) s = move(s, s.pending.options.find(o => o.id.startsWith('take:1:')).id);
     // each steal from P2 asks P2 which other rival (not the thief) to steal the same number from
     let stolen = 0;
     while (s.pending?.prompt?.startsWith('Middlemen')) {

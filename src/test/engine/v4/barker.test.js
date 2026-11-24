@@ -20,7 +20,7 @@ describe('Barker', () => {
   });
   it('after recruiting a member, the owner may also recruit followers, and only followers', () => {
     let s = table(['red', 'trading'], { n: 2, round: 2, res: [{ red: 9, white: 9 }], members: [['trading.barker']], shop: ['red.recruiter', 'trading.cashier'] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = payAll(answer(s, `card:${uidIn(s, 'red.recruiter', 'shop')}`));
     expect(s.pending.kind).toBe('buy');
     expect(s.pending.prompt).toContain('recruit followers again (Barker)');
@@ -33,16 +33,16 @@ describe('Barker', () => {
   });
   it('after buying followers first, there is no second recruit (the extra is for after a member)', () => {
     let s = table(['red', 'trading'], { n: 2, round: 2, res: [{ red: 9, white: 9 }], members: [['trading.barker']] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = payAll(answer(s, 'tier:small'));
     expect(!!(s.pending && s.pending.player === 0 && s.pending.kind === 'buy' && s.pending.options.some(o => o.kind === 'tier'))).toBe(false);
   });
-  // Spree gives no extra buys since Nov 10 (two discard pile recruits now, then the turn's own), so the extra recruits
+  // Salvage gives no extra buys since Nov 10 (two discard pile recruits now, then the turn's own), so the extra recruits
   // come from Squanderer ("Once per round: recruit twice in one turn")
   it('stacks with an extra recruit: each member recruited brings its own followers recruit', () => {
     let s = table(['red', 'trading'], { n: 2, round: 3, res: [{ red: 30, white: 30 }], members: [['trading.barker', 'benders.bigspender1']],
       shop: ['red.recruiter', 'trading.martyr', 'trading.cashier'] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     let followerSteps = 0;
     for (const def of ['red.recruiter', 'trading.martyr']) {
       while (s.pending && s.pending.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
@@ -57,7 +57,7 @@ describe('Barker', () => {
   it('passing on the followers recruit keeps the extra recruit', () => {
     let s = table(['red', 'trading'], { n: 2, round: 3, res: [{ red: 30, white: 30 }], members: [['trading.barker', 'benders.bigspender1']],
       shop: ['red.recruiter', 'trading.martyr'] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = payAll(answer(s, `card:${uidIn(s, 'red.recruiter', 'shop')}`));
     s = answer(s, 'pass');
     expect(s.pending.kind).toBe('buy');
@@ -65,21 +65,21 @@ describe('Barker', () => {
   });
   it('without Barker there is no second recruit', () => {
     let s = table(['red', 'trading'], { n: 2, round: 2, res: [{ red: 9, white: 9 }] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = payAll(answer(s, 'tier:small'));
     expect(!!(s.pending && s.pending.player === 0 && s.pending.kind === 'buy' && s.pending.options.some(o => o.kind === 'tier'))).toBe(false);
   });
-  // Cory, Nov 4: "it should stack with blue actions". Spree recruits two from the discard pile on the space (Nov 10):
+  // Cory, Nov 4: "it should stack with blue actions". Salvage recruits two from the discard pile on the space (Nov 10):
   // each of them brings Barker's followers recruit right after it, then the turn's own recruit follows
-  it('stacks with Spree: each discard pile recruit brings its own followers recruit', () => {
+  it('stacks with Salvage: each discard pile recruit brings its own followers recruit', () => {
     let s = table(['market', 'trading'], { n: 2, round: 3, res: [{ blue: 30, white: 30 }], members: [['trading.barker']] });
     // two plain members (Homecomers, Nov 11, would open a third discard pile recruit of its own)
     for (const u of s.pile.filter(u => s.cards[u].def !== 'market.repeatcustomers').slice(0, 2)) { s.pile.splice(s.pile.indexOf(u), 1); (s.discard ||= []).push(u); }
-    s = answer(s, `slot:${slot(s, 'market', 'Spree')}`);
+    s = answer(s, `slot:${slot(s, 'market', 'Salvage')}`);
     const first = o => o.id !== 'none' && o.id !== 'pass' && o.id !== 'back';
     let followerSteps = 0;
     for (let i = 0; i < 2; i++) {
-      expect(s.pending.prompt).toContain('Spree: recruit which member from the discard pile');
+      expect(s.pending.prompt).toContain('Salvage: recruit which member from the discard pile');
       s = answer(s, s.pending.options.find(first).id); // the member
       s = answer(s, s.pending.options.find(first).id); // how to pay
       expect(s.pending.kind).toBe('buy');

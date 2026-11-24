@@ -32,10 +32,10 @@ describe('discounts on the shop faces', () => {
   });
   it('the hover names the source and amount, without repeating payment instructions', () => {
     const s = createGame({ seats, seed: 4 });
-    grantDiscount(s.players[0], 4, 'Intro Offer');
+    grantDiscount(s.players[0], 4, 'Bargain Down');
     const uid = s.shop[0];
     const { container } = render(<MemberCard state={s} uid={uid} me={0} />);
-    expect(container.querySelector('[data-discount]').textContent).toBe('Intro Offer: next member −4.');
+    expect(container.querySelector('[data-discount]').textContent).toBe('Bargain Down: next member −4.');
     // the cost and nothing else about paying (Cory, 03:40: cut "You pay")
     expect(container.textContent).not.toMatch(/You pay|Pays|Choose how to pay/);
   });
@@ -45,7 +45,7 @@ describe('discounts on the shop faces', () => {
     s.players[0].discount = 4;
     const { container } = render(<MemberCard state={s} uid={s.shop[0]} me={0} />);
     expect(container.querySelector('[data-discount]').textContent).toBe('Earlier discount: next member −4.');
-    expect(container.querySelector('[data-discount]').textContent).not.toContain('Intro Offer');
+    expect(container.querySelector('[data-discount]').textContent).not.toContain('Bargain Down');
   });
 
   it('the discount is said once in the shop, not on every hover; Half Price shows half on the faces (w4 A#23, A#42)', () => {

@@ -29,7 +29,7 @@ const memberOption = (s, def) => `card:${uidIn(s, def, 'shop')}`;
 const bonus = s => s.players.map(p => p.bonus);
 // a shop member moved to the top of the pile, for Walk-In
 const onTop = (s, def) => { const u = uidIn(s, def, 'shop'); s.shop = s.shop.filter(x => x !== u); s.pile.unshift(u); return u; };
-// P2 copies P1 a second time: P1 takes Gather, then P2's Reprise copies P2's Echo, which copies Gather
+// P2 copies P1 a second time: P1 takes Gather the Kin, then P2's Do It Again copies P2's Follow Suit, which copies Gather the Kin
 const secondCopy = s => {
   s = go(s, 'red.turnout');
   s = choose(take(s, 'echo.refrain'), 'echo.echo');
@@ -38,8 +38,8 @@ const secondCopy = s => {
 };
 
 describe('Green redesign: copied copy actions and continuation safety', () => {
-  // Echo copies a rival's Reprise (Sample stopped copying spaces, Oct 28)
-  it('Echo copies a rival Reprise, which chooses from the copier’s own actions afresh', () => {
+  // Follow Suit copies a rival's Do It Again (Sample stopped copying spaces, Oct 28)
+  it('Follow Suit copies a rival Do It Again, which chooses from the copier’s own actions afresh', () => {
     let s = table(Q, { round: 2, left: 6, queue: turns(0, 1, 1, 0, 0) });
     s = go(s, 'gold.rush');
     s = go(s, 'echo.chant');
@@ -54,7 +54,7 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     expect(reloaded.players[0].res).toMatchObject({ gold: 8, green: 2 });
   });
 
-  it('Reprise → Echo cannot return to Reprise or itself, including after reload', () => {
+  it('Do It Again → Follow Suit cannot return to Do It Again or itself, including after reload', () => {
     let s = table(Q, { round: 2, left: 6, queue: turns(1, 0, 0) });
     s = go(s, 'echo.chant');
     s = pass(choose(take(s, 'echo.echo'), 'echo.chant'));
@@ -62,7 +62,7 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     s = choose(saved(take(s, 'echo.refrain')), 'echo.echo');
     s = pass(s);
     expect(s.pending?.kind === 'choose' ? s.pending.options.map(o => o.label) : []).toEqual([]);
-    expect(s.players[0].res.green - before).toBe(2); // Reprise +1, Echo +1, nothing past its own chain
+    expect(s.players[0].res.green - before).toBe(2); // Do It Again +1, Follow Suit +1, nothing past its own chain
     expect(s.log.some(line => /nothing to copy|already.*chain|chain.*already/i.test(line))).toBe(true);
   });
 
@@ -74,9 +74,9 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     expect(s.players[0].res).toMatchObject({ gold: 4, green: 1 }); // Forger +2 of its color on your own copy (Cory, Nov 6)
   });
 
-  // Greatest Hits copies On Recruits since Nov 1: its sibling-path and nested-remainder checks went with its action
-  // copies. The nested recruit is now a Reprise copy of Walk-In, which must still finish its Shadow chain.
-  it('Reprise resumes after a copied Walk-In recruits Shadow', () => {
+  // Replay All copies On Recruits since Nov 1: its sibling-path and nested-remainder checks went with its action
+  // copies. The nested recruit is now a Do It Again copy of Walk-In, which must still finish its Shadow chain.
+  it('Do It Again resumes after a copied Walk-In recruits Shadow', () => {
     const stunt = member('Shadow');
     let s = table(Q, { round: 3, left: 7, shop: [stunt], queue: turns(0, 0, 0, 0) });
     s = go(s, 'red.hire');
@@ -90,25 +90,25 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     expect(s.pending?.kind).not.toBe('choose');
     expect(s.players[0].members).toContain(u);
   });
-  // Greatest Hits is Medley's rule since Nov 10 (your own minions only since Nov 11 11:20pm): the color pick, then each
+  // Replay All is Medley's rule since Nov 10 (your own minions only since Nov 11 11:20pm): the color pick, then each
   // copied action's own choices
-  it('Greatest Hits picks survive a reload between the color pick and a copied action\'s choices', () => {
+  it('Replay All picks survive a reload between the color pick and a copied action\'s choices', () => {
     let s = table(Q, { round: 3, left: 5, res: [{ gold: 3 }, { gold: 3 }], queue: turns(0, 1, 0) });
     s = take(s, 'gold.steal');
     while (s.pending?.player === 0 && s.pending.kind === 'choose') s = move(s, 'player:1');
     s = pass(s);
     s = go(s, 'gold.rush'); // P2's minion on Gold: not copied
     s = take(s, 'echo.eternity');
-    expect(s.pending.options.find(o => o.value === 'gold').label).toBe('Gold (Collect Debts)');
+    expect(s.pending.options.find(o => o.value === 'gold').label).toBe('Gold (Call In Debts)');
     let a = s, b = saved(s), steps = 0;
     while (a.pending?.player === 0 && a.pending.kind !== 'place' && a.pending.kind !== 'buy' && steps++ < 10) {
       const id = a.pending.options[0].id;
       a = move(a, id); b = move(saved(b), id);
     }
-    expect(steps).toBeGreaterThan(1); // the color pick, then the copied Collect Debts' victim picks
+    expect(steps).toBeGreaterThan(1); // the color pick, then the copied Call In Debts' victim picks
     expect(steps).toBeLessThan(10);
     expect(b).toEqual(a);
-    expect(a.log.some(l => /cop(ied|ies) Golden Years/.test(l))).toBe(false);
+    expect(a.log.some(l => /cop(ied|ies) Let It Grow/.test(l))).toBe(false);
   });
 
   it('Tribute Band is once per game and its saved replay resumes through choice-bearing actions', () => {
@@ -124,7 +124,7 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     for (let i = 0; i < 3; i++) s = move(saved(s), 'player:1');
     expect(s.players[0].res.gold).toBe(3);
     expect(s.players[1].res.gold).toBe(6);
-    expect(s.players[0].res.green).toBe(2); // P2's Build Up: one minion on Green, +1
+    expect(s.players[0].res.green).toBe(2); // P2's Flock Together: one minion on Green, +1
     expect(s.cards[uid].used).toBe(true);
     expect(ids(s)).not.toContain(`use:${uid}`);
   });
@@ -148,7 +148,7 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     s.cards[uidIn(s, 'echo.doppel', 2)].copy = muse;
     s = go(s, 'gold.rush');
     s = pass(choose(take(s, 'echo.echo'), 'gold.rush'));
-    expect(s.players.map(p => p.res.green)).toEqual([1, 1, 1]); // P1's Echo +1; each Muse +1
+    expect(s.players.map(p => p.res.green)).toEqual([1, 1, 1]); // P1's Follow Suit +1; each Muse +1
   });
 
   it('Secret-Keepers blocks its owner and rivals from copying its owner’s actions', () => {
@@ -196,7 +196,7 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     expect(s.players[0].bonus).toBe(2);
   });
 
-  // (Greatest Hits copies On Recruits since Nov 1: the Agents-midway-through-its-copies check went with it.)
+  // (Replay All copies On Recruits since Nov 1: the Agents-midway-through-its-copies check went with it.)
   it('losing a printed member after Trapper losses cannot take the total below zero', () => {
     let s = table(Q, { round: 2, left: 6, members: [['echo.bait'], ['red.bigfamily']], queue: turns(0, 1, 0, 1) });
     s = go(s, 'gold.rush');

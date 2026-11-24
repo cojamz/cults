@@ -18,7 +18,7 @@ const beginBuy = s => { s.pending = null; s.queue.shift(); return resume(s); };
 const SHOP = ['gold.midas', 'gold.jackpot', 'gold.tycoon', 'red.mentor', 'red.proselytizer', 'red.bigfamily'];
 
 describe('Red action progression', () => {
-  it.each([1, 2, 3])('Gather totals round %i plus its inherent red', round => {
+  it.each([1, 2, 3])('Gather the Kin totals round %i plus its inherent red', round => {
     const s = scene({ round }); s.recruits = 99;
     expect(R(take(s, 'red.turnout'))[0].red).toBe(round + 1);
   });
@@ -134,7 +134,7 @@ describe('Red members', () => {
     expect(R(s)[0].red).toBe(3);
   });
 
-  it('Sponsor: members cost 2 less, and stacks with Intro Offer', () => {
+  it('Sponsor: members cost 2 less, and stacks with Bargain Down', () => {
     let s = scene({ members: [['red.sponsor']], res: [{ blue: 1 }], shop: ['gold.prospector', ...SHOP.slice(1)] });
     s = beginBuy(s);
     s = move(s, `card:${uidOf(s, 'gold.prospector', 'shop')}`);

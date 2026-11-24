@@ -10,11 +10,11 @@ import { sceneQ, spaceOf, settle, passBuys } from './cards-helpers.js';
 const Q = ['silver', 'red', 'echo', 'market'];
 const scene = (rules, extra = {}) => sceneQ({ quadrants: Q, n: 3, round: 2, rules: { deck: 10, ...rules }, queue: [0, 1, 2].map(p => ({ t: 'turn', p })).concat({ t: 'allPlaced' }), ...extra });
 const silver = (s, i) => s.players[i].res.silver;
-// Cover: "Copy an action with a rival's minion on it. +1 green."
+// Imitate: "Copy an action with a rival's minion on it. +1 green."
 function cover(s) {
-  s = take(s, 'Cover');
+  s = take(s, 'Imitate');
   while (s.pending?.kind === 'choose') {
-    const o = s.pending.options.find(x => /Toast/.test(x.label || '')) || s.pending.options[0];
+    const o = s.pending.options.find(x => /Raise a Glass/.test(x.label || '')) || s.pending.options[0];
     s = move(s, o.id);
   }
   return s;
@@ -31,29 +31,29 @@ describe('space +1 once per game', () => {
   });
   it('the first taker gets the +1 and the dot goes; a later taker does not', () => {
     let s = scene({ plus1: 'game' });
-    const [q, i] = spaceOf(s, 'Toast').split('-').map(Number);
+    const [q, i] = spaceOf(s, 'Raise a Glass').split('-').map(Number);
     expect(plus1Open(s, q, i)).toBe(true);
-    s = passBuys(settle(take(s, 'Toast'))); // "+4 silver. Each rival +2 silver. +1 silver."
+    s = passBuys(settle(take(s, 'Raise a Glass'))); // "+4 silver. Each rival +2 silver. +1 silver."
     expect(silver(s, 0)).toBe(5);
     expect(plus1Open(s, q, i)).toBe(false);
     let t = scene({ plus1: 'game' }); t.plus1Seen = { [`${q}-${i}`]: true };
-    t = passBuys(settle(take(t, 'Toast')));
+    t = passBuys(settle(take(t, 'Raise a Glass')));
     expect(silver(t, 0)).toBe(4);
   });
   it('the claimed +1 is its own effect, after the space\'s gains, so the screen flies it apart', () => {
     const s = scene({ plus1: 'game' });
-    const o = s.pending.options.find(x => x.kind === 'slot' && actionAt(s, x.q, x.i).name === 'Toast');
+    const o = s.pending.options.find(x => x.kind === 'slot' && actionAt(s, x.q, x.i).name === 'Raise a Glass');
     const t = applyMove(s, { player: 0, option: o.id }, { effects: true });
     const fx = t.effects.filter(e => e.type === 'gain' && e.to?.pid === 0 && e.what?.r === 'silver');
     expect(fx.map(e => [e.cause.kind, e.what.n])).toEqual([['space', 4], ['plus1', 1]]);
     expect(fx[1].from).toMatchObject({ kind: 'space', key: `${o.q}-${o.i}` });
   });
-  // picky bot, Nov 11: a later taker's cut came off Polish's +2, before the turn ("Turn all 1 of your silver")
-  it('Polish (Nov 24) prints no +1 of its own: first and later takers both turn the whole +3 and keep no silver', () => {
+  // picky bot, Nov 11: a later taker's cut came off Melt Down's +2, before the turn ("Turn all 1 of your silver")
+  it('Melt Down (Nov 24) prints no +1 of its own: first and later takers both turn the whole +3 and keep no silver', () => {
     const polish = (seen, hold) => {
       let s = scene({ plus1: 'game' }); s.players[0].res.silver = hold;
-      const k = spaceOf(s, 'Polish'); if (seen) s.plus1Seen = { [k]: true };
-      s = take(s, 'Polish');
+      const k = spaceOf(s, 'Melt Down'); if (seen) s.plus1Seen = { [k]: true };
+      s = take(s, 'Melt Down');
       expect(s.pending?.kind).toBe('choose');
       const o = s.pending.options.find(x => x.kind === 'color');
       const c = o.value, had = s.players[0].res[c] || 0;
@@ -64,15 +64,15 @@ describe('space +1 once per game', () => {
     expect(polish(false, 3)).toEqual([6, 0]);
   });
   it('every taker gets it with the setting off', () => {
-    let t = scene({}); const k = spaceOf(t, 'Toast'); t.plus1Seen = { [k]: true };
-    t = passBuys(settle(take(t, 'Toast')));
+    let t = scene({}); const k = spaceOf(t, 'Raise a Glass'); t.plus1Seen = { [k]: true };
+    t = passBuys(settle(take(t, 'Raise a Glass')));
     expect(silver(t, 0)).toBe(5);
   });
   it('a Green copy never gets the +1', () => {
     for (const [rules, want] of [[{ plus1: 'game' }, 4], [{}, 5]]) {
       let s = scene(rules);
-      s = passBuys(settle(take(s, 'Toast')));
-      const before = silver(s, 1); // P2 got +2 silver from P1's Toast
+      s = passBuys(settle(take(s, 'Raise a Glass')));
+      const before = silver(s, 1); // P2 got +2 silver from P1's Raise a Glass
       s = passBuys(cover(s));
       expect(silver(s, 1) - before).toBe(want);
     }

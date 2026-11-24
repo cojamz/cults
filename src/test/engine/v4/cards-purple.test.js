@@ -25,7 +25,7 @@ describe('Purple actions', () => {
     expect(P(take(sc({ n: 3, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] }), 'purple.holdup'))).toBe(2);
     expect(P(take(sc({ slots: { '0-0': 0, '0-1': 0 } }), 'purple.windup'))).toBe(3);
   });
-  it('Overtime: 1 extra turn right after this one, free; Crunch Time: your next 2 turns right away, free, no new minion', () => {
+  it('Burn the Candle: 1 extra turn right after this one, free; Flurry: your next 2 turns right away, free, no new minion', () => {
     for (const held of [0, 7, 8]) {
       const s = take(sc({ round: 2, res: [{ purple: held }] }), 'purple.overtime');
       expect(P(s)).toBe(held);
@@ -37,7 +37,7 @@ describe('Purple actions', () => {
       expect(P(s)).toBe(held + 2); // its +2 purple (Cory, 2026-10-25; was +1)
       expect(turnsQueued(s, 0)).toBe(0); // no extra minion
       expect(upcoming(s)).toEqual([0, 0, 1, 1]);
-      expect(named(s, 'Crunch Time')).toEqual(["P1's Crunch Time: +2 purple.", "P1's Crunch Time: P1 takes their next 2 turns now."]);
+      expect(named(s, 'Flurry')).toEqual(["P1's Flurry: +2 purple.", "P1's Flurry: P1 takes their next 2 turns now."]);
     }
   });
 });
@@ -96,30 +96,30 @@ describe('Purple members', () => {
     expect(s.players[0].left).toBe(5);
   });
 
-  // Crunch Time moves your own turns up: they aren't extra turns, so none of these fire for it
+  // Flurry moves your own turns up: they aren't extra turns, so none of these fire for it
   const crunch = o => take(sc({ round: 3, queue: [0, 1, 0, 1, 0].map(p => ({ t: 'turn', p })), ...o }), 'purple.rally');
-  it('Foreman: +1 purple per worker on the board whenever you take an extra turn (Overtime), named; not on Crunch Time', () => {
+  it('Foreman: +1 purple per worker on the board whenever you take an extra turn (Burn the Candle), named; not on Flurry', () => {
     const s = take(sc({ round: 2, members: [['purple.foreman']], slots: { '0-0': 0 } }), 'purple.overtime');
     expect(P(s)).toBe(2);
     expect(named(s, 'Foreman')).toHaveLength(1);
     const t = crunch({ members: [['purple.foreman']], slots: { '0-0': 0 } });
-    expect(P(t)).toBe(2); // Crunch Time's own +2 only
+    expect(P(t)).toBe(2); // Flurry's own +2 only
     expect(named(t, 'Foreman')).toHaveLength(0);
   });
   // Courier pays on two turns in a row since Oct 29 (courier.test.js); here, that its +1 gold isn't doubled by Midas
   it('Courier: +1 of each other color when your next turn comes right away, named; Midas leaves member income alone', () => {
     const s = passBuys(take(sc({ round: 2, members: [['purple.courier', 'gold.midas']], queue: [0, 1, 0, 1].map(p => ({ t: 'turn', p })) }), 'purple.rally'));
-    // Crunch Time's +2 purple comes as 2 gold (Midas); Courier's +1 gold stays 1
+    // Flurry's +2 purple comes as 2 gold (Midas); Courier's +1 gold stays 1
     expect(s.players[0].res).toEqual({ gold: 3, red: 1, purple: 0, green: 1 });
     expect(named(s, 'Courier')[0]).toMatch(/P1's Courier: \+1 gold, \+1 red, \+1 green/);
   });
-  it('Apprentice: each extra turn makes your next member 4 cheaper, named; not on Crunch Time', () => {
+  it('Apprentice: each extra turn makes your next member 4 cheaper, named; not on Flurry', () => {
     const s = take(sc({ round: 2, members: [['purple.apprentice']] }), 'purple.overtime');
     expect(s.players[0].discount).toBe(4);
     expect(named(s, 'Apprentice')[0]).toMatch(/next member costs 4 less/);
     expect(crunch({ members: [['purple.apprentice']] }).players[0].discount).toBe(0);
   });
-  it('Overseer: half your purple, up to 4, when a rival takes an extra turn (capped), named; not on Crunch Time', () => {
+  it('Overseer: half your purple, up to 4, when a rival takes an extra turn (capped), named; not on Flurry', () => {
     const s = take(sc({ round: 2, res: [{}, { purple: 11 }], members: [[], ['purple.overseer']] }), 'purple.overtime');
     expect(P(s, 1)).toBe(11 + 4);
     expect(named(s, 'Overseer')).toHaveLength(1);
@@ -127,7 +127,7 @@ describe('Purple members', () => {
     expect(P(t, 1)).toBe(11);
     expect(named(t, 'Overseer')).toHaveLength(0);
   });
-  it('Corner-Cutter: Overtime is free, so nothing to halve and no Corner-Cutter line; a Doppelganger copy does not crash', () => {
+  it('Corner-Cutter: Burn the Candle is free, so nothing to halve and no Corner-Cutter line; a Doppelganger copy does not crash', () => {
     let s = take(sc({ round: 2, res: [{ purple: 8 }], members: [['purple.doubletime']] }), 'purple.overtime');
     expect(P(s)).toBe(8);
     expect(turnsQueued(s, 0)).toBe(1);
@@ -136,7 +136,7 @@ describe('Purple members', () => {
     s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'purple.doubletime';
     s = take(s, 'purple.rally');
     expect(P(s)).toBe(8 + 2);
-    expect(turnsQueued(s, 0)).toBe(0); // Crunch Time adds no turn (and here P1 has none left to bring forward)
+    expect(turnsQueued(s, 0)).toBe(0); // Flurry adds no turn (and here P1 has none left to bring forward)
     expect(named(s, 'Corner-Cutter')).toHaveLength(0);
   });
   it('Bookkeeper when your last turn of the round ends (after its buy; Cory 2026-10-15), not at round end; Lamplighter at round start; all named', () => {

@@ -1,10 +1,10 @@
 // A skipped turn shows on the table (Cory, Nov 1: "it's not clear when a turn is skipped. we need to show it happening
 // with some UI component or emphases"). Hold Up, which skipped a rival's next turn, left the wheel Nov 10; the skips now
 // come from the Goes Last token ("your other minions are placed after everyone else's"). P1 has two turns in a row at
-// the snake's end and takes Sleep In on the first: the second is passed over at once, so "Turn skipped: Sleep In"
+// the snake's end and takes Lie Abed on the first: the second is passed over at once, so "Turn skipped: Lie Abed"
 // stands on P1's seat and the seat dims. P1 holds the Purple Cloak ("Whenever you take the Goes Last token, +3
 // purple."), which pays as the token is taken, with the space: the skip itself pays nothing, so P1's purple stays where
-// Sleep In left it.
+// Lie Abed left it.
 import { mkdirSync } from 'node:fs';
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 import { buildStamp } from './lib/stamp.mjs';
@@ -18,7 +18,7 @@ mkdirSync(out, { recursive: true });
 
 const TABLE = ['red', 'purple', 'echo', 'market'];
 const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
-const q = TABLE.indexOf('purple'), i = quadrant('purple').actions.findIndex(a => a.key === 'skip'); // Sleep In
+const q = TABLE.indexOf('purple'), i = quadrant('purple').actions.findIndex(a => a.key === 'skip'); // Lie Abed
 function save() {
   for (let seed = 1; seed < 300; seed++) {
     let s = createGame({ seats, seed, quadrants: TABLE });
@@ -36,7 +36,7 @@ function save() {
     s.build = buildStamp();
     return { save: { config: { seats, speed }, state: s, undo: null, savedAt: Date.now() }, next: next.p };
   }
-  throw new Error('turn-skip: never reached P1 on Sleep In at the snake end of round I');
+  throw new Error('turn-skip: never reached P1 on Lie Abed at the snake end of round I');
 }
 
 const { save: sv, next } = save();
@@ -53,7 +53,7 @@ try {
   const purple = () => p.evaluate(() => (b => Number(b ? (b.dataset.hold ?? b.textContent) : 0))(document.querySelector('.lt-cult-seat[data-seat="0"] .cs-stack[data-res="purple"] b.num')));
   const p0 = await purple();
   await p.locator(`.lt-wheel .slot.lit[data-slot="${q}-${i}"]`).click();
-  // Sleep In's purple (and the cloak's +3 for taking the token) lands with the space
+  // Lie Abed's purple (and the cloak's +3 for taking the token) lands with the space
   await p.waitForFunction(n => { const b = document.querySelector('.lt-cult-seat[data-seat="0"] .cs-stack[data-res="purple"] b.num'); return b && b.dataset.hold === undefined && Number(b.textContent) > n; }, p0);
   await p.locator('.app.game:not([data-animating])').waitFor();
   await p.locator('[data-option="pass"]').first().waitFor();
@@ -91,12 +91,12 @@ try {
     const atTag = firstUp && firstUp[0] <= seenAt + 50 ? firstUp[1] : afterSpace; // shown at the skip's first frames = paid with the space, not the skip
     console.log(`tag at ${Math.round(seenAt)}ms; P1 purple changes ${JSON.stringify(changes.map(([t, v]) => [Math.round(t), v]))}`);
 
-    // it says why: your own Sleep In passed your turn (frame review, Nov 7: "Turn skipped" never said why)
-    if (text !== 'Turn skipped: Sleep In') errors.push(`tag reads "${text}"`);
+    // it says why: your own Lie Abed passed your turn (frame review, Nov 7: "Turn skipped" never said why)
+    if (text !== 'Turn skipped: Lie Abed') errors.push(`tag reads "${text}"`);
     if (!dim) errors.push('the skipped seat did not dim');
     // a +2 may count up a step at a time (2 → 3 → 4): what it pays is where the count settles, when it starts is firstUp
     const end = firstUp ? changes.filter(([t]) => t >= firstUp[0] && t <= firstUp[0] + 1500).pop()[1] : afterSpace;
-    console.log(`P1 purple: before ${p0}, after Sleep In ${afterSpace}, before the skip shows ${atTag}, settles at ${end}${firstUp ? `, first change at ${Math.round(firstUp[0] - seenAt)}ms after the tag` : ''}`);
+    console.log(`P1 purple: before ${p0}, after Lie Abed ${afterSpace}, before the skip shows ${atTag}, settles at ${end}${firstUp ? `, first change at ${Math.round(firstUp[0] - seenAt)}ms after the tag` : ''}`);
     if (atTag !== afterSpace) errors.push(`purple rose before the skip showed (${afterSpace} → ${atTag})`);
     // the cloak pays when the token is taken (Cory, Nov 6), never again for the turn the token passes over
     if (end !== afterSpace) errors.push(`purple rose at the skipped turn (${afterSpace} → ${end})`);

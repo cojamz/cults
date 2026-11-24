@@ -115,7 +115,7 @@ function payAndRecruit(ctx, p, v, { uid, why, fromPile, how = howFor(why) }) {
   if (LADDER.has(why) && ctx.state.shop.includes(uid) === false && ctx.membersOf(p).some(c => ctx.defsOf(c).some(d => d.followersTwice)))
     ctx.state.queue.unshift({ t: 'buy', p: p.id, barker: true });
 }
-const LADDER = new Set(['Markdown', 'Recruit Twice', 'Spree']);
+const LADDER = new Set(['Buy Secondhand', 'Bring Back', 'Salvage']);
 
 /** Offer face-up members the player can pay for at the price `how` sets, in any colors. */
 function offerRow(ctx, p, how, why) {
@@ -390,13 +390,13 @@ const market = {
       // per game, once per round, Round End, Round start, On recruit" (2:49pm: once per game included for now, watched in
       // play); 2:51pm: named Test Drive. Any shop member may go; a member whose timing isn't one of those (Whenever, Game
       // End, none) only goes to the discard pile. The shop refills.
-      key: 'testdrive', ring: 1, name: 'Test Drive', copyDoesIt: true, text: 'Discard a shop member. Use its effect now, unless it is once per game. +1 blue.',
+      key: 'testdrive', ring: 1, name: 'Try Out', copyDoesIt: true, text: 'Discard a shop member. Use its effect now, unless it is once per game. +1 blue.',
       estimate: ctx => 1 + (ctx.shopCards().some(c => driveHook(c.def)) ? 2.5 : 0.3),
       resolve(ctx, p) {
         ctx.gain(p, B, 1, { fromAction: true });
         const shop = ctx.shopCards();
-        if (!shop.length) { ctx.log(`${p.name}'s Test Drive: the shop is empty.`); return; }
-        ctx.choose(p, 'Test Drive: discard which shop member and use its effect?', shop.map(c => ({
+        if (!shop.length) { ctx.log(`${p.name}'s Try Out: the shop is empty.`); return; }
+        ctx.choose(p, 'Try Out: discard which shop member and use its effect?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name}: ${driveHook(c.def) ? c.def.text : `${c.def.text} (no effect to use now)`}`, kind: 'card', value: c.uid,
           hint: driveHook(c.def) ? 2 + (c.def.f || 0) : -priceOf(c) * 0.1,
         })), `${Q}.testDrive`);
@@ -434,20 +434,20 @@ const market = {
       // benefit of the blue cloak (and +1 blue)"): "Discard 3 shop members and refill. +1 of each discarded member's color.
       // +1 blue." One at a time, the row refilling after each; a grey member gives 1 of any color (as the Blue Cloak reads
       // grey: Claude's fill-in). Was "Discard every shop member of one color and refill. +1 blue per member discarded."
-      key: 'restock', ring: 1, name: 'Out of Style', text: 'Discard 3 shop members and refill. +1 of each discarded member’s color. +1 blue.', copyDoesIt: true,
+      key: 'restock', ring: 1, name: 'Clear Out', text: 'Discard 3 shop members and refill. +1 of each discarded member’s color. +1 blue.', copyDoesIt: true,
       estimate: ctx => 1 + Math.min(3, ctx.shopCards().length),
       resolve(ctx, p) {
         ctx.gain(p, B, 1, { fromAction: true });
-        windowPick(ctx, p, 3, [], 'Out of Style');
+        windowPick(ctx, p, 3, [], 'Clear Out');
       },
     },
     {
       // Cory, Nov 10 2:57pm, Blue's recruit ladder ("Make it 3/5/7. and always from discard."; 2:53pm "Markdown should
       // recruit now. then you also get a nromal recruit at the end"): "Recruit a member from the discard pile now, paying 2
       // less. +3 blue." Peek's place (2:17pm "markdown is great"). The +3 includes the space's own +1 (2:58pm).
-      key: 'markdown', ring: 1, name: 'Markdown', copyDoesIt: true, text: 'Recruit a member from the discard pile now, paying 2 less. +3 blue.',
+      key: 'markdown', ring: 1, name: 'Buy Secondhand', copyDoesIt: true, text: 'Recruit a member from the discard pile now, paying 2 less. +3 blue.',
       estimate: (ctx, p) => 3 + discardBest(ctx, p, { less: 2 }) * 0.6,
-      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); discardOffer(ctx, p, { why: 'Markdown', how: { less: 2 }, left: 1 }); },
+      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); discardOffer(ctx, p, { why: 'Buy Secondhand', how: { less: 2 }, left: 1 }); },
     },
     {
       // Out of the wheel since Nov 10 (Markdown takes its place); kept for old saves and its tests
@@ -469,9 +469,9 @@ const market = {
       // extra time this turn."); the turn's own recruit still comes at turn end
       // Claude, under Cory's over-2-days rule, Nov 24 (his Nov 14 "+5 blue recruit twice is a little too much maybe?",
       // pitched +3 and unanswered): +3 blue, own +1 included
-      key: 'clearance', ring: 2, name: 'Recruit Twice', text: 'Recruit a member from the discard pile now. +3 blue.', copyDoesIt: true,
+      key: 'clearance', ring: 2, name: 'Bring Back', text: 'Recruit a member from the discard pile now. +3 blue.', copyDoesIt: true,
       estimate: (ctx, p) => 3 + discardBest(ctx, p, {}) * 0.6,
-      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); discardOffer(ctx, p, { why: 'Recruit Twice', how: {}, left: 1 }); },
+      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); discardOffer(ctx, p, { why: 'Bring Back', how: {}, left: 1 }); },
     },
     // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md), one at a time in Bury's place.
     // Dumpster Dive: the bottom 3 members of the pile (the last ones sent down), one recruited free if it costs 6 or less;
@@ -511,13 +511,13 @@ const market = {
       // Cory, Nov 10 12:14pm/12:15pm: "Simply, +1 Follower per 2 members you have" in Bury's place ("it doesnt need to be
       // called bury!"; name Claude's fill-in, kept); 12:31pm: "+1 blue. Every color action gives +1 of its color".
       // Members as the board counts them; rounded down (Claude's fill-in).
-      key: 'wordofmouth', ring: 2, name: 'Word of Mouth', copyDoesIt: true, text: '+1 follower per 2 members you have. +1 blue.',
+      key: 'wordofmouth', ring: 2, name: 'Spread the Word', copyDoesIt: true, text: '+1 follower per 2 members you have. +1 blue.',
       estimate: (ctx, p) => 1 + 1.5 * Math.floor(ctx.memberCount(p) / 2),
       resolve(ctx, p) {
         ctx.gain(p, B, 1, { fromAction: true });
         const n = Math.floor(ctx.memberCount(p) / 2);
         if (n) p.bonus += n;
-        ctx.log(`${p.name}'s Word of Mouth: ${ctx.memberCount(p)} member${ctx.memberCount(p) === 1 ? '' : 's'}, +${n} follower${n === 1 ? '' : 's'}.`);
+        ctx.log(`${p.name}'s Spread the Word: ${ctx.memberCount(p)} member${ctx.memberCount(p) === 1 ? '' : 's'}, +${n} follower${n === 1 ? '' : 's'}.`);
       },
     },
     {
@@ -537,9 +537,9 @@ const market = {
     {
       // Cory, Nov 10 2:57pm, the ladder: "Recruit two members from the discard pile now. +7 blue." (was "+6 blue. Recruit
       // two extra times this turn."); one at a time, then the turn's own recruit at turn end
-      key: 'spree', ring: 3, name: 'Spree', text: 'Recruit two members from the discard pile now. +7 blue.', copyDoesIt: true,
+      key: 'spree', ring: 3, name: 'Salvage', text: 'Recruit two members from the discard pile now. +7 blue.', copyDoesIt: true,
       estimate: (ctx, p) => 7 + discardBest(ctx, p, {}) * 1.1,
-      resolve(ctx, p) { ctx.gain(p, B, 7, { fromAction: true }); discardOffer(ctx, p, { why: 'Spree', how: {}, left: 2 }); },
+      resolve(ctx, p) { ctx.gain(p, B, 7, { fromAction: true }); discardOffer(ctx, p, { why: 'Salvage', how: {}, left: 2 }); },
     },
   ],
 
@@ -682,7 +682,7 @@ const market = {
       if (!ctx.state.shop.includes(uid)) return;
       const c = ctx.card(uid), hook = driveHook(ctx.defOf(c));
       ctx.buryFromShop(uid);
-      ctx.log(`${p.name}'s Test Drive: sends ${c.def.name} to the discard pile${hook ? ' and uses its effect' : ''}.`);
+      ctx.log(`${p.name}'s Try Out: sends ${c.def.name} to the discard pile${hook ? ' and uses its effect' : ''}.`);
       toBottom(ctx, 1, p);
       if (hook) ctx.useEffectOf(p, uid, hook);
       scavenge(ctx, p, [uid]);
@@ -727,10 +727,10 @@ const market = {
       const out = ctx.shopCards().filter(c => styleOf(ctx, c) === color);
       for (const c of out) { ctx.state.shop.splice(ctx.state.shop.indexOf(c.uid), 1); toDiscard(ctx.state, c.uid); }
       ctx.refillShop();
-      ctx.log(`Out of Style: ${p.name} sends ${out.length} ${styleWord(color)} member${out.length === 1 ? '' : 's'} to the discard pile.`);
+      ctx.log(`Clear Out: ${p.name} sends ${out.length} ${styleWord(color)} member${out.length === 1 ? '' : 's'} to the discard pile.`);
       toBottom(ctx, out.length, p);
       const got = out.length ? ctx.gain(p, B, out.length, { fromAction: true }) : null;
-      if (got) ctx.log(`${p.name}'s Out of Style: +${got.n} ${got.color}.`);
+      if (got) ctx.log(`${p.name}'s Clear Out: +${got.n} ${got.color}.`);
       scavenge(ctx, p, out.map(c => c.uid));
     },
     peek(ctx, p, uid, data) {

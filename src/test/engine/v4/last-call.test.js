@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Last Call (Purple, round II; Cory, 2026-10-22): "+2 followers per minion you have left" (+1 since the Nov 1 balance pass, and +1 purple per minion left since Nov 1) for taking "the remainder
+// Bide Your Time (Purple, round II; Cory, 2026-10-22): "+2 followers per minion you have left" (+1 since the Nov 1 balance pass, and +1 purple per minion left since Nov 1) for taking "the remainder
 // of your turns when others are out of minions". Round II, 4 players, A B C D D C B A A B C D D C B A: B takes it on
 // their first turn with 3 minions left: +3 followers; A C D place all theirs, then B places 3 in a row.
 import { describe, it, expect } from 'vitest';
@@ -20,9 +20,9 @@ function plain(s, rand) {
   return alt ? { player: m.player, option: alt.id } : m;
 }
 
-describe('Last Call', () => {
+describe('Bide Your Time', () => {
   it('round II, 4 players: B on their first turn gets +3 followers and places their other 3 after everyone', () => {
-    // seed 11 since every member was rebased to worth 1 (Cory, Nov 12); seed 3 since the Nov 11 member sort; seed 11 since Late Shift took Trending's place (Nov 11); seed 4 since Night Owls left and Abbess back in round I (Nov 6); seed 6 since every member cost 4 more (Nov 5 evening); seed 32 since Victors left (Nov 6); seed 28 since Sleepyheads and Hurriers joined (Nov 6); seed 23 since Night Watch left (Nov 6); seed 15 since every member cost 1 more (Nov 5); seed 1 since the Nov 5 member changes; seed 6 since Trumpeters and Victors joined the grey deck (Nov 4); seed 5 since the Nov 4 card batch (New Blood, Creditor, Mob…); seed 3 since Night Watch, Second-Story Man, Hawker and Sore Loser went live (Nov 4); seed 8 since bots play out every choice (Nov 2); seed 17 since Last Call's purple per minion, Ferryman and Tryout +2 (Nov 1); seed 13 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 7 since Last Call's +1 per minion (Nov 1); seed 44 since the deck-of-10 price moves (Oct 31); seed 12 since Gather's recruit followers (Oct 31); seed 88 since the Oct 30 prices and bodies; seed 61 since Promote +3 red and Ferryman's color (Oct 30); seed 17 since the Oct 29 balance-run followers (Broker, Clockmaker…); seed 10 since Clockmaker, Courier and Help Yourself changed (Oct 29); seed 7 since bots rate Cover's empty actions (Oct 29; seed 3 before); seed 2 since +1 wild and the round I rework (Oct 28; seed 5 since Oct 27; seed 7 since Gather's +3, Oct 25; seed 11 since the Oct 24 member structure) (seed 6 since Even Swap's +2 red): on other seeds a second bot took Last Call too
+    // seed 11 since every member was rebased to worth 1 (Cory, Nov 12); seed 3 since the Nov 11 member sort; seed 11 since Call to Arms took Trending's place (Nov 11); seed 4 since Night Owls left and Abbess back in round I (Nov 6); seed 6 since every member cost 4 more (Nov 5 evening); seed 32 since Victors left (Nov 6); seed 28 since Sleepyheads and Hurriers joined (Nov 6); seed 23 since Night Watch left (Nov 6); seed 15 since every member cost 1 more (Nov 5); seed 1 since the Nov 5 member changes; seed 6 since Trumpeters and Victors joined the grey deck (Nov 4); seed 5 since the Nov 4 card batch (Welcome Strangers, Creditor, Mob…); seed 3 since Night Watch, Second-Story Man, Hawker and Sore Loser went live (Nov 4); seed 8 since bots play out every choice (Nov 2); seed 17 since Bide Your Time's purple per minion, Ferryman and Tryout +2 (Nov 1); seed 13 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 7 since Bide Your Time's +1 per minion (Nov 1); seed 44 since the deck-of-10 price moves (Oct 31); seed 12 since Gather the Kin's recruit followers (Oct 31); seed 88 since the Oct 30 prices and bodies; seed 61 since Promote +3 red and Ferryman's color (Oct 30); seed 17 since the Oct 29 balance-run followers (Broker, Clockmaker…); seed 10 since Clockmaker, Courier and Pilfer changed (Oct 29); seed 7 since bots rate Imitate's empty actions (Oct 29; seed 3 before); seed 2 since +1 wild and the round I rework (Oct 28; seed 5 since Oct 27; seed 7 since Gather the Kin's +3, Oct 25; seed 11 since the Oct 24 member structure) (seed 6 since Even Swap's +2 red): on other seeds a second bot took Bide Your Time too
     let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 11, quadrants: Q });
     const rand = seededRandom(11);
     while (!(s.round === 2 && s.pending?.kind === 'place')) s = applyMove(s, plain(s, rand));
@@ -53,15 +53,15 @@ describe('Last Call', () => {
   });
 });
 
-// Cory's playtest, 2026-10-26: P2 took Last Call in round III and kept placing. A rival whose turn moved to the end
-// after it (their own Sleep In, Hold Up, Day Laborer's minion) landed behind the caller, so the caller went first.
-describe('Last Call holds for the rest of the round', () => {
-  it('a rival who takes the Goes Last token with Sleep In sends the caller’s minion back to their hand (Cory, Nov 1 2:35pm)', () => {
+// Cory's playtest, 2026-10-26: P2 took Bide Your Time in round III and kept placing. A rival whose turn moved to the end
+// after it (their own Lie Abed, Hold Up, Day Laborer's minion) landed behind the caller, so the caller went first.
+describe('Bide Your Time holds for the rest of the round', () => {
+  it('a rival who takes the Goes Last token with Lie Abed sends the caller’s minion back to their hand (Cory, Nov 1 2:35pm)', () => {
     let s = sceneQ({ quadrants: Q, round: 2, left: 2, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'allPlaced' }] });
     s = take(s, 'purple.lastcall');
     while (s.pending?.kind !== 'place') s = applyMove(s, { player: s.pending.player, option: 'pass' });
     expect(s.pending.player).toBe(1);
-    s = take(s, 'purple.skip'); // P2's Sleep In takes the token: P1's minion goes back to their hand, P2's waits on it
+    s = take(s, 'purple.skip'); // P2's Lie Abed takes the token: P1's minion goes back to their hand, P2's waits on it
     const placed = [];
     while (s.round === 2 && s.pending && placed.length < 2) {
       if (s.pending.kind === 'place') { placed.push(s.pending.player); s = applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.kind === 'slot').id }); }

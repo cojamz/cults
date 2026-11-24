@@ -16,11 +16,11 @@ const rich = { gold: 30, red: 30, blue: 30, green: 30 };
 const cost = id => defById(id).s + defById(id).w;
 
 describe('Red action gains', () => {
-  it.each([1, 2, 3])('Gather is round %i plus its inherent red, independent of recruit count', round => {
+  it.each([1, 2, 3])('Gather the Kin is round %i plus its inherent red, independent of recruit count', round => {
     const s = sceneQ({ round }); s.recruits = 99;
     expect(R(take(s, 'red.turnout')).red).toBe(round + 1);
   });
-  it('Walk-In and Initiation give a free member plus their red (Walk-In: +1, each rival +1)', () => {
+  it('Walk-In and Induct give a free member plus their red (Walk-In: +1, each rival +1)', () => {
     for (const [action, round, red, rival] of [['red.hire', 1, 1, 1], ['red.take', 3, 1, 0]]) {
       const s = settle(take(sceneQ({ round, shop: ['red.volunteer'] }), action));
       expect(s.players[0].members).toHaveLength(1);
@@ -135,7 +135,7 @@ describe('Red members', () => {
     expect(R(s).red).toBe(2);
   });
 
-  it('Sponsor: your members cost 2 less, said in the recruit line; stacks with Intro Offer', () => {
+  it('Sponsor: your members cost 2 less, said in the recruit line; stacks with Bargain Down', () => {
     const restore = pinCosts({ 'gold.tycoon': [3, 4] });
     try {
       let s = sceneQ({ res: [{ gold: 1 }], members: [['red.sponsor']], shop: ['gold.tycoon'] });

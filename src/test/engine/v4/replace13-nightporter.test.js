@@ -28,14 +28,14 @@ describe('REPLACE13=nightporter: Night Porter', () => {
     let s = table(['purple', 'red'], { n: 2, round: 1, members: [['purple.nightporter']], shop: SHOP, left: 2 });
     s.players[1].left = 0;
     const before = s.players[0].bonus || 0;
-    s = go(s, slotOf(s, 'red', 'Gather'));
+    s = go(s, slotOf(s, 'red', 'Gather the Kin'));
     expect((s.players[0].bonus || 0) - before).toBe(2);
     expect(s.log.join('\n')).toContain("P1's Night Porter: every rival is out of minions, +2 followers.");
   });
   it('nothing while a rival has a minion left', () => {
     let s = table(['purple', 'red'], { n: 2, round: 1, members: [['purple.nightporter']], shop: SHOP, left: 2 });
     s.players[1].left = 1;
-    s = go(s, slotOf(s, 'red', 'Gather'));
+    s = go(s, slotOf(s, 'red', 'Gather the Kin'));
     expect(s.log.join('\n')).not.toContain('Night Porter');
   });
 });

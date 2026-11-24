@@ -87,7 +87,7 @@ describe('previews reach the screen', () => {
     expect(previewWords(gift, st).others).toBe('rivals +1 gold in all');
   });
 
-  it('names who gets what, with the member that pays it (Cory, Nov 9, Right Away: "rivals +1 in all" and a separate Why)', () => {
+  it('names who gets what, with the member that pays it (Cory, Nov 9, Make Haste: "rivals +1 in all" and a separate Why)', () => {
     const z = [0, 0];
     const st = { resources: ['gold', 'purple'], players: [{ name: 'P1' }, { name: 'P2' }, { name: 'P3' }, { name: 'P4' }] };
     const row = g => ({ res: { gold: z, purple: g }, followers: z, members: z });
@@ -99,7 +99,7 @@ describe('previews reach the screen', () => {
     expect(previewWords(toast, st).others).toBe('each rival +2 purple');
   });
 
-  it('a contest line never reads a pick off its first branch: Kickback\'s +1 goes to the one you pick (w3b #10), in plain words (w3a #28)', () => {
+  it('a contest line never reads a pick off its first branch: Grease a Palm\'s +1 goes to the one you pick (w3b #10), in plain words (w3a #28)', () => {
     const T = ['gold', 'red', 'market', 'echo'];
     const q = T.indexOf('gold'), i = quadrant('gold').actions.findIndex(a => a.key === 'jv');
     const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];

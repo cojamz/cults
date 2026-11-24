@@ -109,7 +109,7 @@ describe('Ushers: "Each turn, you may also recruit one member costing 4 or less.
   const payAll = s => { while (s.pending?.kind === 'choose' && s.pending.options.some(o => o.kind === 'pay')) s = answer(s, s.pending.options.find(o => o.kind === 'pay').id); return s; };
 
   it("after the turn's own recruit, one more recruit step that offers only members costing 4 or less", () => {
-    let s = take(turn(), 'red.turnout'); // Gather
+    let s = take(turn(), 'red.turnout'); // Gather the Kin
     expect(s.pending.kind).toBe('buy');
     s = payAll(move(s, `card:${uidIn(s, 'red.loyalists', 'shop')}`)); // the turn's own recruit: a 5
     while (s.pending?.kind === 'buy' && s.pending.afterPurchase) s = move(s, 'pass');
@@ -302,7 +302,7 @@ describe('Go-Between: "On Use, once per round: your next turn comes right after 
     const uid = uidIn(s, 'purple.gobetween', 0);
     s = move(s, `use:${uid}`);
     expect(s.cards[uid].used).toBe(true);
-    s = take(s, 'red.turnout'); // Gather
+    s = take(s, 'red.turnout'); // Gather the Kin
     while (s.pending && s.pending.kind !== 'place') s = move(s, s.pending.options.find(o => /pass|done|skip|end/i.test(o.id + o.label))?.id ?? s.pending.options[0].id);
     expect(s.pending.player).toBe(0);
   });
@@ -324,7 +324,7 @@ describe('Go-Between: "On Use, once per round: your next turn comes right after 
 
 describe('scale-up round 1: Sleepyheads, Night Shift, Drill Sergeant', () => {
   const turns = [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }];
-  it('Sleepyheads: "Whenever you take the Goes Last token, +3 followers." Sleep In takes it: +3', () => {
+  it('Sleepyheads: "Whenever you take the Goes Last token, +3 followers." Lie Abed takes it: +3', () => {
     let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 1, members: [['purple.sleepyheads']], queue: turns });
     s = take(s, 'purple.skip');
     expect(s.players[0].bonus).toBe(3);
@@ -401,7 +401,7 @@ describe('Converts: "On Recruit: recruit a rival\'s member costing 4 or less, fo
 });
 
 describe('Snoozers: "Whenever you take the Goes Last token, +1 purple per minion on it."', () => {
-  it('Last Call with 2 minions left: +2 purple on top of the space', () => {
+  it('Bide Your Time with 2 minions left: +2 purple on top of the space', () => {
     const turns = [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }];
     let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 2, members: [['purple.snoozers']], queue: turns });
     s = take(s, 'purple.lastcall');
@@ -515,7 +515,7 @@ describe('Lifers and Floor Crew (Shift Crew\'s place, scale-up 3)', () => {
 });
 
 describe('Turnpike Keeper: "Whenever a rival takes a Purple space, +1 purple."', () => {
-  it('a rival takes Sleep In: +1 purple; a rival takes a Red space: nothing', () => {
+  it('a rival takes Lie Abed: +1 purple; a rival takes a Red space: nothing', () => {
     const turns = [{ t: 'turn', p: 1 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }];
     let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 1, members: [['purple.picketline'], []], queue: turns });
     const had = s.players[0].res.purple || 0;
@@ -573,7 +573,7 @@ describe('Evangelists, Zealots, Relay Runners (Nov 4)', () => {
     def.onRecruit(stub(s, logs), p, s.cards[uid], p, { followers: 3 });
     expect(p.bonus).toBe(pb + 1); expect(r.bonus).toBe(19);
   });
-  it('Relay Runners: its owner\'s Right Away gives two turns right after', () => {
+  it('Relay Runners: its owner\'s Make Haste gives two turns right after', () => {
     let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 2, members: [['purple.relayrunners'], []],
       queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
     s = take(s, 'purple.again');

@@ -16,7 +16,7 @@ Object.assign(s,{round:2,slots:{'0-0':0},squats:{},pending:null,queue:[{t:'allPl
 delete s.echo;s.players[0].lastSlot={key:'0-0',joined:false};s=resume(s);s.build=buildStamp();
 const save={config:{seats,speed:'quick'},state:s,undo:null,savedAt:Date.now()};
 const expected=applyMove(s,{player:0,option:'to:0-1'});
-if(expected.players[0].res.gold!==4||expected.slots['0-0']!==undefined||expected.slots['0-1']!==0)throw Error('Fixture did not move last minion and perform Golden Years exactly once');
+if(expected.players[0].res.gold!==4||expected.slots['0-0']!==undefined||expected.slots['0-1']!==0)throw Error('Fixture did not move last minion and perform Let It Grow exactly once');
 const browser=await launchBrowser({executablePath:browserPath});
 try{
 // the phone pass runs only with V4_PHONE=1 (phone is out of scope, Cory 2026-10-20)

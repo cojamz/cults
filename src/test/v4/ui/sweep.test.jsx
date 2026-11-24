@@ -1,6 +1,6 @@
 // A space that sends face-up members under the deck whatever you choose lists them in its preview, and its space card
 // says so (the whole row as one), so nobody sweeps their own target by surprise. Spaces that sweep nothing list nothing.
-// New Faces (the whole-row sweep) is gone since Blue's Oct 20 rework; Out of Style (3 members since Nov 10) with three face up sweeps them all.
+// New Faces (the whole-row sweep) is gone since Blue's Oct 20 rework; Clear Out (3 members since Nov 10) with three face up sweeps them all.
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
 import { createGame, applyMove, chooseBotMove, previewSpace, quadrant, cardDef } from '../../../engine/v4/index.js';
@@ -22,10 +22,10 @@ function restockScene() {
   return null;
 }
 
-// Out of Style since Nov 10: "Discard 3 shop members and refill." Each of the three is your pick and each send refills the
+// Clear Out since Nov 10: "Discard 3 shop members and refill." Each of the three is your pick and each send refills the
 // row, so no face-up member goes whatever you choose: the preview names none and the space card says no sweep. (The
-// old Out of Style sent a whole color, which one color face up made certain; no live space sweeps for sure now.)
-describe('Out of Style names what it sweeps', () => {
+// old Clear Out sent a whole color, which one color face up made certain; no live space sweeps for sure now.)
+describe('Clear Out names what it sweeps', () => {
   it('names no member: every one of its three sends is your pick, from a row that refills', () => {
     const { s, q, i } = restockScene();
     expect(s.shop.length).toBeGreaterThan(3);

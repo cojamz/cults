@@ -230,10 +230,10 @@ const myGreenMinions = (ctx, p) => Object.entries(ctx.state.slots).filter(([k, o
 const greenMinions = ctx => Object.entries(ctx.state.slots).filter(([k]) => ctx.state.quadrants[+k.split('-')[0]] === 'echo').length
   + Object.entries(ctx.state.squats || {}).filter(([k]) => ctx.state.quadrants[+k.split('-')[0]] === 'echo').reduce((a, [, v]) => a + v.length, 0);
 const CROWD = {
-  key: 'crowd', ring: 1, name: 'Crowd', text: '+2 green in round I, +3 in round II, +4 in round III, +1 more per minion on Green spaces.',
+  key: 'crowd', ring: 1, name: 'Draw a Crowd', text: '+2 green in round I, +3 in round II, +4 in round III, +1 more per minion on Green spaces.',
   byRound: { lines: ['+2 green', '+3 green', '+4 green'], rest: '+1 more per minion on Green spaces.' },
   estimate: ctx => 1 + ctx.state.round + greenMinions(ctx) + 1,
-  resolve(ctx, p) { plus(ctx, p); const n = greenMinions(ctx); ctx.gain(p, 'green', ctx.state.round + n, { fromAction: true }); ctx.log(`${p.name}'s Crowd: ${n} minion${n === 1 ? '' : 's'} on Green spaces.`); },
+  resolve(ctx, p) { plus(ctx, p); const n = greenMinions(ctx); ctx.gain(p, 'green', ctx.state.round + n, { fromAction: true }); ctx.log(`${p.name}'s Draw a Crowd: ${n} minion${n === 1 ? '' : 's'} on Green spaces.`); },
 };
 const ROYALTIES = {
   key: 'royalties', ring: 1, name: 'Royalties', text: '+3 green in round I, +4 in round II, +5 in round III. This round, whenever a rival copies this space, +2 green.',
@@ -549,26 +549,26 @@ function stageMove(ctx, p, { key, joined }, to) {
   ctx.log(`${p.name}'s Stage Door: moves a minion from ${slotAction(ctx, key).name} to ${slotAction(ctx, to).name}.`);
   ctx.state.queue.unshift({ t: 'act', p: p.id, q, i });
 }
-const medleyKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => ['Medley', 'Remix', 'Mashup', 'Greatest Hits'].includes(x.name)).map(x => actionKey(x.key));
+const medleyKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => ['Medley', 'Remix', 'Mashup', 'Replay All'].includes(x.name)).map(x => actionKey(x.key));
 /** Medley: one entry per action with a minion on color q's spaces this round (p's own entry where p shares it). */
 /** Greatest Hits' copy rule: 'own' (the game, Nov 11 11:20pm), 'rival' or false (every minion), from rules.hitsMode. */
 const hitsMode = ctx => { const m = ctx.state.rules?.hitsMode; return m === 'all' ? false : m === 'rival' ? 'rival' : 'own'; };
 // whose: false every minion, 'rival' only rivals' minions, 'own' only the copier's own
 function medleyPlan(ctx, p, q, noThird = false, whose = false) {
   const byAction = new Map();
-  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && !['Medley', 'Remix', 'Mashup', 'Greatest Hits'].includes(x.name) && !(noThird && x.ring === 3) && !(whose === 'rival' && x.p === p.id) && !(whose === 'own' && x.p !== p.id)).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
+  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && !['Medley', 'Remix', 'Mashup', 'Replay All'].includes(x.name) && !(noThird && x.ring === 3) && !(whose === 'rival' && x.p === p.id) && !(whose === 'own' && x.p !== p.id)).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
     const k = actionKey(e.key), had = byAction.get(k);
     if (!had || (had.p !== p.id && e.p === p.id)) byAction.set(k, e);
   }
   return [...byAction.values()].sort((a, b) => (a.seq || 0) - (b.seq || 0)).filter(e => allowed(ctx, e, p));
 }
-const hitsKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => x.name === 'Greatest Hits').map(x => actionKey(x.key));
+const hitsKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => x.name === 'Replay All').map(x => actionKey(x.key));
 let hitsChain = false;
 function hitsStep(ctx, p, left) {
   const mine = left.filter(u => ctx.ownerOf(u)?.id === p.id);
   if (!mine.length) return;
   if (mine.length === 1) { ctx.defer(p, 'echo.hitsDo', { uid: mine[0] }); return; }
-  ctx.choose(p, `Greatest Hits: copy which member's On Recruit first? (${mine.length} to go)`, mine.map(u => {
+  ctx.choose(p, `Replay All: copy which member's On Recruit first? (${mine.length} to go)`, mine.map(u => {
     const c = ctx.card(u), d = recruitDef(c);
     return { id: `card:${u}`, label: `${d.name}: ${d.text}`, kind: 'card', value: u, hint: 2 + (d.f || 0) };
   }), 'echo.hitsPick', { left: mine });
@@ -635,41 +635,41 @@ const echoQ = {
     swap11(swap11({
       // Cory, Nov 10: "+1 green per minion on green (including this). +1 green. So round 1 is max 4 if its taken last" (was
       // +3/4/5). Anyone's minion counts, this one included (it's on its space when it resolves); a copy counts the same.
-      key: 'chant', ring: 1, name: 'Build Up', text: '+1 green per minion on Green spaces, this one included. +1 green.',
+      key: 'chant', ring: 1, name: 'Flock Together', text: '+1 green per minion on Green spaces, this one included. +1 green.',
       estimate: (ctx, p) => 1 + greenCount(ctx) + (onGreen(ctx, p) ? 0 : 1),
       resolve(ctx, p) {
         plus(ctx, p);
         const n = greenCount(ctx);
         if (n) ctx.gain(p, 'green', n, { fromAction: true });
-        ctx.log(`${p.name}'s Build Up: +${n} green (${n} minion${n === 1 ? '' : 's'} on Green).`);
+        ctx.log(`${p.name}'s Flock Together: +${n} green (${n} minion${n === 1 ? '' : 's'} on Green).`);
       },
     }, CROWD), ROYALTIES),
     {
       // The previous placement can be your own on a snake double turn.
-      key: 'echo', ring: 1, name: 'Echo', echo: true, text: 'Copy the previous action. +1 green.', // back to +1 (Cory, Oct 28)
+      key: 'echo', ring: 1, name: 'Follow Suit', echo: true, text: 'Copy the previous action. +1 green.', // back to +1 (Cory, Oct 28)
       estimate: (ctx, p) => VARIANT.plus + bestValue(ctx, targets(ctx, p, 'previous'), p),
-      resolve(ctx, p) { plus(ctx, p); offer(ctx, p, previousNow(ctx, p), 'Echo: copy the previous action?', 'now', null, agentsBlocked(ctx, p, 'previous', ledger(ctx.state).path?.length ? ledger(ctx.state).origin : null)); },
+      resolve(ctx, p) { plus(ctx, p); offer(ctx, p, previousNow(ctx, p), 'Follow Suit: copy the previous action?', 'now', null, agentsBlocked(ctx, p, 'previous', ledger(ctx.state).path?.length ? ledger(ctx.state).origin : null)); },
     },
     {
       // your own spaces are on the board in your color: no memory of last round needed (it replaced Recall)
-      key: 'refrain', ring: 1, name: 'Reprise', echo: true, text: 'Copy an action with your minion. +1 green.', // round I (Cory, 2026-10-27); +1 (Cory, Oct 28)
+      key: 'refrain', ring: 1, name: 'Do It Again', echo: true, text: 'Copy an action with your minion. +1 green.', // round I (Cory, 2026-10-27); +1 (Cory, Oct 28)
       estimate: (ctx, p) => VARIANT.plus + bestValue(ctx, targets(ctx, p, 'own'), p),
       resolve(ctx, p) {
         plus(ctx, p);
-        offer(ctx, p, targets(ctx, p, 'own'), 'Reprise: copy which of your spaces?', 'now', null, agentsBlocked(ctx, p, 'own'));
+        offer(ctx, p, targets(ctx, p, 'own'), 'Do It Again: copy which of your spaces?', 'now', null, agentsBlocked(ctx, p, 'own'));
       },
     },
     {
       // Cory, Nov 10 10:36am: Crowd takes Sample's round II slot ("I like crowd but feel like it doesnt pay enough. Maybe it
       // gives +3 green."; 10:37am: "+2 plus the one inherent to the space"). Anyone's minion counts, this one included.
       // followers can't ride on a chip, so a copy does Crowd itself (counting the minions on Green at that moment)
-      key: 'crowd2', ring: 2, name: 'Crowd', copyDoesIt: true, text: '+1 follower per minion on Green spaces, this one included. +3 green.',
+      key: 'crowd2', ring: 2, name: 'Draw a Crowd', copyDoesIt: true, text: '+1 follower per minion on Green spaces, this one included. +3 green.',
       estimate: ctx => 3 + 1.5 * (greenMinions(ctx) + 1),
       resolve(ctx, p) {
         plus(ctx, p);
         ctx.gain(p, 'green', 2, { fromAction: true });
         const n = greenMinions(ctx);
-        if (n) { p.bonus += n; ctx.log(`${p.name}'s Crowd: +${n} follower${n === 1 ? '' : 's'} (${n} minion${n === 1 ? '' : 's'} on Green spaces).`); }
+        if (n) { p.bonus += n; ctx.log(`${p.name}'s Draw a Crowd: +${n} follower${n === 1 ? '' : 's'} (${n} minion${n === 1 ? '' : 's'} on Green spaces).`); }
       },
     },
     {
@@ -692,11 +692,11 @@ const echoQ = {
       // Claude's fill-in. A copy of an empty space does that action itself (nobody took it, so there's no chip).
       // Cory, Nov 10: "make round II copy an action with a rival's minion on it" (was "Copy an action with no minion on it":
       // "really unintuitive"). Copied as Reprise copies, from a rival's entry instead of yours.
-      key: 'hum', ring: 2, name: 'Cover', echo: true, text: 'Copy an action with a rival\u2019s minion on it. +1 green.',
+      key: 'hum', ring: 2, name: 'Imitate', echo: true, text: 'Copy an action with a rival\u2019s minion on it. +1 green.',
       estimate: (ctx, p) => VARIANT.plus + bestValue(ctx, targets(ctx, p, 'rival'), p),
       resolve(ctx, p) {
         plus(ctx, p);
-        offer(ctx, p, targets(ctx, p, 'rival'), 'Cover: copy which rival\u2019s space?', 'now', null, agentsBlocked(ctx, p, 'rival'));
+        offer(ctx, p, targets(ctx, p, 'rival'), 'Imitate: copy which rival\u2019s space?', 'now', null, agentsBlocked(ctx, p, 'rival'));
       },
     },
     {
@@ -709,16 +709,16 @@ const echoQ = {
       // Cory, Nov 11 9:32pm Eastern: "ship greatest hits, copying only rivals, minions" (action test: takers won 64%, 56%
       // rivals only); then 11:20pm: "Let's put it on your own. Let's try your own. I'll try that in game." (33% in bots). rules.hitsMode (bot tests only): 'all' the old rule, 'own' only your own minions (Cory: "try some
       // where it only copies your own on another color").
-      key: 'eternity', ring: 3, name: 'Greatest Hits', text: 'Choose a color other than green. Copy every action with your minion on its spaces. +1 green.',
+      key: 'eternity', ring: 3, name: 'Replay All', text: 'Choose a color other than green. Copy every action with your minion on its spaces. +1 green.',
       estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.filter(q => q !== 'echo').map(q => medleyPlan(ctx, p, q, false, hitsMode(ctx)).reduce((a, e) => a + entryValue(ctx, e, p), 0))),
       resolve(ctx, p) {
         plus(ctx, p);
         const rivalOnly = hitsMode(ctx);
         const opts = ctx.state.quadrants.filter(q => q !== 'echo').map(q => ({ q, list: medleyPlan(ctx, p, q, false, rivalOnly) })).filter(x => x.list.length);
-        if (!opts.length) { ctx.log(`${p.name}'s Greatest Hits: no color has an action to copy.`); return; }
-        withPath(ctx, [...new Set([...pathNow(ctx), ...medleyKeys(ctx)])], () => ctx.choose(p, 'Greatest Hits: copy every action on which color\u2019s spaces?', opts.map(({ q, list }) => ({
+        if (!opts.length) { ctx.log(`${p.name}'s Replay All: no color has an action to copy.`); return; }
+        withPath(ctx, [...new Set([...pathNow(ctx), ...medleyKeys(ctx)])], () => ctx.choose(p, 'Replay All: copy every action on which color\u2019s spaces?', opts.map(({ q, list }) => ({
           id: `color:${q}`, label: `${quadrant(q).name} (${list.map(e => e.name).join(', ')})`, kind: 'color', value: q, hint: list.reduce((a, e) => a + entryValue(ctx, e, p), 0),
-        })), 'echo.medley', { who: 'Greatest Hits', rivalOnly }));
+        })), 'echo.medley', { who: 'Replay All', rivalOnly }));
       },
     },
     // idea pipeline pool 7 (Nov 7, writer round 1). Stage Door: as Pacers' move (purple.js), onto a Green space only, and

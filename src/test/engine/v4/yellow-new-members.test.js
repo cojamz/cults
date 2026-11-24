@@ -34,7 +34,7 @@ describe('Hostages: "On Recruit: swap one of your members for a rival’s member
   it('offers only same-cost pairs, and swaps the pair you pick', () => {
     // Deprogrammers and Journeyman cost the same as a player sees them (5); Fairy Godmother costs more
     let s = table(['red', 'yellow', 'thieves'], { n: 2, round: 2, res: [{ red: 0, yellow: 20 }], members: [['red.movementpenalty'], ['red.seatfiller', 'red.panel']], shop: ['yellow.exchangestudents'] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = toBuy(s);
     s = answer(s, `card:${uidIn(s, 'yellow.exchangestudents', 'shop')}`);
     while (s.pending && s.pending.player === 0 && !String(s.pending.prompt).startsWith('Hostages')) s = answer(s, s.pending.options[0].id);

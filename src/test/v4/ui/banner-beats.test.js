@@ -40,7 +40,7 @@ it('tells what a later step adds to a line that is up as a line of its own', () 
   expect(grewBy('+3 gold from P2', '+5 gold from P2 and P3')).toBe(null);
 });
 
-it("the space's own gain counts up on one row as its picks land (Cory, Nov 9: Out of Style on grey)", async () => {
+it("the space's own gain counts up on one row as its picks land (Cory, Nov 9: Clear Out on grey)", async () => {
   const { foldStoryLines, linesMemo } = await import('../../../v4/game/GameScreen.jsx');
   const r = linesMemo('t');
   let out = foldStoryLines(r, ['+2 blue'], 0);
@@ -68,11 +68,11 @@ it("a line labelled with its space's board words is one line as it grows, howeve
 
 it("a hub line's reading time counts the words the card prints for it: its space and the wheel's words (Nov 12)", async () => {
   const { hubShown } = await import('../../../v4/game/GameScreen.jsx');
-  const first = hubShown('+3 red', 0, 'Gather', null, 1);
-  expect(first.startsWith('Gather (')).toBe(true);
+  const first = hubShown('+3 red', 0, 'Gather the Kin', null, 1);
+  expect(first.startsWith('Gather the Kin (')).toBe(true);
   expect(first.endsWith('): P +3 red')).toBe(true);
   expect(first.split(/\s+/).length).toBeGreaterThan(8); // "+3 red" alone is 2 words: the card shows a dozen
-  expect(hubShown('+1 blue', 1, 'Gather', null, 1)).toBe('P +1 blue');
-  expect(hubShown('recruited Journeyman (free)', 1, 'Gather', null, 1)).toBe('recruited Journeyman (free)');
+  expect(hubShown('+1 blue', 1, 'Gather the Kin', null, 1)).toBe('P +1 blue');
+  expect(hubShown('recruited Journeyman (free)', 1, 'Gather the Kin', null, 1)).toBe('recruited Journeyman (free)');
   expect(hubShown('+3 red', 0, null, null, 1)).toBe('+3 red');
 });

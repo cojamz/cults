@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Tall-Tale Teller: "Whenever you copy an action, double the resources it gives you." Every way of copying an action
-// (Cory, Nov 3: "copying Polish didnt double with Tall-Tale Teller. gotta audit what wallflower works with").
+// (Cory, Nov 3: "copying Melt Down didnt double with Tall-Tale Teller. gotta audit what wallflower works with").
 import { describe, it, expect } from 'vitest';
 import { take, move, play, actionName } from './helpers.js';
 import { table } from './cards-helpers-b.js';
@@ -14,10 +14,10 @@ const red = o => o.id === 'color:red';
 const sum = r => Object.values(r).reduce((a, b) => a + b, 0);
 
 describe('Tall-Tale Teller doubles every copied action', () => {
-  // Polish (Nov 24): "+3 silver. Turn all your silver into one other color. Each rival +1 silver." Tall-Tale Teller doubles the
-  // silver gained, not the turn (Cory, Nov 11: "just the +3 should double"). The rival's Polish first gave the copier
+  // Melt Down (Nov 24): "+3 silver. Turn all your silver into one other color. Each rival +1 silver." Tall-Tale Teller doubles the
+  // silver gained, not the turn (Cory, Nov 11: "just the +3 should double"). The rival's Melt Down first gave the copier
   // +1 silver: 3 held + 3 = 6 red, or + 6 doubled = 9 red
-  it('Echo copying a rival\'s Polish: the silver gained doubled, the turn not', () => {
+  it('Follow Suit copying a rival\'s Melt Down: the silver gained doubled, the turn not', () => {
     const run = members => {
       let s = table(['silver', 'red', 'market', 'echo'], { members: [members], res: [{ silver: 2 }, { silver: 2 }], queue: turns(1, 0) });
       s = go(s, 'silver.polish', red);
@@ -32,8 +32,8 @@ describe('Tall-Tale Teller doubles every copied action', () => {
     expect(run(['echo.wallflower'])).toEqual({ gained: 9, silver: 0 });
   });
 
-  // Cover copies an action with a rival's minion on it (Cory, Nov 10): a rival's Golden Years (+4 gold in round II) doubled
-  it('Cover copying a rival\'s action is doubled', () => {
+  // Imitate copies an action with a rival's minion on it (Cory, Nov 10): a rival's Let It Grow (+4 gold in round II) doubled
+  it('Imitate copying a rival\'s action is doubled', () => {
     const run = members => {
       let s = table(['gold', 'red', 'market', 'echo'], { round: 2, members: [members], queue: turns(1, 0) });
       s = go(s, 'gold.rush');
@@ -41,32 +41,32 @@ describe('Tall-Tale Teller doubles every copied action', () => {
       return R(s);
     };
     expect(run([])).toMatchObject({ gold: 4, green: 1 });
-    expect(run(['echo.wallflower'])).toMatchObject({ gold: 8, green: 1 }); // Cover's own +1 isn't a copy
+    expect(run(['echo.wallflower'])).toMatchObject({ gold: 8, green: 1 }); // Imitate's own +1 isn't a copy
   });
-  // Echo copying a rival's Cover: Cover's +1 doubled, and the Build Up the copied Cover picks again doubled once, never twice
+  // Follow Suit copying a rival's Imitate: Imitate's +1 doubled, and the Flock Together the copied Imitate picks again doubled once, never twice
   it('a copy inside a copy is doubled once', () => {
     let s = table(['gold', 'red', 'market', 'echo'], { n: 3, round: 2, members: [['echo.wallflower']], queue: turns(1, 2, 0) });
     s = go(s, 'echo.chant'); // P2: +1 for its minion, +1
-    s = go(s, 'echo.hum', sp('echo.chant')); // P3's Cover copies P2's Build Up
+    s = go(s, 'echo.hum', sp('echo.chant')); // P3's Imitate copies P2's Flock Together
     s = take(s, 'echo.echo');
     s = play(s, sp('echo.hum'));
     s = pass(play(s, sp('echo.chant')));
-    expect(R(s).green).toBe(1 + 2 + 4); // Echo +1, Cover's +1 doubled, Build Up's +2 doubled
+    expect(R(s).green).toBe(1 + 2 + 4); // Follow Suit +1, Imitate's +1 doubled, Flock Together's +2 doubled
   });
-  it('Translator turns a copied Polish green', () => {
+  it('Translator turns a copied Melt Down green', () => {
     let s = table(['silver', 'red', 'market', 'echo'], { members: [['echo.translator']], res: [{ silver: 2 }, { silver: 2 }], queue: turns(1, 0) });
     s = go(s, 'silver.polish', red);
     s = take(s, 'echo.echo');
     s = play(s, sp('silver.polish'));
     while (s.pending?.options?.some(red)) s = play(s, red);
     s = pass(s);
-    expect(R(s)).toMatchObject({ red: 0, silver: 0, green: 1 + 6 }); // Echo's +1, Polish's 3 held (2 + the rival's gift) + 3 turned, as green
+    expect(R(s)).toMatchObject({ red: 0, silver: 0, green: 1 + 6 }); // Follow Suit's +1, Melt Down's 3 held (2 + the rival's gift) + 3 turned, as green
   });
   it('an Impersonator holding a rival\'s Tall-Tale Teller doubles a copy', () => {
     let s = table(['gold', 'red', 'market', 'echo'], { members: [['echo.impersonators'], ['echo.wallflower']], queue: turns(1, 0) });
     s.cards[s.players[0].members[0]].ability = 'echo.wallflower';
     s = go(s, 'echo.chant');
     s = go(s, 'echo.echo', sp('echo.chant'));
-    expect(R(s).green).toBe(1 + 4); // Echo's +1, Build Up's +2 (one minion, +1) doubled
+    expect(R(s).green).toBe(1 + 4); // Follow Suit's +1, Flock Together's +2 (one minion, +1) doubled
   });
 });

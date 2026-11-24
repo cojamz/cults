@@ -30,15 +30,15 @@ const entry = (s, name) => Object.values(s.echo.now).find(e => e.name === name);
 
 describe('Green: a space’s chip is what the space gave, closed at the buy step', () => {
   it('a member recruited in the buy step (Understudy) does not add its copy to the space the buyer just took', () => {
-    // P2 takes Golden Years. P1 takes Build Up (+2 green: its own minion on Green, +1), then buys legacy Understudy and copies Golden Years.
+    // P2 takes Let It Grow. P1 takes Flock Together (+2 green: its own minion on Green, +1), then buys legacy Understudy and copies Let It Grow.
     let s = scene({ turns: [1, 0, 1], res: [{ green: 10, gold: 4 }, {}], shop: ['echo.understudy', 'red.twins', 'red.bigfamily'] });
     s = pass(take(s, 'gold.rush'));
     s = take(s, 'echo.chant');
     s = buyCard(s, 'echo.understudy');
     expect(s.pending.prompt).toMatch(/^Understudy/);
     s = pass(move(s, s.pending.options[0].id));
-    const hum = entry(s, 'Build Up');
-    // Its taker got just Build Up's +2, and nothing from Understudy's copy.
+    const hum = entry(s, 'Flock Together');
+    // Its taker got just Flock Together's +2, and nothing from Understudy's copy.
     expect(hum.res).toEqual({ green: 2 });
     expect(hum.redo).toBeFalsy();
     expect(hum.members).toEqual([]);
@@ -47,12 +47,12 @@ describe('Green: a space’s chip is what the space gave, closed at the buy step
   it('a Doppelganger bought in the buy step does not turn the space into "do it yourself"', () => {
     let s = scene({ turns: [0, 1], res: [{ red: 10, gold: 10, green: 10 }, {}], members: [['gold.banker'], []], shop: ['echo.doppel', 'red.twins'] });
     s = take(s, 'gold.jv');
-    // Kickback: pick the rival for the gift
+    // Grease a Palm: pick the rival for the gift
     s = move(s, s.pending.options[0].id);
     s = buyCard(s, 'echo.doppel');
     expect(s.pending.prompt).toMatch(/^Doppelganger/);
     s = pass(move(s, s.pending.options[0].id));
-    const kb = entry(s, 'Kickback');
+    const kb = entry(s, 'Grease a Palm');
     expect(kb.res).toEqual({ gold: 3 });
     expect(kb.redo).toBeFalsy();
   });
@@ -60,7 +60,7 @@ describe('Green: a space’s chip is what the space gave, closed at the buy step
 
 describe('Gold', () => {
   // fixed 2026-10-15 (Cory): the steal's later victims are the same gain (core gain's again)
-  it('Gold Panner: one action that gains you gold pays +1 more once (Collect Debts split over two rivals)', () => {
+  it('Gold Panner: one action that gains you gold pays +1 more once (Call In Debts split over two rivals)', () => {
     let s = scene({ n: 3, round: 2, turns: [0], res: [{}, { gold: 2 }, { gold: 2 }], members: [['gold.prospector'], [], []] });
     s = take(s, 'gold.steal');
     s = move(s, 'player:1'); s = move(s, 'player:1'); s = move(s, 'player:2');
@@ -108,9 +108,9 @@ describe('Green members', () => {
     expect(s.cards[u].used).toBeFalsy();
   });
 
-  it('a copy gives the printed gain, not what the taker’s members added (Poor Relation on Kickback)', () => {
+  it('a copy gives the printed gain, not what the taker’s members added (Poor Relation on Grease a Palm)', () => {
     let s = scene({ turns: [1, 0], res: [{}, { gold: 0 }], members: [[], ['gold.underdog']] });
-    // P1 holds more gold than P2, so P2's Poor Relation doubles: P2 gets 6 from Kickback
+    // P1 holds more gold than P2, so P2's Poor Relation doubles: P2 gets 6 from Grease a Palm
     s.players[0].res.gold = 5;
     s = take(s, 'gold.jv'); s = pass(move(s, s.pending.options[0].id));
     expect(s.players[1].res.gold).toBe(6);

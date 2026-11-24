@@ -17,11 +17,11 @@ describe('Second Billing (Green, round III)', () => {
     expect(s.players[0].res.green).toBe(1);
     expect(s.pending.prompt).toBe('Second Billing: copy which round II action?');
     const names = s.pending.options.map(o => o.label.split(':')[0].replace(/ \(P\d\)$/, ''));
-    expect(names).toEqual(expect.arrayContaining(['Collect Debts', 'Tithe']));
-    expect(names).not.toContain('Double Down');
+    expect(names).toEqual(expect.arrayContaining(['Call In Debts', 'Pass the Plate']));
+    expect(names).not.toContain('Multiply');
     expect(names).not.toContain('Second Billing');
-    s = move(s, s.pending.options.find(o => o.label.startsWith('Tithe')).id);
-    expect(s.log.some(l => /Tithe/.test(l))).toBe(true);
+    s = move(s, s.pending.options.find(o => o.label.startsWith('Pass the Plate')).id);
+    expect(s.log.some(l => /Pass the Plate/.test(l))).toBe(true);
   });
 });
 

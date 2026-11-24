@@ -27,7 +27,7 @@ describe('REPLACE13=lastorders: Last Orders', () => {
   it("placing the round's last minion gives a second recruit this turn", () => {
     let s = table(['purple', 'red'], { n: 2, round: 1, members: [['purple.lastorders']], res: [{ red: 9, purple: 9 }], shop: SHOP, left: 1 });
     s.players[1].left = 0;
-    s = go(s, slotOf(s, 'red', 'Gather'));
+    s = go(s, slotOf(s, 'red', 'Gather the Kin'));
     expect(s.log.join('\n')).toContain("P1's Last Orders");
     s = go(s, s.pending.options.find(o => o.label.startsWith('Volunteer')).id);
     while (s.pending?.prompt.includes('pay')) s = go(s, s.pending.options[0].id);
@@ -36,7 +36,7 @@ describe('REPLACE13=lastorders: Last Orders', () => {
   it('not when a rival still has a minion', () => {
     let s = table(['purple', 'red'], { n: 2, round: 1, members: [['purple.lastorders']], res: [{ red: 9 }], shop: SHOP, left: 1 });
     s.players[1].left = 1;
-    s = go(s, slotOf(s, 'red', 'Gather'));
+    s = go(s, slotOf(s, 'red', 'Gather the Kin'));
     expect(s.log.join('\n')).not.toContain("Last Orders");
   });
 });

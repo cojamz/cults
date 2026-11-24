@@ -105,29 +105,29 @@ describe('turn order on the cults', () => {
     expect(seatTurns(createGame({ seats, seed: 42 }), 0)).toEqual({});
     expect(seatTurns(s, null)).toEqual({});
   });
-  it('turns taken early (Crunch Time) read as your own turns moved up: not extra, the seats count them right', () => {
+  it('turns taken early (Flurry) read as your own turns moved up: not extra, the seats count them right', () => {
     let s = until(createGame({ seats, seed: 43 }), t => t.round >= 1 && t.pending && t.pending.kind === 'place');
     const me = s.current;
-    turnsNow(contextFor(s), s.players[me], 2, 'Crunch Time');
+    turnsNow(contextFor(s), s.players[me], 2, 'Flurry');
     const seq = turnSequence(s);
     expect(seq.filter(t => t.kind === 'extra')).toHaveLength(0); // all 12 are the round's own placements
     expect(seq.filter(t => t.kind === 'snake')).toHaveLength(12);
     expect(seq.slice(0, 3).map(t => t.pid)).toEqual([me, me, me]);
-    expect(seq.slice(1, 3).map(t => t.early)).toEqual(['Crunch Time', 'Crunch Time']);
+    expect(seq.slice(1, 3).map(t => t.early)).toEqual(['Flurry', 'Flurry']);
     // three in a row counts down (Cory, Nov 4: "its not clear to me how many turns i have remaining")
     expect(seatTurns(s, me)[me].say).toBe('3 turns in a row');
     expect(seatTurns(s, me)[me].title).toMatch(/This turn and 2 more right after it/);
-    expect(turnPlaces(s, me).places[me].title).toMatch(/taken early \(Crunch Time\), not an extra one/);
+    expect(turnPlaces(s, me).places[me].title).toMatch(/taken early \(Flurry\), not an extra one/);
     // the seat after the early turns counts them right
     const r = turnRail(s);
     const after = r.next.find(p => p !== me);
     expect(seatTurns(s, after)[after].say).toBe(`your turn in ${r.next.indexOf(after) + 1}`);
-    // play into the early turn: the headline names Crunch Time, not "extra turn"
+    // play into the early turn: the headline names Flurry, not "extra turn"
     s = until(s, t => t.pending && t.pending.kind === 'place' && (t.turns || []).length === 2);
     expect(s.current).toBe(me);
     const c = currentTurn(s);
     expect(c.again).toBe(true);
-    expect(c.early).toBe('Crunch Time');
+    expect(c.early).toBe('Flurry');
     expect(seatTurns(s, me)[me].say).toBe('2 turns in a row');
     s = until(s, t => t.pending && t.pending.kind === 'place' && (t.turns || []).length === 3);
     expect(seatTurns(s, me)[me].say).toBe('last turn in a row');

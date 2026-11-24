@@ -16,20 +16,20 @@ const S = (s, i = 0) => s.players[i].res.silver;
 const rich = { gold: 30, red: 30, silver: 30, green: 30 };
 
 describe('Silver actions', () => {
-  it('Toast, flat in every round (Cory, Nov 11): +4 silver, each rival +2 silver, +1 silver', () => {
+  it('Raise a Glass, flat in every round (Cory, Nov 11): +4 silver, each rival +2 silver, +1 silver', () => {
     for (const round of [1, 2, 3]) {
       const s = take(sc({ n: 3, round }), 'silver.toast');
       expect(s.players.map(p => p.res.silver)).toEqual([5, 2, 2]);
     }
   });
-  it('Polish: +3 silver, then all your silver into one other color you choose, then each rival +1 silver (Cory, Nov 24)', () => {
+  it('Melt Down: +3 silver, then all your silver into one other color you choose, then each rival +1 silver (Cory, Nov 24)', () => {
     let s = take(sc({ res: [{ silver: 2 }] }), 'silver.polish');
     s = move(s, 'color:red');
     expect([S(s), s.players[0].res.red]).toEqual([0, 5]);
     expect(s.players.slice(1).every(o => o.res.silver >= 1)).toBe(true);
-    expect(named(s, 'Polish').length).toBeGreaterThan(0);
+    expect(named(s, 'Melt Down').length).toBeGreaterThan(0);
   });
-  it('Party Gifts: rivals gain up to 3 silver from the bank, split as you choose, +2 followers each', () => {
+  it('Hand Out Gifts: rivals gain up to 3 silver from the bank, split as you choose, +2 followers each', () => {
     let s = take(sc({ n: 3, res: [{ silver: 2 }] }), 'silver.partygifts');
     s = move(move(move(s, 'player:1'), 'player:2'), 'player:1');
     expect(s.players.map(p => p.res.silver)).toEqual([2, 2, 1]);
@@ -44,7 +44,7 @@ describe('Silver actions', () => {
     for (let i = 0; i < 6; i++) s = move(s, 'color:red');
     expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[0, 6], [1, 0], [2, 0]]);
   });
-  it('Buyout: recruit a rival member, paying them its cost in silver, +1 silver; Largesse: rivals must gain all 10 silver, +7 followers', () => {
+  it('Hire Away: recruit a rival member, paying them its cost in silver, +1 silver; Throw Coins: rivals must gain all 10 silver, +7 followers', () => {
     let s = sc({ round: 2, res: [{ silver: 20 }], members: [[], ['silver.guest']] });
     const uid = s.players[1].members[0], k = s.cards[uid].def ? s.cards[uid].def.s + s.cards[uid].def.w : null;
     s = take(s, 'silver.buyout');
@@ -62,8 +62,8 @@ describe('Silver actions', () => {
     expect(s.players[1].res.silver).toBe(10);
     expect(s.players[0].bonus).toBe(7); // Cory, Nov 24: "+7 give 10"
   });
-  // flat since Nov 11 (Cory: "i dont like Toast scaling so crazily"): the same in every round
-  it.each([1, 2, 3])('Toast round %i: the same gift, with Guest, Almsgiver and Grand Host', round => {
+  // flat since Nov 11 (Cory: "i dont like Raise a Glass scaling so crazily"): the same in every round
+  it.each([1, 2, 3])('Raise a Glass round %i: the same gift, with Guest, Almsgiver and Grand Host', round => {
     const s = take(sc({ n: 3, round, members: [['silver.grandhost', 'silver.caterer'], ['silver.guest']] }), 'silver.toast');
     // Grand Host doubles the +4 and the +1 (8 + 2), Silver Cloak +2 on your own gift (Cory, Nov 7); each rival +2, Guest +1 more
     expect(s.players.map(p => p.res.silver)).toEqual([12, 3, 2]);
@@ -73,7 +73,7 @@ describe('Silver actions', () => {
 });
 
 describe('Silver members', () => {
-  it('Gift Wrapper: +1 follower whenever you give rivals silver, once per space (Toast, Sweet Nothings)', () => {
+  it('Gift Wrapper: +1 follower whenever you give rivals silver, once per space (Raise a Glass, Sweet Nothings)', () => {
     let s = take(sc({ n: 3, members: [['silver.giftwrapper']] }), 'silver.toast');
     expect(s.players[0].bonus).toBe(1);
     s = take(sc({ n: 3, round: 2, members: [['silver.giftwrapper']] }), 'silver.sweetnothings');
@@ -81,7 +81,7 @@ describe('Silver members', () => {
     expect(s.players[0].bonus).toBe(1);
     expect(named(s, 'Gift Wrapper')).toHaveLength(1);
   });
-  it('Almsgiver: Sweet Nothings is one gift, +2 silver once however many rivals get silver (as Toast)', () => {
+  it('Almsgiver: Sweet Nothings is one gift, +2 silver once however many rivals get silver (as Raise a Glass)', () => {
     let s = take(sc({ n: 3, round: 2, members: [['silver.caterer']] }), 'silver.sweetnothings');
     s = move(move(move(s, 'player:1'), 'player:2'), 'done');
     expect(S(s)).toBe(3 - 2 + 2);
@@ -158,7 +158,7 @@ describe('Silver members', () => {
     expect(S(s, 1)).toBe(3);
     expect(named(s, 'Hangers-On')[0]).toMatch(/P2's Hangers-On: \+1 silver/);
   });
-  it('Guest × Kickback: Gold’s gift counts, named', () => {
+  it('Guest × Grease a Palm: Gold’s gift counts, named', () => {
     const s = move(take(sc({ members: [[], ['silver.guest']] }), 'gold.jv'), 'player:1');
     expect(s.players[1].res.gold).toBe(2);
     expect(named(s, 'Hangers-On')).toHaveLength(1);
@@ -192,12 +192,12 @@ describe('Silver members', () => {
     expect(named(s, 'Almsgiver')[0]).toMatch(/P1's Almsgiver: \+2 silver/);
   });
   // Cory, Nov 6: the Silver Cloak pays only on your own gifts ("Whenever you gift silver, +2 silver."); gold doesn't count
-  it('Almsgiver: a gift of gold (Kickback) pays nothing; a rival gifting silver pays nothing', () => {
+  it('Almsgiver: a gift of gold (Grease a Palm) pays nothing; a rival gifting silver pays nothing', () => {
     const s = move(take(sc({ members: [['silver.caterer']] }), 'gold.jv'), 'player:1');
     expect(S(s)).toBe(0);
     expect(named(s, 'Almsgiver')).toHaveLength(0);
     const t = take(sc({ queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }], members: [['silver.caterer']] }), 'silver.toast');
-    expect(S(t)).toBe(2); // P2's Toast gives P1 2 silver; P1's cloak pays only P1's own gifts
+    expect(S(t)).toBe(2); // P2's Raise a Glass gives P1 2 silver; P1's cloak pays only P1's own gifts
     expect(named(t, 'Almsgiver')).toHaveLength(0);
   });
 
@@ -217,7 +217,7 @@ describe('Silver members', () => {
   // rewards not hosting (dead-window audit, 2026-10-14): it was "+1 more when an action gains you silver"
   it('Silversmith: whenever a rival takes a Silver space, +1 silver, named; not your own, not other spaces', () => {
     let s = take(sc({ members: [[], ['silver.silversmith']] }), 'silver.toast');
-    expect(S(s, 1)).toBe(2 + 1); // Toast's +2 to everyone else, and Silversmith's
+    expect(S(s, 1)).toBe(2 + 1); // Raise a Glass's +2 to everyone else, and Silversmith's
     expect(named(s, 'Silversmith')).toEqual(["P2's Silversmith: +1 silver."]);
     s = take(sc({ members: [['silver.silversmith']] }), 'silver.toast');
     expect(S(s)).toBe(5);
@@ -316,7 +316,7 @@ describe('Silver members', () => {
     const s = take(sc({ members: [['silver.grandhost']] }), 'silver.toast');
     expect(S(s)).toBe(10); // the +4 and the +1, each doubled
     expect(S(s, 1)).toBe(2); // the spill is not doubled
-    expect(named(s, 'Grand Host')).toHaveLength(2); // once for each silver gain Toast prints
+    expect(named(s, 'Grand Host')).toHaveLength(2); // once for each silver gain Raise a Glass prints
   });
   it('Grand Host × Doppelganger: each copy doubles again (×4)', () => {
     let s = sc({ members: [['silver.grandhost', 'echo.doppel']] });

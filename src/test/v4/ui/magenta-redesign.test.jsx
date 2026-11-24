@@ -26,9 +26,9 @@ describe('Magenta action wording and one-stack theft', () => {
     expect(stash.main).toBe('+3 magenta'); // a plain stand-in (Cory, Nov 10 10:42pm)
     expect(stash.second).toBeNull();
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toContain(`costing ${6 + MORE} or less`);
-    expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 4 @f and 4 resources'); // Heist, Nov 10 3:46pm
+    expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 4 @f and 4 resources'); // Plunder, Nov 10 3:46pm
     expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 3 followers and 3 resources');
-    // Catch Up (Nov 10) and Swindle (Nov 10, Shake Down's slot)
+    // Beg (Nov 10) and Sleight of Hand (Nov 10, Shake Down's slot)
     expect(panelText('thieves', { key: 'catchup' }, 1)).toMatchObject({ main: '+2 magenta', second: 'per rival with more resources' });
     expect(panelText('thieves', { key: 'swindle' }, 2)).toMatchObject({ verb: `Steal a member up to ${6 + MORE} for a shop member`, second: 'you give them one' }); // the give-back in line 1 (picky bot, Nov 11)
   });
@@ -60,7 +60,7 @@ it('does not describe original-color theft choices as swaps, including stealing 
   const state = { resources: ['gold', 'magenta'], players: [{ id: 0 }, { id: 1 }] };
   const change = res => ({ res, followers: 1, members: 0, turns: 0, early: 0, discount: 0, swapped: 0 });
   const a = change({ gold: 1, magenta: 1 }), b = change({ gold: 0, magenta: 2 });
-  const pv = { exact: false, tied: true, asks: ['Help Yourself: take 1'], theirAsks: [], you: { res: { gold: [0, 1], magenta: [1, 2] }, followers: [1, 1], members: [0, 0], turns: [0, 0], discount: [0, 0] },
+  const pv = { exact: false, tied: true, asks: ['Pilfer: take 1'], theirAsks: [], you: { res: { gold: [0, 1], magenta: [1, 2] }, followers: [1, 1], members: [0, 0], turns: [0, 0], discount: [0, 0] },
     others: { res: { gold: [-1, 0], magenta: [-1, 0] }, followers: [0, 0], members: [0, 0] }, mix: [a, b], best: a, likely: a };
   expect(youdWords(pv, state, 'magenta')).toEqual({ text: '+1 magenta, +1 follower; steal 1 in colors you pick', note: null });
 });

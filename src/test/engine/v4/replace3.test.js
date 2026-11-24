@@ -211,11 +211,11 @@ describe('REPLACE3: each card fires', () => {
     s = { ...s, slots: { '0-0': 0 } };
     s = move(s, `use:${uidIn(s, 'purple.pacers', 0)}`);
     expect(s.pending.prompt).toBe('Pacers: move one of your minions to which open space?');
-    s = answer(s, 'to:0-1'); // Gather: +3 red in round II
+    s = answer(s, 'to:0-1'); // Gather the Kin: +3 red in round II
     expect(s.slots['0-0']).toBeUndefined();
     expect(s.slots['0-1']).toBe(0);
     expect(s.players[0].res.red).toBe(3);
-    expect(named(s, 'Pacers')).toContain("P1's Pacers: moves a minion from Tryout to Gather.");
+    expect(named(s, 'Pacers')).toContain("P1's Pacers: moves a minion from Tryout to Gather the Kin.");
     // used for this round
     expect(s.pending?.options?.some(o => o.id === `use:${uidIn(s, 'purple.pacers', 0)}`) ?? false).toBe(false);
   });

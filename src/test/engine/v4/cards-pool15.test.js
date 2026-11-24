@@ -50,19 +50,19 @@ describe('Top Billing (Green, round III)', () => {
   const Q = ['echo', 'gold', 'purple', 'market'];
   it("Copy any round III action (a rival's taken one). +1 green.", () => {
     let s = sceneQ({ quadrants: Q, round: 3, res: [{}, { gold: 5 }], queue: [1, 0].map(p => ({ t: 'turn', p })) });
-    s = passBuys(take(s, 'gold.strike')); // P2: Double Down
+    s = passBuys(take(s, 'gold.strike')); // P2: Multiply
     s = take(s, 'echo.topbilling');
     expect(s.players[0].res.green).toBe(1);
     expect(s.pending.prompt).toBe('Top Billing: copy which round III action?');
-    const opt = s.pending.options.find(o => o.label.startsWith('Double Down (P2)'));
+    const opt = s.pending.options.find(o => o.label.startsWith('Multiply (P2)'));
     expect(s.pending.options.some(o => o.label.startsWith('Top Billing'))).toBe(false);
     s = move(s, opt.id);
-    expect(s.log.some(l => /Top Billing/.test(l) || /copies Double Down/.test(l))).toBe(true);
+    expect(s.log.some(l => /Top Billing/.test(l) || /copies Multiply/.test(l))).toBe(true);
   });
   it('an open round III action is done', () => {
     let s = sceneQ({ quadrants: Q, round: 3, res: [{ gold: 4 }] });
     s = take(s, 'echo.topbilling');
-    s = move(s, s.pending.options.find(o => o.label.startsWith('Double Down:')).id);
+    s = move(s, s.pending.options.find(o => o.label.startsWith('Multiply:')).id);
     expect(s.players[0].res.gold).toBe(8);
   });
 });

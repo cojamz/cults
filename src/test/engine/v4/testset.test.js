@@ -9,7 +9,7 @@ const defs = s => new Set(Object.values(s.cards).map(c => c.def));
 
 describe('Test version (rules.testSet)', () => {
   // Nov 11 (Cory: "we are committing to the test version, with updated actions from our recent action work"): the
-  // recent action work kept Polish, Estate Sale and Melting Pot, so every color plays its live spaces
+  // recent action work kept Melt Down, Estate Sale and Hold a Fair, so every color plays its live spaces
   it('plays every color\'s live spaces', () => {
     const t = { rules: { testSet: true } }, live = { rules: {} };
     for (const q of ['thieves', 'market', 'echo', 'purple', 'red', 'silver', 'trading', 'yellow']) {
@@ -26,7 +26,7 @@ describe('Test version (rules.testSet)', () => {
     const d = defs(createGame({ seats, seed: 3, quadrants: Q, rules: { deck: 10 } }));
     for (const id of ['trading.anchorites', 'trading.oldguard', 'market.repossessors', 'benders.protesters', 'benders.giftswappers', 'benders.purifiers']) expect(d.has(id)).toBe(false);
     for (const id of ['trading.recluse', 'market.regular']) expect(d.has(id)).toBe(true);
-    expect(spacesOf({ rules: {} }, 'yellow').map(a => a.name)).toContain('Melting Pot');
+    expect(spacesOf({ rules: {} }, 'yellow').map(a => a.name)).toContain('Hold a Fair');
   });
   it('white and blue decks keep their size', () => {
     for (const q of [Q, Q2]) {

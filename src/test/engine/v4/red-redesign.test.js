@@ -19,12 +19,12 @@ const pass = s => s.pending?.kind === 'buy' ? move(s, 'pass') : s;
 const remaining = s => [...s.shop, ...s.pile, ...(s.discard || []), ...s.players.flatMap(p => p.members)];
 
 describe('locked Red action progression', () => {
-  it.each([1, 2, 3])('Gather gives round +1 red in round %i, and +1 follower per 3 paid on a member recruit this turn', round => {
+  it.each([1, 2, 3])('Gather the Kin gives round +1 red in round %i, and +1 follower per 3 paid on a member recruit this turn', round => {
     let s = table(Q, { round, shop: ROW });
     s.players[0].res.gold = 9;
     s = take(s, 'red.turnout');
     expect(s.players[0].res.red).toBe(round + 1);
-    expect(s.players[0].spendFollowers).toEqual([{ per: 3, name: 'Gather' }]);
+    expect(s.players[0].spendFollowers).toEqual([{ per: 3, name: 'Gather the Kin' }]);
     const bonus = s.players[0].bonus, before = { ...s.players[0].res };
     s = move(s, `card:${uidIn(s, 'gold.tycoon', 'shop')}`);
     while (s.pending && s.pending.prompt?.includes('pay')) s = move(s, s.pending.options[0].id);
@@ -33,22 +33,22 @@ describe('locked Red action progression', () => {
     expect(paid).toBeGreaterThanOrEqual(3);
     expect(s.players[0].bonus - bonus).toBe(Math.floor(paid / 3));
     expect(s.players[0].spendFollowers).toBeUndefined();
-    expect(s.log.join('\n')).toMatch(/P1's Gather: \+\d+ follower/);
+    expect(s.log.join('\n')).toMatch(/P1's Gather the Kin: \+\d+ follower/);
   });
 
-  it('Gather pays nothing for buying followers', () => {
+  it('Gather the Kin pays nothing for buying followers', () => {
     let s = table(Q, { shop: ROW });
     s.players[0].res.gold = 5;
     s = take(s, 'red.turnout');
     s = move(s, 'tier:mid');
-    expect(s.log.join('\n')).not.toMatch(/Gather: \+\d+ follower/);
+    expect(s.log.join('\n')).not.toMatch(/Gather the Kin: \+\d+ follower/);
   });
 
-  it('Gather wears off when the turn ends, so a recruit off your turn never collects it', () => {
+  it('Gather the Kin wears off when the turn ends, so a recruit off your turn never collects it', () => {
     let s = table(Q, { shop: ROW });
     s.players[0].res.gold = 5;
     s = take(s, 'red.turnout');
-    expect(s.players[0].spendFollowers).toEqual([{ per: 3, name: 'Gather' }]);
+    expect(s.players[0].spendFollowers).toEqual([{ per: 3, name: 'Gather the Kin' }]);
     s.pending = null; s.queue = [{ t: 'endTurn', p: 0 }];
     s = resume(s);
     expect(s.players[0].spendFollowers).toBeUndefined();
@@ -232,7 +232,7 @@ describe('locked Red action progression', () => {
     const actorMember = uidIn(s, 'red.volunteer', 1), target = uidIn(s, 'gold.banker', 'shop');
     s = move(s, swapId(actorMember, target));
     expect(defs(s, 1)).toContain('gold.banker');
-    expect([s.players[1].res.green, s.players[1].res.red, s.players[1].res.gold]).toEqual([1, 3, 3]); // Echo +1
+    expect([s.players[1].res.green, s.players[1].res.red, s.players[1].res.gold]).toEqual([1, 3, 3]); // Follow Suit +1
   });
 });
 

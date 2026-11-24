@@ -16,27 +16,27 @@ const words = (s, name) => {
 };
 
 describe('hover honesty (live panel r1)', () => {
-  it('Help Yourself with Starveling: the Why names Starveling', () => {
+  it('Pilfer with Starveling: the Why names Starveling', () => {
     const s = sceneQ({ quadrants: T, round: 3, n: 3, res: [{}, { gold: 5, red: 4 }, { blue: 3 }], bonus: [0, 3, 3], members: [['thieves.desperado'], [], []] });
-    const { pv, y } = words(s, 'Help Yourself');
+    const { pv, y } = words(s, 'Pilfer');
     // Nov 10: 1 per minion you've placed this round, this one included (here the first: 1), +2 with Starveling (Cory, Nov 1,
     // 2:27pm): 3, all your pick, from any rivals; its +1 magenta came back with the Nov 10 text
     expect(y.text).toBe('+1 magenta; steal 3 in colors you pick');
     expect(whyLine(pv.reasons)).toBe('Starveling: +2 to steal (1 → 3)');
   });
 
-  it('Collect Debts with Sticky Fingers: the Why names it, and a rival it can rob reads now and after, never a gift', () => {
+  it('Call In Debts with Sticky Fingers: the Why names it, and a rival it can rob reads now and after, never a gift', () => {
     const s = sceneQ({ quadrants: T, round: 2, n: 3, res: [{}, { gold: 3 }, { gold: 3 }], members: [['thieves.sticky'], [], []] });
-    const { pv, y } = words(s, 'Collect Debts');
+    const { pv, y } = words(s, 'Call In Debts');
     expect(y.text).toBe('+4 gold');
     expect(whyLine(pv.reasons)).toBe('Sticky Fingers: +1 to steal (3 → 4)');
-    const [q, i] = at(s, 'Collect Debts');
+    const [q, i] = at(s, 'Call In Debts');
     const r = raceAfter(s, cachedPreview(s, 0, q, i).race, 'gold', 0, true);
     expect(r.tail).toBe('');
     for (const t of r.them) expect(t.text).toMatch(/^P[23] has 3 now, \d( or \d| to \d)? after$/);
   });
 
-  describe('retired spaces, kept for old saves (Bury, the old Gather; Walk-In back too so "Gather" names one space)', () => {
+  describe('retired spaces, kept for old saves (Bury, the old Gather the Kin; Walk-In back too so "Gather the Kin" names one space)', () => {
   useRetired(['market.pricecheck', 'red.turnout', 'red.hire']);
   it('Bury: says the most it can give, as your pick (1 + half the priciest face-up cost), never a loss', () => {
     const s = sceneQ({ quadrants: T, round: 2, n: 3, res: [{ gold: 9, red: 3 }], shop: ['red.bigfamily', 'gold.tycoon', 'red.intern', 'gold.taxman', 'red.twins', 'red.volunteer'] });
@@ -47,11 +47,11 @@ describe('hover honesty (live panel r1)', () => {
     expect(y.text).not.toMatch(/−/);
   });
 
-  it('Gather shows the round gain regardless of recruitment around the table', () => {
+  it('Gather the Kin shows the round gain regardless of recruitment around the table', () => {
     for (const round of [1, 2, 3]) {
       const s = sceneQ({ quadrants: T, round, n: 3 });
       s.recruits = 9;
-      expect(words(s, 'Gather').y.text).toMatch(new RegExp(`^\\+${round + 1} red`));
+      expect(words(s, 'Gather the Kin').y.text).toMatch(new RegExp(`^\\+${round + 1} red`));
     }
   });
   });

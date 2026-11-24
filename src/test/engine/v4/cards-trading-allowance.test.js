@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Allowance left the wheel Nov 11 (Modest Means took its slot); its card checks stay here, on the retired space.
+// Allowance left the wheel Nov 11 (Live Simply took its slot); its card checks stay here, on the retired space.
 // Card-by-card verifier, White (trading): every action and member against its printed text at the doubled
 // member costs, through real legal moves, plus cross-sphere cases. Every number a card changes must
 // show up in a log line that names the card.
@@ -29,7 +29,7 @@ const text = k => [...W.actions, ...W.members].find(c => c.key === k).text;
 
 useRetired(['trading.stipend', 'trading.exchange', 'trading.estatesale']);
 
-describe('Estate Sale (retired Nov 11, Write-Off took its slot)', () => {
+describe('Estate Sale (retired Nov 11, Give Away took its slot)', () => {
   it('Estate Sale: Baron (8+4) pays 12 white, named', () => {
     let s = take(table(Q, { round: 2, members: [['gold.tycoon']], shop: ROW }), 'trading.estatesale');
     s = move(s, cardOpt(s, 'gold.tycoon', 0));
@@ -39,7 +39,7 @@ describe('Estate Sale (retired Nov 11, Write-Off took its slot)', () => {
 });
 
 describe('White: Allowance and Exchange (retired Nov 11)', () => {
-  it('Allowance (Oct 31, Gather\'s shape): round II pays +4 white, and +2 followers on a member recruit that turn (named)', () => {
+  it('Allowance (Oct 31, Gather the Kin\'s shape): round II pays +4 white, and +2 followers on a member recruit that turn (named)', () => {
     let s = take(table(Q, { round: 2, res: [{ red: 2 }], shop: ROW }), 'trading.stipend');
     expect([B(s), R(s).white]).toEqual([0, 4]);
     s = move(s, cardOpt(s, 'red.intern', 'shop'));

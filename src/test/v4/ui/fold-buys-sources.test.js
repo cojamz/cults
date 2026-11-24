@@ -31,7 +31,7 @@ it("a rival's buys at two follower cards fly from each card, in turn; buys at on
   expect(fols[0].cause.folded).toBe(2);
 });
 
-// Gather's, Splurge's and Allowance's followers pay on a recruit but are the space's: they fly from the space, on their
+// Gather the Kin's, Spend Freely's and Allowance's followers pay on a recruit but are the space's: they fly from the space, on their
 // own, never riding on the recruited member's worth
 it("followers a space pays on a recruit fly from that space, not with the recruit", () => {
   let fromSpace = 0;

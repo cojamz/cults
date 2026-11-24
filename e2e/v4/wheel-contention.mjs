@@ -34,7 +34,7 @@ try{
   await page.click('[data-home="resume"]');await page.waitForSelector('.lt-wheel .slot');await page.waitForTimeout(800);
   const cdp=await page.context().newCDPSession(page);await cdp.send('Emulation.setCPUThrottlingRate',{rate});
   if(mode==='chain'){
-   const i=quadrant('silver').actions.findIndex(a=>a.name==='Toast');
+   const i=quadrant('silver').actions.findIndex(a=>a.name==='Raise a Glass');
    await page.locator(`[data-slot="0-${i}"]`).press('Enter');
    await page.waitForFunction(()=>document.querySelector('.app.game[data-chain]')&&document.querySelector('.piece-flight,.worker-flight,.as-member'),null,{timeout:6000});
   }else if(mode==='scoring'){

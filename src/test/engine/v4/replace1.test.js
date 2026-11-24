@@ -94,7 +94,7 @@ describe('REPLACE1: each card fires', () => {
     expect(named(s, 'Thief-Takers')).toEqual(["P1's Thief-Takers: took 1 from P2."]);
   });
 
-  it('Night Watch: a rival takes the Goes Last token with Last Call, +1 follower per minion on it', () => {
+  it('Night Watch: a rival takes the Goes Last token with Bide Your Time, +1 follower per minion on it', () => {
     const s = take(sceneQ({ quadrants: ['gold', 'red', 'purple', 'echo'], round: 2, left: 3, members: [[], ['purple.nightwatch']], queue: [...turns(0, 1, 0, 1, 0, 1), { t: 'allPlaced' }] }), 'purple.lastcall');
     expect(s.goesLast).toEqual({ round: 2, pid: 0 });
     expect(s.players[1].bonus).toBe(2);

@@ -1,13 +1,13 @@
-// Polish's 4 coins (and every "+1 of which color?" run) taken with one Take play as one step: foldPicks folds your own
+// Melt Down's 4 coins (and every "+1 of which color?" run) taken with one Take play as one step: foldPicks folds your own
 // answers to the same question, their gains summed per stack, and the chain flies them in one beat (Cory, Nov 5:
-// "Polish animation is slow").
+// "Melt Down animation is slow").
 import { describe, it, expect } from 'vitest';
 import { applyMove } from '../../../engine/v4/index.js';
 import { planChain, foldPicks } from '../../../v4/game/director.js';
 import { setMotionSpeed } from '../../../v4/motion.js';
 import { colorSave } from '../../../../e2e/v4/lib/dialog-save.mjs';
 
-// Polish became one pick (Nov 11), so the run of picks is Harvest's ("+3 in round I, +4 in round II, +5 in round III,
+// Melt Down became one pick (Nov 11), so the run of picks is Harvest's ("+3 in round I, +4 in round II, +5 in round III,
 // in colors you choose").
 function polishRun(picks) {
   let s = colorSave('harvest').state;

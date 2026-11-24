@@ -23,7 +23,7 @@ describe('Yellow actions', () => {
     expect(R(s).gold).toBe(3);
     expect(s.pending?.prompt || '').not.toMatch(/Harvest/);
   });
-  it("Survey (was Leaders' Tax): +1 yellow per minion on the busiest color's spaces, anyone's, then +1 yellow (Nov 5)", () => {
+  it("Count Heads (was Leaders' Tax): +1 yellow per minion on the busiest color's spaces, anyone's, then +1 yellow (Nov 5)", () => {
     let s = sc({ n: 4 });
     // gold (quadrant 0) holds 3 minions, one of them yours and one joined; red 1; yellow gets yours when you take it
     s.slots = { '0-0': 1, '0-1': 0, '1-0': 3 };
@@ -31,16 +31,16 @@ describe('Yellow actions', () => {
     s = take(s, 'yellow.transmute');
     expect(s.pending?.kind).not.toBe('choose'); // no choice left
     expect(R(s).yellow).toBe(3 + 1);
-    expect(named(s, 'Survey').some(l => /\+3 yellow \(3 minions on gold, the busiest\)/.test(l))).toBe(true);
+    expect(named(s, 'Count Heads').some(l => /\+3 yellow \(3 minions on gold, the busiest\)/.test(l))).toBe(true);
   });
-  it('Survey: a tie pays the tied count once, and its own minion can make yellow the busiest', () => {
+  it('Count Heads: a tie pays the tied count once, and its own minion can make yellow the busiest', () => {
     let s = sc({ n: 4 });
     s.slots = { '0-0': 1, '1-0': 2 }; // gold 1, red 1, yellow 1 (yours): all tied at 1
     s = take(s, 'yellow.transmute');
     expect(R(s).yellow).toBe(1 + 1);
-    expect(named(s, 'Survey').some(l => /1 minion on gold and red and yellow/.test(l))).toBe(true);
+    expect(named(s, 'Count Heads').some(l => /1 minion on gold and red and yellow/.test(l))).toBe(true);
   });
-  // New Blood and Big New Blood (Nov 4) replaced Dilute and Big Dilute: Gather's "this turn, if you recruit" shape
+  // Welcome Strangers and Big New Blood (Nov 4) replaced Dilute and Big Dilute: Gather the Kin's "this turn, if you recruit" shape
   const newBlood = (round, key, members, buyDef) => {
     let s = take(sc({ round, res: [rich], members: [members], shop: [buyDef] }), key);
     const y = R(s).yellow, b = s.players[0].bonus;
@@ -49,70 +49,70 @@ describe('Yellow actions', () => {
   };
   // Cory, Nov 4: the new-color recruit pays yellow, not followers
   // flat since Nov 11 (Cory: "+3 flat if the condition is met (no scaling)")
-  it.each([[1, 3], [2, 3], [3, 3]])('New Blood in round %i: +2 yellow; recruiting a member of a new color, +%i yellow', (round, n) => {
+  it.each([[1, 3], [2, 3], [3, 3]])('Welcome Strangers in round %i: +2 yellow; recruiting a member of a new color, +%i yellow', (round, n) => {
     const { s, y, paid } = newBlood(round, 'yellow.dilute', ['red.volunteer'], 'gold.banker');
     expect(y).toBe(30 + 2);
     expect(paid).toBe(0);
     expect(R(s).yellow).toBe(y + n); // the banker is paid in gold
-    expect(named(s, 'New Blood')).toContain(`P1's New Blood: +${n} yellow for recruiting a member of a new color.`);
+    expect(named(s, 'Welcome Strangers')).toContain(`P1's Welcome Strangers: +${n} yellow for recruiting a member of a new color.`);
   });
-  it('New Blood: a member of a color you already have pays nothing, and the promise ends with the turn', () => {
+  it('Welcome Strangers: a member of a color you already have pays nothing, and the promise ends with the turn', () => {
     let s = take(sc({ res: [rich], members: [['red.volunteer']], shop: ['red.intern', 'gold.banker'] }), 'yellow.dilute');
     const b = s.players[0].bonus;
     s = move(s, `card:${uidOf(s, 'red.intern', 'shop')}`);
     expect(s.players[0].bonus).toBe(b);
     expect(s.players[0].recruitFollowers).toBeUndefined();
-    expect(named(s, 'New Blood').filter(l => /for recruiting/.test(l))).toEqual([]);
+    expect(named(s, 'Welcome Strangers').filter(l => /for recruiting/.test(l))).toEqual([]);
   });
-  it('New Blood: your first member is always a new color', () => {
+  it('Welcome Strangers: your first member is always a new color', () => {
     const { s } = newBlood(1, 'yellow.dilute', [], 'red.intern');
-    expect(named(s, 'New Blood')).toContain("P1's New Blood: +3 yellow for recruiting a member of a new color.");
+    expect(named(s, 'Welcome Strangers')).toContain("P1's Welcome Strangers: +3 yellow for recruiting a member of a new color.");
   });
-  // Cory, Nov 11: Makeover moves to round II in Housewarming's slot; Offering takes round III
-  it('round II holds Dye Job (in Makeover\'s slot, Nov 24) and Melting Pot, round III Offering; Housewarming is off the wheel', async () => {
+  // Cory, Nov 11: Makeover moves to round II in Housewarming's slot; Demand Tribute takes round III
+  it('round II holds Paint Over (in Makeover\'s slot, Nov 24) and Hold a Fair, round III Demand Tribute; Housewarming is off the wheel', async () => {
     const { quadrant } = await import('../../../engine/v4/content/index.js');
     const acts = quadrant('yellow').actions, ring = n => acts.filter(a => a.ring === n).map(a => a.name);
-    expect(ring(2)).toEqual(expect.arrayContaining(['Dye Job', 'Melting Pot']));
-    expect(ring(3)).toEqual(['Offering']);
+    expect(ring(2)).toEqual(expect.arrayContaining(['Paint Over', 'Hold a Fair']));
+    expect(ring(3)).toEqual(['Demand Tribute']);
     expect(acts.map(a => a.name)).not.toContain('Housewarming');
   });
-  it('Offering (round III, the pitch\'s Tithe): +5 yellow; each rival discards 2 of each color among your members, all they have when short; grey adds nothing', () => {
+  it('Demand Tribute (round III, the pitch\'s Pass the Plate): +5 yellow; each rival discards 2 of each color among your members, all they have when short; grey adds nothing', () => {
     let s = take(sc({ n: 3, round: 3, members: [['red.twins', 'gold.banker', 'benders.frontrunner']], res: [{}, { red: 5, gold: 1, green: 4 }, { red: 2 }] }), 'yellow.offering');
     expect(R(s).yellow).toBe(5);
     expect(s.players[1].res).toMatchObject({ red: 3, gold: 0, green: 4 });
     expect(s.players[2].res.red).toBe(0);
-    expect(named(s, 'Offering').some(l => /P2 discards 1 gold, 2 red\./.test(l))).toBe(true);
+    expect(named(s, 'Demand Tribute').some(l => /P2 discards 1 gold, 2 red\./.test(l))).toBe(true);
     s = take(sc({ n: 3, round: 3, res: [{}, { red: 5 }] }), 'yellow.offering');
     expect(s.players[1].res.red).toBe(5); // no members: nothing to discard
   });
   // Cory, Nov 11: "+1 follower and + 1 of each color among your members (including a wild for grey)"
-  it('Melting Pot (round II): for each color among your members, +1 follower and +1 of that color', () => {
+  it('Hold a Fair (round II): for each color among your members, +1 follower and +1 of that color', () => {
     const s = take(sc({ round: 2, members: [['red.twins', 'gold.banker', 'yellow.explorer']] }), 'yellow.meltingpot');
     expect(R(s)).toMatchObject({ red: 1, gold: 1, yellow: 1, green: 0 });
     expect(s.players[0].bonus).toBe(3);
-    expect(s.pending?.prompt || '').not.toMatch(/Melting Pot/);
+    expect(s.pending?.prompt || '').not.toMatch(/Hold a Fair/);
   });
-  it('Melting Pot with Dabblers: Dabblers is wild, so +1 of every color (Cory, Nov 5)', () => {
+  it('Hold a Fair with Dabblers: Dabblers is wild, so +1 of every color (Cory, Nov 5)', () => {
     const s = take(sc({ round: 2, members: [['benders.dabblers']] }), 'yellow.meltingpot');
     expect(R(s)).toMatchObject({ red: 1, gold: 1, yellow: 1, green: 1 });
     expect(s.players[0].bonus).toBe(4);
   });
-  it('Dye Job (Nov 24, Makeover\'s slot): +4 yellow, then up to 8 of rivals\' resources turn into yellow, one at a time', () => {
+  it('Paint Over (Nov 24, Makeover\'s slot): +4 yellow, then up to 8 of rivals\' resources turn into yellow, one at a time', () => {
     let s = take(sc({ round: 2, res: [{}, { red: 6, gold: 4 }] }), 'yellow.makeover');
     expect(R(s).yellow).toBe(4);
     for (let i = 0; i < 6; i++) s = move(s, 'dye:1:red');
     expect(s.pending.prompt).toMatch(/6 of up to 8/);
     s = move(move(s, 'dye:1:gold'), 'dye:1:gold');
     expect(s.players[1].res).toMatchObject({ red: 0, gold: 2, yellow: 8 });
-    expect(s.log).toContain("P1's Dye Job: 8 of rivals' resources turned into yellow.");
+    expect(s.log).toContain("P1's Paint Over: 8 of rivals' resources turned into yellow.");
   });
-  it('Dye Job: Turn nothing keeps rivals as they are; with nothing to turn it is just the yellow', () => {
+  it('Paint Over: Turn nothing keeps rivals as they are; with nothing to turn it is just the yellow', () => {
     let s = take(sc({ round: 2, res: [{}, { red: 2 }] }), 'yellow.makeover');
     s = move(s, 'done');
     expect(s.players[1].res.red).toBe(2);
     const t = take(sc({ round: 2, res: [{}, {}] }), 'yellow.makeover');
     expect(R(t).yellow).toBe(4);
-    expect(t.log.some(l => /Dye Job: no rival holds a resource to turn/.test(l))).toBe(true);
+    expect(t.log.some(l => /Paint Over: no rival holds a resource to turn/.test(l))).toBe(true);
   });
 });
 
@@ -171,11 +171,11 @@ describe('Yellow members', () => {
     expect(R(s, 1).yellow || 0).toBe(0);
     expect(named(s, 'Customs Officer')).toHaveLength(0);
   });
-  it('Customs Officer: a rival\'s Heist taking your followers pays nothing (followers are not resources; Nov 4)', () => {
+  it('Customs Officer: a rival\'s Plunder taking your followers pays nothing (followers are not resources; Nov 4)', () => {
     let s = sceneQ({ quadrants: ['gold', 'yellow', 'thieves', 'echo'], n: 2, round: 2, bonus: [0, 5], members: [[], ['yellow.customs']] });
     s = take(s, 'thieves.rob');
-    while (s.pending?.options?.some(o => o.id === 'player:1')) s = move(s, 'player:1'); // one follower a pick (Heist, Nov 5)
-    expect(s.players[1].bonus).toBe(2); // Heist takes 3 (Nov 13)
+    while (s.pending?.options?.some(o => o.id === 'player:1')) s = move(s, 'player:1'); // one follower a pick (Plunder, Nov 5)
+    expect(s.players[1].bonus).toBe(2); // Plunder takes 3 (Nov 13)
     expect(R(s, 1).yellow || 0).toBe(0);
     expect(named(s, 'Customs Officer')).toHaveLength(0);
   });
@@ -397,7 +397,7 @@ describe('Yellow members', () => {
   it('Pilgrim: when recruited +1 of each color, named', () => {
     let s = sc({ round: 3, shop: ['yellow.pilgrim'] });
     s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.pilgrim', 'shop')}`);
-    expect(R(s)).toEqual({ gold: 1, red: 2, yellow: 1, green: 1 }); // and Initiation's own +1 red (v0.8.0)
+    expect(R(s)).toEqual({ gold: 1, red: 2, yellow: 1, green: 1 }); // and Induct's own +1 red (v0.8.0)
     expect(named(s, 'Pilgrim')[0]).toMatch(/P1's Pilgrim: \+1 gold, \+1 red, \+1 yellow, \+1 green/);
   });
   it('Farmer: +1 more when an action gains yellow, named; a Doppelganger copy adds another', () => {
@@ -406,7 +406,7 @@ describe('Yellow members', () => {
     expect(named(s, 'Farmer')).toHaveLength(1);
     s = sc({ members: [['yellow.farmer', 'echo.doppel']] });
     s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'yellow.farmer';
-    expect(R(take(s, 'yellow.dilute')).yellow).toBe(4); // New Blood's 2, +1 Farmer, +1 its copy
+    expect(R(take(s, 'yellow.dilute')).yellow).toBe(4); // Welcome Strangers's 2, +1 Farmer, +1 its copy
   });
   it('Weaver: buying 5+ followers gives +1 of each color, named; a 1-buy does not', () => {
     let s = sc({ res: [{ gold: 3, red: 3, yellow: 3, green: 3 }], members: [['yellow.weaver']] });

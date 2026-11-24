@@ -42,7 +42,7 @@ describe('Guest members (rule-benders)', () => {
   });
   it('Moneychangers: worth 2; all into one color, or split color by color; the last color takes the rest', () => {
     let s = sceneQ({ res: [{ gold: 4, red: 3, blue: 2, green: 1 }], shop: ['benders.launderer'] });
-    s = buy(take(s, 'gold.rush'), 'benders.launderer'); // Golden Years +2 gold, then the 5 paid out of the resources
+    s = buy(take(s, 'gold.rush'), 'benders.launderer'); // Let It Grow +2 gold, then the 5 paid out of the resources
     const total = Object.values(s.players[0].res).reduce((a, b) => a + b, 0);
     expect(s.pending.options.map(o => o.id)).toEqual(['color:gold', 'color:red', 'color:blue', 'color:green', 'split', 'keep']);
     let t = move(s, 'color:blue');
@@ -115,7 +115,7 @@ describe('Guest members (rule-benders)', () => {
     const restore = pinCosts({ 'gold.banker': [2, 0] });
     try {
       let s = sceneQ({ res: [{ red: 5 }], members: [['benders.freelancer']], shop: ['gold.banker'] });
-      s = take(s, 'red.turnout'); // Gather adds 2 red in round I (Oct 31)
+      s = take(s, 'red.turnout'); // Gather the Kin adds 2 red in round I (Oct 31)
       s = buy(s, 'gold.banker');
       expect(s.players[0].res.red).toBe(5);
       expect(named(s, 'Conjurer')).toHaveLength(1);

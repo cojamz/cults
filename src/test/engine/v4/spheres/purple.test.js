@@ -56,7 +56,7 @@ function scene({ n = 2, seed = 7, round = 1, res = [], members = [], shop = null
 const R = (s, i = 0) => s.players[i].res;
 const pass = s => (s.pending?.kind === 'buy' ? move(s, 'pass') : s);
 const turns = (...ps) => ps.map(p => ({ t: 'turn', p }));
-/** A bot move, minus Sleep In (it skips a turn; the turnsNow test counts the plain snake). */
+/** A bot move, minus Lie Abed (it skips a turn; the turnsNow test counts the plain snake). */
 function noSkip(s, rand) {
   const m = chooseBotMove(s, rand);
   const o = s.pending?.options?.find(x => x.id === m.option);
@@ -100,7 +100,7 @@ describe('Purple actions', () => {
     expect(R(take(scene(), 'purple.windup')).purple).toBe(1);
     expect(R(take(scene({ slots: { [JV]: 0, [HIRE]: 0, [RUSH]: 1 } }), 'purple.windup')).purple).toBe(3);
   });
-  it('Overtime (ring II): take 1 extra turn right after this one; nothing to pay', () => {
+  it('Burn the Candle (ring II): take 1 extra turn right after this one; nothing to pay', () => {
     let s = take(scene({ round: 2, res: [{ purple: 9 }], queue: turns(0, 1) }), 'purple.overtime');
     expect(R(s).purple).toBe(9); // nothing spent
     expect(s.players[0].left).toBe(2 + 1); // one minion in, one back
@@ -116,54 +116,54 @@ describe('Purple actions', () => {
     expect(s.pending).toMatchObject({ kind: 'place', player: 0 });
   });
   it('extra turns never squeeze a later player out of the last space', () => {
-    // round II: only Overtime and two other spaces open (Rush Hour taken), P2 still has a turn
-    const slots = { ...fullRoundI(JV, RUSH), '0-3': 1, '0-4': 1, '1-3': 1, '1-4': 1, '3-3': 1, '3-4': 1, '2-3': 1, '2-4': 1, '2-5': 1 }; // 2-4: Rush Hour, where Overtime stood; 2-5: Crunch Time (round II since Oct 22) (Overtime is a test-only 7th space)
+    // round II: only Burn the Candle and two other spaces open (Rush Hour taken), P2 still has a turn
+    const slots = { ...fullRoundI(JV, RUSH), '0-3': 1, '0-4': 1, '1-3': 1, '1-4': 1, '3-3': 1, '3-4': 1, '2-3': 1, '2-4': 1, '2-5': 1 }; // 2-4: Rush Hour, where Burn the Candle stood; 2-5: Flurry (round II since Oct 22) (Burn the Candle is a test-only 7th space)
     const s0 = scene({ round: 2, slots, queue: turns(0, 1) });
     expect(spareSpace(contextFor(s0))).toBe(true); // 3 open, 1 turn queued
     let s = take(s0, 'purple.overtime');
     expect(s.players[0].left).toBe(2 + 1); // 2 open, 1 turn queued: room for the 1
     expect(nextPlacer(s)).toBe(0);
-    // only Overtime and one other space open: no space to spare, so no extra turn (and nothing else instead)
+    // only Burn the Candle and one other space open: no space to spare, so no extra turn (and nothing else instead)
     s = take(scene({ round: 2, slots: { ...slots, [RUSH]: 1 }, queue: turns(0, 1) }), 'purple.overtime');
     expect(s.players[0].left).toBe(2);
     expect(R(s).purple).toBe(0);
-    expect(s.log).toContain("P1's Overtime: no free space this round, so no extra turn.");
+    expect(s.log).toContain("P1's Burn the Candle: no free space this round, so no extra turn.");
     expect(nextPlacer(s)).toBe(1);
   });
   // Cory, 2026-10-15: "it's not extra turns, it's taking two immediate turns with existing minions"
   const upcoming = s => s.queue.filter(t => t.t === 'turn').map(t => t.p);
-  // every turn after the scene's first (the one that took Crunch Time), however far the scene has run on
+  // every turn after the scene's first (the one that took Flurry), however far the scene has run on
   const after1 = s => { const r = turnRail(s); return [...r.done, ...(r.current != null ? [r.current] : []), ...r.next].slice(1); };
-  it('Crunch Time (ring II): your next 2 turns right away; nothing to pay, no new minion', () => {
+  it('Flurry (ring II): your next 2 turns right away; nothing to pay, no new minion', () => {
     const rally = purpleHeld => take(scene({ round: 3, res: [{ purple: purpleHeld }], queue: turns(0, 1, 0, 1, 0, 1) }), 'purple.rally');
     for (const held of [0, 3, 5, 30]) {
       const s = rally(held);
       expect(R(s).purple).toBe(held + 2); // nothing spent; its +1 purple (Cory, 2026-10-22: "all should give at least 1")
       expect(s.players[0].left).toBe(2); // the 3 it started with, less this one: no extra minion
       expect(after1(s)).toEqual([0, 0, 1, 1, 1]);
-      expect(s.log).toContain("P1's Crunch Time: P1 takes their next 2 turns now.");
+      expect(s.log).toContain("P1's Flurry: P1 takes their next 2 turns now.");
       expect(nextPlacer(s)).toBe(0);
     }
     expect(() => take(scene({ round: 1 }), 'purple.rally')).toThrow(); // it opens in round II (Cory, 2026-10-22)
   });
-  it('Crunch Time needs no spare space: on a full board it still moves your turns', () => {
-    // round III: 4 spaces open once Crunch Time is taken, and 4 turns to come: no room for an extra turn, room for these
+  it('Flurry needs no spare space: on a full board it still moves your turns', () => {
+    // round III: 4 spaces open once Flurry is taken, and 4 turns to come: no room for an extra turn, room for these
     const taken = { ...fullRoundI('0-0', '0-1', '0-2'), '0-3': 1, '0-4': 1, '1-3': 1, '1-4': 1, '2-3': 1, '3-3': 1, '3-4': 1, '0-5': 1, '1-5': 1, '3-5': 1 };
     const s = take(scene({ round: 3, slots: taken, queue: turns(0, 1, 1, 0, 0) }), 'purple.rally');
     expect(after1(s)).toEqual([0, 0, 1, 1]);
     expect(s.log.some(l => /no free space this round/i.test(l))).toBe(false);
   });
-  it('Crunch Time with 1 minion left takes that 1; with none, nothing happens', () => {
+  it('Flurry with 1 minion left takes that 1; with none, nothing happens', () => {
     let s = take(scene({ round: 3, queue: turns(0, 1, 1, 0, 1) }), 'purple.rally');
     expect(after1(s)).toEqual([0, 1, 1, 1]);
-    expect(s.log).toContain("P1's Crunch Time: P1 takes their next turn now (their last minion).");
+    expect(s.log).toContain("P1's Flurry: P1 takes their next turn now (their last minion).");
     s = take(scene({ round: 3, queue: turns(0, 1, 1) }), 'purple.rally');
     expect(after1(s)).toEqual([1, 1]);
-    expect(s.log).toContain('P1 has no turns left this round to take now: Crunch Time does nothing.');
+    expect(s.log).toContain('P1 has no turns left this round to take now: Flurry does nothing.');
     expect(nextPlacer(s)).toBe(1);
   });
   it('turnsNow: placements per round unchanged, the next 2 happen at once, and it works in round I at 4 players', () => {
-    // a real 4-player round I (3 minions each, snake): P? first; give the first placer Crunch Time's move on its first turn
+    // a real 4-player round I (3 minions each, snake): P? first; give the first placer Flurry's move on its first turn
     const g = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 11, quadrants: Q });
     let s = g;
     const rand = seededRandom(5);
@@ -171,9 +171,9 @@ describe('Purple actions', () => {
     const first = s.pending.player;
     const before = upcoming(s);
     expect(before).toHaveLength(11); // 12 placements, the first one running
-    // move the first placer's next 2 turns up (as Crunch Time would, from a round-I space)
+    // move the first placer's next 2 turns up (as Flurry would, from a round-I space)
     const ctx = contextFor(s);
-    expect(turnsNow(ctx, s.players[first], 2, 'Crunch Time')).toBe(2);
+    expect(turnsNow(ctx, s.players[first], 2, 'Flurry')).toBe(2);
     const after = upcoming(s);
     expect(after).toHaveLength(11); // same placements
     expect(after.slice(0, 2)).toEqual([first, first]);
@@ -198,11 +198,11 @@ describe('Purple actions', () => {
     while (s.pending && s.pending.kind !== 'place') s = applyMove(s, chooseBotMove(s, rand));
     const first = s.pending.player;
     const firstPass = s.order.slice(0, 4);
-    turnsNow(contextFor(s), s.players[first], 2, 'Crunch Time');
+    turnsNow(contextFor(s), s.players[first], 2, 'Flurry');
     const { order, early } = roundOrder(s);
     expect(order.slice(0, 3)).toEqual([first, first, first]);
     expect(order.slice(1).filter((_, i) => i < 11)).toEqual(upcoming(s));
-    expect(early.slice(1, 3)).toEqual(['Crunch Time', 'Crunch Time']);
+    expect(early.slice(1, 3)).toEqual(['Flurry', 'Flurry']);
     expect(s.order.slice(0, 4)).toEqual(firstPass);
   });
 });
@@ -245,17 +245,17 @@ describe('Purple members', () => {
     expect(t.queue.filter(x => x.t === 'turn' && x.p === 0)).toHaveLength(4);
   });
   // Courier left this trio on Oct 29: it pays on two turns in a row now (courier.test.js)
-  it('Foreman, Apprentice: whenever you take an extra turn (Overtime gives 1); Crunch Time\'s turns aren\'t extra', () => {
+  it('Foreman, Apprentice: whenever you take an extra turn (Burn the Candle gives 1); Flurry\'s turns aren\'t extra', () => {
     const trio = [['purple.foreman', 'purple.apprentice']];
     const s = take(scene({ round: 2, slots: { [JV]: 0 }, members: trio, queue: turns(0, 1) }), 'purple.overtime');
-    // Foreman: 2 workers on the board (Kickback + Overtime)
+    // Foreman: 2 workers on the board (Grease a Palm + Burn the Candle)
     expect(R(s)).toEqual({ gold: 0, red: 0, purple: 2, green: 0 });
     expect(s.players[0].discount).toBe(4);
     const t = take(scene({ round: 3, slots: { [JV]: 0 }, members: trio, queue: turns(0, 1, 0, 1, 0) }), 'purple.rally');
-    expect(R(t)).toEqual({ gold: 0, red: 0, purple: 2, green: 0 }); // Crunch Time's own +2 only
+    expect(R(t)).toEqual({ gold: 0, red: 0, purple: 2, green: 0 }); // Flurry's own +2 only
     expect(t.players[0].discount).toBe(0);
   });
-  it('Overseer: whenever a rival takes an extra turn, gain half your purple, up to 4; not on Crunch Time', () => {
+  it('Overseer: whenever a rival takes an extra turn, gain half your purple, up to 4; not on Flurry', () => {
     let s = take(scene({ round: 2, res: [{}, { purple: 5 }], members: [[], ['purple.overseer']], queue: turns(0, 1) }), 'purple.overtime');
     expect(R(s, 1).purple).toBe(5 + 2);
     s = take(scene({ round: 2, res: [{}, { purple: 20 }], members: [[], ['purple.overseer']], queue: turns(0, 1) }), 'purple.overtime');
@@ -269,13 +269,13 @@ describe('Purple members', () => {
     expect(R(s).purple).toBe(2); // pays 5 → 3
     expect(s.log.some(l => l.includes('Corner-Cutter: 5 → 3'))).toBe(true);
     expect(nextPlacer(s)).toBe(0);
-    // Overtime and Crunch Time cost nothing, so Corner-Cutter has nothing to halve: no change, no log line
+    // Burn the Candle and Flurry cost nothing, so Corner-Cutter has nothing to halve: no change, no log line
     s = take(scene({ round: 2, res: [{ purple: 4 }], members: [['purple.doubletime']], queue: turns(0, 1) }), 'purple.overtime');
     expect(R(s).purple).toBe(4);
     expect(s.players[0].left).toBe(2 + 1);
     s = take(scene({ round: 3, res: [{ purple: 2 }], members: [['purple.doubletime']], queue: turns(0, 1, 0) }), 'purple.rally');
     expect(R(s).purple).toBe(2 + 2); // its +2, nothing halved
-    expect(s.players[0].left).toBe(2); // Crunch Time adds no minion
+    expect(s.players[0].left).toBe(2); // Flurry adds no minion
     expect(s.log.some(l => l.includes('Corner-Cutter'))).toBe(false);
   });
   it('Bookkeeper: when your last turn of a round ends, +1 purple per 2 workers you have on the board; nothing at round end', () => {

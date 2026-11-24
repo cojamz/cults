@@ -1,5 +1,5 @@
 // @vitest-environment node
-// A copy must do everything the space does (Cory, 2026-10-23: Echo and Reprise copying Sleep In didn't skip a turn or
+// A copy must do everything the space does (Cory, 2026-10-23: Follow Suit and Do It Again copying Lie Abed didn't skip a turn or
 // pay Gossip). A copy hands over a space's chip (its resources, discount and free members) unless the space is
 // marked redo, when the copier does the action itself. So every space that does anything a chip can't carry (moves
 // turns, skips one, gives followers, sets a rule for the round) must be redo. This takes every space on a fresh table
@@ -45,20 +45,20 @@ describe('a copy does what the space does', () => {
   }
 });
 
-describe('Echo copying Sleep In (Cory’s playtest, Oct 23)', () => {
+describe('Follow Suit copying Lie Abed (Cory’s playtest, Oct 23)', () => {
   it('the copier takes the Goes Last token, and Gossip pays when their emptied hand is passed over (Cory, Nov 1 2:35pm)', () => {
     const rich = { purple: 9, green: 9, gold: 9, red: 9 };
     let s = sceneQ({ quadrants: ['purple', 'echo', 'gold', 'red'], n: 3, round: 2, res: [rich, rich, rich], members: [[], [], ['purple.gossip']],
       queue: [0, 1, 2, 2, 1, 0].map(p => ({ t: 'turn', p })).concat({ t: 'allPlaced' }) });
     s = passBuys(settle(take(s, 'purple.skip')));
     s = passBuys(settle(take(s, 'echo.echo')));
-    // P1's Sleep In minion was already last (nothing passed); P2's copy takes the token and P1's minion goes back
-    expect(s.log).toContain("P2's Sleep In: P2 takes the Goes Last token from P1, and the minion on it goes back to P1.");
+    // P1's Lie Abed minion was already last (nothing passed); P2's copy takes the token and P1's minion goes back
+    expect(s.log).toContain("P2's Lie Abed: P2 takes the Goes Last token from P1, and the minion on it goes back to P1.");
     expect(s.goesLast.pid).toBe(1);
-    expect(s.players[1].res.purple).toBe(9 + 5); // Sleep In's round II gain (+4 / +5 / +6, Oct 28)
+    expect(s.players[1].res.purple).toBe(9 + 5); // Lie Abed's round II gain (+4 / +5 / +6, Oct 28)
     s = passBuys(settle(take(s, 'gold.rush'))); // P3
     s = passBuys(settle(take(s, 'red.turnout'))); // P3 again; P2's turn is next, passed over
-    expect(s.log).toContain("P2's turn is skipped (Sleep In).");
+    expect(s.log).toContain("P2's turn is skipped (Lie Abed).");
     expect(s.pending.player).toBe(0);
     expect(s.players[2].bonus).toBe(1); // P2's pass only
   });
@@ -74,9 +74,9 @@ describe('Shadow (Cory’s playtest, Oct 23)', () => {
   });
 });
 
-// Greatest Hits copies On Recruits since Nov 1, so the turn-space copies are checked through Reprise, which still copies
-// an action with your minion (Sleep In's copy is checked through Echo above; Crunch Time's round-I limit was Greatest Hits only).
-describe('Reprise copying turn spaces (Cory’s playtest, Oct 23)', () => {
+// Replay All copies On Recruits since Nov 1, so the turn-space copies are checked through Do It Again, which still copies
+// an action with your minion (Lie Abed's copy is checked through Follow Suit above; Flurry's round-I limit was Replay All only).
+describe('Do It Again copying turn spaces (Cory’s playtest, Oct 23)', () => {
   const after = (sp) => {
     const rich = { purple: 9, green: 9, gold: 9, red: 9 };
     let s = sceneQ({ quadrants: ['purple', 'echo', 'gold', 'red'], n: 2, round: 3, res: [rich, rich], queue: [0, 1, 0, 1, 0, 1].map(p => ({ t: 'turn', p })).concat({ t: 'allPlaced' }) });
@@ -88,15 +88,15 @@ describe('Reprise copying turn spaces (Cory’s playtest, Oct 23)', () => {
     }
     const n = s.log.length;
     s = take(s, 'echo.refrain');
-    const pick = s.pending?.options?.find(o => /Right Away/.test(o.label || ''));
+    const pick = s.pending?.options?.find(o => /Make Haste/.test(o.label || ''));
     if (pick && s.pending.kind !== 'place') s = move(s, pick.id);
     s = passBuys(settle(s));
     return { s, log: s.log.slice(n) };
   };
-  it('Right Away: the copy gives its turn too', () => {
+  it('Make Haste: the copy gives its turn too', () => {
     const { s, log } = after('purple.again');
-    expect(log).toContain('P1 copies Right Away: doing it again.');
-    expect(log).toContain("P1's Right Away: P1 takes their next turn now.");
+    expect(log).toContain('P1 copies Make Haste: doing it again.');
+    expect(log).toContain("P1's Make Haste: P1 takes their next turn now.");
     expect(s.pending.player).toBe(0);
   });
 });

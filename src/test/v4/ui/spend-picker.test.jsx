@@ -9,7 +9,7 @@ import { giftPick } from '../../../v4/game/boardPick.js';
 import GiftCard from '../../../v4/game/GiftCard.jsx';
 
 afterEach(cleanup);
-useRetired(['trading.exchange']); // Exchange left the wheel Nov 11 (Nest Egg); its spend card still runs for old saves
+useRetired(['trading.exchange']); // Exchange left the wheel Nov 11 (Put By); its spend card still runs for old saves
 
 function scene(round) {
   const s = createGame({ seats: Array.from({ length: 3 }, (_, i) => ({ name: `P${i + 1}`, kind: 'human' })), seed: 7, quadrants: ['trading', 'red', 'blue', 'purple'] });

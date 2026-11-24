@@ -19,7 +19,7 @@ const owns = (s, i, key) => s.players[i].members.some(u => s.cards[u].def.endsWi
 const SHOP = ['red.volunteer', 'red.recruiter', 'market.regular', 'red.patriarch'];
 
 const buyRecruiter = s => {
-  s = go(s, slotOf(s, 'red', 'Gather'));
+  s = go(s, slotOf(s, 'red', 'Gather the Kin'));
   s = go(s, s.pending.options.find(o => o.label.startsWith('Ferryman')).id);
   while (s.pending?.prompt.includes('pay')) s = go(s, s.pending.options[0].id);
   return s;

@@ -68,7 +68,7 @@ describe('Tag Team (Purple)', () => {
 describe('Cutthroats (Magenta)', () => {
   const steal3 = () => {
     let s = sceneQ({ quadrants: ['thieves', 'gold', 'red', 'market'], members: [['thieves.cutthroats']], res: [{}, { red: 5 }], bonus: [0, 4] });
-    s = take(placed(s, 0, 2), 'thieves.pickpocket'); // Help Yourself's third minion: steal 3
+    s = take(placed(s, 0, 2), 'thieves.pickpocket'); // Pilfer's third minion: steal 3
     for (let k = 0; k < 3; k++) s = move(s, 'take:1:red');
     return s;
   };

@@ -39,7 +39,7 @@ describe('11 · every choice names the card or space that asked', () => {
     s = take(s, 'red.evenswap');
     expect(s.pending.prompt).toMatch(/^Tryout: /);
   });
-  it('a copy of Walk-In does Walk-In itself: Echo recruits the top member of the deck', () => {
+  it('a copy of Walk-In does Walk-In itself: Follow Suit recruits the top member of the deck', () => {
     let s = sceneQ({ quadrants: CLASSIC, n: 2, round: 2, queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
     const first = s.pile[0];
     s = take(s, 'red.hire'); // P2 takes Walk-In: the deck's top member, free
@@ -68,7 +68,7 @@ describe('12 · one price rule for every recruit', () => {
     expect(s.players[0].res).toMatchObject({ gold: 0, blue: 0 });
     } finally { restore(); }
   });
-  it('Talent Scout uses (and spends) an Intro Offer discount', () => {
+  it('Talent Scout uses (and spends) an Bargain Down discount', () => {
     const restore = pinCosts({ 'gold.underdog': [4, 2] }); // the price this case was written at (Poor Relation is 8 since 2026-10-15)
     try {
     let s = sceneQ({ quadrants: CLASSIC, res: [{ red: 2, blue: 2 }], discount: [4], members: [['market.blackmarket']] });
@@ -84,7 +84,7 @@ describe('12 · one price rule for every recruit', () => {
     expect(left).toBe(2);
     } finally { restore(); }
   });
-  it('memberPrice: the exact price after Intro Offer, and the shortfall by color', () => {
+  it('memberPrice: the exact price after Bargain Down, and the shortfall by color', () => {
     const s = sceneQ({ quadrants: CLASSIC, res: [{ gold: 2 }], discount: [4] });
     row(s, ['gold.jackpot']); // Lottery Winner: 7 gold + 6 any (6 + 4 printed; 1 more gold and 2 more any since Nov 5 night)
     const p = s.players[0], u = s.shop[0];
@@ -137,25 +137,25 @@ describe('12 · one price rule for every recruit', () => {
 });
 
 describe('13 · Hand-pick’s preview never offers last round’s spaces as copies', () => {
-  // Hand-pick became Red's Initiation (v0.8.0): the same round-III free recruit of a face-up member
-  it('in round III before any placement, Initiation (with Sleepwalker face up) shows no "can copy"', () => {
+  // Hand-pick became Red's Induct (v0.8.0): the same round-III free recruit of a face-up member
+  it('in round III before any placement, Induct (with Sleepwalker face up) shows no "can copy"', () => {
     const s = sceneQ({ quadrants: CLASSIC, round: 3, res: [rich] });
     row(s, ['echo.afterimage', 'red.intern'], ['red.mob']);
     // P1's round-II spaces, as the copy ledger kept them
     s.echo = { round: 2, now: {
-      '0-1': { key: '0-1', p: 0, ring: 1, name: 'Golden Years', color: 'gold', idx: 1, echo: false, res: { gold: 4 }, discount: 0, members: [], seq: 1 },
-      '0-4': { key: '0-4', p: 0, ring: 2, name: 'Tithe', color: 'gold', idx: 4, echo: false, res: { gold: 5 }, discount: 0, members: [], seq: 2 },
+      '0-1': { key: '0-1', p: 0, ring: 1, name: 'Let It Grow', color: 'gold', idx: 1, echo: false, res: { gold: 4 }, discount: 0, members: [], seq: 1 },
+      '0-4': { key: '0-4', p: 0, ring: 2, name: 'Pass the Plate', color: 'gold', idx: 4, echo: false, res: { gold: 5 }, discount: 0, members: [], seq: 2 },
     }, last: {}, open: null };
-    const handpick = s.pending.options.find(o => o.label === 'Initiation');
+    const handpick = s.pending.options.find(o => o.label === 'Induct');
     const pv = previewSpace(s, 0, handpick.q, handpick.i);
     expect(pv).not.toBeNull();
     expect(pv.copies).toBeNull();
   });
-  it('Echo still lists the spaces it can copy', () => {
+  it('Follow Suit still lists the spaces it can copy', () => {
     let s = sceneQ({ quadrants: CLASSIC, n: 2, queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
     s = take(s, 'gold.rush');
     while (s.pending && s.pending.player === 1) s = move(s, 'pass');
-    const echo = s.pending.options.find(o => o.label === 'Echo');
+    const echo = s.pending.options.find(o => o.label === 'Follow Suit');
     expect(previewSpace(s, 0, echo.q, echo.i).copies).toEqual(['0-1']);
   });
 });
@@ -166,7 +166,7 @@ describe('14 · Poor Relation vs Hustler: the preview gives the real number and 
     s.cards[uidOf(s, 'gold.hustler', 0)].color = 'gold';
     return s;
   };
-  const kick = s => s.pending.options.find(o => o.label === 'Kickback');
+  const kick = s => s.pending.options.find(o => o.label === 'Grease a Palm');
   it('9 gold vs 11: Hustler’s +3 lands first, so no ×2; the preview says +6 and why', () => {
     const s = setup(9);
     const k = kick(s);
@@ -193,7 +193,7 @@ describe('14 · Poor Relation vs Hustler: the preview gives the real number and 
   });
 });
 
-describe('19 · Collect Debts keeps its count through a save and load', () => {
+describe('19 · Call In Debts keeps its count through a save and load', () => {
   it('pending.count says 1 of 3 taken after a JSON round trip', () => {
     let s = sceneQ({ quadrants: CLASSIC, n: 3, round: 2, res: [{}, { gold: 1 }, { gold: 5 }] });
     s = take(s, 'gold.steal');
@@ -207,7 +207,7 @@ describe('19 · Collect Debts keeps its count through a save and load', () => {
 
 // The online gate stalled on a Snap Up pay choice (a seat in round III, 2026-10-15). Snap Up is gone (Blue's Oct 20
 // rework); Talent Scout keeps that off-buy recruit path, so drive Talent Scout → pay to the end
-// with Skinflint and an Intro Offer, by the bot and by the first option, also through a JSON save (the online
+// with Skinflint and an Bargain Down, by the bot and by the first option, also through a JSON save (the online
 // session stores stateJson), and check every offered pay option is legal and finishes.
 import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { STRAYS, stray } from './stray.js';

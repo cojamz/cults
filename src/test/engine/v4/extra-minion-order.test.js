@@ -2,7 +2,7 @@
 // A minion gained during a round goes into the normal turn order (Cory, Nov 14, on his game where Extra Hand's minion
 // waited behind everyone: "this is not how an extra minion works", "it just inserts into the normal", "only goes last
 // effects"). It takes its owner's next place in the round's order that no minion of theirs is waiting for, such as a
-// turn Right Away or Crunch Time already moved up; with none, it comes after the round's order.
+// turn Make Haste or Flurry already moved up; with none, it comes after the round's order.
 import { describe, it, expect } from 'vitest';
 import { applyMove } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
@@ -32,8 +32,8 @@ const scene = () => {
 };
 
 describe('a minion gained mid-round goes into the normal order', () => {
-  it('Right Away moved your last turn up; Extra Hand’s minion takes that turn’s place, not the end', () => {
-    let s = take(scene(), 'purple.again'); // Right Away: P1's last turn (5th in the order) comes right after this one
+  it('Make Haste moved your last turn up; Extra Hand’s minion takes that turn’s place, not the end', () => {
+    let s = take(scene(), 'purple.again'); // Make Haste: P1's last turn (5th in the order) comes right after this one
     s = move(s, `card:${uidOf(s, 'benders.extrahand', 'shop')}`);
     expect(s.players[0].left).toBe(3);
     // P1 now, then the order: P2, P1, P2, P1 (the gained minion, in the moved turn's place), P2

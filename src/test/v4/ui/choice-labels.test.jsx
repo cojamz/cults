@@ -1,5 +1,5 @@
 // RC1 saboteur panel (triage item 19): a choice's buttons say what a click really does. "Take all 3 from P3" when P3
-// holds 1 took 1; the Collect Debts tally reset on a reload; Social Climber read "Gold", "Red", "+2 blue", "+2 green".
+// holds 1 took 1; the Call In Debts tally reset on a reload; Social Climber read "Gold", "Red", "+2 blue", "+2 green".
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
 import { ChoicePrompt } from '../../../v4/game/parts.jsx';
@@ -12,19 +12,19 @@ const CLASSIC = ['gold', 'red', 'market', 'echo'];
 const show = s => render(<ChoicePrompt state={s} onPick={() => {}} busy={false} />).container;
 
 describe('choice labels say what happens', () => {
-  it('Collect Debts: no "Take all 3" button for a rival holding only 1', () => {
+  it('Call In Debts: no "Take all 3" button for a rival holding only 1', () => {
     let s = sceneQ({ quadrants: CLASSIC, n: 3, round: 2, res: [{}, { gold: 1 }, {}] });
     s = take(s, 'gold.steal');
     const c = show(s);
     expect([...c.querySelectorAll('.take-all')].map(b => b.textContent)).toEqual([]);
     expect(c.textContent).not.toMatch(/Take all 3/);
   });
-  it('Collect Debts: a lone rival holding 2 of 3 reads "Take 2 from P2 (all they have)", P2 as its seat emoji (Cory, Nov 9)', () => {
+  it('Call In Debts: a lone rival holding 2 of 3 reads "Take 2 from P2 (all they have)", P2 as its seat emoji (Cory, Nov 9)', () => {
     let s = sceneQ({ quadrants: CLASSIC, n: 3, round: 2, res: [{}, { gold: 2 }, {}] });
     s = take(s, 'gold.steal');
     expect([...show(s).querySelectorAll('.take-all')].map(b => b.textContent)).toEqual([`Take 2 from ${seatEmoji(s, 1)} (all they have)`]);
   });
-  it('Collect Debts: the tally survives a save and load ("1 of 3 taken")', () => {
+  it('Call In Debts: the tally survives a save and load ("1 of 3 taken")', () => {
     let s = sceneQ({ quadrants: CLASSIC, n: 3, round: 2, res: [{}, { gold: 1 }, { gold: 5 }] });
     s = take(s, 'gold.steal');
     s = move(s, 'player:2');

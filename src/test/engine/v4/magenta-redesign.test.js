@@ -19,7 +19,7 @@ useCosts({ 'red.twins': [2, 0], 'red.mentor': [3, 2], 'red.panel': [3, 3] });
 
 // These are isolated rule checks, deliberately without seeded full-game simulations.
 describe('Magenta redesign edge cases', () => {
-  // Help Yourself gives +1 magenta again (Cory, Nov 10: "... this one included. +1 magenta.")
+  // Pilfer gives +1 magenta again (Cory, Nov 10: "... this one included. +1 magenta.")
   it.each(['pickpocket', 'hideout', 'rob', 'ransom', 'heist'])('%s always grants one Magenta even when its effect has no target', key => {
     const s = take(table(Q, { round: 3, shop }), `thieves.${key}`);
     expect(s.players[0].res.magenta).toBe(1);
@@ -44,7 +44,7 @@ describe('Magenta redesign edge cases', () => {
     s = move(s, s.pending.options.find(o => o.kind === 'space' && o.label.startsWith(actionName('thieves.tipoff'))).id);
     expect(s.players[0].res).toMatchObject({ green: 1, magenta: 3 });
   });
-  it('copying Help Yourself grants its resource once, with fresh rival choices and no followers', () => {
+  it('copying Pilfer grants its resource once, with fresh rival choices and no followers', () => {
     let s = table(Q, { round: 2, n: 3, res: [{}, {}, { gold: 9, red: 9 }], bonus: [0, 0, 5], shop, queue: turns(1, 0) });
     s = take(placed(s, 1, 3, AV), 'thieves.pickpocket'); // P2's fourth minion: steal 4
     for (let k = 0; k < 4; k++) s = move(s, 'take:2:gold');
@@ -69,7 +69,7 @@ describe('Magenta redesign edge cases', () => {
     expect(loaded.players[0].res).toMatchObject({ magenta: 1, gold: 5, red: 0 });
     expect(loaded.players[0].bonus).toBe(0);
   });
-  it('Starveling adds 2 to Help Yourself\'s 3 while tied for fewest followers', () => {
+  it('Starveling adds 2 to Pilfer\'s 3 while tied for fewest followers', () => {
     let s = table(Q, { round: 1, res: [{}, { gold: 8 }], members: [['thieves.desperado']], bonus: [0, 1], shop });
     s = take(placed(s, 0, 2, AV), 'thieves.pickpocket'); // the third minion: 3, and Starveling's 2
     expect(s.pending.count.left).toBe(5);
@@ -77,23 +77,23 @@ describe('Magenta redesign edge cases', () => {
     expect(s.players[0].bonus).toBe(0);
     expect(s.players[0].res).toMatchObject({ gold: 5, magenta: 1 });
   });
-  it('Heist offers only rivals with followers to steal, never a protected one, and takes 3 (Nov 13)', () => {
+  it('Plunder offers only rivals with followers to steal, never a protected one, and takes 3 (Nov 13)', () => {
     let s = table(Q, { round: 2, n: 4, res: [{}, {}, {}, {}], bonus: [0, 5, 0, 6], shop });
     s.players[3].hideout = s.round; // Lie Low (Thief-Takers stopped blocking, Nov 11)
     s = take(s, 'thieves.rob');
     expect(ids(s)).toEqual(['player:1']);
     s = restored(s);
-    for (let k = 0; k < 3; k++) s = move(s, 'player:1'); // Heist: one follower a pick (Nov 5)
+    for (let k = 0; k < 3; k++) s = move(s, 'player:1'); // Plunder: one follower a pick (Nov 5)
     expect(s.pending?.kind).toBe('buy'); // no resources to steal
     expect(s.players[0].bonus).toBe(3);
     expect(s.players[1].bonus).toBe(2);
     expect(s.players[3].bonus).toBe(6);
     expect(s.players[0].res.magenta).toBe(1);
   });
-  it('Heist never takes more followers than the rival has loose', () => {
+  it('Plunder never takes more followers than the rival has loose', () => {
     let s = table(Q, { round: 2, res: [{}, {}], bonus: [0, 2], shop });
     s = take(s, 'thieves.rob');
-    for (let k = 0; k < 4 && s.pending?.options?.some(o => o.id === 'player:1'); k++) s = move(s, 'player:1'); // Heist: one follower a pick (Nov 5)
+    for (let k = 0; k < 4 && s.pending?.options?.some(o => o.id === 'player:1'); k++) s = move(s, 'player:1'); // Plunder: one follower a pick (Nov 5)
     expect(s.pending?.kind).toBe('buy');
     expect(s.players[0].bonus).toBe(2);
     expect(s.players[1].bonus).toBe(0);

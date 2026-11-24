@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Cloaks on copied actions (Cory, Nov 6: "copying toast didnt trigger silver cloak"). A copied steal is done again,
-// so it is your steal. A copied Toast hands only its printed silver (rulebook: gifts to others are not copied), so no
+// so it is your steal. A copied Raise a Glass hands only its printed silver (rulebook: gifts to others are not copied), so no
 // A copied gift space gifts the rivals again (Cory, Nov 6: "yes."), so the copier's Silver Cloak pays.
 import { describe, it, expect } from 'vitest';
 import { take, move, play, actionName } from './helpers.js';
@@ -19,7 +19,7 @@ const withCloak = (s, def, i = 0) => {
 };
 
 describe('cloaks on copied actions', () => {
-  it('Magenta Cloak: Echo copying Help Yourself is your steal, +2 magenta', () => {
+  it('Magenta Cloak: Follow Suit copying Pilfer is your steal, +2 magenta', () => {
     const run = cloak => {
       let s = table(['gold', 'thieves', 'market', 'echo'], { queue: turns(1, 0, 1, 0), res: [{ gold: 5 }, { gold: 5 }] });
       if (cloak) s = withCloak(s, 'thieves.fence', 0);
@@ -30,7 +30,7 @@ describe('cloaks on copied actions', () => {
     const base = run(false), s = run(true);
     expect(s.players[0].res.magenta).toBe(base.players[0].res.magenta + 2);
   });
-  it('Silver Cloak: Echo copying Toast gifts each rival again, +2 silver', () => {
+  it('Silver Cloak: Follow Suit copying Raise a Glass gifts each rival again, +2 silver', () => {
     const run = cloak => {
       let s = table(['gold', 'silver', 'market', 'echo'], { queue: turns(1, 0, 1, 0) });
       if (cloak) s = withCloak(s, 'silver.caterer', 0);
@@ -39,7 +39,7 @@ describe('cloaks on copied actions', () => {
       return s;
     };
     const base = run(false), s = run(true);
-    expect(base.players[1].res.silver).toBe(5 + 2); // P2's Toast, then P1's copy gives P2 2
+    expect(base.players[1].res.silver).toBe(5 + 2); // P2's Raise a Glass, then P1's copy gives P2 2
     expect(s.players[0].res.silver).toBe(base.players[0].res.silver + 2);
   });
 });

@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Right Away (Purple, round I; Cory, 2026-10-22): "+1 purple, take another turn right after this one". Cory's yes:
+// Make Haste (Purple, round I; Cory, 2026-10-22): "+1 purple, take another turn right after this one". Cory's yes:
 // Cory, Nov 6: "it should scale more. like 2/3/4".
 // the second placement uses one of your own minions, so you place the same number that round. Round I, A B C D:
 // A takes it on their first turn, places again right away, then B C D D C B A B C D (A's last turn came up).
@@ -20,7 +20,7 @@ function plain(s, rand) {
   return alt ? { player: m.player, option: alt.id } : m;
 }
 
-describe('Right Away', () => {
+describe('Make Haste', () => {
   it("round I, 4 players: +2 purple, A places again at once, and still places 3 in all", () => {
     let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 1, quadrants: Q });
     const rand = seededRandom(1);

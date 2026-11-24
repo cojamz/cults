@@ -2159,10 +2159,10 @@ function spendBonus(state, p, spend) {
   const n = Math.floor(Object.values(spend).reduce((a, b) => a + b, 0) / (state.round === 2 ? 1 : 2));
   if (!n) return;
   const extra = sumMemberFlag(state, p, 'brokerBonus'), mark = fMark(state);
-  asSource(bonusCause(state, p, 'Splurge'), () => { p.bonus += n; });
+  asSource(bonusCause(state, p, 'Spend Freely'), () => { p.bonus += n; });
   if (extra) asSource(memberFlagCause(state, p, 'brokerBonus'), () => { p.bonus += extra; });
-  fCredit(state, mark, 'Splurge');
-  log(state, `${p.name}'s Splurge: +${n} follower${n > 1 ? 's' : ''} for spending.${extra ? ` Preachers: +${extra}.` : ''}`);
+  fCredit(state, mark, 'Spend Freely');
+  log(state, `${p.name}'s Spend Freely: +${n} follower${n > 1 ? 's' : ''} for spending.${extra ? ` Preachers: +${extra}.` : ''}`);
 }
 // Gather-style fuel spaces (Cory, 2026-10-31: Gather, then Allowance and Stash "gather style"): "This turn, if you recruit
 // a member, +1 follower (+2 in round II, +3 in round III)". Each space taken this turn adds { n, name, broker } to

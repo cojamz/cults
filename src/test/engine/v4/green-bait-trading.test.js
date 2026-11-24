@@ -19,7 +19,7 @@ describe('Trapper follower losses preserve White’s loose-follower limits', () 
     s = pass(take(s, 'gold.rush'));
     s = copyGold(take(s, 'echo.echo'));
     s = pass(take(s, 'red.turnout'));
-    // Reprise copies P2's own Echo, which copies the previous action: P1's Gather (Sample no longer copies, Oct 28)
+    // Do It Again copies P2's own Follow Suit, which copies the previous action: P1's Gather the Kin (Sample no longer copies, Oct 28)
     s = take(s, 'echo.refrain');
     s = move(s, s.pending.options.find(o => o.label.startsWith(`${actionName('echo.echo')} (`)).id);
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);

@@ -28,7 +28,7 @@ const cardOpt = (s, def, who) => `card:${uidIn(s, def, who)}`;
 
 describe('Magenta actions', () => {
   // Cory, Nov 10: "Steal 1 resource per minion you've placed this round, this one included. +1 magenta."
-  it.each([[1, 0], [1, 2], [2, 3], [3, 4]])('Help Yourself steals 1 per minion placed this round, this one included, in original colors, +1 magenta, no followers (round %i, %i placed before)', (round, before) => {
+  it.each([[1, 0], [1, 2], [2, 3], [3, 4]])('Pilfer steals 1 per minion placed this round, this one included, in original colors, +1 magenta, no followers (round %i, %i placed before)', (round, before) => {
     let s = table(Q, { round, left: 5, res: [{}, { gold: 9 }], bonus: [0, 5], shop: ROW });
     s = take(placed(s, 0, before), 'thieves.pickpocket');
     for (let k = 0; k < before + 1; k++) s = move(s, 'take:1:gold');
@@ -49,7 +49,7 @@ describe('Magenta actions', () => {
     expect(named(s, 'Sticky Fingers').length).toBe(1);
     expect(named(s, 'Starveling').length).toBe(1);
   });
-  it('× Sticky Fingers and Starveling on Gold\'s Collect Debts: 3+2+1 = 6, and the log names both', () => {
+  it('× Sticky Fingers and Starveling on Gold\'s Call In Debts: 3+2+1 = 6, and the log names both', () => {
     let s = table(Q, { round: 2, left: 4, res: [{}, { gold: 9 }], members: [['thieves.sticky', 'thieves.desperado']], bonus: [0, 3], shop: ROW });
     s = take(s, 'gold.steal');
     while (s.pending?.kind === 'choose' && s.pending.options.some(o => o.id === 'player:1')) s = move(s, 'player:1');
@@ -96,11 +96,11 @@ describe('Magenta actions', () => {
   });
 
   // Cory, Nov 10 3:46pm: "Steal 4 followers and 4 resources. +1 magenta."
-  // Cory, Nov 13 12:36am: "Heist is for sure to strong. Should maybe go to 3 and 3"
-  it('Heist steals 3 loose followers, then 3 resources, each split among rivals as you choose', () => {
+  // Cory, Nov 13 12:36am: "Plunder is for sure to strong. Should maybe go to 3 and 3"
+  it('Plunder steals 3 loose followers, then 3 resources, each split among rivals as you choose', () => {
     let s = table(Q, { n: 3, round: 2, res: [{}, { gold: 3 }, { red: 5 }], bonus: [0, 7, 1], shop: ROW });
     s = take(s, 'thieves.rob');
-    for (let k = 0; k < 2; k++) s = move(s, 'player:1'); // Heist: one follower a pick (Nov 5)
+    for (let k = 0; k < 2; k++) s = move(s, 'player:1'); // Plunder: one follower a pick (Nov 5)
     s = move(s, 'player:2');
     expect(s.players[0].bonus).toBe(3);
     expect(s.players[1].bonus).toBe(5);
@@ -110,8 +110,8 @@ describe('Magenta actions', () => {
     expect(R(s)).toMatchObject({ magenta: 1, gold: 1, red: 2 });
     expect([R(s, 1).gold, R(s, 2).red]).toEqual([2, 3]);
   });
-  // picky bot, Nov 11: each follower pick was its own steal, so a Heist paid "Whenever you steal, +1 magenta." 5 times
-  it('one Heist is one steal: Fence pays +2 magenta once (+1 until Nov 11), over every pick and both parts', () => {
+  // picky bot, Nov 11: each follower pick was its own steal, so a Plunder paid "Whenever you steal, +1 magenta." 5 times
+  it('one Plunder is one steal: Fence pays +2 magenta once (+1 until Nov 11), over every pick and both parts', () => {
     let s = table(Q, { n: 3, round: 2, res: [{}, { gold: 3 }, { red: 5 }], bonus: [0, 7, 1], members: [['thieves.fence'], [], []], shop: ROW });
     s = take(s, 'thieves.rob');
     for (let k = 0; k < 2; k++) s = move(s, 'player:1');
@@ -122,9 +122,9 @@ describe('Magenta actions', () => {
   it('Lookout takes an original-color resource back, only once per round', () => {
     let s = table(Q, { n: 3, round: 2, res: [{ gold: 2 }, { gold: 7 }, { red: 3 }], bonus: [0, 5, 0], members: [[], [], ['thieves.lookout']], shop: ROW, queue: turns(0, 0) });
     s = take(s, 'thieves.rob');
-    for (let k = 0; k < 3; k++) s = play(s, 'player:1'); // Heist: one follower a pick (Nov 5)
+    for (let k = 0; k < 3; k++) s = play(s, 'player:1'); // Plunder: one follower a pick (Nov 5)
     s = play(s, 'take:1:gold', 'take:1:gold', 'take:1:gold'); // then 3 resources
-    s = pass(s); // Lookout answers the Heist once
+    s = pass(s); // Lookout answers the Plunder once
     expect(s.players[0].bonus).toBe(3);
     expect(R(s)).toMatchObject({ magenta: 1, gold: 4 });
     expect(R(s, 2)).toMatchObject({ gold: 1 });

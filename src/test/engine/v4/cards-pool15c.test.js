@@ -20,11 +20,11 @@ describe('Mashup (Green, round III)', () => {
     s = move(s, 'color:gold');
     expect(s.pending.prompt).toBe('Mashup: copy which Gold action first?');
     expect(s.pending.options).toHaveLength(3);
-    s = move(s, s.pending.options.find(o => o.label.startsWith('Golden Years')).id);
+    s = move(s, s.pending.options.find(o => o.label.startsWith('Let It Grow')).id);
     expect(s.pending.prompt).toBe('Mashup: copy which Gold action second?');
     expect(s.pending.options).toHaveLength(2);
-    s = move(s, s.pending.options.find(o => o.label.startsWith('Kickback')).id);
-    expect(named(s, 'Mashup')).toContain("P1's Mashup copies Golden Years and Kickback.");
+    s = move(s, s.pending.options.find(o => o.label.startsWith('Grease a Palm')).id);
+    expect(named(s, 'Mashup')).toContain("P1's Mashup copies Let It Grow and Grease a Palm.");
     expect(s.players[0].res.gold).toBeGreaterThan(0);
   });
   it('two or fewer there: both are copied with no pick', () => {
@@ -32,6 +32,6 @@ describe('Mashup (Green, round III)', () => {
     s = passBuys(take(s, 'gold.rush'));
     s = take(s, 'echo.mashup');
     s = move(s, 'color:gold');
-    expect(named(s, 'Mashup')).toContain("P1's Mashup copies Golden Years.");
+    expect(named(s, 'Mashup')).toContain("P1's Mashup copies Let It Grow.");
   });
 });

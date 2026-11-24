@@ -23,7 +23,7 @@ describe('REPLACE9: Lamplighters', () => {
     expect([d.s, d.w, d.f]).toEqual([o.s, o.w, 1]); // worth 1: a live member is rebased to 1, while the retired card keeps its old worth (Cory, Nov 12)
     expect(o.retired).toBe(true);
   });
-  it('Last Call with minions on Red and Purple: +2 followers', () => {
+  it('Bide Your Time with minions on Red and Purple: +2 followers', () => {
     const s0 = sceneQ({ quadrants: Q, round: 2, left: 3, members: [['purple.lamplighters']], slots: { '1-0': 0 }, queue: [...turns(0, 1, 0, 1, 0, 1), { t: 'allPlaced' }] });
     const b = s0.players[0].bonus;
     const s = take(s0, 'purple.lastcall');

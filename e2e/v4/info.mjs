@@ -39,7 +39,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //      each rule-changer bending the price (Skinflint, a discount);
 //  (n) you are "You": the round summary and the Chronicle never use your seat's name; the summary keeps the type scale (caps labels 11, words 14 at least);
 //  (r) every hover card opened in (m) reads whole (lib/textclip.mjs) and keeps to the two marks (lib/legacy.mjs);
-//  (s) hovering Initiation ("Recruit a member in the shop costing 10 or less, for free.") in round III lights exactly the
+//  (s) hovering Induct ("Recruit a member in the shop costing 10 or less, for free.") in round III lights exactly the
 //      face-up members at 10 or less (two, both lit, the pricier ones not), its hover card names them ("Could recruit:
 //      A or B"), and the light leaves with the hover without moving any card (Cory, 2026-10-16; was Open Door, cut Oct 27);
 //  (a) also covers each chair's member count, its "+N" cell and its "each round" line (live panel r1, G4).
@@ -634,7 +634,7 @@ try {
     await pg.close();
   }
 
-  // (s) hovering Initiation lights exactly the face-up members at 10 or less, names them, and lets go with the hover
+  // (s) hovering Induct lights exactly the face-up members at 10 or less, names them, and lets go with the hover
   {
     const { save, key, lit: aimed } = aimSave();
     const pg = await browser.newPage({ viewport: { width: 1270, height: 700 } });
@@ -651,7 +651,7 @@ try {
     const want = aimed.map(String).sort().join(',');
     const lit = () => pg.$$eval('.lt-shop .card[data-uid][data-aim]', els => els.map(e => e.dataset.uid).sort().join(','));
     const ok = await pg.waitForFunction(w => [...document.querySelectorAll('.lt-shop .card[data-uid][data-aim]')].map(e => e.dataset.uid).sort().join(',') === w, want, { timeout: 6000 }).then(() => true, () => false);
-    if (!ok) fail(`(s) hovering Initiation lit [${await lit()}], not the face-up members at 10 or less [${want}]`, 'aim');
+    if (!ok) fail(`(s) hovering Induct lit [${await lit()}], not the face-up members at 10 or less [${want}]`, 'aim');
     // the lit card looks lit: the lamp's ring, not a near-invisible change
     await pg.waitForTimeout(300); // the light's quick fade-in, done
     // the unified shop's aim ring (shop.css): a 3px outline in the lamp's warm light, the same light ringing it inside
@@ -659,19 +659,19 @@ try {
     if (!glow || glow.w < 2 || !/^solid/.test(glow.outline) || !/255, 224, 161/.test(glow.outline) || !/255, 224, 161[^)]*\) 0px 0px 0px 2px inset/.test(glow.shadow)) fail(`(s) a lit card carries no lamp ring (${JSON.stringify(glow)})`, 'aim');
     const line = await pg.waitForFunction(() => { const r = document.querySelector('[data-hover-layer][data-open="1"] [data-aims]'); return r ? { aims: r.getAttribute('data-aims'), text: r.closest('.lt-yd-row').innerText } : null; }, null, { timeout: 4000 }).then(h => h.jsonValue(), () => null);
     const names = aimed.map(u => defById(save.state.cards[u].def).name);
-    if (!line) fail('(s) the Initiation hover card has no line naming what it lights', 'aim');
+    if (!line) fail('(s) the Induct hover card has no line naming what it lights', 'aim');
     else {
       if (line.aims.split(' ').sort().join(',') !== want) fail(`(s) the hover's line names [${line.aims}], the ones at 10 or less are [${want}]`, 'aim');
       // why they're lit: the line reads as recruits you could make (two lit, so "Could", never "Would")
       if (!/^\s*Could recruit\b/i.test(line.text)) fail(`(s) the hover's line doesn't say they're the members you could recruit: ${JSON.stringify(line.text)}`, 'aim');
       for (const n of names) if (!line.text.includes(n)) fail(`(s) the hover's line doesn't name ${n}: ${JSON.stringify(line.text)}`, 'aim');
-      console.log(`info.mjs: Initiation lights ${want}; its hover says ${JSON.stringify(line.text.replace(/\s+/g, ' '))}`);
+      console.log(`info.mjs: Induct lights ${want}; its hover says ${JSON.stringify(line.text.replace(/\s+/g, ' '))}`);
     }
     await pg.screenshot({ path: `${SHOTS}/08-recruit-member-aim.png` });
     if ((await boxes()) !== before) fail('(s) lighting the cards moved the shop row', 'aim');
     await pg.mouse.move(4, 690);
     const off = await pg.waitForFunction(() => !document.querySelector('.lt-shop .card[data-aim]'), null, { timeout: 2000 }).then(() => true, () => false);
-    if (!off) fail('(s) the lit cards stay lit after the pointer leaves Initiation', 'aim');
+    if (!off) fail('(s) the lit cards stay lit after the pointer leaves Induct', 'aim');
     await pg.close();
   }
 
@@ -768,13 +768,13 @@ try {
     await pg.screenshot({ path: `${SHOTS}/10-member-card.png` });
     // the pay dialog: place, then recruit a gold member; the dialog holds focus and names the rule-changers
     await pg.mouse.move(4, 690);
-    // a plain gain (blue's "+3 blue"): Intro Offer stacked on the −4 to 8 off, so every gold member came free, and Even
+    // a plain gain (blue's "+3 blue"): Bargain Down stacked on the −4 to 8 off, so every gold member came free, and Even
     // Swap's question swapped Skinflint away (both after the Oct 21 prices and deck)
     const plain = `${st.quadrants.indexOf('blue')}-${quadrant('blue').actions.findIndex(a => a.key === 'a1')}`;
     const sp = await pg.$(`.slot.can[data-slot="${plain}"] .base`);
     const bb = await sp.boundingBox();
     await pg.mouse.click(bb.x + bb.width / 2, bb.y + bb.height / 2);
-    // the space's question, answered where it's asked (Kickback: a rival's seat; lib/answer.mjs)
+    // the space's question, answered where it's asked (Grease a Palm: a rival's seat; lib/answer.mjs)
     // (only while a choice is open, never a buy: the step can turn to the buy step between the check and the click, and
     // a follower buy there ended the turn before the gold member was tried; layout.mjs does the same)
     await pg.waitForTimeout(300);

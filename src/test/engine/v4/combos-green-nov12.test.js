@@ -55,7 +55,7 @@ describe('Mimics: "On Recruit: use the On Recruit of any member in play."', () =
   // Druids, not Gardeners, since Copyist costs 7 (Cory, Nov 13: "Copyist can be more expensive")
   it("copies a rival's Hostages: swaps one of the Mimics owner's members for a same-cost rival member", () => {
     const { s } = go('mimics-exchange', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [['echo.copyist'], ['yellow.exchangestudents', 'silver.bookies', 'echo.diehards']], res: [RICH] },
-      [/Gather/, /Mimics/, /Hostages/, /Copyist ↔ P2: Druids/]);
+      [/Gather the Kin/, /Mimics/, /Hostages/, /Copyist ↔ P2: Druids/]);
     expect(names(s, 0).sort()).toEqual(['Druids', 'Mimics']);
     expect(names(s, 1).sort()).toEqual(['Copyist', 'Hostages', 'Indulgence Seller']);
     expect(has(s, /P1's Hostages: swaps Copyist for P2's Druids/)).toBe(true);
@@ -63,14 +63,14 @@ describe('Mimics: "On Recruit: use the On Recruit of any member in play."', () =
   });
 
   it('Changeling ("give this member to a rival") is not offered: Mimics is not the Changeling card', () => {
-    const { s } = go('mimics-doubleagent', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [[], ['thieves.doubleagent', 'gold.banker']], res: [RICH] }, [/Gather/, /Mimics/]);
+    const { s } = go('mimics-doubleagent', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [[], ['thieves.doubleagent', 'gold.banker']], res: [RICH] }, [/Gather the Kin/, /Mimics/]);
     expect(mimicLabels(s).some(l => /Changeling/.test(l))).toBe(false);
     expect(mimicLabels(s)).toEqual([expect.stringMatching(/^P2's Banker/)]);
   });
 
   it("copies a rival's Purse-Switchers: the Mimics owner's silver swaps with the rival they pick (3 players)", () => {
     const { s } = go('mimics-hustlers', { quads: QS, n: 3, turns: [0], shop: ['echo.mimics'], members: [[], ['silver.hustlers'], []],
-      res: [RICH, { silver: 2 }, { silver: 9 }] }, [/Gather/, /Mimics/, /Purse-Switchers/, /player:2/]);
+      res: [RICH, { silver: 2 }, { silver: 9 }] }, [/Gather the Kin/, /Mimics/, /Purse-Switchers/, /player:2/]);
     expect(s.players.map(p => p.res.silver)).toEqual([9, 2, 0]);
     expect(s.log).toContain("P1's Purse-Switchers: swaps silver with P3 (0 for 9).");
     cleanLog(s);
@@ -78,7 +78,7 @@ describe('Mimics: "On Recruit: use the On Recruit of any member in play."', () =
 
   it("copies a rival's Indulgence Seller: turns in the Mimics owner's silver, not the rival's", () => {
     const { s } = go('mimics-bookies', { quads: QS, turns: [0], shop: ['echo.mimics'], members: [[], ['silver.bookies']], res: [{ ...RICH, silver: 5 }, { silver: 3 }] },
-      [/Gather/, /Mimics/, /Indulgence Seller/, /n:4/]);
+      [/Gather the Kin/, /Mimics/, /Indulgence Seller/, /n:4/]);
     expect(s.players[0].res.silver).toBe(1);
     expect(s.players[1].res.silver).toBe(3);
     expect(s.log).toContain("P1's Indulgence Seller: turns in 4 silver, +8 followers.");
@@ -88,67 +88,67 @@ describe('Mimics: "On Recruit: use the On Recruit of any member in play."', () =
 
 
   it('Headhunters (On Use) is not offered; with nothing else in play, one plain log line and no question', () => {
-    const { s } = go('mimics-headhunters', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [[], ['yellow.headhunters']], res: [RICH] }, [/Gather/, /Mimics/]);
+    const { s } = go('mimics-headhunters', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [[], ['yellow.headhunters']], res: [RICH] }, [/Gather the Kin/, /Mimics/]);
     expect(mimicPrompt(s)).toBe(false);
     expect(s.log).toContain("P1's Mimics: no member in play has an On Recruit to use.");
   });
 
   it('another Mimics in play is not offered (no loop)', () => {
-    const { s } = go('mimics-mimics', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [['echo.mimics'], ['echo.mimics']], res: [RICH] }, [/Gather/, /Mimics/]);
+    const { s } = go('mimics-mimics', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [['echo.mimics'], ['echo.mimics']], res: [RICH] }, [/Gather the Kin/, /Mimics/]);
     expect(mimicPrompt(s)).toBe(false);
     expect(s.log).toContain("P1's Mimics: no member in play has an On Recruit to use.");
   });
 
   // QUESTION (not fixed: needs core.js borrowOnRecruit, which runs card.def, never card.copy): a Doppelganger that became
   // a copy of Indulgence Seller has Indulgence Seller' On Recruit, so "any member in play" reads as offering it. Mimics leaves it out (the
-  // Doppelganger's own text, "this member becomes a copy", is filtered), unlike Greatest Hits and Impersonator, which read
+  // Doppelganger's own text, "this member becomes a copy", is filtered), unlike Replay All and Impersonator, which read
   // the copy. Fixing the list alone would run the Doppelganger's own On Recruit for the Mimics owner.
   it.fails('a Doppelganger copying a rival\'s Indulgence Seller is offered as Indulgence Seller', () => {
     const { s } = go('mimics-doppel', { quads: QS, turns: [0], shop: ['echo.mimics'], members: [[], ['silver.bookies', 'echo.doppel']], res: [{ ...RICH, silver: 2 }],
-      prep: st => { st.cards[uidOf(st, 1, 'echo.doppel')].copy = 'silver.bookies'; } }, [/Gather/, /Mimics/]);
+      prep: st => { st.cards[uidOf(st, 1, 'echo.doppel')].copy = 'silver.bookies'; } }, [/Gather the Kin/, /Mimics/]);
     expect(mimicLabels(s).length).toBe(2);
   });
 
   it('members in the shop or the pile are not in play: a face-up Banker is not offered', () => {
-    const { s } = go('mimics-shop', { quads: Q, turns: [0], shop: ['echo.mimics', 'gold.banker'], members: [[], ['silver.bookies']], res: [RICH] }, [/Gather/, /Mimics/]);
+    const { s } = go('mimics-shop', { quads: Q, turns: [0], shop: ['echo.mimics', 'gold.banker'], members: [[], ['silver.bookies']], res: [RICH] }, [/Gather the Kin/, /Mimics/]);
     expect(mimicLabels(s)).toEqual([expect.stringMatching(/^P2's Indulgence Seller/)]);
   });
 
-  it('recruited free with Initiation: its On Recruit fires', () => {
-    const { s } = go('mimics-initiation', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [[], ['gold.banker']], res: [{}] }, [/Initiation/, /Mimics/, /Banker/]);
+  it('recruited free with Induct: its On Recruit fires', () => {
+    const { s } = go('mimics-initiation', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [[], ['gold.banker']], res: [{}] }, [/Induct/, /Mimics/, /Banker/]);
     expect(names(s, 0)).toContain('Mimics');
     expect(s.players[0].res.gold).toBe(3);
   });
 
   it('log names whose member it copies and reads the possessive right', () => {
-    const { s } = go('mimics-log', { quads: QS, turns: [0], shop: ['echo.mimics'], members: [[], ['silver.hustlers']], res: [RICH, { silver: 2 }] }, [/Gather/, /Mimics/, /Purse-Switchers/, /player:1/]);
+    const { s } = go('mimics-log', { quads: QS, turns: [0], shop: ['echo.mimics'], members: [[], ['silver.hustlers']], res: [RICH, { silver: 2 }] }, [/Gather the Kin/, /Mimics/, /Purse-Switchers/, /player:1/]);
     expect(s.log).toContain("P1's Mimics uses P2's Purse-Switchers' On Recruit.");
     cleanLog(s);
   });
 
   it('Minstrel ("your next On Recruit happens twice") then Mimics: two uses, each its own pick', () => {
     const { s, trail } = go('mimics-encore', { quads: QS, turns: [0], shop: ['echo.mimics'], members: [['echo.encore'], ['silver.bookies', 'gold.banker']], res: [{ ...RICH, silver: 4 }] },
-      [/use:/, /Gather/, /Mimics/, /Banker/, /Banker/]);
+      [/use:/, /Gather the Kin/, /Mimics/, /Banker/, /Banker/]);
     globalThis.__mimicsEncore = trail;
     expect(s.players[0].res.gold).toBe(6);
   });
 
   it("copies a rival's Admirers: the rival with the most followers is read from the Mimics owner's side (P3, not P2)", () => {
-    // P2 owns Admirers (worth 3); P3 leads on followers and has a minion on Gather. Fixed Nov 12: was not offered.
+    // P2 owns Admirers (worth 3); P3 leads on followers and has a minion on Gather the Kin. Fixed Nov 12: was not offered.
     const { s } = go('mimics-fanclub', { quads: Q, n: 3, turns: [2, 0], shop: ['echo.mimics'], members: [[], ['echo.mirror'], []], res: [RICH],
-      prep: st => { st.players[2].bonus = 20; } }, [/Build Up/, /^pass$/, /Gather/, /Mimics/, /Admirers/]);
+      prep: st => { st.players[2].bonus = 20; } }, [/Flock Together/, /^pass$/, /Gather the Kin/, /Mimics/, /Admirers/]);
     expect(s.log).toContain("P1's Mimics uses P2's Admirers' On Recruit.");
     expect(s.pending.prompt).toBe("Admirers: copy which of P3's actions?");
     expect(s.pending.player).toBe(0);
     cleanLog(s);
   });
 
-  it("copies a rival's Shadow: copies the action the Mimics owner just took (Build Up), not the rival's", () => {
+  it("copies a rival's Shadow: copies the action the Mimics owner just took (Flock Together), not the rival's", () => {
     const { s } = go('mimics-stuntdouble', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [[], ['echo.hourglass']], res: [{ green: 8 }],
-      prep: st => { st.slots['1-0'] = 1; } }, [/Build Up/, /Mimics/, /Shadow/]); // P2 sits on Borrow
+      prep: st => { st.slots['1-0'] = 1; } }, [/Flock Together/, /Mimics/, /Shadow/]); // P2 sits on Borrow
     expect(s.log).toContain("P1's Mimics uses P2's Shadow's On Recruit.");
-    expect(s.log).toContain("P1's Shadow: P1 copied Build Up: +2 green.");
-    expect(s.players[0].res.green).toBe(4); // 8 + 2 from Build Up, less 8 for Mimics, + 2 copied
+    expect(s.log).toContain("P1's Shadow: P1 copied Flock Together: +2 green.");
+    expect(s.players[0].res.green).toBe(4); // 8 + 2 from Flock Together, less 8 for Mimics, + 2 copied
     cleanLog(s);
   });
 });
@@ -157,7 +157,7 @@ describe('Mimics: "On Recruit: use the On Recruit of any member in play."', () =
 describe('Mimics arriving other ways (a swap or steal brings a member in as your recruit: Cory, Nov 4; Kidnapper, Changeling notes)', () => {
   it('swapped in with Hostages: its On Recruit fires for the new holder', () => {
     const { s } = go('mimics-swapped-in', { quads: Q, turns: [0], shop: ['yellow.exchangestudents'], members: [['silver.bookies'], ['echo.mimics', 'gold.banker']], res: [{ yellow: 9, red: 9 }] },
-      [/Gather/, /Hostages/, /Indulgence Seller ↔ P2: Mimics/, /Banker/]);
+      [/Gather the Kin/, /Hostages/, /Indulgence Seller ↔ P2: Mimics/, /Banker/]);
     expect(names(s, 0).sort()).toEqual(['Hostages', 'Mimics']);
     expect(s.log).toContain("P1's Mimics uses P2's Banker's On Recruit.");
     expect(s.players[0].res.gold).toBe(3);
@@ -186,9 +186,9 @@ describe('Gardeners: "Round End: +1 follower per minion you have on Green spaces
     expect(s.log.some(reg)).toBe(false);
   });
 
-  it('Reprise copying Build Up adds no minion: Build Up and Reprise are 2 minions, +2', () => {
+  it('Do It Again copying Flock Together adds no minion: Flock Together and Do It Again are 2 minions, +2', () => {
     const { s, trail } = go('regulars-reprise', { quads: Q, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }, ...END], members: [['echo.regulars']] },
-      [/Build Up/, /^pass$/, /Reprise/, /Build Up/, /^pass$/]);
+      [/Flock Together/, /^pass$/, /Do It Again/, /Flock Together/, /^pass$/]);
     expect(trail.join('\n')).not.toMatch(/STOP/);
     expect(s.log).toContain("P1's Gardeners: 2 minions on Green spaces: +2 followers.");
   });
@@ -240,7 +240,7 @@ describe('Druids: "Game End: if you have the most green members, +6 followers."'
   it('Mimics copies Hostages to take a rival\'s Druids: it scores for its new holder', () => {
     const { s } = go('diehards-mimics-exchange', { quads: Q, queue: [{ t: 'turn', p: 0 }, ...FIN], shop: ['echo.mimics'],
       members: [['echo.hourglass'], ['yellow.exchangestudents', 'echo.diehards', 'echo.copyist']], res: [RICH] },
-      [/Gather/, /Mimics/, /Hostages/, /Shadow ↔ P2: Druids/]);
+      [/Gather the Kin/, /Mimics/, /Hostages/, /Shadow ↔ P2: Druids/]);
     expect(names(s, 0).sort()).toEqual(['Druids', 'Mimics']);
     expect(part(s, 0)).toEqual(['Druids +6']); // 2 green (Mimics, Druids) to P2's 2 (Shadow, Copyist): a tie
     expect(part(s, 1)).toEqual([]);

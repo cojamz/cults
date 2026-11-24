@@ -14,7 +14,7 @@ const scene = options => baseScene({ quadrants: ['gold', 'red', 'blue', 'green']
 const R = s => s.players.map(p => p.res);
 
 describe('Gold actions', () => {
-  it('Kickback: +3 gold, then +1 gold to the chosen player', () => {
+  it('Grease a Palm: +3 gold, then +1 gold to the chosen player', () => {
     let s = scene({ n: 3 });
     s = take(s, 'gold.jv');
     expect(R(s)[0].gold).toBe(3);
@@ -24,14 +24,14 @@ describe('Gold actions', () => {
     expect(R(s).map(r => r.gold)).toEqual([3, 0, 1]);
   });
 
-  it('Golden Years: +2 gold per round number', () => {
+  it('Let It Grow: +2 gold per round number', () => {
     for (const round of [1, 2, 3]) {
       const s = take(scene({ round }), 'gold.rush');
       expect(R(s)[0].gold).toBe(2 * round);
     }
   });
 
-  it('Intro Offer: the next paid member costs 4 less, color part first, then it is used up', () => {
+  it('Bargain Down: the next paid member costs 4 less, color part first, then it is used up', () => {
     // Midas: 3 gold + 2 wild. With Intro Offer: 0 gold + 1 wild.
     let s = scene({ res: [{ blue: 1 }], shop: ['gold.midas', 'gold.banker', 'red.intern', 'red.host', 'red.mob', 'red.sponsor'] });
     expect(hasOpt(s, `card:${uidOf(s, 'gold.midas', 'shop')}`)).toBe(false);
@@ -43,7 +43,7 @@ describe('Gold actions', () => {
     expect(s.players[0].discount).toBe(0);
   });
 
-  it('Intro Offer spills onto the wild part when the color part is smaller', () => {
+  it('Bargain Down spills onto the wild part when the color part is smaller', () => {
     // Midas: 3 gold + 2 wild, with 4 off becomes 0 gold + 1 wild.
     let s = scene({ res: [{ red: 1 }], shop: ['gold.banker', 'red.mentor', 'red.patriarch', 'red.bigfamily', 'gold.midas', 'gold.jackpot'] });
     s = take(s, 'gold.discount');
@@ -52,7 +52,7 @@ describe('Gold actions', () => {
     expect(s.players[0].members.length).toBe(1);
   });
 
-  it('Intro Offer is not used up by a free recruit', () => {
+  it('Bargain Down is not used up by a free recruit', () => {
     let s = scene({ discount: [2], shop: ['red.volunteer', 'gold.midas', 'gold.jackpot', 'gold.tycoon', 'red.mentor', 'red.proselytizer'] });
     const top = s.pile[0];
     s = take(s, 'red.hire'); // Walk-In: the deck's top member, free
@@ -60,7 +60,7 @@ describe('Gold actions', () => {
     expect(s.players[0].discount).toBe(2);
   });
 
-  it('Collect Debts: take 3 gold split however you like', () => {
+  it('Call In Debts: take 3 gold split however you like', () => {
     let s = scene({ n: 3, round: 2, res: [{}, { gold: 2 }, { gold: 5 }] });
     s = take(s, 'gold.steal');
     expect(ids(s)).toEqual(['player:1', 'player:2']);
@@ -71,30 +71,30 @@ describe('Gold actions', () => {
     expect(R(s).map(r => r.gold)).toEqual([3, 0, 4]);
   });
 
-  it('Collect Debts: takes only what rivals have', () => {
+  it('Call In Debts: takes only what rivals have', () => {
     let s = scene({ round: 2, res: [{}, { gold: 1 }] });
     s = take(s, 'gold.steal');
     s = move(s, 'player:1');
     expect(R(s).map(r => r.gold)).toEqual([1, 0]);
   });
 
-  it('Collect Debts: nothing to take gains nothing and asks nothing', () => {
+  it('Call In Debts: nothing to take gains nothing and asks nothing', () => {
     const s = take(scene({ round: 2 }), 'gold.steal');
     expect(R(s)[0].gold).toBe(0);
     expect(s.pending?.kind).not.toBe('choose');
   });
 
-  it('Collect Debts is closed in round I', () => {
+  it('Call In Debts is closed in round I', () => {
     const s = scene({ round: 1 });
     expect(() => take(s, 'gold.steal')).toThrow(/not open/);
   });
 
-  it('Tithe: +1 gold per member (Triplets counts as three)', () => {
+  it('Pass the Plate: +1 gold per member (Triplets counts as three)', () => {
     const s = take(scene({ round: 2, members: [['red.twins', 'red.intern', 'red.crowd']] }), 'gold.windfall');
     expect(R(s)[0].gold).toBe(5);
   });
 
-  it('Double Down: doubles your gold (round III only)', () => {
+  it('Multiply: doubles your gold (round III only)', () => {
     expect(() => take(scene({ round: 2 }), 'gold.strike')).toThrow();
     const s = take(scene({ round: 3, res: [{ gold: 7 }] }), 'gold.strike');
     expect(R(s)[0].gold).toBe(14);
@@ -105,10 +105,10 @@ describe('Gold members', () => {
   it('Midas: action gains come as gold; other gains do not; can be switched off and on at the buy', () => {
     let s = scene({ members: [['gold.midas']], res: [{ red: 2 }], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }] });
     const uid = uidOf(s, 'gold.midas', 0);
-    // Gather (v0.8.0): +1 red × round and +1 red, 2 in round I, all of it gold under Midas. (Even Swap's +1 red now
+    // Gather the Kin (v0.8.0): +1 red × round and +1 red, 2 in round I, all of it gold under Midas. (Even Swap's +1 red now
     // opens a swap choice whenever any two members on the table cost the same.)
     s = take(s, 'red.turnout');
-    expect(R(s)[0]).toMatchObject({ gold: 2, red: 2 }); // Gather's 2 red in round I (Oct 31)
+    expect(R(s)[0]).toMatchObject({ gold: 2, red: 2 }); // Gather the Kin's 2 red in round I (Oct 31)
     expect(s.pending.kind).toBe('buy');
     s = move(s, `toggle:${uid}`);
     expect(s.cards[uid].on).toBe(false);
@@ -142,7 +142,7 @@ describe('Gold members', () => {
     expect(R(s)[0].gold).toBe(0);
   });
 
-  it('Gold Panner: a Collect Debts counts once', () => {
+  it('Gold Panner: a Call In Debts counts once', () => {
     let s = scene({ round: 2, members: [['gold.prospector']], res: [{}, { gold: 3 }] });
     s = take(s, 'gold.steal');
     s = play(s, 'player:1', 'player:1', 'player:1');
@@ -234,7 +234,7 @@ describe('Gold members', () => {
     expect(R(take(scene({ members: [['gold.tinker']] }), 'blue.a1'))[0]).toMatchObject({ blue: 3, gold: 1 });
     expect(R(take(scene({ members: [['gold.tinker']] }), 'blue.a2'))[0]).toMatchObject({ blue: 2, red: 1, gold: 2 });
     expect(R(take(scene({ members: [['gold.tinker']] }), 'gold.rush'))[0]).toMatchObject({ gold: 2 });
-    // Gather's 2 red is one gain of one other color: +1 gold, not 2
+    // Gather the Kin's 2 red is one gain of one other color: +1 gold, not 2
     expect(R(take(scene({ members: [['gold.tinker']] }), 'red.turnout'))[0]).toMatchObject({ red: 2, gold: 1 });
   });
 

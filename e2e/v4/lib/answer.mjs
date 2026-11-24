@@ -1,6 +1,6 @@
 // One way for every e2e to answer the table, the way a person would (QA, 2026-10-15). Choices moved onto the board
 // (boardPick.js): a rival's seat, a resource stack, a wheel space, a shop card is now the answer, and the keyboard list
-// is Tab-only; drivers that clicked only ".prompt.choice button"s waited forever (Kickback asks for a rival's seat).
+// is Tab-only; drivers that clicked only ".prompt.choice button"s waited forever (Grease a Palm asks for a rival's seat).
 //
 // answerChoice(page, opts) answers whatever is pending for the person at the device:
 //   - the pay sheet: its Pay button (the suggested way), else Enter in the sheet; the split and spend cards: their Take;

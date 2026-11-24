@@ -6,7 +6,7 @@
 //  - a retired symbol typed into visible text (◆ ◍ ◐ ⛤ ▯ ↻ ⇄ ☺ ★ ✓ ✔ ↶ ⬡ ⬢ ♦), panels included;
 //  - a dot standing for something that isn't a resource: a player's color dot in the since-strip or a card's owner line;
 //  - a browser tooltip (title) on something that has its own hover card (it sat on top of the card, saying it twice).
-// Usage: const bad = await page.evaluate(LEGACY);  // -> ['text "✓ Kickback" in span.tick', …]
+// Usage: const bad = await page.evaluate(LEGACY);  // -> ['text "✓ Grease a Palm" in span.tick', …]
 export const LEGACY = () => {
   const out = [];
   const vis = e => { for (let a = e; a && a !== document.body; a = a.parentElement) { const s = getComputedStyle(a); if (s.display === 'none' || s.visibility === 'hidden' || Number(s.opacity) === 0) return false; } const b = e.getBoundingClientRect(); return b.width > 0 && b.height > 0; };

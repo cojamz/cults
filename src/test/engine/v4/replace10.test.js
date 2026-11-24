@@ -80,7 +80,7 @@ describe('REPLACE10: Bootlegger', () => {
 
 describe('REPLACE10: Inside Job (Stash\'s slot)', () => {
   it('steals 2 resources from each rival with a minion on a Magenta space, +1 magenta; Stash is gone', () => {
-    // thieves is quadrant 1: Help Yourself 1-0, Inside Job 1-1, Lie Low 1-2
+    // thieves is quadrant 1: Pilfer 1-0, Inside Job 1-1, Lie Low 1-2
     let s = table(['red', 'thieves', 'trading', 'yellow'], { n: 4, round: 1, res: [{}, { red: 3 }, { white: 3 }, { yellow: 3 }] });
     s.slots = { '1-0': 1, '1-2': 2, '0-0': 3 };
     expect(s.pending.options.some(o => o.label === 'Stash')).toBe(false);
@@ -106,7 +106,7 @@ describe('REPLACE10: the pitched turns', () => {
     expect(s.players[0].res.green).toBe(g + 2); // two green members: Bootlegger and Roadie
   });
 
-  it('Inside Job: round I, Ben took Help Yourself, Cleo took Lie Low: you steal 2 from Ben only, +1 magenta (3 in all)', () => {
+  it('Inside Job: round I, Ben took Pilfer, Cleo took Lie Low: you steal 2 from Ben only, +1 magenta (3 in all)', () => {
     let s = table(['red', 'thieves', 'trading', 'yellow'], { n: 4, round: 1, res: [{}, { red: 4 }, { white: 4 }, {}] });
     s.slots = { '1-0': 1, '1-2': 2 };
     s.players[2].hideout = 1; // Cleo lies low this round
@@ -141,22 +141,22 @@ describe('REPLACE10: Warm-Up Act', () => {
     let s = table(['red', 'echo', 'thieves', 'trading'], { n: 3, round: 1, res: [{}, { red: 4 }, { red: 4 }], members: [['echo.warmup']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.prompt).toBe('Warm-Up Act: copy which round I action?');
     const names = s.pending.options.map(o => o.label.split(':')[0]);
-    expect(names).toContain('Help Yourself');
-    expect(names).toContain('Build Up');
-    expect(names).not.toContain('Echo');
-    s = answer(s, s.pending.options.find(o => o.label.startsWith('Build Up')).id);
-    // Build Up since Nov 10: +1 green per minion on Green spaces, +1 green; at round start no minion is on Green
+    expect(names).toContain('Pilfer');
+    expect(names).toContain('Flock Together');
+    expect(names).not.toContain('Follow Suit');
+    s = answer(s, s.pending.options.find(o => o.label.startsWith('Flock Together')).id);
+    // Flock Together since Nov 10: +1 green per minion on Green spaces, +1 green; at round start no minion is on Green
     expect(s.players[0].res.green).toBe(1);
   });
 
   it('leaves off spaces that say "this turn", and says the copied gain under its own name (Lab play judge, Nov 4)', () => {
     let s = table(['red', 'echo', 'thieves', 'trading'], { n: 4, round: 2, members: [[], ['echo.warmup'], [], []], queue: [{ t: 'round', r: 3 }] });
     const names = s.pending.options.map(o => o.label.split(':')[0]);
-    expect(names).not.toContain('Gather');
+    expect(names).not.toContain('Gather the Kin');
     expect(names).not.toContain('Allowance');
-    expect(names).not.toContain('Splurge');
-    s = answer(s, s.pending.options.find(o => o.label.startsWith('Build Up')).id);
-    expect(s.players[1].res.green).toBe(1); // Build Up with no minion on Green (Nov 10)
+    expect(names).not.toContain('Spend Freely');
+    s = answer(s, s.pending.options.find(o => o.label.startsWith('Flock Together')).id);
+    expect(s.players[1].res.green).toBe(1); // Flock Together with no minion on Green (Nov 10)
     expect(s.log).toContain("P2's Warm-Up Act: +1 green.");
   });
 });

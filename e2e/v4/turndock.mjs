@@ -1,6 +1,6 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E turn-card dock gate (2026-10-15: "Maximum update depth exceeded" in TurnCard on a market/echo/yellow/gold table,
-// right after a buy step, with "You took Echo" docked under the since-strip; the game fell to "Something went wrong").
+// right after a buy step, with "You took Follow Suit" docked under the since-strip; the game fell to "Something went wrong").
 // The card docks at a foot that never depends on the story (layout.css --turn-dock), and the story leaves it room
 // (--turn-h). On that table, at 1270×700 and 1100×700:
 //  (d1) no page error, no console "Maximum update depth", no recovery screen;

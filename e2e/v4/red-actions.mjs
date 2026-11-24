@@ -1,4 +1,4 @@
-// Focused real clicks: Red swaps can involve two rivals or the shop; Green copying Promote asks afresh (Echo copies
+// Focused real clicks: Red swaps can involve two rivals or the shop; Green copying Promote asks afresh (Follow Suit copies
 // the rival's Promote just placed; Sample copied it until it became "Copy the On Recruit of a rival's member").
 import { chromium, devices } from 'playwright';
 import { mkdirSync } from 'node:fs';
@@ -55,7 +55,7 @@ function scenario(name) {
   let expected = move(s, `slot:${slot(name === 'copy-promote' ? 'echo' : 'red', action)}`);
   const picks = [];
   if (name === 'copy-promote') {
-    // Echo copies the previous action outright; a pick shows only if the engine asks
+    // Follow Suit copies the previous action outright; a pick shows only if the engine asks
     const copy = expected.pending?.kind !== 'buy' && expected.pending.options.find(o => o.value === slot('red', 'hireup'));
     if (copy) { picks.push(copy.id); expected = move(expected, copy.id); }
   }

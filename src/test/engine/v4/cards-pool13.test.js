@@ -21,7 +21,7 @@ describe('Safecrackers (Magenta)', () => {
     if (s.pending?.kind === 'choose' && !s.pending.prompt.startsWith('P1')) s = move(s, s.pending.options[0].id);
     s = passBuys(s);
     const before = total(s.players[1].res);
-    s = take(s, 'thieves.pickpocket'); // Help Yourself
+    s = take(s, 'thieves.pickpocket'); // Pilfer
     while (s.pending?.kind === 'choose' && s.pending.options.some(o => o.kind === 'player')) s = move(s, s.pending.options.find(o => o.kind === 'player').id);
     while (s.pending?.kind === 'choose' && s.pending.options.some(o => o.kind === 'take')) s = move(s, s.pending.options.find(o => o.kind === 'take').id);
     expect(total(s.players[1].res)).toBeLessThan(before);

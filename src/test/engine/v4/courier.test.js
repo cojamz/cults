@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Courier (Cory, 2026-10-29): "Whenever you take two turns in a row, +1 of each other color." It pays on Right Away,
-// Crunch Time, a snake turnaround and a minion placed right after your turn; it never paid on Right Away before
+// Courier (Cory, 2026-10-29): "Whenever you take two turns in a row, +1 of each other color." It pays on Make Haste,
+// Flurry, a snake turnaround and a minion placed right after your turn; it never paid on Make Haste before
 // ("courier doesnt seem to work right").
 import { describe, it, expect } from 'vitest';
 import { take, move } from './helpers.js';
@@ -23,14 +23,14 @@ describe('Courier', () => {
     expect(s.players[0].members).toContain(c.uid);
     expect(quadrant('purple').members.find(d => d.id === 'purple.courier' || d.key === 'courier')?.text).toBe('Whenever you take a consecutive turn, +1 of each other color.'); // reworded, Cory Nov 4
   });
-  it('Right Away: your next turn comes now, and Courier pays +1 of each other color', () => {
+  it('Make Haste: your next turn comes now, and Courier pays +1 of each other color', () => {
     let s = scene([0, 1, 2, 2, 1, 0]);
     s = passBuys(settle(take(s, 'purple.again')));
     expect(s.pending).toMatchObject({ kind: 'place', player: 0 });
     expect(paid(s)).toEqual(["P1's Courier: +1 green, +1 gold, +1 red."]);
     expect(s.players[0].res).toMatchObject({ green: 10, gold: 10, red: 10 });
   });
-  it('Crunch Time pays twice: two turns, each one right after your last', () => {
+  it('Flurry pays twice: two turns, each one right after your last', () => {
     let s = scene([0, 1, 2, 2, 1, 0, 0, 1, 2]);
     s = passBuys(settle(take(s, 'purple.rally')));
     s = plain(s);

@@ -7,7 +7,7 @@
 //              60 games 4.9% · 85 games 3.5% · 100 games 3.0% · 170 games 1.7% · 200 games 1.5%.
 //            So a sphere's 200-game block plays 100 in the verdict (catches a bug in ≥3% of that table's games), and
 //            the bot fuzz plays 85 per seat count (≥3.5% per seat count; ≥1.2% over its 255 games). A block that asserts
-//            a rate over its games (Market's Spree share, Silver's takes a game) passes `verdict` = `full`: a rate
+//            a rate over its games (Market's Salvage share, Silver's takes a game) passes `verdict` = `full`: a rate
 //            needs its whole sample.
 //   full     check:v4 --full (the nightly / remote job, and before a release): every game, the strength above for the
 //            full count. Also `V4_GAMES=full npx vitest run src/test/engine/v4`.

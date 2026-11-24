@@ -17,7 +17,7 @@ describe('Scalpers (Purple)', () => {
   it('Whenever a rival takes the Goes Last token, they give you 2 of their resources', () => {
     let s = sceneQ({ quadrants: ['purple', 'gold', 'red', 'market'], members: [[], ['purple.scalpers']], res: [{ red: 3 }],
       queue: [0, 1, 0, 1].map(p => ({ t: 'turn', p })) });
-    s = take(s, 'purple.skip'); // P1: Sleep In takes the token
+    s = take(s, 'purple.skip'); // P1: Lie Abed takes the token
     expect(s.pending.prompt).toMatch(/^P2's Scalpers: give P2 1 of which resource\?/);
     s = move(s, 'color:red');
     s = move(s, s.pending.options.find(o => o.id === 'color:red').id);
@@ -117,7 +117,7 @@ describe('Teetotalers (Silver)', () => {
     expect(s.players.map(p => p.res.silver)).toEqual([6, 0, 5]);
     expect(named(s, 'Teetotalers')[0]).toBe("P2's Teetotalers: P1 can't give P2 silver, and keeps it.");
   });
-  it("Rivals can't give you silver (Party Gifts can't pick them)", () => {
+  it("Rivals can't give you silver (Hand Out Gifts can't pick them)", () => {
     let s = sceneQ({ quadrants: Q, n: 3, members: [[], ['silver.teetotalers']] });
     s = take(s, 'silver.partygifts');
     expect(s.pending.options.filter(o => o.kind === 'player').map(o => o.value)).toEqual([2]);

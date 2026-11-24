@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Cory's playtest, Nov 9 10:20pm Eastern: "window shopper didnt give resources when used on round start (on grey
 // members)". Culler ("On Recruit and Round Start: discard 2 shop members. +1 of each one's color.") sending a
-// grey member gives +1 of any color, the owner's pick, as Out of Style does.
+// grey member gives +1 of any color, the owner's pick, as Clear Out does.
 import { describe, it, expect } from 'vitest';
 import { move } from './helpers.js';
 import { table, uidIn } from './cards-helpers-b.js';

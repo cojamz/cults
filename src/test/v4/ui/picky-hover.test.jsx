@@ -1,6 +1,6 @@
 // First-time readers' hover catches (picky bot, Nov 4; /mnt/project-files/picky/merged-2026-11-04.md B3, B4, B11, B24,
 // B25, B26): "You'd get" never peeks at the face-down pile, says Goes Last as going last, a steal whole, a rival's gift
-// as theirs, and a cast-out member with its followers on Farewell and Estate Sale alike.
+// as theirs, and a cast-out member with its followers on Bid Farewell and Estate Sale alike.
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, chooseBotMove, previewSpace, spacesOf, cardDef } from '../../../engine/v4/index.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
@@ -15,7 +15,7 @@ const words = (s, qid, key) => { const pid = s.pending.player; return youdWords(
 const cost = (s, u) => { const d = cardDef(s, u); return (d.s || 0) + (d.w || 0); };
 
 describe('picky hover (Nov 4)', () => {
-  useRetired(['trading.estatesale']); // Estate Sale left the wheel Nov 11 (Write-Off)
+  useRetired(['trading.estatesale']); // Estate Sale left the wheel Nov 11 (Give Away)
   describe('Walk-In (retired Nov 10, kept for old saves)', () => {
   useRetired(['red.hire']);
   it('Walk-In: the face-down top card is never named or counted (B3)', () => {
@@ -30,16 +30,16 @@ describe('picky hover (Nov 4)', () => {
   });
   });
 
-  it('Sleep In and Last Call go last; Right Away comes right after (B4)', () => {
+  it('Lie Abed and Bide Your Time go last; Make Haste comes right after (B4)', () => {
     const s = start(['thieves', 'silver', 'trading', 'purple']);
-    // Sleep In holds all your other minions since Nov 10, as Last Call does
+    // Lie Abed holds all your other minions since Nov 10, as Bide Your Time does
     expect(words(s, 'purple', 'skip').text).toMatch(/your other 2 minions go last/);
     expect(words(s, 'purple', 'again').text).toMatch(/your next turn right after this one/);
     expect(words(s, 'purple', 'lastcall').text).toMatch(/your other 2 minions go last/);
     for (const k of ['skip', 'lastcall']) expect(words(s, 'purple', k).text).not.toMatch(/after this one/);
   });
 
-  it('Help Yourself says the whole steal (B24; Potluck, B25, left the wheel Nov 6)', () => {
+  it('Pilfer says the whole steal (B24; Potluck, B25, left the wheel Nov 6)', () => {
     const s = start(['thieves', 'silver', 'trading', 'purple']);
     s.round = 3;
     for (const o of s.players) for (const r of s.resources) o.res[r] = 2;
@@ -48,7 +48,7 @@ describe('picky hover (Nov 4)', () => {
     expect(words(s, 'thieves', 'pickpocket')).toEqual({ text: '+1 magenta; steal 1 in colors you pick', note: null });
   });
 
-  it('Farewell and Estate Sale both say the member leaves with its followers (B26)', () => {
+  it('Bid Farewell and Estate Sale both say the member leaves with its followers (B26)', () => {
     const s = start(['thieves', 'silver', 'trading', 'purple']);
     const pid = s.pending.player;
     const u = s.shop.find(x => cardDef(s, x).f === 1);
@@ -76,11 +76,11 @@ describe('picky hover (Nov 4)', () => {
     expect(two).toBe(`${b.name}’s ${cardDef(s, s.shop[1]).name} for the shop’s ${cardDef(s, shop[0]).name}`);
   });
 
-  it('a hover preview cut short still lights every member Initiation can take (B11)', () => {
+  it('a hover preview cut short still lights every member Induct can take (B11)', () => {
     const s = start(['red', 'thieves', 'echo', 'purple']);
     const pid = s.pending.player;
     const pv = previewSpace(s, pid, ...space(s, 'red', 'take'), { cap: 4 });
     expect(pv.capped).toBe(true);
-    expect(pv.targets.shop.slice().sort()).toEqual(s.shop.filter(u => cost(s, u) <= 10).sort()); // Initiation: "costing 10 or less"
+    expect(pv.targets.shop.slice().sort()).toEqual(s.shop.filter(u => cost(s, u) <= 10).sort()); // Induct: "costing 10 or less"
   });
 });

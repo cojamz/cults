@@ -1,7 +1,7 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: a player's members, clearly, and using one, obviously (Cory, 2026-10-15: the seat hover "should cleanly show a list
 // of member ability/passives, if they've been activated … I still don't know how to activate a member / the UI for it").
-// A saved hot-seat game (e2e/v4/lib/members-save.mjs): P1 holds eleven members of every kind on a Gold/Echo/Trading/
+// A saved hot-seat game (e2e/v4/lib/members-save.mjs): P1 holds eleven members of every kind on a Gold/Follow Suit/Trading/
 // Purple table and is about to place in round I. Build-failing assertions:
 //  (m1) your seat card is your members: one row each with its whole ability (every word of the card's text, never cut:
 //       no ellipsis, no clipping), no Followers / Has / Last moves rows, whole on screen (a long list scrolls inside);

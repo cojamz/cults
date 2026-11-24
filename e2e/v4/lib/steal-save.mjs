@@ -1,7 +1,7 @@
 // Saved hot-seat games stopped on a board-picker choice for P1, the only person.
-//  Steals and gifts (Gold, Magenta, Blue, Green): Help Yourself, Redistribute, Lie Low, Collect Debts (round II),
-//  Kickback ("give 1 gold to…"); the rivals hold known piles so a test can say which stacks light up.
-//  Copies and members (Green, Red, Blue, Magenta): Echo, Cover (round II), Test Drive, Heist (round II; Bury and Shake
+//  Steals and gifts (Gold, Magenta, Blue, Green): Pilfer, Redistribute, Lie Low, Call In Debts (round II),
+//  Grease a Palm ("give 1 gold to…"); the rivals hold known piles so a test can say which stacks light up.
+//  Copies and members (Green, Red, Blue, Magenta): Follow Suit, Imitate (round II), Try Out, Plunder (round II; Bury and Shake
 //  Down left the wheel Nov 10), Hand-pick (round III).
 // Used by the board-picker gate (e2e/v4/steal.mjs) and the before/after shots.
 import { createGame, applyMove, chooseBotMove, quadrant } from '../../../src/engine/v4/index.js';
@@ -17,7 +17,7 @@ export const SPACES = {
   debts: [STEAL_TABLE, 'gold', 'steal'], kickback: [STEAL_TABLE, 'gold', 'jv'],
   echo: [BOARD_TABLE, 'echo', 'echo'], encore: [BOARD_TABLE, 'echo', 'encore'], cover: [BOARD_TABLE, 'echo', 'hum'], testdrive: [BOARD_TABLE, 'market', 'testdrive'],
   heist: [BOARD_TABLE, 'thieves', 'rob'], handpick: [BOARD_TABLE, 'red', 'take'],
-  // Swindle (Nov 10, Shake Down's slot): "Steal a rival's member. Give them a shop member of your choice."
+  // Sleight of Hand (Nov 10, Shake Down's slot): "Steal a rival's member. Give them a shop member of your choice."
   swindle: [BOARD_TABLE, 'thieves', 'swindle'],
 };
 // what everyone holds when P1 takes a steal space (P4 holds less than P1: Redistribute still takes from P4, one from
@@ -31,7 +31,7 @@ export const PILES = [
 
 // placed: false stops a step earlier, with P1 about to place on the space (a test then places it by clicking)
 // piles: what everyone holds in place of PILES (steal tables only)
-// round: the round to take it in (default the space's own ring; Help Yourself steals 1 × round, so its gate asks for II)
+// round: the round to take it in (default the space's own ring; Pilfer steals 1 × round, so its gate asks for II)
 // occupy: { '<space key>': pid } rival minions put down before P1 places (Redistribute steals 1 per Magenta action
 //   already holding a minion); each takes one of that rival's minions for the round
 export function stealSave(space = 'help', { placed = true, piles = PILES, round: at = null, occupy = null, ownPlaced = null } = {}) {
@@ -53,7 +53,7 @@ export function stealSave(space = 'help', { placed = true, piles = PILES, round:
       s = { ...s, slots: { ...s.slots }, players: s.players.map(p => ({ ...p })) };
       for (const [k, pid] of Object.entries(occupy)) { s.slots[k] = pid; s.players[pid].left = Math.max(0, s.players[pid].left - 1); }
     }
-    // ownPlaced: P1 has exactly this many minions on the wheel already this round (Help Yourself steals 1 per minion
+    // ownPlaced: P1 has exactly this many minions on the wheel already this round (Pilfer steals 1 per minion
     // you've placed this round, this one included: Cory, Nov 10); more go on open round I spaces of other colors
     if (ownPlaced != null) {
       const mine = () => Object.values(s.slots).filter(v => v === 0).length;

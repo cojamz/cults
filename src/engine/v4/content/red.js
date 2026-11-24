@@ -254,12 +254,12 @@ export default {
     {
       // Cory, Nov 11 2:04pm: Late Shift replaces Trending ("1. yes... lets just try it and see what the testing says").
       // The count includes the minion on this space, as Help Yourself reads it; the free member is the player's pick.
-      key: 'lateshift', ring: 1, name: 'Late Shift', copyDoesIt: true,
+      key: 'lateshift', ring: 1, name: 'Call to Arms', copyDoesIt: true,
       text: 'Recruit a shop member costing up to 2 per minion you’ve placed this round, this one included, for free. +1 red.',
       estimate: (ctx, p) => 1 + Math.max(0, ...lateList(ctx, p, placedCount(ctx, p) + (onBoardNow(ctx, p) ? 0 : 1)).map(c => c.def.f * 1.5 + 1)),
       resolve(ctx, p) {
         const n = placedCount(ctx, p), cap = lateCap(ctx, n);
-        freeAsk(ctx, p, 'Late Shift', lateList(ctx, p, n), 'red.poolFree', `${n} minion${n === 1 ? '' : 's'} placed, and no shop member costs ${cap} or less`, cap);
+        freeAsk(ctx, p, 'Call to Arms', lateList(ctx, p, n), 'red.poolFree', `${n} minion${n === 1 ? '' : 's'} placed, and no shop member costs ${cap} or less`, cap);
         ctx.gain(p, 'red', 1, { fromAction: true });
       },
     },
@@ -284,7 +284,7 @@ export default {
     swap11({
       // Out of the wheel since Nov 10 (Trending takes its place); kept for old saves and its tests
       pool: true,
-      key: 'turnout', ring: 1, name: 'Gather', copyDoesIt: true,
+      key: 'turnout', ring: 1, name: 'Gather the Kin', copyDoesIt: true,
       text: '+2 red in round I, +3 in round II, +4 in round III. If you recruit a member this turn: +1 follower for every 3 resources you pay.',
       // Cory, 2026-10-31: fuel tied to the recruit ("B": 2/3/4 red, 1/2/3 followers). Cory, Nov 9 ("lets say yeah for now"):
       // the followers scale with the member bought, as Splurge's do; per 3 paid is Claude's fill-in. Core pays it on the
@@ -293,7 +293,7 @@ export default {
       estimate: ctx => ctx.state.round + 1 + 2.3,
       resolve(ctx, p) {
         ctx.gain(p, 'red', ctx.state.round + 1, { fromAction: true });
-        (p.spendFollowers ||= []).push({ per: 3, name: 'Gather' });
+        (p.spendFollowers ||= []).push({ per: 3, name: 'Gather the Kin' });
       },
     }, {
       // Rally (REPLACE11=rally, Actions lane r4 batch, Nov 4): Gather's place. Members as the board counts them.
@@ -312,11 +312,11 @@ export default {
       // +1 red." (his call, kept as said beside the round I rule). In Walk-In's place. "A color you already have": one of
       // your members before this recruit is that color; it pays once, on the turn's first recruit that matches. Name is
       // Claude's fill-in (Gather's old job).
-      key: 'gather', ring: 1, name: 'Gather', text: '+3 red. If you recruit a member this turn of a color you already have: +4 followers. +1 red.', copyDoesIt: true,
+      key: 'gather', ring: 1, name: 'Gather the Kin', text: '+3 red. If you recruit a member this turn of a color you already have: +4 followers. +1 red.', copyDoesIt: true,
       estimate: (ctx, p) => 4 + (ctx.membersOf(p).length ? 2.5 : 0),
       resolve(ctx, p) {
         ctx.gain(p, 'red', 4, { fromAction: true });
-        (p.recruitFollowers ||= []).push({ n: 4, name: 'Gather', sameColor: true });
+        (p.recruitFollowers ||= []).push({ n: 4, name: 'Gather the Kin', sameColor: true });
       },
     },
     swap11(swap11({
@@ -354,14 +354,14 @@ export default {
       resolve(ctx, p) { ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
     {
-      key: 'take', ring: 3, name: 'Initiation', text: `Recruit a shop member costing ${INIT_CAP} or less, for free. +1 red.`, // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
+      key: 'take', ring: 3, name: 'Induct', text: `Recruit a shop member costing ${INIT_CAP} or less, for free. +1 red.`, // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
       estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= INIT_CAP + richUp(ctx.state)).map(c => c.def.f + cost(c) * 0.6)),
       resolve(ctx, p) {
         const shop = ctx.shopCards().filter(c => cost(c) <= INIT_CAP + richUp(ctx.state));
         ctx.gain(p, 'red', 1, { fromAction: true });
         if (!shop.length) { ctx.log(`${p.name}: no shop member costs ${INIT_CAP + richUp(ctx.state)} or less.`); return; }
         if (ACT.has('initiation')) usesRecruit(ctx, p);
-        ctx.choose(p, 'Initiation: which member?', shop.map(c => ({
+        ctx.choose(p, 'Induct: which member?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(c),
         })), 'red.takeFree');
       },

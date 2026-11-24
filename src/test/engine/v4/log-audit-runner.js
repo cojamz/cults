@@ -40,7 +40,7 @@ export function auditLog({ games = 40, from = 0, seed = 7, levels = ['easy', 'no
         const mv = chooseBotMove(s, rand, { maxMs: Infinity });
         s = applyMove(s, mv);
         moves++;
-        // by count, not by the last line's text: once the log is full a new line can repeat it (Cover's +1 green)
+        // by count, not by the last line's text: once the log is full a new line can repeat it (Imitate's +1 green)
         const fresh = logSince(s, n);
         s.players.forEach((p, i) => {
           const what = changed(before[i], p);

@@ -1,7 +1,7 @@
 // @vitest-environment node
 // The copy rule's words match the engine (panel tester C #2): a copy gives the space's own printed gain (its chip),
-// never the taker's members' bonuses (Grand Host's double, Almsgiver). A copied gift is done again (Cory, Nov 6). Greatest Hits copying a
-// Grand Host's Toast gives the printed +9, as the engine does (interactions.test.js pins the engine side).
+// never the taker's members' bonuses (Grand Host's double, Almsgiver). A copied gift is done again (Cory, Nov 6). Replay All copying a
+// Grand Host's Raise a Glass gives the printed +9, as the engine does (interactions.test.js pins the engine side).
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { GLOSSARY } from '../../../v4/glossary.js';

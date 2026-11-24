@@ -24,7 +24,7 @@ describe('Latecomers and Weeders (Nov 7)', () => {
     expect(s.goesLast).toEqual({ round: 2, pid: 0 });
     expect(named(s, 'Latecomers').length).toBeGreaterThan(0);
   });
-  // Cory, Nov 12: "your next minion" was wrong; the token holds every minion you have left, as Sleep In's does
+  // Cory, Nov 12: "your next minion" was wrong; the token holds every minion you have left, as Lie Abed's does
   it('Latecomers puts every minion you have left on the token, and says so', () => {
     expect(defById('purple.latecomers').text).toMatch(/your other minions are placed after everyone else/);
     let s = sceneQ({ quadrants: Q, round: 2, left: 3, res: [{ gold: 20, purple: 20 }], shop: ['purple.latecomers'], queue: [...turns(0, 1, 0, 1, 0, 1), { t: 'allPlaced' }] });

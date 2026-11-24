@@ -1,4 +1,4 @@
-// Out of Style's pick ("send which color to the discard pile?") counts shop members, so each choice shows a member
+// Clear Out's pick ("send which color to the discard pile?") counts shop members, so each choice shows a member
 // figure in its color and how many go, not a bare resource dot (picky run, Nov 7: three dots, one "grey", no counts).
 import { describe, it, expect, afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
@@ -18,15 +18,15 @@ function scene() {
   return resume(s);
 }
 
-describe('Out of Style on the pick card', () => {
+describe('Clear Out on the pick card', () => {
   // Nov 10: "Discard 3 shop members and refill. +1 of each discarded member's color." It picks members, not a color, so
   // the pick is on the shop's own cards (shop-recruit-single-choice.test.jsx clicks one), never a color figure card
   it('asks for one shop member at a time, three to go, each option a face-up member', () => {
     const s = take(scene(), 'market.restock');
-    expect(s.pending.prompt).toBe('Out of Style: send which member to the discard pile? (3 to go)');
+    expect(s.pending.prompt).toBe('Clear Out: send which member to the discard pile? (3 to go)');
     expect(s.pending.options.map(o => o.value)).toEqual(s.shop);
     expect(s.pending.options.every(o => o.kind === 'card' && o.target && s.shop.includes(o.target.uid))).toBe(true);
     // the pick is on the shop board, with the prompt's words as its head
-    expect(giftPick(s, s.pending)).toMatchObject({ title: 'Out of Style', board: 'shop', head: 'Send which member to the discard pile? (3 to go)' });
+    expect(giftPick(s, s.pending)).toMatchObject({ title: 'Clear Out', board: 'shop', head: 'Send which member to the discard pile? (3 to go)' });
   });
 });

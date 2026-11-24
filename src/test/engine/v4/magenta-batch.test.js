@@ -8,7 +8,7 @@ useRetired(['thieves.hideout']);
 const Q = ['gold', 'red', 'thieves', 'market'];
 const shop = ['red.volunteer', 'red.intern'];
 describe('Magenta corrections retained through the redesign', () => {
-  it('Help Yourself can take from poorer and tied rivals', () => {
+  it('Pilfer can take from poorer and tied rivals', () => {
     let s = table(Q, { n: 3, res: [{ gold: 6 }, { gold: 1 }, { red: 6 }], shop });
     s = take(placed(s, 0, 2), 'thieves.pickpocket'); // the third minion this round: steal 3
     expect(ids(s)).toContain('take:1:gold');
@@ -36,7 +36,7 @@ describe('Magenta corrections retained through the redesign', () => {
     expect(s.players[1].res.gold).toBe(9);
     expect(s.players[2].res.red).toBe(3);
   });
-  it('Collect Debts takes Starveling\'s 2 more from a selected rival', () => {
+  it('Call In Debts takes Starveling\'s 2 more from a selected rival', () => {
     let s = table(Q, { round: 2, left: 4, res: [{}, { gold: 9 }], members: [['thieves.desperado']], bonus: [0, 5], shop });
     s = move(take(s, 'gold.steal'), 'player:1');
     expect(s.pending.count.left).toBe(4);

@@ -16,8 +16,8 @@ import { useRetired } from '../helpers.js';
 useRetired(['market.bargain', 'market.pricecheck', 'market.showroom', 'red.turnout']);
 
 // seeded games in the table block below: a game count, not a time budget (budget.js). The verdict plays all 200 here,
-// not half: the block asserts a rate (Spree in over 60% of games), and a rate needs its whole sample. The fast gate 20.
-const GAMES = games(200, 40, 200); // fast 40 (Nov 12): 20 games read 8 to 10 Spree games either side of the 45% bar by seed luck alone
+// not half: the block asserts a rate (Salvage in over 60% of games), and a rate needs its whole sample. The fast gate 20.
+const GAMES = games(200, 40, 200); // fast 40 (Nov 12): 20 games read 8 to 10 Salvage games either side of the 45% bar by seed luck alone
 
 install();
 const Q = ['gold', 'red', 'market', 'green'];
@@ -92,7 +92,7 @@ describe('Blue actions', () => {
       expect(s.pending.kind).toBe('buy');
     }
   });
-  it('Out of Style (ring I, Nov 10): discard 3 shop members you pick, +1 of each one\'s color, +1 blue', () => {
+  it('Clear Out (ring I, Nov 10): discard 3 shop members you pick, +1 of each one\'s color, +1 blue', () => {
     let s = take(scene({ shop: S5 }), 'market.restock'); // Midas, Jackpot, Baron gold; Governess, Proselytizers red
     expect(R(s).blue).toBe(1);
     s = move(s, card(s, 'gold.midas'));
@@ -111,7 +111,7 @@ describe('Blue actions', () => {
     expect(ids(s)).toContain(`card:${top[1]}`);
     expect(ids(s)).not.toContain(`card:${s.pile[4]}`);
   });
-  it('Recruit Twice (ring II, Nov 24): +3 blue and a member from the discard pile now, then the turn\'s own recruit', () => {
+  it('Bring Back (ring II, Nov 24): +3 blue and a member from the discard pile now, then the turn\'s own recruit', () => {
     expect(() => take(scene({ round: 1, shop: SHOP }), 'market.clearance')).toThrow();
     let s = scene({ round: 2, res: [{ red: 10, gold: 8 }], shop: CHEAP.slice(1) });
     s.discard = [s.pile.splice(s.pile.findIndex(u => s.cards[u].def === 'red.intern'), 1)[0]];
@@ -132,7 +132,7 @@ describe('Blue actions', () => {
     s = move(s, card(s, 'gold.midas')); // 5
     expect(R(s).blue).toBe(2 + 1);
   });
-  it('Spree (ring III, Nov 10): +7 blue, two members from the discard pile now, then the turn\'s own recruit', () => {
+  it('Salvage (ring III, Nov 10): +7 blue, two members from the discard pile now, then the turn\'s own recruit', () => {
     let s = scene({ round: 3, res: [{ red: 10, gold: 8, green: 8 }], shop: CHEAP.slice(2) });
     const pick = d => s.pile.splice(s.pile.findIndex(u => s.cards[u].def === d), 1)[0];
     s.discard = [pick('red.intern'), pick('red.volunteer')];
@@ -141,7 +141,7 @@ describe('Blue actions', () => {
     expect(R(s).blue).toBe(7);
     expect(s.pending.prompt).toMatch(/\(2 to go\)$/);
     s = move(s, `card:${intern}`);
-    expect(s.pending.prompt).toBe('Spree: recruit which member from the discard pile?');
+    expect(s.pending.prompt).toBe('Salvage: recruit which member from the discard pile?');
     s = move(s, `card:${vol}`);
     expect(s.pending.kind).toBe('buy');
     s = move(s, card(s, 'red.twins'));
@@ -149,12 +149,12 @@ describe('Blue actions', () => {
     expect(s.players[0].members).toHaveLength(3);
   });
 
-  it('Spree: "Recruit nothing" ends the discard pile recruits; the turn\'s own recruit still comes', () => {
+  it('Salvage: "Recruit nothing" ends the discard pile recruits; the turn\'s own recruit still comes', () => {
     let s = scene({ round: 3, res: [{ red: 10, gold: 8, green: 8 }], shop: CHEAP.slice(2) });
     s.discard = [s.pile.splice(s.pile.findIndex(u => s.cards[u].def === 'red.intern'), 1)[0]];
     s = take(s, 'market.spree');
     s = move(s, 'none');
-    expect(s.log).toContain("P1's Spree: recruits nothing.");
+    expect(s.log).toContain("P1's Salvage: recruits nothing.");
     expect(s.pending.kind).toBe('buy');
     expect(s.players[0].members).toHaveLength(0);
   });
@@ -180,18 +180,18 @@ describe('Blue members', () => {
   it('Connoisseurs: whenever you recruit a blue member, +1 blue', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9, blue: 1 }], members: [['market.connoisseur']], shop: ['market.recluse', ...SHOP.slice(0, 5)] }), 'market.clearance');
     s = move(s, card(s, 'market.recluse'));
-    expect(R(s).gold).toBe(9); // the 1 blue held and Recruit Twice's 3 (Nov 24) pay Recluse in blue, no gold
+    expect(R(s).gold).toBe(9); // the 1 blue held and Bring Back's 3 (Nov 24) pay Recluse in blue, no gold
     expect(R(s).blue).toBe(4 - 3 + 1);
     let t = take(scene({ round: 2, res: [{ red: 9 }], members: [['market.connoisseur']], shop: CHEAP }), 'market.clearance');
     t = move(t, card(t, 'red.twins'));
-    // Recruit Twice's 3 blue (Nov 24) are kept (Blue scores held blue since Oct 20, like Red's held red), Twins is all red,
+    // Bring Back's 3 blue (Nov 24) are kept (Blue scores held blue since Oct 20, like Red's held red), Twins is all red,
     // and no +1 comes back for a red member
     expect(R(t)).toMatchObject({ red: 7, blue: 3 });
   });
   it('Reseller: whenever you recruit, +1 of that member’s color', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9 }], members: [['market.reseller']], shop: SHOP }), 'market.clearance');
     s = move(s, card(s, 'gold.tycoon'));
-    // Recruit Twice's 3 blue (Nov 24): 1 blue and 3 gold pay Baron's 4, Reseller's +1 gold back.
+    // Bring Back's 3 blue (Nov 24): 1 blue and 3 gold pay Baron's 4, Reseller's +1 gold back.
     expect(R(s)).toEqual({ gold: 7, red: 0, blue: 2, green: 0 });
   });
   it('Curator: round start, +1 blue per other blue member', () => {
@@ -236,7 +236,7 @@ describe('Blue members', () => {
     expect(t.players[0].discount).toBe(0);
   });
   it('Shopaholics: you can always recruit twice, and the second recruit names it', () => {
-    // its own test since Gather's +3 (Oct 25) moved the seeded fire-audit games under 3 holds
+    // its own test since Gather the Kin's +3 (Oct 25) moved the seeded fire-audit games under 3 holds
     let s = scene({ res: [{ red: 6, gold: 6 }], members: [['market.shopaholic']], shop: CHEAP });
     s = take(s, 'red.turnout');
     const pay = st => st.pending?.kind === 'pay' ? move(st, st.pending.options[0].id) : st;
@@ -248,7 +248,7 @@ describe('Blue members', () => {
   });
   it('Talent Scout: once per game, also recruit one of the top 5 of the pile at its cost', () => {
     let s = scene({ res: [{ gold: 9, red: 1 }], members: [['market.blackmarket']], shop: CHEAP, pileFirst: ['red.mob', 'red.host', 'gold.jackpot', 'red.sponsor', 'red.patriarch', 'gold.midas'] });
-    s = take(s, 'red.turnout'); // Gather (v0.8.0): +1 red × round and +1 red, so 9 gold and 2 red
+    s = take(s, 'red.turnout'); // Gather the Kin (v0.8.0): +1 red × round and +1 red, so 9 gold and 2 red
     const use = `use:${uidOf(s, 'market.blackmarket', 0)}`;
     s = move(s, use); // its question comes at once (gut call, 2026-10-15); your normal buy follows
     expect(s.pending.prompt).toContain('top 5');
@@ -296,19 +296,19 @@ describe(`Blue table: ${GAMES} seeded bot games`, () => {
           if (g <= 25) checkInvariants(s, { seed: g });
           if (++k > 1500) throw new Error(`game ${g} stuck`);
         }
-        if (s.log.some(l => l.includes('took Spree'))) usedSpree++;
+        if (s.log.some(l => l.includes('took Salvage'))) usedSpree++;
         expect(s.ranking).toHaveLength(4);
         for (const p of s.players) expect(followers(s, p)).toBeGreaterThan(0);
       }
     });
   }
-  it('bots reach Spree in over 45% of the games', () => {
-    // Bots still reach Spree in about half the games. The bar was 0.75 under the old 10→10 clock (166/200 then), then
+  it('bots reach Salvage in over 45% of the games', () => {
+    // Bots still reach Salvage in about half the games. The bar was 0.75 under the old 10→10 clock (166/200 then), then
     // 0.6 with 10→10 unlimited (134/200). Re-measured 2026-10-15 on these 200 seeds, Normal bots: 105/200 at c90c278
     // and the live tree. Bisected: 134 through balance pass 1, 129 at a6ebe85 (pass 2), 95 at 86a7c8a (Cory's six
     // pass-1 fixes, Pardoner and Open House here, together with the Blue pricing and scoring change; neither
-    // alone moves it that far). Spree still pays: 2.1 buys a Spree turn on average, 8 of 20 use all 3 (40 seeds).
-    // A bot-use rate, not a design verdict: the bar guards against Spree going dead.
+    // alone moves it that far). Salvage still pays: 2.1 buys a Salvage turn on average, 8 of 20 use all 3 (40 seeds).
+    // A bot-use rate, not a design verdict: the bar guards against Salvage going dead.
     expect(usedSpree).toBeGreaterThan(GAMES * 0.45);
   });
 });

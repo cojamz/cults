@@ -42,18 +42,18 @@ describe('v4 format helpers', () => {
 
   it('the log reads newest turn first, each turn top-down (w3b #49), with no bare passes (w3a #34)', () => {
     const st = { players: [{ name: 'P1' }, { name: 'P2' }] };
-    const lines = ['P1 took Kickback (Gold).', 'P1 recruited Banker.', 'P2 took Redistribute (Magenta).', 'P2 stole 2 gold from P1.', 'P2 passed.', 'Round I ends. Most gold: P1 +2'];
+    const lines = ['P1 took Grease a Palm (Gold).', 'P1 recruited Banker.', 'P2 took Redistribute (Magenta).', 'P2 stole 2 gold from P1.', 'P2 passed.', 'Round I ends. Most gold: P1 +2'];
     expect(turnGroups(st, lines)).toEqual([[5], [2, 3], [0, 1]]);
     // a minion that joins a rival's space starts a turn too, and says whose doing it is (Squatter), never a copy
-    expect(turnGroups(st, ['P1 took Kickback (Gold).', 'P2 joined P1 on Kickback (Gold).', 'P2 recruited Banker.'])).toEqual([[1, 2], [0]]);
-    expect(explainLine(['P2 joined P1 on Kickback (Gold).'], 0).text).toBe('P2 joined P1 on Kickback (Squatter).');
+    expect(turnGroups(st, ['P1 took Grease a Palm (Gold).', 'P2 joined P1 on Grease a Palm (Gold).', 'P2 recruited Banker.'])).toEqual([[1, 2], [0]]);
+    expect(explainLine(['P2 joined P1 on Grease a Palm (Gold).'], 0).text).toBe('P2 joined P1 on Grease a Palm (Squatter).');
     // a member's trigger that repeats is said once, at its newest, with how many times (w4b #29: Tipster after every move)
-    const tip = ['P1 took Kickback (Gold).', "P3's Tipster: +1 white.", 'P2 took Rush (Gold).', "P3's Tipster: +1 white.", 'P1 took Haggle (White).', "P3's Tipster: +1 white."];
+    const tip = ['P1 took Grease a Palm (Gold).', "P3's Tipster: +1 white.", 'P2 took Rush (Gold).', "P3's Tipster: +1 white.", 'P1 took Haggle (White).', "P3's Tipster: +1 white."];
     const f = foldRepeats(tip, turnGroups(st, tip));
     expect(f.groups).toEqual([[4, 5], [2], [0]]);
     expect(f.times.get(5)).toBe(3);
     // a round's opening line heads the pay-outs logged just before it
-    expect(turnGroups(st, ["P2's Investor: +2 gold.", 'Round II begins. P1 picks first.', 'P1 took Kickback (Gold).'])).toEqual([[2], [1, 0]]);
+    expect(turnGroups(st, ["P2's Investor: +2 gold.", 'Round II begins. P1 picks first.', 'P1 took Grease a Palm (Gold).'])).toEqual([[2], [1, 0]]);
     // a real game: every line but the passes, once each
     const s = play(2);
     for (const sec of logSections(s)) {
@@ -91,7 +91,7 @@ describe('v4 format helpers', () => {
     expect(effectStory(s, s, 0, 0, fx).gift).toBe('');
     // the log's story (an online guest's table, no effect stream) says it too
     const end = structuredClone(s);
-    end.log = [...s.log, 'Bo took Kickback (Gold).', "Ana's Pardoner: +1 gold."];
+    end.log = [...s.log, 'Bo took Grease a Palm (Gold).', "Ana's Pardoner: +1 gold."];
     end.players[1].res.gold = (end.players[1].res.gold || 0) + 3;
     end.players[0].res.gold = (end.players[0].res.gold || 0) + 2;
     const ts = turnStory(s, end, 1, 0);
@@ -213,11 +213,11 @@ describe('v4 format helpers', () => {
     expect(st.short).toMatch(/^\+6 gold \(Midas\)/);
   });
 
-  it('the log names a space by the words the board shows on it too (panel r1: "Sample", now Crowd; wave-2 B#3: "which is Heist?")', () => {
-    const log = ['Round II begins. Bo picks first.', 'P1 took Crowd (Green).', "Cy copied Largesse (Di's): +7 followers.", 'P1 took Kickback (Gold).', 'P1 took Nowhere (Gold).'];
-    expect(plainLine(log, 1)).toBe('P1 took Crowd (+3 green, +1 follower per minion on Green).');
-    expect(plainLine(log, 2)).toBe('Cy copied Di\'s Largesse (Give rivals 10 silver: +7 followers): +7 followers.');
-    expect(plainLine(log, 3)).toBe('P1 took Kickback (+3 gold, +1 gold to a rival).');
+  it('the log names a space by the words the board shows on it too (panel r1: "Sample", now Draw a Crowd; wave-2 B#3: "which is Plunder?")', () => {
+    const log = ['Round II begins. Bo picks first.', 'P1 took Draw a Crowd (Green).', "Cy copied Throw Coins (Di's): +7 followers.", 'P1 took Grease a Palm (Gold).', 'P1 took Nowhere (Gold).'];
+    expect(plainLine(log, 1)).toBe('P1 took Draw a Crowd (+3 green, +1 follower per minion on Green).');
+    expect(plainLine(log, 2)).toBe('Cy copied Di\'s Throw Coins (Give rivals 10 silver: +7 followers): +7 followers.');
+    expect(plainLine(log, 3)).toBe('P1 took Grease a Palm (+3 gold, +1 gold to a rival).');
     expect(plainLine(log, 4)).toBe('P1 took Nowhere (Gold).'); // no such space: the line as the engine wrote it
   });
 
@@ -272,7 +272,7 @@ describe('v4 format helpers', () => {
   });
 
   it('tells every placement on its own card: the space actually taken, gross amounts, who it touched, recruits', () => {
-    // one card per placement (RC1 panel: a snake double read "You took Golden Years · paid 6 gold" after Reprise, paid 10)
+    // one card per placement (RC1 panel: a snake double read "You took Let It Grow · paid 6 gold" after Do It Again, paid 10)
     let s = createGame({ seats: [...seats, { name: 'Di', kind: 'bot' }], seed: 11 });
     const trail = createTrail(0);
     let doubles = 0;
@@ -285,7 +285,7 @@ describe('v4 format helpers', () => {
       expect(st.text.startsWith(st.actor === 0 ? 'You' : name)).toBe(true);
       // exactly one placement per card, and the head names it
       expect(st.text.match(/ (took|joined) /g) || []).toHaveLength(st.space ? 1 : 0);
-      // a minion joining a rival's space says whose doing it is: "… joined Bo on Initiation (Squatter)"
+      // a minion joining a rival's space says whose doing it is: "… joined Bo on Induct (Squatter)"
       if (st.space) expect(st.head).toMatch(new RegExp(`${st.space.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}( \\(Squatter\\))?$`));
       for (const id of st.touched) { touched++; expect(st.text).toMatch(new RegExp(`(from |· |: )${id === 0 ? 'you' : s.players[id].name}( |$)`)); }
       if (/recruited /.test(st.text)) { recruits++; expect(st.text).toMatch(/recruited [^·]+\((paid [^)]+|free)\)/); }
@@ -407,7 +407,7 @@ describe('v4 format helpers', () => {
     let found = null;
     for (let seed = 1; seed < 40 && !found; seed++) {
       let s = createGame({ seats, seed, quadrants: ['gold', 'purple', 'echo', 'silver'] });
-      // seat 1 holds Errand Boy from the start: since Oct 25's +1 on Gather, Hold Up and Crunch Time, bots stopped buying it here
+      // seat 1 holds Errand Boy from the start: since Oct 25's +1 on Gather the Kin, Hold Up and Flurry, bots stopped buying it here
       // and Extra Hand (Once per game since Oct 28: the bot uses it in round III)
       for (const id of ['purple.secondwind', 'benders.extrahand']) {
         const gg = Object.keys(s.cards).find(u => s.cards[u].def === id);

@@ -11,13 +11,13 @@ const Q = ['echo', 'gold', 'purple', 'market'];
 describe('Encore Crowd (Green, round III)', () => {
   it('Copy a round III action a rival has a minion on. +1 green.', () => {
     let s = sceneQ({ quadrants: Q, round: 3, res: [{}, { gold: 5 }], queue: [1, 0].map(p => ({ t: 'turn', p })) });
-    s = passBuys(take(s, 'gold.strike')); // P2: Double Down
+    s = passBuys(take(s, 'gold.strike')); // P2: Multiply
     s = take(s, 'echo.encorecrowd');
     expect(s.players[0].res.green).toBe(1);
     // the one rival round III space is offered (or copied straight away when it is the only one)
     if (s.pending?.kind === 'choose' && s.pending.prompt.startsWith('Encore Crowd')) {
       expect(s.pending.options.every(o => o.label.includes('(P2)'))).toBe(true);
-      s = move(s, s.pending.options.find(o => o.label.startsWith('Double Down')).id);
+      s = move(s, s.pending.options.find(o => o.label.startsWith('Multiply')).id);
     }
     expect(s.players[0].res.gold).toBeGreaterThan(0);
   });

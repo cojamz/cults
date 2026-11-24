@@ -1,9 +1,9 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
-// E2E: Greatest Hits at 1270×700. Since Nov 11 11:20pm it reads "Choose a color other than green. Copy every action with
+// E2E: Replay All at 1270×700. Since Nov 11 11:20pm it reads "Choose a color other than green. Copy every action with
 // your minion on its spaces. +1 green." (Cory: "Let's put it on your own"; every minion from Nov 10, rivals only at 9:32pm).
-// Round III, P1 took Golden Years, P2 Kickback, P1 Intro Offer (all Gold), and P1 places their last minion:
+// Round III, P1 took Let It Grow, P2 Grease a Palm, P1 Bargain Down (all Gold), and P1 places their last minion:
 //  (c1) the space's hover card opens;
-//  (c2) after you take it and pick Gold, P1's two Gold actions are copied and named in the log, and P2's Kickback is not;
+//  (c2) after you take it and pick Gold, P1's two Gold actions are copied and named in the log, and P2's Grease a Palm is not;
 //  (c3) the Chronicle carries those lines.
 // Server: $V4_URL (a built preview). Shots: $V4_SHOTS/copyall (or $GH_SHOTS).
 import { chromium } from 'playwright';
@@ -19,8 +19,8 @@ const base = (process.env.V4_URL || 'http://localhost:5532/').replace(/\/$/, '')
 const QUADS = ['gold', 'red', 'purple', 'echo'];
 const key = (q, k) => `${QUADS.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.key === k)}`;
 const GH = key('echo', 'eternity');
-const COPIED = ['Golden Years', 'Intro Offer'];
-const NOT_COPIED = 'Kickback';
+const COPIED = ['Let It Grow', 'Bargain Down'];
+const NOT_COPIED = 'Grease a Palm';
 
 /** Round III, P1 (the only person) to place their last minion, after P1 took two Gold spaces and P2 one. */
 function copyAllSave(stamp) {
@@ -37,7 +37,7 @@ function copyAllSave(stamp) {
     while (s.pending?.player === pid && !s.pending.options.some(o => o.id.startsWith('slot:'))) s = applyMove(s, { player: pid, option: s.pending.options.find(o => o.id === 'pass')?.id || s.pending.options[0].id });
   };
   go(0, key('gold', 'rush')); go(1, key('gold', 'jv')); go(0, key('gold', 'discount'));
-  if (!(s.pending?.player === 0 && s.pending.options.some(o => o.id === `slot:${GH}`))) throw new Error('copyall: setup never offered Greatest Hits');
+  if (!(s.pending?.player === 0 && s.pending.options.some(o => o.id === `slot:${GH}`))) throw new Error('copyall: setup never offered Replay All');
   return { config: { seats: seats.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal' }, state: s, undo: null, savedAt: Date.now() };
 }
 
@@ -67,7 +67,7 @@ try {
   const card = await page.waitForSelector(`[data-space-card="${GH}"]`, { timeout: 4000 }).catch(() => null);
   await page.waitForTimeout(500);
   await page.screenshot({ path: `${SHOTS}/01-hover.png` });
-  if (!card) fail('Greatest Hits\' hover card never opened', 'c1');
+  if (!card) fail('Replay All\' hover card never opened', 'c1');
 
   // (c2) take it, answer its choices as a person would
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
@@ -83,11 +83,11 @@ try {
   await page.waitForTimeout(600);
   await page.screenshot({ path: `${SHOTS}/03-after.png` });
   const log = await page.evaluate(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state.log);
-  const at = log.findIndex(l => /took Greatest Hits/.test(l));
+  const at = log.findIndex(l => /took Replay All/.test(l));
   const after = at < 0 ? [] : log.slice(at);
-  if (at < 0) fail('the game log never says P1 took Greatest Hits', 'c2');
+  if (at < 0) fail('the game log never says P1 took Replay All', 'c2');
   else {
-    if (!after.includes("P1's Greatest Hits copies every action on Gold's spaces.")) fail(`no "P1's Greatest Hits copies every action on Gold's spaces.": ${JSON.stringify(after.slice(0, 12))}`, 'c2');
+    if (!after.includes("P1's Replay All copies every action on Gold's spaces.")) fail(`no "P1's Replay All copies every action on Gold's spaces.": ${JSON.stringify(after.slice(0, 12))}`, 'c2');
     for (const n of COPIED) if (!after.some(l => l.startsWith(`P1 copied ${n}:`))) fail(`no "P1 copied ${n}:": ${JSON.stringify(after.slice(0, 12))}`, 'c2');
     if (after.some(l => l.startsWith(`P1 copied ${NOT_COPIED}`))) fail(`P1 copied P2's ${NOT_COPIED}: ${JSON.stringify(after.slice(0, 12))}`, 'c2');
   }

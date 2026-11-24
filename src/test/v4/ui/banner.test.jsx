@@ -10,9 +10,9 @@ import { makeTables } from '../../engine/v4/fuzz-tables-runner.js';
 
 describe('banner lines', () => {
   it('puts the Goes Last token on the space line', () => {
-    expect(joinGoesLast(['+5 purple', 'recruited Gilder (paid 5 yellow 4 purple)', 'Sleep In: took the Goes Last token'], 'Sleep In'))
+    expect(joinGoesLast(['+5 purple', 'recruited Gilder (paid 5 yellow 4 purple)', 'Lie Abed: took the Goes Last token'], 'Lie Abed'))
       .toEqual(['+5 purple · Goes Last token', 'recruited Gilder (paid 5 yellow 4 purple)']);
-    expect(joinGoesLast(['recruited Gilder (free)', 'Sleep In: took the Goes Last token'], 'Sleep In')).toHaveLength(2);
+    expect(joinGoesLast(['recruited Gilder (free)', 'Lie Abed: took the Goes Last token'], 'Lie Abed')).toHaveLength(2);
   });
 
   it('draws cults, members and the recruit line from the game\'s own words', () => {

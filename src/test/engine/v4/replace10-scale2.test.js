@@ -27,12 +27,12 @@ describe('REPLACE10: Song Request and Stagehand', () => {
     expect(defById('echo.roadie').retired).toBe(true);
   });
 
-  it('Song Request: On Use, once per round: copy an action a rival has a minion on (Ben is on Build Up: +4 green)', () => {
+  it('Song Request: On Use, once per round: copy an action a rival has a minion on (Ben is on Flock Together: +4 green)', () => {
     let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, members: [['echo.songrequest']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
     const done = x => { while (x.pending && x.pending.kind !== 'place') x = move(x, (x.pending.options.find(o => o.kind === 'pass') || x.pending.options[0]).id); return x; };
     s = done(take(s, 'red.turnout'));
     expect(s.pending.player).toBe(1);
-    s = done(take(s, 'echo.chant')); // Ben (P2) on Build Up
+    s = done(take(s, 'echo.chant')); // Ben (P2) on Flock Together
     expect(s.pending.player).toBe(0);
     const u = uidOf(s, 'echo.songrequest', 0);
     const g = s.players[0].res.green || 0, m = s.players[0].res.magenta || 0;

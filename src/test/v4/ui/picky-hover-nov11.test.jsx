@@ -22,19 +22,19 @@ const table = () => sceneQ({ quadrants: ['red', 'market', 'trading', 'thieves'],
 describe('the space badge (B4, B6)', () => {
   it('a once-a-game +1 someone claimed is struck as taken, not offered', () => {
     const s = sceneQ({ quadrants: ['echo', 'red', 'thieves', 'market'], rules: { plus1: 'game' } });
-    const [q, i] = at(s, 'Echo');
-    expect(card(s, 'Echo').querySelector('[data-plus]').getAttribute('data-plus')).toBe('');
+    const [q, i] = at(s, 'Follow Suit');
+    expect(card(s, 'Follow Suit').querySelector('[data-plus]').getAttribute('data-plus')).toBe('');
     cleanup();
     s.plus1Seen = { [`${q}-${i}`]: true };
-    const badge = card(s, 'Echo').querySelector('[data-plus]');
+    const badge = card(s, 'Follow Suit').querySelector('[data-plus]');
     expect(badge.getAttribute('data-plus')).toBe('taken');
     expect(badge.querySelector('s')).not.toBeNull();
     expect(badge.getAttribute('title')).toMatch(/^Taken/);
   });
 
-  it('a gain the sentence leads into stays in the sentence (New Blood never ends on a colon)', () => {
+  it('a gain the sentence leads into stays in the sentence (Welcome Strangers never ends on a colon)', () => {
     const s = sceneQ({ quadrants: ['yellow', 'red', 'thieves', 'market'] });
-    const c = card(s, 'New Blood');
+    const c = card(s, 'Welcome Strangers');
     expect(c.querySelector('[data-plus]')).toBeNull();
     expect(c.querySelector('.sc-rule').textContent).not.toMatch(/:\s*$/);
   });
@@ -43,11 +43,11 @@ describe('the space badge (B4, B6)', () => {
 describe("You'd get (B5, W5, W18)", () => {
   it('a steal of followers says yours beside the rival’s loss', () => {
     const s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'market'], round: 2, n: 3, res: [{}, { gold: 5, red: 4 }, { blue: 3 }], bonus: [0, 6, 3] });
-    expect(words(s, 'Heist').text).toBe('+1 magenta, +3 followers; steal 3 in colors you pick');
+    expect(words(s, 'Plunder').text).toBe('+1 magenta, +3 followers; steal 3 in colors you pick');
   });
 
   it('a steal the space doesn’t print names the member it brings in', () => {
-    expect(youd(table(), 'Swindle')).toContain('steal up to 3 in colors you pick (via Bandit)');
+    expect(youd(table(), 'Sleight of Hand')).toContain('steal up to 3 in colors you pick (via Bandit)');
   });
 
   it('a card that counts as several members says so on itself', () => {
@@ -61,14 +61,14 @@ describe("You'd get (B5, W5, W18)", () => {
 
   it('a swap’s worst pick is never read as a first step ("… then up to …")', () => {
     const s = table();
-    for (const n of ['Demote', 'Promote', 'Farewell']) {
+    for (const n of ['Demote', 'Promote', 'Bid Farewell']) {
       const y = words(s, n);
       expect(y.orWord).toBeUndefined();
     }
   });
 
   it('a free recruit with nothing in reach says why', () => {
-    expect(youd(table(), 'Late Shift')).toContain('no shop member costs 2 or less');
+    expect(youd(table(), 'Call to Arms')).toContain('no shop member costs 2 or less');
   });
 });
 
@@ -85,7 +85,7 @@ describe('target lines (W4, W18)', () => {
 
   it('a member’s number says it’s a cost', () => {
     const s = table();
-    const [q, i] = at(s, 'Swindle');
+    const [q, i] = at(s, 'Sleight of Hand');
     const line = targetLines(s, 0, previewSpace(s, 0, q, i).targets, '').find(l => l.k === 'Could take');
     expect(line.text).toMatch(/Bandit \(cost \d+\)/);
   });

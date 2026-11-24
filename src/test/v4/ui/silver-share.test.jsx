@@ -1,4 +1,4 @@
-// Rivals gain silver one click at a time (Party Gifts, Largesse; Cory, 2026-11-01: "not clear how many times you've
+// Rivals gain silver one click at a time (Hand Out Gifts, Throw Coins; Cory, 2026-11-01: "not clear how many times you've
 // clicked / what's remaining"): the gift card says how many are given and left, and each rival's face shows its tally.
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
@@ -21,14 +21,14 @@ function scene(round = 1) {
 }
 const view = s => render(<GiftCard state={s} gift={giftPick(s, s.pending)} onFirst={() => {}} onAnswer={() => {}} busy={false} />);
 
-describe('Party Gifts on the gift card', () => {
+describe('Hand Out Gifts on the gift card', () => {
   it('opens with 0 given, 3 left, a face per rival and Give nothing', () => {
     const s = take(scene(), 'silver.partygifts');
     const g = giftPick(s, s.pending);
     expect(g.kind).toBe('share');
     expect([g.total, g.left]).toEqual([0, 3]);
     const { container } = view(s);
-    expect(container.querySelector('.gc-title').textContent).toBe('Party Gifts · 0 given · 3 left');
+    expect(container.querySelector('.gc-title').textContent).toBe('Hand Out Gifts · 0 given · 3 left');
     expect(container.querySelectorAll('.gc-share')).toHaveLength(2);
     expect(container.querySelector('.gc-tally')).toBeNull();
     expect(container.querySelector('.gc-rest').textContent).toBe('Give nothing');
@@ -38,7 +38,7 @@ describe('Party Gifts on the gift card', () => {
     const g = giftPick(s, s.pending);
     expect([g.total, g.left, g.given[1]]).toEqual([2, 1, 2]);
     const { container } = view(s);
-    expect(container.querySelector('.gc-title').textContent).toBe('Party Gifts · 2 given · 1 left');
+    expect(container.querySelector('.gc-title').textContent).toBe('Hand Out Gifts · 2 given · 1 left');
     expect(container.querySelector('.gc-share[data-pid="1"] .gc-tally').textContent).toBe('+2');
     expect(container.querySelector('.gc-share[data-pid="2"] .gc-tally')).toBeNull();
     expect(container.querySelector('.gc-sub').textContent).toContain('+4 so far');
@@ -46,17 +46,17 @@ describe('Party Gifts on the gift card', () => {
   });
 });
 
-describe('Largesse on the gift card (Cory, Nov 24: "+7 give 10")', () => {
+describe('Throw Coins on the gift card (Cory, Nov 24: "+7 give 10")', () => {
   it('asks for all 10, offers no way out, and says +7 followers once all are given', () => {
     const s = move(take(scene(3), 'silver.largesse'), 'player:1');
     const { container } = view(s);
-    expect(container.querySelector('.gc-title').textContent).toBe('Largesse · 1 given · 9 left');
+    expect(container.querySelector('.gc-title').textContent).toBe('Throw Coins · 1 given · 9 left');
     expect(container.querySelector('.gc-rest')).toBeNull();
     expect(container.querySelector('.gc-sub').textContent).toBe('One per click, from the bank. +7 followers once all 10 are given.');
   });
 });
 
-describe('Party Gifts set whole and given in one move (Cory, Nov 13: "they should make that decision all at once")', () => {
+describe('Hand Out Gifts set whole and given in one move (Cory, Nov 13: "they should make that decision all at once")', () => {
   it('clicks on faces only set the split; Give sends every pick, then Done, in one answer', async () => {
     const { fireEvent } = await import('@testing-library/react');
     const { applyMove } = await import('../../../engine/v4/core.js');
@@ -66,7 +66,7 @@ describe('Party Gifts set whole and given in one move (Cory, Nov 13: "they shoul
     fireEvent.click(container.querySelector('.gc-share[data-pid="1"]'));
     fireEvent.click(container.querySelector('.gc-share[data-pid="2"]'));
     expect(answered).toEqual([]);
-    expect(container.querySelector('.gc-title').textContent).toBe('Party Gifts · 2 given · 1 left');
+    expect(container.querySelector('.gc-title').textContent).toBe('Hand Out Gifts · 2 given · 1 left');
     fireEvent.click(container.querySelector('[data-share-give]'));
     expect(sent).toEqual([['player:1', 'player:2', 'done']]);
     // the engine takes it as one move: each rival +1 silver

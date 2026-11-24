@@ -15,7 +15,7 @@ const rich = { gold: 30, red: 30, blue: 30, green: 30 };
 const topOfPile = (s, pred) => { const k = s.pile.findIndex(u => pred(s.cards[u].def)); s.pile.unshift(...s.pile.splice(k, 1)); };
 
 describe('Gold actions', () => {
-  it('Kickback: +3 gold to you, +1 gold to the player you pick', () => {
+  it('Grease a Palm: +3 gold to you, +1 gold to the player you pick', () => {
     let s = sceneQ({ n: 3 });
     s = take(s, 'gold.jv');
     expect(s.pending.options.map(o => o.id)).toEqual(['player:1', 'player:2']);
@@ -23,12 +23,12 @@ describe('Gold actions', () => {
     expect(G(s)).toEqual([3, 0, 1]);
     expect(s.log.some(l => l.includes('gave 1 gold to P3'))).toBe(true);
   });
-  it('Golden Years: 2 / 4 / 6 by round; Tithe: +1 per member; Double Down: doubles', () => {
+  it('Let It Grow: 2 / 4 / 6 by round; Pass the Plate: +1 per member; Multiply: doubles', () => {
     for (const r of [1, 2, 3]) expect(G(take(sceneQ({ round: r }), 'gold.rush'))[0]).toBe(2 * r);
     expect(G(take(sceneQ({ round: 2, members: [['red.intern', 'red.twins']] }), 'gold.windfall'))[0]).toBe(4);
     expect(G(take(sceneQ({ round: 3, res: [{ gold: 7 }] }), 'gold.strike'))[0]).toBe(14);
   });
-  it('Collect Debts: up to 3 gold from rivals, split as you like, all through the shared steal', () => {
+  it('Call In Debts: up to 3 gold from rivals, split as you like, all through the shared steal', () => {
     let s = sceneQ({ n: 3, round: 2, res: [{}, { gold: 2 }, { gold: 5 }] });
     s = take(s, 'gold.steal');
     s = move(s, 'player:1'); s = move(s, 'player:2'); s = move(s, 'player:2');
@@ -121,7 +121,7 @@ describe('Gold members', () => {
     const restore = pinCosts({ 'gold.prospector': [4, 2] });
     try {
       let s = sceneQ({ res: [{ gold: 3 }], members: [['gold.thrift']], shop: ['gold.prospector'] });
-      s = take(s, 'gold.discount'); // Intro Offer 4 off: cost 4+2 → 0+2, paid with 1 gold
+      s = take(s, 'gold.discount'); // Bargain Down 4 off: cost 4+2 → 0+2, paid with 1 gold
       expect(s.players[0].discount).toBe(4);
       s = buy(s, 'gold.prospector');
       expect(s.players[0].res.gold).toBe(2);

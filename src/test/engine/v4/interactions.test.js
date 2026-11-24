@@ -76,7 +76,7 @@ describe('Green copies the risky spaces', () => {
     s = go(placed(s, 1, 2, AV), 'thieves.pickpocket', 'take:2:gold', 'take:2:gold', 'take:2:gold'); // P2's third minion: steal 3
     expect(R(s, 1)).toMatchObject({ gold: 3, magenta: 1 });
     s = take(placed(s, 0, 2, AV), 'echo.echo');
-    expect(labels(s)).toEqual(['Help Yourself (P2): do Help Yourself yourself']);
+    expect(labels(s)).toEqual(['Pilfer (P2): do Pilfer yourself']);
     s = move(s, s.pending.options[0].id);
     // P1 now steals 3 (their own third minion): P2's gold and magenta and P3's last gold are on offer
     expect(ids(s).sort()).toEqual(['take:1:gold', 'take:1:magenta', 'take:2:gold']);
@@ -95,7 +95,7 @@ describe('Green copies the risky spaces', () => {
     expect(ids(s)).toEqual(['take:0:red']); // P2 can only rob P1
     s = pass(move(move(move(s, 'take:0:red'), 'take:0:red'), 'take:0:red')); // P2's third minion: steal 3
     s = take(s, 'echo.echo');
-    s = move(s, s.pending.options.find(opt('Help Yourself')).id);
+    s = move(s, s.pending.options.find(opt('Pilfer')).id);
     expect(ids(s).length).toBeGreaterThan(0);
     expect(ids(s).every(id => id.startsWith('take:1:'))).toBe(true); // never P3
   });
@@ -109,27 +109,27 @@ describe('Green copies the risky spaces', () => {
     expect(labels(s)).toEqual(['Exchange (P2): do Exchange yourself']);
   });
 
-  it('copying Blue’s Out of Style does Out of Style again for the copier', () => {
+  it('copying Blue’s Clear Out does Clear Out again for the copier', () => {
     const B = ['gold', 'red', 'market', 'echo'];
     let s = scene({ quads: B, turns: [1, 0] });
     s = take(s, 'market.restock'); // Nov 10: "Discard 3 shop members and refill. +1 of each discarded member's color. +1 blue."
     for (let k = 0; k < 3; k++) s = move(s, s.pending.options[0].id);
     s = pass(s);
     s = take(s, 'echo.echo');
-    expect(labels(s)).toEqual(['Out of Style (P2): do Out of Style yourself']);
+    expect(labels(s)).toEqual(['Clear Out (P2): do Clear Out yourself']);
     s = move(s, s.pending.options[0].id);
     expect(R(s, 0).blue).toBe(1); // its +1 now, +1 of each color once the copier picks the members
-    expect(s.pending.prompt).toBe('Out of Style: send which member to the discard pile? (3 to go)');
+    expect(s.pending.prompt).toBe('Clear Out: send which member to the discard pile? (3 to go)');
   });
 
-  it('a copied Toast is done again: it gifts the rivals too, without the host’s Almsgiver or Grand Host (Cory, Nov 6)', () => {
+  it('a copied Raise a Glass is done again: it gifts the rivals too, without the host’s Almsgiver or Grand Host (Cory, Nov 6)', () => {
     const S = ['gold', 'red', 'silver', 'echo'];
     let s = scene({ quads: S, turns: [1, 0], members: [[], ['silver.caterer']] });
     s = go(s, 'silver.toast');
     expect(R(s, 1).silver).toBe(7); // 5 (+4, +1) + the Silver Cloak's 2 on its holder's own gift (Cory, Nov 7)
     expect(R(s, 0).silver).toBe(2); // the toast's spill
     s = take(s, 'echo.echo');
-    expect(labels(s)).toEqual(['Toast (P2): do Toast yourself']);
+    expect(labels(s)).toEqual(['Raise a Glass (P2): do Raise a Glass yourself']);
     s = pass(move(s, s.pending.options[0].id));
     expect(R(s, 0).silver).toBe(7);
     expect(R(s, 1).silver).toBe(9); // the copy's gift; P2's Almsgiver pays only on P2's own gifts
@@ -138,7 +138,7 @@ describe('Green copies the risky spaces', () => {
     t = go(t, 'silver.toast');
     expect(R(t, 1).silver).toBe(10);
     t = take(t, 'echo.echo');
-    expect(labels(t)).toEqual(['Toast (P2): do Toast yourself']);
+    expect(labels(t)).toEqual(['Raise a Glass (P2): do Raise a Glass yourself']);
   });
 
 
@@ -147,15 +147,15 @@ describe('Green copies the risky spaces', () => {
     let s = scene({ quads: S, turns: [1, 0], members: [['gold.midas'], []] });
     s = go(s, 'silver.toast');
     s = pass(move(take(s, 'echo.echo'), 'space:now:2-0'));
-    expect(R(s, 0)).toMatchObject({ gold: 6, silver: 2 }); // the copied +4 and +1 turn gold; Echo's inherent +1 green also turns gold; the gift stays silver.
+    expect(R(s, 0)).toMatchObject({ gold: 6, silver: 2 }); // the copied +4 and +1 turn gold; Follow Suit's inherent +1 green also turns gold; the gift stays silver.
 
     let t = scene({ quads: S, turns: [1, 0], members: [[], ['gold.midas']] });
-    t = go(t, 'echo.chant'); // Build Up (Nov 10): +1 per minion on Green (its own) and +1 green: 2
+    t = go(t, 'echo.chant'); // Flock Together (Nov 10): +1 per minion on Green (its own) and +1 green: 2
     expect(R(t, 1)).toMatchObject({ gold: 2, green: 0 });
     t = take(t, 'echo.echo');
-    expect(labels(t)).toEqual(['Build Up (P2): +2 green']);
+    expect(labels(t)).toEqual(['Flock Together (P2): +2 green']);
     t = pass(move(t, t.pending.options[0].id));
-    expect(R(t, 0).green).toBe(3); // the copied +2, Echo's own +1
+    expect(R(t, 0).green).toBe(3); // the copied +2, Follow Suit's own +1
   });
 
   it('Poor Relation doubles a copied gold gain (the copy is the copier’s own action)', () => {
@@ -180,13 +180,13 @@ describe('Doppelganger copying Purple, Green and Silver members', () => {
   it('copying Foreman pays on every extra turn twice', () => {
     let s = scene({ quads: ['gold', 'red', 'purple', 'echo'], round: 2, slots: { '0-0': 0 }, members: [['purple.foreman', 'echo.doppel']], copies: { 0: { 'echo.doppel': 'purple.foreman' } } });
     s = take(s, 'purple.overtime');
-    expect(R(s, 0).purple).toBe(4); // 2 workers on the board, two Foremen, Overtime's 1 turn (Crunch Time's turns aren't extra)
+    expect(R(s, 0).purple).toBe(4); // 2 workers on the board, two Foremen, Burn the Candle's 1 turn (Flurry's turns aren't extra)
   });
   it('copying Choir pays on every copy twice', () => {
     let s = scene({ quads: ['gold', 'red', 'silver', 'echo'], turns: [1, 0], members: [['echo.choir', 'echo.doppel']], copies: { 0: { 'echo.doppel': 'echo.choir' } } });
     s = go(s, 'gold.rush');
     s = pass(move(take(s, 'echo.echo'), 'space:now:0-1'));
-    expect(R(s, 0)).toMatchObject({ gold: 2, green: 3 }); // Two Choirs plus Echo's inherent +1 green.
+    expect(R(s, 0)).toMatchObject({ gold: 2, green: 3 }); // Two Choirs plus Follow Suit's inherent +1 green.
   });
   it('copying Errand Boy gives a usable once-per-game extra turn of its own', () => {
     let s = scene({ quads: ['gold', 'red', 'purple', 'echo'], round: 3, turns: [0, 1], members: [['purple.secondwind', 'echo.doppel']], copies: { 0: { 'echo.doppel': 'purple.secondwind' } } });
@@ -206,16 +206,16 @@ describe('Doppelganger copying Purple, Green and Silver members', () => {
 });
 
 // ---------------------------------------------------------------------------------------------------------
-describe('Silver gifts with Guest and Kickback', () => {
+describe('Silver gifts with Guest and Grease a Palm', () => {
   const Q = ['gold', 'red', 'silver', 'yellow'];
-  it('Party Gifts: the Guest gets 1 more silver per gift', () => {
+  it('Hand Out Gifts: the Guest gets 1 more silver per gift', () => {
     let s = scene({ quads: Q, members: [[], ['silver.guest']] });
     s = go(s, 'silver.partygifts', 'player:1');
     s = move(move(s, 'player:1'), 'done');
     expect(R(s, 1).silver).toBe(3); // 2 given + Guest’s 1
     expect(s.players[0].bonus).toBe(4);
   });
-  it('Kickback’s gold is a gift: the Guest gets 1 more', () => {
+  it('Grease a Palm’s gold is a gift: the Guest gets 1 more', () => {
     const s = go(scene({ quads: Q, members: [[], ['silver.guest']] }), 'gold.jv', 'player:1');
     expect(R(s, 1).gold).toBe(2);
   });
@@ -225,8 +225,8 @@ describe('Silver gifts with Guest and Kickback', () => {
 describe('Blue’s out-of-buy recruits with Pied Piper and Proselytizers', () => {
   const Q = ['gold', 'red', 'market', 'green'];
   const rich = { gold: 9, red: 9, blue: 9, green: 9 };
-  // Recruit Twice (Nov 24): "Recruit a member from the discard pile now. +3 blue." The turn's own recruit still follows.
-  it('Recruit Twice: a discard pile recruit, then the turn\'s own: Drive pays, Proselytizers pays twice', () => {
+  // Bring Back (Nov 24): "Recruit a member from the discard pile now. +3 blue." The turn's own recruit still follows.
+  it('Bring Back: a discard pile recruit, then the turn\'s own: Drive pays, Proselytizers pays twice', () => {
     let s = scene({ quads: Q, round: 2, res: [rich, { blue: 30 }], members: [['red.drive', 'red.proselytizer']] });
     s = toDiscard(s, ['red.intern']);
     s = take(s, 'market.clearance');
@@ -246,8 +246,8 @@ describe('Blue’s out-of-buy recruits with Pied Piper and Proselytizers', () =>
     expect(s.pending?.kind).toBe('buy');
     expect(s.players[0].turnRecruits).toBe(0);
   });
-  // Spree (Nov 10): "Recruit two members from the discard pile now. +7 blue." Then the turn's own recruit.
-  it('Spree: two discard pile recruits and the turn\'s own, Drive pays once', () => {
+  // Salvage (Nov 10): "Recruit two members from the discard pile now. +7 blue." Then the turn's own recruit.
+  it('Salvage: two discard pile recruits and the turn\'s own, Drive pays once', () => {
     let s = scene({ quads: Q, round: 3, res: [{ gold: 20, red: 20, blue: 20, green: 20 }, { blue: 30 }], members: [['red.drive']] });
     s = toDiscard(s, ['red.intern', 'red.clan']);
     s = take(s, 'market.spree');
@@ -372,9 +372,9 @@ describe('White sells followers that contests and bonuses counted', () => {
 });
 
 // ---------------------------------------------------------------------------------------------------------
-describe('Lie Low against Gold’s Collect Debts and Shake Down', () => {
+describe('Lie Low against Gold’s Call In Debts and Shake Down', () => {
   const Q = ['gold', 'red', 'thieves', 'market'];
-  it('Collect Debts can’t take from the player in the Lie Low this round, and can next round', () => {
+  it('Call In Debts can’t take from the player in the Lie Low this round, and can next round', () => {
     let s = scene({ quads: Q, n: 3, round: 2, turns: [1, 0], res: [{}, { gold: 4 }, { gold: 4 }] });
     s = go(s, 'thieves.hideout', 'take:2:gold'); // P2 hides, stealing 1 gold from P3 (Cory, Nov 1)
     expect(R(s, 1)).toMatchObject({ gold: 5, magenta: 1 });
@@ -392,7 +392,7 @@ describe('Lie Low against Gold’s Collect Debts and Shake Down', () => {
     expect(s.pending.prompt).toMatch(/to keep Big Family\?$/);
     expect(defs(s, 1)).toEqual(['red.twins']);
   });
-  it('Gold’s Collect Debts sets off Magenta’s reactions (Lookout)', () => {
+  it('Gold’s Call In Debts sets off Magenta’s reactions (Lookout)', () => {
     let s = scene({ quads: Q, n: 3, round: 2, res: [{ gold: 1 }, { gold: 4 }, {}], members: [[], [], ['thieves.lookout']] });
     s = play(take(s, 'gold.steal'), 'player:1', 'player:1', 'player:1');
     expect(R(s, 1).gold).toBe(1);
@@ -427,16 +427,16 @@ describe('gain changers on stolen goods', () => {
     expect(ids(s)).toEqual(['take:1:gold', 'take:1:red']);
     s = pass(move(move(move(s, 'take:1:red'), 'take:1:red'), 'take:1:red')); // the third minion: steal 3
     expect(R(s, 1)).toMatchObject({ red: 0, gold: 5 }); // lost 3
-    expect(R(s, 0)).toMatchObject({ gold: 8, red: 0, magenta: 0 }); // 3 red and the +1 magenta → 4 gold → 8 (Help Yourself's +1 magenta is back, Nov 10)
+    expect(R(s, 0)).toMatchObject({ gold: 8, red: 0, magenta: 0 }); // 3 red and the +1 magenta → 4 gold → 8 (Pilfer's +1 magenta is back, Nov 10)
   });
 });
 
 // ---------------------------------------------------------------------------------------------------------
 describe('member colors across spheres', () => {
-  it('Yellow’s Melting Pot counts Green members as a color', () => {
+  it('Yellow’s Hold a Fair counts Green members as a color', () => {
     let s = go(scene({ quads: ['gold', 'red', 'yellow', 'echo'], round: 2, members: [['echo.evergreen', 'echo.choir', 'red.twins']] }), 'yellow.meltingpot');
     // green and red among the members: +1 of each
-    expect(s.pending?.prompt || '').not.toMatch(/Melting Pot/);
+    expect(s.pending?.prompt || '').not.toMatch(/Hold a Fair/);
     expect(R(s, 0)).toMatchObject({ green: 1, red: 1, yellow: 0, gold: 0 }); // and +2 followers (Nov 11)
     expect(s.players[0].bonus).toBe(2);
   });

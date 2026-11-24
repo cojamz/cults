@@ -14,7 +14,7 @@ delete process.env.MEMBER_UP;
 
 describe('REPLACE10: Turf (Stash\'s slot, Cory\'s idea)', () => {
   it('steals 1 resource from each rival per minion they have on Magenta spaces, +1 magenta; Lie Low blocks it', () => {
-    // thieves is quadrant 1; round II: Help Yourself 1-0, Turf 1-1, Lie Low 1-2, Heist 1-3, Shake Down 1-4
+    // thieves is quadrant 1; round II: Pilfer 1-0, Turf 1-1, Lie Low 1-2, Plunder 1-3, Shake Down 1-4
     let s = table(['red', 'thieves', 'trading', 'yellow'], { n: 4, round: 2, left: 4, res: [{}, { red: 5 }, { white: 5 }, { yellow: 5 }] });
     s.slots = { '1-0': 1, '1-3': 1, '1-4': 2, '1-2': 3, '0-0': 2 };
     s.players[3].hideout = 2;

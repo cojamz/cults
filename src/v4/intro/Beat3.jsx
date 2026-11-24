@@ -41,8 +41,8 @@ export const stillShot = { ...CAM.wheelAndCult };
 // ---------- the actions: which minion, which space, what it pays, and when ----------
 // a minion floats (f ms), lands; the space lights; the plaque pops; the glyphs lift off one by one (gap apart)
 const ACTS = [
-  { m: 0, q: 'gold', k: 0, r: 'gold', n: 3, name: 'Kickback', at: A1, float: 900, arc: 14, gap: 230, pop: 150, fly: 520, pile: [0, 1, 2] },
-  { m: 2, q: 'green', k: 1, r: 'green', n: 3, name: 'Build Up', at: A2, float: 450, arc: 10, gap: 100, pop: 80, fly: 400, pile: [3, 4, 5] },
+  { m: 0, q: 'gold', k: 0, r: 'gold', n: 3, name: 'Grease a Palm', at: A1, float: 900, arc: 14, gap: 230, pop: 150, fly: 520, pile: [0, 1, 2] },
+  { m: 2, q: 'green', k: 1, r: 'green', n: 3, name: 'Flock Together', at: A2, float: 450, arc: 10, gap: 100, pop: 80, fly: 400, pile: [3, 4, 5] },
 ].map(a => {
   const land = a.at + a.float;
   const plaque = land + (a.m ? 30 : 100);

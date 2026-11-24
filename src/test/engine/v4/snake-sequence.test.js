@@ -1,9 +1,9 @@
 // @vitest-environment node
 // The round's real turn sequence against the plain snake when one seat takes turns out of it (3 players, Purple table).
-// Cory's play notes #98/#99 (2026-10-17): "the middle player went twice?" after Crunch Time.
+// Cory's play notes #98/#99 (2026-10-17): "the middle player went twice?" after Flurry.
 // - An extra turn (Errand Boy, Night Owls, Errand Runner, Taskmaster, Early Riser) is a turn put in: everyone else keeps
 //   the plain snake, untouched.
-// - Crunch Time ("Take your next 2 turns right away", Cory 2026-10-15) moves your own last two turns of the round up (Cory, 2026-10-21: it shouldn't skip your next turns). Nobody gains
+// - Flurry ("Take your next 2 turns right away", Cory 2026-10-15) moves your own last two turns of the round up (Cory, 2026-10-21: it shouldn't skip your next turns). Nobody gains
 //   or loses a turn, everyone else keeps their order, but the gaps those two turns left close: a seat that never places
 //   twice in a row in the plain snake (the middle seat) can now. That is the rule, not a reshuffle.
 import { describe, it, expect } from 'vitest';
@@ -38,7 +38,7 @@ function playRound(s, rand, onTurn) {
   }
   return seq;
 }
-/** A bot move, minus Purple's turn-moving spaces (Sleep In, Hold Up, Right Away, Last Call, and Overtime's extra minion; these tests count the plain snake against Crunch Time). */
+/** A bot move, minus Purple's turn-moving spaces (Lie Abed, Hold Up, Make Haste, Bide Your Time, and Burn the Candle's extra minion; these tests count the plain snake against Flurry). */
 function botMove(s, rand) {
   // nobody recruits (Nov 13): members that add, skip or move turns (Extra Hand, Bouncers, Latecomers, Errand Boy…) changed
   // every time the deck did, and these seeded tables broke after each deck change. Without members the turn order is the
@@ -68,23 +68,23 @@ describe('snake vs real sequence, 3 players, one seat taking turns out of it', (
     const base = s.order.slice(0, 3), who = base[at];
     const seq = playRound(s, rand, st => {
       if (st.pending.player !== who || st.turns.filter(p => p === who).length !== 1) return null;
-      const o = st.pending.options.find(x => x.kind === 'slot' && actionAt(st, x.q, x.i).name === 'Crunch Time');
+      const o = st.pending.options.find(x => x.kind === 'slot' && actionAt(st, x.q, x.i).name === 'Flurry');
       return o ? applyMove(st, { player: who, option: o.id }) : null;
     });
     return { base, who, plain: s.order, seq };
   };
-  it('Crunch Time on the first seat\'s first turn (round III): its last two turns move up, so the middle seat places twice in a row at the end', () => {
+  it('Flurry on the first seat\'s first turn (round III): its last two turns move up, so the middle seat places twice in a row at the end', () => {
     const { base, who, plain, seq } = crunch(0);
-    console.log(`Crunch Time, seat A\n  plain : ${letters(base, plain)}\n  actual: ${letters(base, seq)}`);
+    console.log(`Flurry, seat A\n  plain : ${letters(base, plain)}\n  actual: ${letters(base, seq)}`);
     expect(letters(base, plain)).toBe('A B C C B A A B C C B A A B C');
     expect(letters(base, seq)).toBe('A A A B C C B A A B C C B B C');
     // same placements per seat, everyone else's order untouched
     expect([...seq].sort()).toEqual([...plain].sort());
     expect(others(seq, who)).toEqual(others(plain, who));
   });
-  it('Crunch Time on the middle seat\'s first turn: its last two turns move up and the rest of the order stays', () => {
+  it('Flurry on the middle seat\'s first turn: its last two turns move up and the rest of the order stays', () => {
     const { base, who, plain, seq } = crunch(1);
-    console.log(`Crunch Time, seat B\n  plain : ${letters(base, plain)}\n  actual: ${letters(base, seq)}`);
+    console.log(`Flurry, seat B\n  plain : ${letters(base, plain)}\n  actual: ${letters(base, seq)}`);
     expect(letters(base, seq)).toBe('A B B B C C B A A B C C A A C');
     expect(others(seq, who)).toEqual(others(plain, who));
   });

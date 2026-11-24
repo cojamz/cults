@@ -239,10 +239,10 @@ function dyeAsk(ctx, p, data) {
     hint: 0.2 + 0.05 * o.res[c] + 0.02 * ctx.followers(o) - (c === 'silver' ? 1 : 0),
   }));
   opts.push({ id: 'done', label: data.n ? 'Done' : 'Turn nothing', kind: 'done', value: 'done', hint: 0 });
-  ctx.choose(p, `Dye Job: turn which rival's resource into yellow? (${data.n} of up to ${DYE_MAX} so far)`, opts, 'yellow.dyeStep', data);
+  ctx.choose(p, `Paint Over: turn which rival's resource into yellow? (${data.n} of up to ${DYE_MAX} so far)`, opts, 'yellow.dyeStep', data);
 }
 function dyeDone(ctx, p, data) {
-  ctx.log(data.n ? `${p.name}'s Dye Job: ${data.n} of rivals' resources turned into yellow.` : `${p.name}'s Dye Job: turns nothing.`);
+  ctx.log(data.n ? `${p.name}'s Paint Over: ${data.n} of rivals' resources turned into yellow.` : `${p.name}'s Paint Over: turns nothing.`);
   if (data.n) tastemaker(ctx, p);
 }
 
@@ -313,7 +313,7 @@ export default {
       // Nov 5 (Cory: "Leaders tax should be renamed and should be +1 yellow per minion on the most occupied color"): every
       // player's minions on the color whose spaces hold the most; a tie pays the same count. Your own minion counts,
       // this one included when yellow is the busiest. No choice left. Name Claude's fill-in (was Leaders' Tax).
-      key: 'transmute', ring: 1, name: 'Survey', text: "+1 yellow per minion on the color with the most minions. +1 yellow.",
+      key: 'transmute', ring: 1, name: 'Count Heads', text: "+1 yellow per minion on the color with the most minions. +1 yellow.",
       estimate: (ctx, p) => 1 + busiest(ctx).n,
       resolve(ctx, p) { bandwagon(ctx, p); },
     }]),
@@ -321,7 +321,7 @@ export default {
       // New Blood (Claude, under Cory's go-with-your-gut, Nov 4; was Dilute, "+2 yellow, then change up to 3 of rivals'
       // resources one for one"). Gather's shape: core pays it on the turn's first recruit of a member of a color none of
       // your other members have (newColor below, as Guest Book reads it). Keys kept for old saves and records.
-      key: 'dilute', ring: 1, name: 'New Blood', copyDoesIt: true,
+      key: 'dilute', ring: 1, name: 'Welcome Strangers', copyDoesIt: true,
       // Cory, Nov 4: "New Blood Should give additional yellow rather than followers": the new-color recruit pays yellow,
       // same numbers (a follower buys at 1 of anything, so 1 yellow for 1 follower)
       // Cory, Nov 11 11:58am: "Make it +2 yellow, +3 flat if the condition is met (no scaling)"
@@ -329,7 +329,7 @@ export default {
       estimate: (ctx, p) => 2 + (newInShop(ctx, p) ? 0.6 * 3 : 0),
       resolve(ctx, p) {
         ctx.gain(p, Y, 2, { fromAction: true });
-        (p.recruitFollowers ||= []).push({ n: 3, name: 'New Blood', newColor: true, color: Y });
+        (p.recruitFollowers ||= []).push({ n: 3, name: 'Welcome Strangers', newColor: true, color: Y });
       },
     },
     // Housewarming in Big New Blood's place, live since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality
@@ -354,12 +354,12 @@ export default {
       // Cory, Nov 24 11:45am: "Dye job is cool, +6 probably too much" (Nov 13: "Makeover being bad is definitely a
       // problem"): Dye Job takes Makeover's slot, his Oct 30 "turn up to 8 rival resources into yellow… spread it across
       // rivals". +4 (own +1 included) is Claude's number under his go-with-your-gut. Key kept for old saves and records.
-      key: 'makeover', ring: 2, name: 'Dye Job', copyDoesIt: true,
+      key: 'makeover', ring: 2, name: 'Paint Over', copyDoesIt: true,
       text: "+4 yellow. Turn up to 8 of rivals' resources into yellow, split as you choose.",
       estimate: (ctx, p) => 4 + Math.min(DYE_MAX, dyeTargets(ctx, p).reduce((a, [o, c]) => a + o.res[c], 0)) * 0.25,
       resolve(ctx, p) {
         ctx.gain(p, Y, 4, { fromAction: true });
-        if (!dyeTargets(ctx, p).length) { ctx.log(`${p.name}'s Dye Job: no rival holds a resource to turn, so only the yellow.`); return; }
+        if (!dyeTargets(ctx, p).length) { ctx.log(`${p.name}'s Paint Over: no rival holds a resource to turn, so only the yellow.`); return; }
         dyeAsk(ctx, p, { n: 0, instance: newChange(ctx) });
       },
     },
@@ -370,15 +370,15 @@ export default {
       // Cory, Nov 11 12:05pm: "+1 follower and + 1 of each color among your members (including a wild for grey)",
       // "that'd be +10 if somebody had all four and a grey": a follower and a resource per color; grey members count as
       // one color whose resource is your pick. The old +2 yellow goes.
-      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: 'For each color among your members: +1 follower and +1 of that color (grey: 1 of any color).',
+      key: 'meltingpot', ring: 2, name: 'Hold a Fair', text: 'For each color among your members: +1 follower and +1 of that color (grey: 1 of any color).',
       estimate: (ctx, p) => 2 * (memberColors(ctx, p).length + (hasGrey(ctx, p) ? 1 : 0)),
       resolve(ctx, p) {
         const cs = memberRes(ctx, p).filter(c => colors(ctx).includes(c)), grey = hasGrey(ctx, p);
         const n = cs.length + (grey ? 1 : 0);
         for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
         if (n) p.bonus += n;
-        ctx.log(n ? `${p.name}'s Melting Pot: ${n} member color${n > 1 ? 's' : ''}, +${n} follower${n > 1 ? 's' : ''}${cs.length ? `, +1 ${cs.join(', +1 ')}` : ''}${grey ? ', and 1 of any color for grey' : ''}.` : `${p.name}'s Melting Pot: no members yet, nothing.`);
-        if (grey) pickColors(ctx, p, 1, 'Melting Pot', true);
+        ctx.log(n ? `${p.name}'s Hold a Fair: ${n} member color${n > 1 ? 's' : ''}, +${n} follower${n > 1 ? 's' : ''}${cs.length ? `, +1 ${cs.join(', +1 ')}` : ''}${grey ? ', and 1 of any color for grey' : ''}.` : `${p.name}'s Hold a Fair: no members yet, nothing.`);
+        if (grey) pickColors(ctx, p, 1, 'Hold a Fair', true);
       },
     }, GRAND_TOUR), OPEN_HOUSE),
     {
@@ -386,16 +386,16 @@ export default {
       // type of member that you have, basically. And gray just doesn't count". 2 of each of your member colors from each
       // rival (all they have of it when short); Dabblers counts as every table color, as Melting Pot reads it.
       // Name: Claude's fill-in (the pitch's "Tithe" is already Gold's round II space, Cory's Oct naming pick)
-      key: 'offering', ring: 3, name: 'Offering', copyDoesIt: true, text: '+5 yellow. Each rival discards 2 of each color among your members.', // Cory, Nov 11: "you dont need to say 'grey doesnt count' for now"
+      key: 'offering', ring: 3, name: 'Demand Tribute', copyDoesIt: true, text: '+5 yellow. Each rival discards 2 of each color among your members.', // Cory, Nov 11: "you dont need to say 'grey doesnt count' for now"
       estimate: (ctx, p) => 5 + 0.4 * ctx.rivals(p).reduce((n, o) => n + offeringColors(ctx, p).reduce((m, c) => m + Math.min(2, o.res[c] || 0), 0), 0),
       resolve(ctx, p) {
         ctx.gain(p, Y, 5, { fromAction: true });
         const cs = offeringColors(ctx, p);
-        if (!cs.length) { ctx.log(`${p.name}'s Offering: no colored members yet, so rivals discard nothing.`); return; }
+        if (!cs.length) { ctx.log(`${p.name}'s Demand Tribute: no colored members yet, so rivals discard nothing.`); return; }
         for (const o of ctx.rivals(p)) {
           const lost = cs.map(c => [c, Math.min(2, o.res[c] || 0)]).filter(([, k]) => k > 0);
           for (const [c, k] of lost) o.res[c] -= k;
-          ctx.log(lost.length ? `${p.name}'s Offering: ${o.name} discards ${lost.map(([c, k]) => `${k} ${c}`).join(', ')}.` : `${p.name}'s Offering: ${o.name} has none of ${cs.join(', ')} to discard.`);
+          ctx.log(lost.length ? `${p.name}'s Demand Tribute: ${o.name} discards ${lost.map(([c, k]) => `${k} ${c}`).join(', ')}.` : `${p.name}'s Demand Tribute: ${o.name} has none of ${cs.join(', ')} to discard.`);
         }
       },
     },
@@ -423,7 +423,7 @@ export default {
       if (value === 'done') { dyeDone(ctx, p, data); return; }
       const [oid, c] = String(value).split(':'), o = ctx.player(Number(oid));
       if (!o || !(o.res[c] > 0) || c === Y) { dyeAsk(ctx, p, data); return; }
-      changeOne(ctx, p, o, c, Y, 'Dye Job', data.instance);
+      changeOne(ctx, p, o, c, Y, 'Paint Over', data.instance);
       dyeAsk(ctx, p, { ...data, n: data.n + 1 });
     },
     moneyWith(ctx, p, oid, data) { if (ctx.player(oid)) moneyAsk(ctx, p, { ...data, o: oid, n: 0 }); },
@@ -1135,7 +1135,7 @@ function commonColors(ctx, p) {
 function bandwagon(ctx, p) {
   const { n, colors: cs } = busiest(ctx);
   if (n) ctx.gain(p, Y, n, { fromAction: true });
-  ctx.log(`${p.name}'s Survey: +${n} yellow (${n} minion${n === 1 ? '' : 's'} on ${cs.join(' and ')}, the busiest).`);
+  ctx.log(`${p.name}'s Count Heads: +${n} yellow (${n} minion${n === 1 ? '' : 's'} on ${cs.join(' and ')}, the busiest).`);
   ctx.gain(p, Y, 1, { fromAction: true });
 }
 function transmuteStep(ctx, p, data) {

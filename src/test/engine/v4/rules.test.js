@@ -321,7 +321,7 @@ describe('payment', () => {
     let s = scene({ res: [{ gold: 2, red: 1 }], shop: ['gold.midas', 'red.mentor', 'gold.banker', 'red.intern', 'red.volunteer', 'gold.seed'] });
     s = take(s, 'red.turnout');
     const offered = s.pending.options.filter(o => o.kind === 'card').map(o => s.cards[o.uid].def).sort();
-    // Gather gives +1 red × round and +1 red (v0.8.0), so 2 gold + 3 red (+3 since Oct 25): Banker (2+1), Intern (1) and Governess (3+2) are in reach,
+    // Gather the Kin gives +1 red × round and +1 red (v0.8.0), so 2 gold + 3 red (+3 since Oct 25): Banker (2+1), Intern (1) and Governess (3+2) are in reach,
     // Midas (3 gold) is not
     expect(s.players[0].res).toMatchObject({ gold: 2, red: 3 });
     expect(offered).toEqual(['gold.banker', 'gold.seed', 'red.intern', 'red.mentor', 'red.volunteer']);

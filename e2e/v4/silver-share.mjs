@@ -1,5 +1,5 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
-// E2E gate: giving silver one click at a time (Party Gifts; Cory, 2026-11-01: "giving out silver when you're choosing -
+// E2E gate: giving silver one click at a time (Hand Out Gifts; Cory, 2026-11-01: "giving out silver when you're choosing -
 // not clear how many times you've clicked / what's remaining"). At 1270x700 the gift card by the space says
 // "0 given · 3 left", each click moves it (1 · 2, 2 · 1) and puts "+1" on that rival's face, Give says how many it
 // gives ("Give 2"), and at Give the rivals' silver goes up by their tallies, all in one move (Cory, Nov 13: "they should
@@ -31,7 +31,7 @@ function save() {
     s.build = buildStamp();
     return { config: { seats: seats.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal' }, state: s, undo: null, savedAt: Date.now() };
   }
-  throw new Error('silver-share save: never reached P1 on Party Gifts');
+  throw new Error('silver-share save: never reached P1 on Hand Out Gifts');
 }
 
 let server = null;
@@ -63,13 +63,13 @@ try {
   const title = () => page.$eval(`${card} .gc-title`, e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
   const done = () => page.$eval(`${card} .gc-rest [data-share-give]`, e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
   const tally = pid => page.$eval(`${card} .gc-share[data-pid="${pid}"] .gc-tally`, e => e.textContent).catch(() => '');
-  if ((await title()) !== 'Party Gifts · 0 given · 3 left') errors.push(`opens with "${await title()}", want "Party Gifts · 0 given · 3 left"`);
+  if ((await title()) !== 'Hand Out Gifts · 0 given · 3 left') errors.push(`opens with "${await title()}", want "Hand Out Gifts · 0 given · 3 left"`);
   const rest = () => page.$eval(`${card} .gc-rest`, e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
   if ((await rest()) !== 'Give nothing') errors.push(`opens with "${await rest()}", want "Give nothing"`);
   await page.screenshot({ path: `${SHOTS}/0-open.png` });
   const silver = pid => sv.state.players[pid].res.silver || 0;
   // two clicks set the split on the card, then Give sends both and Done in one move
-  const want = [[1, 'Party Gifts · 1 given · 2 left', { 1: '+1' }], [2, 'Party Gifts · 2 given · 1 left', { 1: '+1', 2: '+1' }]];
+  const want = [[1, 'Hand Out Gifts · 1 given · 2 left', { 1: '+1' }], [2, 'Hand Out Gifts · 2 given · 1 left', { 1: '+1', 2: '+1' }]];
   for (const [k, [pid, t, tallies]] of want.entries()) {
     await page.waitForTimeout(250); // a person's pace between clicks
     await page.click(`${card} .gc-share[data-pid="${pid}"]:not([disabled])`, { timeout: 8000 }).catch(() => errors.push(`click ${k + 1}: P${pid + 1}'s face not clickable`));
@@ -93,5 +93,5 @@ try {
 await browser.close();
 if (server) server.kill();
 if (errors.length) { console.error('silver-share gate: FAIL\n  ' + errors.join('\n  ')); process.exit(1); }
-console.log(`silver-share gate: ok (count and tally on Party Gifts' card; shots in ${SHOTS})`);
+console.log(`silver-share gate: ok (count and tally on Hand Out Gifts' card; shots in ${SHOTS})`);
 process.exit(0);

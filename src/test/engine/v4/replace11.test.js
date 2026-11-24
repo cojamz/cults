@@ -25,10 +25,10 @@ const slotOf = (s, name) => {
 };
 
 describe('REPLACE11: the switch', () => {
-  it('puts Call Back on the wheel in Right Away\'s place', () => {
+  it('puts Call Back on the wheel in Make Haste\'s place', () => {
     const names = quadrant('purple').actions.map(a => a.name);
     expect(names).toContain('Call Back');
-    expect(names).not.toContain('Right Away');
+    expect(names).not.toContain('Make Haste');
   });
 });
 
@@ -37,11 +37,11 @@ describe('REPLACE11: Call Back', () => {
     let s = createGame({ seats: [{ name: 'P1', kind: 'bot' }, { name: 'P2', kind: 'bot' }], seed: 3, quadrants: ['red', 'purple'] });
     while (s.pending && s.pending.kind !== 'place') s = answer(s, s.pending.options[0].id);
     const first = s.pending.player, other = 1 - first;
-    const sleepIn = slotOf(s, 'Sleep In'), callBack = slotOf(s, 'Call Back');
-    // first player: Sleep In's neighbour space Hold Up is left alone; take a red space first
+    const sleepIn = slotOf(s, 'Lie Abed'), callBack = slotOf(s, 'Call Back');
+    // first player: Lie Abed's neighbour space Hold Up is left alone; take a red space first
     const redSlot = s.pending.options.find(o => o.id.startsWith(`slot:${s.quadrants.indexOf('red')}-`)).id.slice(5);
     s = passBuys(answer(s, `slot:${redSlot}`));
-    // the other player takes Sleep In, so they hold the Goes Last token
+    // the other player takes Lie Abed, so they hold the Goes Last token
     expect(s.pending.player).toBe(other);
     s = passBuys(answer(s, `slot:${sleepIn}`));
     expect(s.goesLast.pid).toBe(other);
@@ -75,7 +75,7 @@ describe('REPLACE11: Call Back', () => {
   // sentence 2, with no other minion of yours on the wheel: you still take the token (a rival's minions on it go home)
   it('with no other minion on the wheel, still takes the Goes Last token from its holder', () => {
     let s = table(['red', 'purple'], { queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
-    s = passBuys(answer(s, `slot:${slotOf(s, 'Sleep In')}`));
+    s = passBuys(answer(s, `slot:${slotOf(s, 'Lie Abed')}`));
     expect(s.goesLast.pid).toBe(1);
     s = passBuys(answer(s, `slot:${slotOf(s, 'Call Back')}`));
     expect(s.goesLast.pid).toBe(0);
@@ -98,13 +98,13 @@ describe('REPLACE11: Call Back', () => {
     expect(s.queue.filter(t => t.t === 'turn' && t.p === 0 && t.token)).toHaveLength(1);
   });
 
-  // a rival takes the token afterwards (Sleep In): your waiting minion goes back to your hand and still gets placed
+  // a rival takes the token afterwards (Lie Abed): your waiting minion goes back to your hand and still gets placed
   it('when a rival takes the token back, your minion still gets placed, before theirs', () => {
     let s = table(['red', 'purple'], { queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }], left: 2 });
     s.slots['0-0'] = 0;
     s = passBuys(answer(s, `slot:${slotOf(s, 'Call Back')}`));
     expect(s.goesLast.pid).toBe(0);
-    s = passBuys(answer(s, `slot:${slotOf(s, 'Sleep In')}`));
+    s = passBuys(answer(s, `slot:${slotOf(s, 'Lie Abed')}`));
     expect(s.goesLast.pid).toBe(1);
     const order = [];
     let guard = 0;
@@ -158,7 +158,7 @@ describe('REPLACE11: Yard Sale', () => {
     while (s.pending && s.pending.kind === 'buy') s = answer(s, 'pass');
     s = answer(s, `card:${raiders}`);
     while (s.pending && s.pending.player === 0) s = answer(s, s.pending.kind === 'buy' ? 'pass' : s.pending.options[0].id);
-    s = answer(s, `slot:${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather')}`); // a plain gain (Borrow, Red's first space since Nov 10, would recruit the cheapest member itself)
+    s = answer(s, `slot:${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather the Kin')}`); // a plain gain (Borrow, Red's first space since Nov 10, would recruit the cheapest member itself)
     while (s.pending && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
     const buy = s.pending.options.find(o => o.id === `card:${raiders}`);
     expect(buy, JSON.stringify(s.pending.options.map(o => o.id))).toBeTruthy();
@@ -182,17 +182,17 @@ describe('REPLACE11: one space at a time', () => {
     const out = execFileSync('node', ['-e', "import('./src/engine/v4/content/index.js').then(m => console.log(JSON.stringify(['purple', 'trading'].map(q => m.quadrant(q).actions.map(a => a.name)))))"],
       { env: { ...process.env, REPLACE11: 'yardsale' }, encoding: 'utf8' });
     const [purple, white] = JSON.parse(out);
-    expect(purple).toContain('Right Away');
+    expect(purple).toContain('Make Haste');
     expect(white).toContain('Yard Sale');
   });
 });
 
 describe('REPLACE11: Gift Shop', () => {
   const slot = (s, name) => { const q = s.quadrants.indexOf('silver'); return `${q}-${quadrant('silver').actions.findIndex(a => a.name === name)}`; };
-  it("is on the wheel in Polish's place", () => {
+  it("is on the wheel in Melt Down's place", () => {
     const names = quadrant('silver').actions.map(a => a.name);
     expect(names).toContain('Gift Shop');
-    expect(names).not.toContain('Polish');
+    expect(names).not.toContain('Melt Down');
   });
 
   // sentence 2: "+3 silver in round I, +5 in round II, +7 in round III."
@@ -224,10 +224,10 @@ describe('REPLACE11: Gift Shop', () => {
 
 describe('Sweet Nothings (live in Potluck\'s place, Cory Nov 6)', () => {
   const slot = (s, name) => { const q = s.quadrants.indexOf('silver'); return `${q}-${quadrant('silver').actions.findIndex(a => a.name === name)}`; };
-  it("is on the wheel in Potluck's place, beside Buyout (Sweet Talk's place, Nov 11)", () => {
+  it("is on the wheel in Potluck's place, beside Hire Away (Sweet Talk's place, Nov 11)", () => {
     const names = quadrant('silver').actions.map(a => a.name);
     expect(names).toContain('Sweet Nothings');
-    expect(names).toContain('Buyout');
+    expect(names).toContain('Hire Away');
     expect(names).not.toContain('Potluck');
   });
   // "+3 silver. Give rivals up to 3 of your silver, split as you choose. Gain 2 of any colors for each."
@@ -383,7 +383,7 @@ describe("Blue contest setting 'recruits' (Most recruits this round)", () => {
 
 describe('REPLACE11: Blue Bloods, the reserved token', () => {
   const rich = { red: 30, blue: 30 };
-  const gatherSlot = s => `${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather')}`;
+  const gatherSlot = s => `${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather the Kin')}`;
   it('replaces the Game End Snobs', async () => {
     const { defById } = await import('../../../engine/v4/content/index.js');
     expect(defById('market.snob2').text).toBe('On Recruit and Round Start: put a token on a shop member. Until the round ends, only you may recruit it.');
@@ -439,7 +439,7 @@ describe('REPLACE11: Blue Bloods, the reserved token', () => {
 });
 
 describe('REPLACE11: Landlord, rent on a space', () => {
-  const gatherSlot = s => `${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather')}`;
+  const gatherSlot = s => `${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather the Kin')}`;
   it('replaces the old Landlord', async () => {
     const { defById } = await import('../../../engine/v4/content/index.js');
     expect(defById('trading.landlord2').text).toBe('On Recruit and Round Start: put your token on a space. This round, whenever a rival takes it, +3 white.');
@@ -452,7 +452,7 @@ describe('REPLACE11: Landlord, rent on a space', () => {
       expect(s.pending.prompt).toBe('Landlord: put your token on which space this round?');
       const g = gatherSlot(s);
       s = answer(s, `space:${g}`);
-      expect(s.log.join('\n')).toContain("P1's Landlord: a token on Gather this round.");
+      expect(s.log.join('\n')).toContain("P1's Landlord: a token on Gather the Kin this round.");
       s = passBuys(s);
       const want = rivalTakes ? 1 : 0;
       // whoever isn't meant to take it places elsewhere first, if it's their turn

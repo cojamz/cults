@@ -2,7 +2,7 @@
 //  1. an extra turn says which card gave it, on the turn that gets it and on the extra turn itself (Cory: "Log did not
 //     indicate a Night Owls turn");
 //  2. what a member used before the placement did is told as that member's, never as the space's own result (final
-//     panel S#6 / game-skeptic w4 #6: "You took Spree · +3 gold · 3 gold from P2", the gold from Tribute Band's copy);
+//     panel S#6 / game-skeptic w4 #6: "You took Salvage · +3 gold · 3 gold from P2", the gold from Tribute Band's copy);
 //  3. a steal is told once: each rival's loss on one line, in the colors taken (stolen resources keep their colors
 //     since the Magenta redesign, 2026-10-19), never repeated.
 import { describe, expect, it } from 'vitest';
@@ -12,7 +12,7 @@ import { actionName, useRetired } from '../../engine/v4/helpers.js';
 import { createTrail, feed, liveStory } from '../../../v4/game/trail.js';
 import { useRetiredRollCall } from '../../engine/v4/retired-overtime.js';
 
-useRetired(['trading.estatesale']); // Estate Sale left the wheel Nov 11 (Write-Off)
+useRetired(['trading.estatesale']); // Estate Sale left the wheel Nov 11 (Give Away)
 useRetiredRollCall(); // Roll Call, a plain purple space, kept for these tests (it left the board 2026-10-22)
 
 /** Drive a hand-made table through real moves (with the effects the play session records), feeding every state. */
@@ -76,7 +76,7 @@ describe('an extra turn names the card that gave it', () => {
     expect(extra.lines[1]).toBe('Errand Boy: extra turn');
   });
 
-  it('Crunch Time: the turns it moves up say they were taken now, not that they are extra', () => {
+  it('Flurry: the turns it moves up say they were taken now, not that they are extra', () => {
     const d = table({ quadrants: ['gold', 'red', 'purple', 'green'], round: 3, left: 3,
       queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }],
       order: [0, 1, 0, 1, 0, 1] }, 1);
@@ -87,13 +87,13 @@ describe('an extra turn names the card that gave it', () => {
     d.on();
     const moved = d.t.stories[1];
     expect(moved.actor).toBe(0);
-    expect(moved.lines[1]).toBe('Crunch Time: next turn, now');
+    expect(moved.lines[1]).toBe('Flurry: next turn, now');
     expect(moved.text).not.toMatch(/extra turn/);
   });
 });
 
 describe('a member used before the placement is told as its own, not as the space', () => {
-  it('Tribute Band copying Collect Debts, then Spree: the gold is Tribute Band\'s (game-skeptic w4 #6)', () => {
+  it('Tribute Band copying Call In Debts, then Salvage: the gold is Tribute Band\'s (game-skeptic w4 #6)', () => {
     // Tribute Band plays a rival's actions (Cory, 2026-10-28): P2 collects debts first
     const d = table({ quadrants: ['gold', 'echo', 'market', 'red'], round: 3, left: 2, res: [{ gold: 6 }, { gold: 2 }],
       members: [['echo.dejavu']], queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] }, 0);
@@ -111,7 +111,7 @@ describe('a member used before the placement is told as its own, not as the spac
     const card = lastLive(d);
     expect(d.s.log).toContain(`P1's Tribute Band: P1 copies ${debts} (P2's): doing it again.`);
     expect(card.head).toBe(`You used Tribute Band, then took ${spree}`);
-    // Spree gives nothing itself: no line of gold under it that isn't Tribute Band's
+    // Salvage gives nothing itself: no line of gold under it that isn't Tribute Band's
     expect(card.lines.some(l => /^Tribute Band: \+3 gold/.test(l))).toBe(true);
     expect(card.lines).not.toContain('+3 gold');
     expect(card.lines.filter(l => /gold/.test(l))).toHaveLength(1);
@@ -122,7 +122,7 @@ describe('a member used before the placement is told as its own, not as the spac
       members: [['echo.dejavu']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }] }, 0);
     d.take('gold.steal');
     d.on();
-    d.take(d.s.pending.options.find(o => o.kind === 'slot' && !/Spree/.test(o.label)).label);
+    d.take(d.s.pending.options.find(o => o.kind === 'slot' && !/Salvage/.test(o.label)).label);
     d.on();
     const from = d.states.length - 1;
     d.use();
@@ -141,8 +141,8 @@ describe('a member used before the placement is told as its own, not as the spac
 describe('a steal is told once, in the colors it took', () => {
   // Magenta redesign (decisions.md 2026-10-19): stolen resources keep their colors and every Magenta action gives +1
   // magenta, so the "…, as magenta" line is gone. What stays: each rival's loss is told once, beside the thief's gain,
-  // and Help Yourself no longer steals followers (Oct 27). A fresh table each time (sceneQ runs the queue it is given in place).
-  // Help Yourself (Nov 10) steals 1 per minion you've placed this round, this one included: two of P1's minions already
+  // and Pilfer no longer steals followers (Oct 27). A fresh table each time (sceneQ runs the queue it is given in place).
+  // Pilfer (Nov 10) steals 1 per minion you've placed this round, this one included: two of P1's minions already
   // sit on Gold's spaces, so it steals 3, as these stories were written for
   const opts = (round = 1) => ({ quadrants: ['gold', 'thieves', 'market', 'red'], n: 3, round, left: 2, res: [{}, { gold: 3 }, { red: 2 }],
     slots: { '0-0': 0, '0-1': 0 },
@@ -156,16 +156,16 @@ describe('a steal is told once, in the colors it took', () => {
   };
   const once = st => {
     expect(st.text).not.toMatch(/as magenta/);
-    // Help Yourself's +1 magenta came back with its Nov 10 text: told once, its own gain, never in a "from" line
+    // Pilfer's +1 magenta came back with its Nov 10 text: told once, its own gain, never in a "from" line
     expect(st.lines.join(' ').match(/\+1 magenta/g) || []).toHaveLength(1);
     expect(st.lines.join(' ')).not.toMatch(/magenta from|\d+ magenta[^(]*\)/); // the magenta is never told as taken
-    expect(st.lines.filter(l => /followers?/.test(l))).toHaveLength(0); // Help Yourself steals no followers (Oct 27)
+    expect(st.lines.filter(l => /followers?/.test(l))).toHaveLength(0); // Pilfer steals no followers (Oct 27)
   };
   it('from the effects: the gain in its own colors, and one line for what you lost', () => {
     const st = steal(true); // round I: steal 3, all of your gold
     expect(st.fx).toBe(true);
     // the steal on one line (picky bot, Nov 7: the stolen coins told twice, in the gain and in a "from" line)
-    expect(st.lines).toEqual(['+1 magenta +3 gold (3 gold from you)']); // with its own +1 magenta, as Heist's line reads
+    expect(st.lines).toEqual(['+1 magenta +3 gold (3 gold from you)']); // with its own +1 magenta, as Plunder's line reads
     expect(st.hit).toBe('took 3 of your gold');
     expect(st.short).toBe('+1 magenta +3 gold (3 gold from you)'); // (the gain that says whose it was, once)
     once(st);

@@ -21,14 +21,14 @@ describe('REPLACE9: Setlist', () => {
     expect([d.s, d.w]).toEqual([o.s, o.w]);
     expect(o.retired).toBe(true);
   });
-  it('after Build Up, the use does Build Up again; then it is spent for the round', () => {
+  it('after Flock Together, the use does Flock Together again; then it is spent for the round', () => {
     let s = table(Q, { n: 2, round: 2, left: 4, members: [['echo.setlist']] });
     const u = uidIn(s, 'echo.setlist', 0);
     s = take(s, 'echo.chant');
     const g = s.players[0].res.green || 0;
     if (s.pending?.player !== 0 || !s.pending.options.some(o => o.id === `use:${u}`)) throw new Error('use not offered after the turn');
     s = move(s, `use:${u}`);
-    expect((s.players[0].res.green || 0) - g).toBe(2); // Build Up again: one minion on Green, +1 (Cory, Nov 10)
+    expect((s.players[0].res.green || 0) - g).toBe(2); // Flock Together again: one minion on Green, +1 (Cory, Nov 10)
     expect(s.cards[u].used).toBe(true);
   });
   it('resets at Round Start', () => {

@@ -18,15 +18,15 @@ const pair = (a, b) => `trade:${a}:${b}`;
 const copyChoice = (s, action) => s.pending.options.find(o => o.kind === 'space' && o.label.startsWith(`${actionName(action)} (`));
 
 describe('Green exact action targets alongside Red recruitment', () => {
-  // Build Up since Nov 10: "+1 green per minion on Green spaces, this one included. +1 green."
-  it.each([1, 2, 3])('Build Up in round %i alone on Green gives 2 green and its estimate matches the gain', round => {
+  // Flock Together since Nov 10: "+1 green per minion on Green spaces, this one included. +1 green."
+  it.each([1, 2, 3])('Flock Together in round %i alone on Green gives 2 green and its estimate matches the gain', round => {
     const s = table(Q, { round });
     const ctx = contextFor(s), buildUp = quadrant('echo').actions.find(a => a.key === 'chant');
     expect(buildUp.estimate(ctx, s.players[0])).toBe(2);
     const after = take(s, 'echo.chant');
     expect(after.players[0].res.green).toBe(2);
   });
-  it('Build Up counts a rival\'s minion on Green too, and its estimate matches the gain', () => {
+  it('Flock Together counts a rival\'s minion on Green too, and its estimate matches the gain', () => {
     let s = table(Q, { round: 2, left: 5, queue: turns(1, 0) });
     s = go(s, 'echo.crowd2');
     const ctx = contextFor(s), buildUp = quadrant('echo').actions.find(a => a.key === 'chant');
@@ -35,7 +35,7 @@ describe('Green exact action targets alongside Red recruitment', () => {
     expect(s.players[0].res.green).toBe(3);
   });
 
-  it('Cover (Nov 10) offers only actions with a rival\'s minion on them and copies the chosen one', () => {
+  it('Imitate (Nov 10) offers only actions with a rival\'s minion on them and copies the chosen one', () => {
     let s = table(Q, { round: 2, left: 5, queue: turns(1, 0, 0) });
     s = go(s, 'gold.rush');
     s = go(s, 'echo.chant'); // P1's own: not offered
@@ -45,10 +45,10 @@ describe('Green exact action targets alongside Red recruitment', () => {
     expect(copyChoice(s, 'echo.chant')).toBeUndefined();
     const before = s.players[0].res.gold;
     s = pass(move(s, copyChoice(s, 'gold.rush').id));
-    expect(s.players[0].res.gold - before).toBe(4); // Golden Years in round II
+    expect(s.players[0].res.gold - before).toBe(4); // Let It Grow in round II
   });
 
-  it.each([0, 1])('Echo copies the immediately preceding player %i, including your own snake turn', previousPlayer => {
+  it.each([0, 1])('Follow Suit copies the immediately preceding player %i, including your own snake turn', previousPlayer => {
     let s = table(Q, { queue: turns(previousPlayer, 0, 0) });
     s = go(s, 'gold.rush');
     expect(previousEntry(contextFor(s)).p).toBe(previousPlayer);
@@ -76,8 +76,8 @@ describe('Green exact action targets alongside Red recruitment', () => {
     expect(s.pending?.kind).not.toBe('choose');
   });
 
-  // Reprise plays the role Sample had until Oct 28 (Sample now copies a member's On Recruit)
-  it('Reprise → Echo chooses the latest placement and cannot fall back past its own chain', () => {
+  // Do It Again plays the role Sample had until Oct 28 (Sample now copies a member's On Recruit)
+  it('Do It Again → Follow Suit chooses the latest placement and cannot fall back past its own chain', () => {
     let s = table(Q, { round: 2, queue: turns(0, 0, 0) });
     s = go(s, 'gold.rush');
     s = take(s, 'echo.echo');

@@ -12,23 +12,23 @@ const rich = { gold: 30, red: 30, purple: 30, green: 30 };
 const upcoming = s => s.queue.filter(t => t.t === 'turn').map(t => t.p);
 
 describe('Purple members, Oct 22', () => {
-  it('Early Birds: your turns can’t be skipped; Sleep In still gives its +5 in round II', () => {
+  it('Early Birds: your turns can’t be skipped; Lie Abed still gives its +5 in round II', () => {
     const s = take(sc({ round: 2, members: [['purple.earlybird']], queue: turns(0, 1, 0, 1) }), 'purple.skip');
     expect(s.players[0].res.purple).toBe(5);
     expect(upcoming(s)).toEqual([1, 0, 1]);
     expect(s.log).toContain("P1's Early Birds: P1's turns can't be skipped, so P1 doesn't go last.");
   });
-  it('Early Birds recruited after Sleep In on the same turn: the skip set earlier doesn\u2019t land (checked when the turn comes)', () => {
-    // Cory, 2026-10-22: "your turns cannot be skipped, your own Sleep In and Last Call too" (firstbirds-ab2 games 2 and 4)
+  it('Early Birds recruited after Lie Abed on the same turn: the skip set earlier doesn\u2019t land (checked when the turn comes)', () => {
+    // Cory, 2026-10-22: "your turns cannot be skipped, your own Lie Abed and Bide Your Time too" (firstbirds-ab2 games 2 and 4)
     let s = sc({ round: 2, res: [rich], shop: ['purple.earlybird'], queue: turns(0, 1, 0, 1) });
     s = buy(take(s, 'purple.skip'), 'purple.earlybird');
     s = passBuys(take(passBuys(s), 'gold.rush'));
-    expect(s.log).not.toContain("P1's turn is skipped (Sleep In).");
+    expect(s.log).not.toContain("P1's turn is skipped (Lie Abed).");
     expect(s.log).toContain("P1's Early Birds: P1's turn can't be skipped, so P1 takes it now.");
     expect(s.pending.player).toBe(0);
     expect(upcoming(s)).toEqual([1]);
   });
-  it('Early Birds: Last Call still pays its followers, and you keep your turns', () => {
+  it('Early Birds: Bide Your Time still pays its followers, and you keep your turns', () => {
     const s = take(sc({ round: 2, left: 3, members: [['purple.earlybird']], queue: turns(0, 1, 0, 1, 0) }), 'purple.lastcall');
     expect(s.players[0].bonus).toBe(2);
     expect(upcoming(s)).toEqual([1, 0, 1, 0]);
@@ -44,7 +44,7 @@ describe('Purple members, Oct 22', () => {
     let s = take(sc({ round: 2, members: [[], ['purple.gossip']], queue: turns(0, 1, 0, 1) }), 'purple.skip');
     expect(s.players[1].bonus).toBe(0);
     s = passBuys(take(passBuys(s), 'gold.rush'));
-    expect(s.log).toContain("P1's turn is skipped (Sleep In).");
+    expect(s.log).toContain("P1's turn is skipped (Lie Abed).");
     expect(s.players[1].bonus).toBe(1);
     expect(linesNaming(s.log, 'Gossip')).toEqual(["P2's Gossip: +1 follower."]);
   });

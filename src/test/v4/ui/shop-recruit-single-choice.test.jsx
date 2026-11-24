@@ -4,8 +4,8 @@ import GameScreen from '../../../v4/game/GameScreen.jsx';
 import { table } from '../../engine/v4/cards-helpers-b.js';
 import { take } from '../../engine/v4/helpers.js';
 afterEach(() => { cleanup(); localStorage.clear(); });
-// Bury left the wheel Nov 10; Test Drive ("Discard a shop member. Use its effect now.") and Out of Style pick the same way
-for (const [name, id] of [['Test Drive', 'market.testdrive'], ['Out of Style', 'market.restock']]) it(`${name} picks on the enlarged shop cards, one click, one answer`, async () => {
+// Bury left the wheel Nov 10; Try Out ("Discard a shop member. Use its effect now.") and Clear Out pick the same way
+for (const [name, id] of [['Try Out', 'market.testdrive'], ['Clear Out', 'market.restock']]) it(`${name} picks on the enlarged shop cards, one click, one answer`, async () => {
   const base = table(['gold', 'red', 'market', 'echo'], { round: 2, res: [{gold:20,red:20,blue:20,green:20},{}], shop:['market.recruit','gold.banker'] });
   const state = take(base, id);
   expect(state.pending.prompt).toMatch(new RegExp(`^${name}:`));

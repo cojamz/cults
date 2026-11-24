@@ -142,7 +142,7 @@ describe('bot levels', () => {
   });
 
   // Blind tester, 2026-10-15: "P4 swapped Guest for Busker, then swapped back" (two turns, no change). Seeds below
-  // took a member back 6 times in 100 games before the fix (Reprise copying Even Swap among them).
+  // took a member back 6 times in 100 games before the fix (Do It Again copying Even Swap among them).
   it('bots never swap back a member they swapped away', () => {
     const tables = [['red', 'gold', 'blue', 'green'], ['red', 'market', 'echo', 'gold'], ['red', 'thieves', 'trading', 'blue']];
     let swaps = 0;

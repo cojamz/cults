@@ -22,10 +22,10 @@ function saveOf(state) {
 // Scenes deal from the whole deck, as the unit tests do (round decks, the cull and artifacts would hold cards back).
 // (The cross-cult swap scene went with Even Swap: Tryout took its space in the round I rework, Cory Oct 27.)
 const SCENE = { roundDecks: 0, cull: false, artifacts: false };
-// Help Yourself (Cory, Nov 10): "Steal 1 resource per minion you’ve placed this round, this one included. +1 magenta."
+// Pilfer (Cory, Nov 10): "Steal 1 resource per minion you’ve placed this round, this one included. +1 magenta."
 // P1 has two minions out already, so this third steals 3; stolen resources keep their colors
 let steal = sceneQ({ quadrants: ['gold', 'silver', 'thieves'], round: 1, res: [{}, { gold: 1, silver: 2 }], rules: SCENE, slots: { '0-0': 0, '1-0': 0 }, left: 1 });
-steal = take(steal, 'Help Yourself');
+steal = take(steal, 'Pilfer');
 steal = move(steal, 'take:1:gold');
 steal = move(steal, 'take:1:silver');
 const stolen = move(steal, 'take:1:silver');

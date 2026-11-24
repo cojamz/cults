@@ -19,10 +19,10 @@ const log = s => s.log.join('\n');
 
 describe('REPLACE14: Grand Tour ("+2 yellow. Choose a rival: gain 1 of each color among their members.")', () => {
   const quads = ['red', 'yellow', 'market', 'silver', 'thieves'];
-  it("is on the wheel in Melting Pot's place", () => {
+  it("is on the wheel in Hold a Fair's place", () => {
     const names = quadrant('yellow').actions.map(a => a.name);
     expect(names).toContain('Grand Tour');
-    expect(names).not.toContain('Melting Pot');
+    expect(names).not.toContain('Hold a Fair');
   });
   it('+2 yellow, even when no rival has members (then nothing to choose)', () => {
     let s = table(quads, { n: 3, round: 2 });

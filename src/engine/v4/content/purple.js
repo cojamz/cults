@@ -497,10 +497,10 @@ export const RETIRED_ROLLCALL = {
   resolve(ctx, p) { ctx.gain(p, P, onBoard(ctx, p), { fromAction: true }); },
 };
 export const RETIRED_OVERTIME = {
-  key: 'overtime', ring: 2, name: 'Overtime', text: 'Take 1 extra turn right after this one.',
+  key: 'overtime', ring: 2, name: 'Burn the Candle', text: 'Take 1 extra turn right after this one.',
   copyDoesIt: true,
   estimate: ctx => freeTurnsEstimate(ctx, 1),
-  resolve(ctx, p) { freeTurns(ctx, p, 1, 'Overtime'); },
+  resolve(ctx, p) { freeTurns(ctx, p, 1, 'Burn the Candle'); },
 };
 
 /**
@@ -683,25 +683,25 @@ export default {
       // Cory, 2026-10-28: grows by round, "maybe more like 4/5/6", so a late skip is worth taking
       // Cory, Nov 1 2:35pm: the Goes Last token ("Let's just try it with the goes last token"): one minion waits on it,
       // so your hand empties a turn early and that snake turn is passed (a skip, for Pocket Watch and Gossip)
-      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your other minions are placed after everyone else’s.',
+      key: 'skip', copyDoesIt: true, ring: 1, name: 'Lie Abed', text: '+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your other minions are placed after everyone else’s.',
       byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token: your other minions are placed after everyone else’s.' },
       estimate: ctx => ctx.state.round + 3,
       resolve(ctx, p) {
         ctx.gain(p, P, ctx.state.round + 3, { fromAction: true });
-        toToken(ctx, p, 1, 'Sleep In');
+        toToken(ctx, p, 1, 'Lie Abed');
       },
     },
     {
       // Cory, Nov 10 12:43am: Purple's third round I space, "+2 purple * consecutive turn. so it's always at least 2 purple
       // but could get up to like 10"; 12:45am: a skipped turn doesn't break a streak (consecutive means no other player
       // placed in between: skips aren't turns); 12:48am: it takes the Goes Last token. Hold Up's place. Name is Claude's fill-in.
-      key: 'onaroll', copyDoesIt: true, ring: 1, name: 'On a Roll', text: '+2 purple per consecutive turn, this one included. Take the Goes Last token: your other minions are placed after everyone else’s.',
+      key: 'onaroll', copyDoesIt: true, ring: 1, name: 'Keep Going', text: '+2 purple per consecutive turn, this one included. Take the Goes Last token: your other minions are placed after everyone else’s.',
       estimate: (ctx, p) => 2 * (inARow(ctx, p) + 1),
       resolve(ctx, p) {
         const n = inARow(ctx, p) + 1;
         ctx.gain(p, P, 2 * n, { fromAction: true });
-        ctx.log(`${p.name}'s On a Roll: ${n} turn${n === 1 ? '' : 's'} in a row, +${2 * n} purple.`);
-        toToken(ctx, p, 1, 'On a Roll');
+        ctx.log(`${p.name}'s Keep Going: ${n} turn${n === 1 ? '' : 's'} in a row, +${2 * n} purple.`);
+        toToken(ctx, p, 1, 'Keep Going');
       },
     },
     {
@@ -726,52 +726,52 @@ export default {
       // Cory, 2026-10-22: "+1 purple, take another turn right after this one", in Roll Call's spot. One of your own
       // turns, moved up (his yes: you still place the same minions that round), like Crunch Time's two. Name: fill-in.
       // Cory, 2026-10-23: "Right Away should scale. +1 +2 +3" (Hold Up's wording).
-      key: 'again', copyDoesIt: true, ring: 1, name: 'Right Away', text: '+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one.', // 2/3/4 (Cory, Nov 6: "it should scale more. like 2/3/4")
+      key: 'again', copyDoesIt: true, ring: 1, name: 'Make Haste', text: '+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one.', // 2/3/4 (Cory, Nov 6: "it should scale more. like 2/3/4")
       byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Your next turn comes right after this one.' },
       estimate: (ctx, p) => ctx.state.round + 1 + turnsNowEstimate(ctx, p, 1),
-      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round + 1, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Right Away'); },
+      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round + 1, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Make Haste'); },
     }, CALL_BACK),
     {
       // Cory, 2026-10-22: "+1 purple, you can play on occupied spaces this round" (+2 with the inherent +1; he may
       // raise it to +3 after play). Any taken space, yours or a rival's, for the rest of this round. Name is Claude's fill-in.
       // Cory, 2026-10-28 9:31pm Eastern: "It should just be like, +5 purple and gain a minion this round" (placing on
       // taken spaces copied too much with Greatest Hits). Extra minions stop when the round's spare spaces run out.
-      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+4 purple. +1 minion this round. Take the Goes Last token: your other minions are placed after everyone else’s.', // +4 (Cory, Nov 5: "give a little more purple"); the token (Cory, Nov 6: "Overtime is good. I like it", a third way to take it)
+      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Burn the Candle', text: '+4 purple. +1 minion this round. Take the Goes Last token: your other minions are placed after everyone else’s.', // +4 (Cory, Nov 5: "give a little more purple"); the token (Cory, Nov 6: "Overtime is good. I like it", a third way to take it)
       estimate: ctx => 4 + (spareSpace(ctx) ? turnValue(ctx) : 0),
       resolve(ctx, p) {
         ctx.gain(p, P, 4, { fromAction: true });
-        if (!extraMinion(ctx, p, 'Overtime')) return;
+        if (!extraMinion(ctx, p, 'Burn the Candle')) return;
         // the extra minion waits on the Goes Last token (as Night Owls' did with NIGHTOWL=token); Early Birds keeps it off
         // Cory, Nov 12: "goes last makes ALL minions go last": the extra minion and every other one you have left
-        toToken(ctx, p, 1, 'Overtime');
+        toToken(ctx, p, 1, 'Burn the Candle');
       },
     },
     {
       // Cory, 2026-10-22: a follower bonus for taking the rest of your turns last ("YES now you're cooking"), in his
       // words ("take the remainder of your turns when others are out of minions"), "let's just try it at 2 followers
       // per minion left". Replaces Rush Hour. Name is Claude's fill-in.
-      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Last Call', text: '+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token: your other minions go after everyone else’s.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
+      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Bide Your Time', text: '+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token: your other minions go after everyone else’s.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
       estimate: (ctx, p) => 1 + 2 * Math.max(0, p.left - 1),
       resolve(ctx, p) {
         ctx.gain(p, P, 1 + p.left, { fromAction: true });
         const k = turnsLeft(ctx, p), f = p.left;
-        if (f) { p.bonus += f; ctx.log(`${p.name}'s Last Call: +${f} follower${f === 1 ? '' : 's'}.`); }
+        if (f) { p.bonus += f; ctx.log(`${p.name}'s Bide Your Time: +${f} follower${f === 1 ? '' : 's'}.`); }
         // only turns with a rival's turn still after them are skipped: once everyone else is out of minions (or already
         // places before you, as after your own earlier Last Call) there is nothing to wait for, so nothing is skipped and
         // Gossip and Pocket Watch pay nothing (balance-1.0 g8: a second copy of Last Call re-skipped turns already last,
         // paying both for skips that passed over no one)
         // every minion left goes on the Goes Last token (Cory, Nov 1 2:35pm)
-        toToken(ctx, p, k, 'Last Call');
+        toToken(ctx, p, k, 'Bide Your Time');
       },
     },
     {
       // the burst, free (Cory, 2026-10-15): was "pay all your purple (4 or more) for 2 extra turns, else +4 purple"
       // your own turns, now (Cory, 2026-10-15: "it's not extra turns, it's taking two immediate turns with existing
       // minions"): no new minion, no spare space needed, and the extra-turn members don't fire
-      key: 'rally', copyDoesIt: true, ring: 2, name: 'Crunch Time', text: '+2 purple. Your next two turns come right after this one.',
+      key: 'rally', copyDoesIt: true, ring: 2, name: 'Flurry', text: '+2 purple. Your next two turns come right after this one.',
       // Cory, 2026-10-22: "all should give at least 1"; 2026-10-25: +2 (Hard bot read).
       estimate: (ctx, p) => 2 + turnsNowEstimate(ctx, p, 2),
-      resolve(ctx, p) { ctx.gain(p, P, 2, { fromAction: true }); turnsNow(ctx, p, 2, 'Crunch Time'); },
+      resolve(ctx, p) { ctx.gain(p, P, 2, { fromAction: true }); turnsNow(ctx, p, 2, 'Flurry'); },
     },
     // The test version (Cory, Nov 8: "Lets just try goes last token on all the purple"; content/testset.js). The token
     // comes after what the space already does: Right Away's and Crunch Time's turns come first, then the minion after
@@ -789,15 +789,15 @@ export default {
       },
     }, 'testset'),
     poolSpace({
-      key: 'againlast', copyDoesIt: true, ring: 1, name: 'Right Away', text: '+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one. Then take the Goes Last token: your minions after that are placed after everyone else\u2019s.',
+      key: 'againlast', copyDoesIt: true, ring: 1, name: 'Make Haste', text: '+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one. Then take the Goes Last token: your minions after that are placed after everyone else\u2019s.',
       byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Your next turn comes right after this one. Then take the Goes Last token: your minions after that are placed after everyone else\u2019s.' },
       estimate: (ctx, p) => ctx.state.round + 1 + turnsNowEstimate(ctx, p, 1),
-      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round + 1, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Right Away'); toToken(ctx, p, 1, 'Right Away'); },
+      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round + 1, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Make Haste'); toToken(ctx, p, 1, 'Make Haste'); },
     }, 'testset'),
     poolSpace({
-      key: 'rallylast', copyDoesIt: true, ring: 2, name: 'Crunch Time', text: '+2 purple. Your next two turns come right after this one. Then take the Goes Last token: your minions after those are placed after everyone else\u2019s.',
+      key: 'rallylast', copyDoesIt: true, ring: 2, name: 'Flurry', text: '+2 purple. Your next two turns come right after this one. Then take the Goes Last token: your minions after those are placed after everyone else\u2019s.',
       estimate: (ctx, p) => 2 + turnsNowEstimate(ctx, p, 2),
-      resolve(ctx, p) { ctx.gain(p, P, 2, { fromAction: true }); turnsNow(ctx, p, 2, 'Crunch Time'); toToken(ctx, p, 1, 'Crunch Time'); },
+      resolve(ctx, p) { ctx.gain(p, P, 2, { fromAction: true }); turnsNow(ctx, p, 2, 'Flurry'); toToken(ctx, p, 1, 'Flurry'); },
     }, 'testset'),
     // test version (Cory, Nov 9: "lets try it at 2 followers"): Closing Time in Crunch Time's place
     poolSpace({

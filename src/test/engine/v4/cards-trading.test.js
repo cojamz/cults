@@ -42,55 +42,55 @@ describe('White: the printed cards', () => {
 });
 
 describe('White actions', () => {
-  it('Modest Means (Nov 11): +2 white, +1 per rival with more members, named', () => {
+  it('Live Simply (Nov 11): +2 white, +1 per rival with more members, named', () => {
     let s = take(table(Q), 'trading.modestmeans');
     expect(R(s).white).toBe(2);
-    expect(named(s, 'Modest Means')).toContain("P1's Modest Means: 0 rivals with more members, +2 white.");
+    expect(named(s, 'Live Simply')).toContain("P1's Live Simply: 0 rivals with more members, +2 white.");
     s = take(table(Q, { n: 4, members: [[], ['red.intern'], ['red.bigfamily'], ['red.twins']] }), 'trading.modestmeans');
     expect(R(s).white).toBe(5);
     s = take(table(Q, { n: 4, members: [['red.intern'], ['red.twins', 'red.volunteer'], ['benders.dabblers'], []] }), 'trading.modestmeans');
     expect(R(s).white).toBe(4); // 2 + 2: P2 (2 cards) and P3 (Dabblers counts 2) have more members than P1's one; P4 has none
   });
 
-  it('Splurge: a 12-cost Baron pays +6 followers, named; Preachers adds 2 in the same line', () => {
+  it('Spend Freely: a 12-cost Baron pays +6 followers, named; Preachers adds 2 in the same line', () => {
     let s = take(table(Q, { res: [{ gold: 12 }], shop: ROW }), 'trading.splurge');
     s = move(s, cardOpt(s, 'gold.tycoon', 'shop'));
     expect(owns(s, 0, 'gold.tycoon')).toBe(true);
     expect(B(s)).toBe(6);
-    expect(named(s, 'Splurge')).toContain("P1's Splurge: +6 followers for spending.");
+    expect(named(s, 'Spend Freely')).toContain("P1's Spend Freely: +6 followers for spending.");
     let b = take(table(Q, { res: [{ gold: 12 }], members: [['trading.broker']], shop: ROW }), 'trading.splurge');
     b = move(b, cardOpt(b, 'gold.tycoon', 'shop'));
     expect(B(b)).toBe(8);
-    expect(named(b, 'Splurge')).toContain("P1's Splurge: +6 followers for spending. Preachers: +2.");
+    expect(named(b, 'Spend Freely')).toContain("P1's Spend Freely: +6 followers for spending. Preachers: +2.");
   });
 
-  it('Nest Egg (Nov 11 stand-in): +3 white, named', () => {
+  it('Put By (Nov 11 stand-in): +3 white, named', () => {
     const s = take(table(Q), 'trading.nestegg');
     expect(R(s).white).toBe(3);
-    expect(named(s, 'Nest Egg')).toContain("P1's Nest Egg: +3 white.");
+    expect(named(s, 'Put By')).toContain("P1's Put By: +3 white.");
   });
 
-  it('Farewell: Big Family (4+4) pays 8 followers, named; it goes to the discard pile', () => {
+  it('Bid Farewell: Big Family (4+4) pays 8 followers, named; it goes to the discard pile', () => {
     let s = take(table(Q, { round: 2, members: [['red.bigfamily']], shop: ROW }), 'trading.farewell');
     const u = uidIn(s, 'red.bigfamily', 0);
     s = move(s, `card:${u}`);
     expect([B(s), R(s).white]).toEqual([8, 1]);
     expect(s.discard.at(-1)).toBe(u);
-    expect(named(s, 'Farewell')).toContain("P1's Farewell: Big Family paid 8 followers.");
+    expect(named(s, 'Bid Farewell')).toContain("P1's Bid Farewell: Big Family paid 8 followers.");
   });
 
-  it('Write-Off: give Baron (8+4) to a rival for 12 white, then +1 white, named', () => {
+  it('Give Away: give Baron (8+4) to a rival for 12 white, then +1 white, named', () => {
     let s = take(table(Q, { round: 2, members: [['gold.tycoon']], shop: ROW }), 'trading.writeoff');
     s = move(s, cardOpt(s, 'gold.tycoon', 0));
     s = move(s, 'player:1');
     expect([R(s).white, B(s), owns(s, 0, 'gold.tycoon'), owns(s, 1, 'gold.tycoon')]).toEqual([13, 0, false, true]);
-    expect(named(s, 'Write-Off')).toContain("P1's Write-Off: gives Baron to P2.");
+    expect(named(s, 'Give Away')).toContain("P1's Give Away: gives Baron to P2.");
   });
 
-  it('Cash In: 7 white become 7 followers, then +1 white (named)', () => {
+  it('Redeem: 7 white become 7 followers, then +1 white (named)', () => {
     const s = take(table(Q, { round: 3, left: 5, res: [{ white: 7 }], shop: ROW }), 'trading.cashin');
     expect([B(s), R(s).white]).toEqual([7, 1]);
-    expect(named(s, 'Cash In')).toEqual(["P1's Cash In: 7 white became 7 followers."]);
+    expect(named(s, 'Redeem')).toEqual(["P1's Redeem: 7 white became 7 followers."]);
   });
 });
 
@@ -118,7 +118,7 @@ describe('White members', () => {
     expect(B(s)).toBe(1);
   });
 
-  it('Preachers: +2 on Farewell (named)', () => {
+  it('Preachers: +2 on Bid Farewell (named)', () => {
     let s = take(table(Q, { round: 2, members: [['trading.broker', 'red.twins']], shop: ROW }), 'trading.farewell');
     s = move(s, cardOpt(s, 'red.twins', 0));
     expect(B(s)).toBe(4 + 2);
@@ -152,7 +152,7 @@ describe('White members', () => {
     expect(R(t, 1).magenta || 0).toBe(0);
   });
 
-  it('Farewell casting out pays a rival\'s Ferryman nothing (it pays for shop recruits since Cory, Nov 1 3:59pm)', () => {
+  it('Bid Farewell casting out pays a rival\'s Ferryman nothing (it pays for shop recruits since Cory, Nov 1 3:59pm)', () => {
     let s = take(table(Q, { round: 2, members: [['red.bigfamily'], ['red.recruiter']], shop: ROW }), 'trading.farewell');
     const r0 = R(s, 1).red;
     s = move(s, `card:${uidIn(s, 'red.bigfamily', 0)}`);
@@ -184,7 +184,7 @@ describe('White members', () => {
     expect(named(s, 'Undertaker')).toEqual(["P1's Undertaker: +2 followers."]);
   });
 
-  it('Penitents: whenever you buy followers, +2 white (named); a rival\'s buy and Cash In pay nothing', () => {
+  it('Penitents: whenever you buy followers, +2 white (named); a rival\'s buy and Redeem pay nothing', () => {
     let s = table(Q, { res: [{ gold: 5 }], members: [[], ['trading.changer']], shop: ROW, ...buy });
     s = move(s, 'tier:mid');
     expect([B(s), R(s, 1).white || 0]).toEqual([5, 0]); // a rival's buy pays nothing (Cory, Nov 6: own actions only)
@@ -193,7 +193,7 @@ describe('White members', () => {
     t = move(t, 'tier:small');
     expect([B(t), R(t).white]).toEqual([1, 2]); // its holder's own buy: +2
     const c = take(table(Q, { round: 3, left: 5, res: [{ white: 3 }], members: [['trading.changer']], shop: ROW }), 'trading.cashin');
-    expect([B(c), R(c).white]).toEqual([3, 1]); // Cash In turns white into followers, but nobody bought any
+    expect([B(c), R(c).white]).toEqual([3, 1]); // Redeem turns white into followers, but nobody bought any
     expect(named(c, 'Penitents')).toEqual([]);
   });
   it('× Doppelganger copying Penitents: +2 white each on your own buy', () => {
@@ -203,11 +203,11 @@ describe('White members', () => {
     expect(R(s).white).toBe(4);
   });
 
-  it('Martyrs: discarded with Farewell, +4 followers and +4 white (named)', () => {
+  it('Martyrs: discarded with Bid Farewell, +4 followers and +4 white (named)', () => {
     let s = take(table(Q, { round: 2, members: [['trading.martyr']], shop: ROW }), 'trading.farewell');
     const w1 = R(s).white || 0;
     s = move(s, cardOpt(s, 'trading.martyr', 0));
-    expect(B(s)).toBe(8); // Farewell: its cost (4); Martyrs: +4 followers
+    expect(B(s)).toBe(8); // Bid Farewell: its cost (4); Martyrs: +4 followers
     expect((R(s).white || 0) - w1).toBe(4); // Martyrs: +4 white
     expect(named(s, 'Martyrs')).toEqual(["P1's Martyrs were discarded: +4 white, +4 followers."]);
   });

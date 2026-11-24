@@ -56,9 +56,9 @@ const lines = (s, re) => s.log.filter(l => re.test(l));
 const bonusOf = (s, i) => s.players[i].bonus;
 
 describe('Thief-Takers: "Whenever a rival steals from you, steal 1 back from them."', () => {
-  it('Heist (3 followers, then 3 resources) is one steal: one steal back, not five', () => {
+  it('Plunder (3 followers, then 3 resources) is one steal: one steal back, not five', () => {
     const { s } = go('bg-heist', { quads: Q, round: 2, turns: [0], members: [[], ['thieves.watchdog']], res: [{ red: 5 }, { gold: 6 }], prep: st => { st.players[1].bonus = 5; } },
-      [/Heist/, /player:1/, /player:1/, /player:1/, /take:1:gold/, /take:1:gold/, /take:1:gold/]);
+      [/Plunder/, /player:1/, /player:1/, /player:1/, /take:1:gold/, /take:1:gold/, /take:1:gold/]);
     expect(lines(s, /Thief-Takers/)).toEqual(["P2's Thief-Takers: took 1 from P1."]);
     expect(s.players[0].res).toMatchObject({ magenta: 1, red: 4, gold: 3 }); // 1 red back (P1's biggest pile when the steal began)
     expect(s.players[1].res).toMatchObject({ gold: 3, red: 1 });
@@ -68,11 +68,11 @@ describe('Thief-Takers: "Whenever a rival steals from you, steal 1 back from the
 
   it('both players hold Thief-Takers: one steal back, the thief\'s Thief-Takers does not answer it (no loop)', () => {
     const { s } = go('bg-both', { quads: Q, round: 1, turns: [0], members: [['thieves.watchdog'], ['thieves.watchdog']], res: [{ red: 2 }, { gold: 3 }] },
-      [/Help Yourself/, /take:1:gold/]);
+      [/Pilfer/, /take:1:gold/]);
     expect(lines(s, /Thief-Takers/)).toEqual(["P2's Thief-Takers: took 1 from P1."]);
     expect(s.players[0].res).toMatchObject({ magenta: 1, red: 1, gold: 1 });
     expect(s.players[1].res).toMatchObject({ gold: 2, red: 1 });
-    expect(tot(s.players[0]) + tot(s.players[1])).toBe(6); // 5 held + Help Yourself's +1 magenta
+    expect(tot(s.players[0]) + tot(s.players[1])).toBe(6); // 5 held + Pilfer's +1 magenta
     cleanLog(s);
   });
 
@@ -89,7 +89,7 @@ describe('Thief-Takers: "Whenever a rival steals from you, steal 1 back from the
 
   it("the thief's Lie Low (\"Rivals can't steal from you this round\") stops the steal back", () => {
     const { s } = go('bg-lielow', { quads: Q, round: 1, turns: [0], members: [[], ['thieves.watchdog']], res: [{ red: 2 }, { gold: 3 }], prep: st => { st.players[0].hideout = 1; } },
-      [/Help Yourself/, /take:1:gold/]);
+      [/Pilfer/, /take:1:gold/]);
     expect(has(s, /Thief-Takers/)).toBe(false);
     expect(s.players[0].res).toMatchObject({ magenta: 1, red: 2, gold: 1 });
     expect(s.players[1].res.gold).toBe(2);
@@ -97,7 +97,7 @@ describe('Thief-Takers: "Whenever a rival steals from you, steal 1 back from the
 
   it('Starveling on the Thief-Takers owner ("your steals take 2 more") makes the steal back 3', () => {
     const { s } = go('bg-desperado', { quads: Q, round: 1, turns: [0], members: [[], ['thieves.watchdog', 'thieves.desperado']], res: [{ red: 4 }, { gold: 3 }],
-      prep: st => { st.players[0].bonus = 9; } }, [/Help Yourself/, /take:1:gold/]);
+      prep: st => { st.players[0].bonus = 9; } }, [/Pilfer/, /take:1:gold/]);
     expect(s.log).toContain("P2's Thief-Takers: takes 3, not 1 (P2's Starveling: +2).");
     expect(s.log).toContain("P2's Thief-Takers: took 3 from P1.");
     expect(tot(s.players[0])).toBe(4 + 1 + 1 - 3);
@@ -106,15 +106,15 @@ describe('Thief-Takers: "Whenever a rival steals from you, steal 1 back from the
 
   it("the steal back is a steal: the thief's Informer (\"they lose 1 follower\") takes 1 from the Thief-Takers owner", () => {
     const { s } = go('bg-snitch', { quads: Q, round: 1, turns: [0], members: [['thieves.snitch'], ['thieves.watchdog']], res: [{ red: 2 }, { gold: 3 }],
-      prep: st => { st.players[1].bonus = 2; } }, [/Help Yourself/, /take:1:gold/]);
+      prep: st => { st.players[1].bonus = 2; } }, [/Pilfer/, /take:1:gold/]);
     expect(s.log).toContain("P2's Thief-Takers: took 1 from P1.");
     expect(s.log).toContain("P1's Informer: P2 loses 1 follower.");
     expect(bonusOf(s, 1)).toBe(1);
   });
 
-  it('Heist (3 followers, then 3 resources) is one steal: the victim\'s Informer ("they lose 1 follower") takes 1, not five', () => {
+  it('Plunder (3 followers, then 3 resources) is one steal: the victim\'s Informer ("they lose 1 follower") takes 1, not five', () => {
     const { s } = go('snitch-heist', { quads: Q, round: 2, turns: [0], members: [[], ['thieves.snitch']], res: [{ red: 5 }, { gold: 6 }], prep: st => { st.players[0].bonus = 9; st.players[1].bonus = 5; } },
-      [/Heist/, /player:1/, /player:1/, /player:1/, /take:1:gold/, /take:1:gold/, /take:1:gold/]);
+      [/Plunder/, /player:1/, /player:1/, /player:1/, /take:1:gold/, /take:1:gold/, /take:1:gold/]);
     expect(lines(s, /Informer/)).toEqual(["P2's Informer: P1 loses 1 follower."]);
     expect(s.players[0].res.gold).toBe(3);
     expect([bonusOf(s, 0), bonusOf(s, 1)]).toEqual([9 + 3 - 1, 2]);
@@ -123,7 +123,7 @@ describe('Thief-Takers: "Whenever a rival steals from you, steal 1 back from the
 
   it("3 players: a third player's Lookout answers the first steal, not the steal back", () => {
     const { s } = go('bg-lookout', { quads: Q, n: 3, round: 1, turns: [0], members: [[], ['thieves.watchdog'], ['thieves.lookout']], res: [{ red: 3 }, { gold: 3 }, {}] },
-      [/Help Yourself/, /take:1:gold/]);
+      [/Pilfer/, /take:1:gold/]);
     expect(lines(s, /Thief-Takers|Lookout/)).toEqual(expect.arrayContaining(["P2's Thief-Takers: took 1 from P1.", "P3's Lookout: took 1 from P1."]));
     expect(lines(s, /Lookout/).length).toBe(1);
     expect(tot(s.players[0])).toBe(3 + 1 + 1 - 2);
@@ -291,7 +291,7 @@ describe('Changeling: "On Recruit: swap this member for a rival\'s member costin
   });
 
   // Nov 12, a seeded game looped forever: Changeling swapped away, then swapped straight back the same turn (Shadow
-  // copying Reprise copying Promote), firing its On Recruit each time. Its On Recruit happens once a turn for a player.
+  // copying Do It Again copying Promote), firing its On Recruit each time. Its On Recruit happens once a turn for a player.
   it('swapped straight back the same turn, Changeling does not swap again', () => {
     const { s } = go('da-back', { quads: Q, turns: [0], shop: ['thieves.doubleagent'], members: [[], ['thieves.bigscore']], res: [RICHRES, { gold: 4 }] },
       [/Stash/, /Changeling/, /Safecracker/]);
@@ -338,20 +338,20 @@ describe('Changeling: "On Recruit: swap this member for a rival\'s member costin
   });
 });
 
-// Test Drive (Blue: "Discard a shop member. Use its effect now. +1 blue."), whose effect fires for Round End members
+// Try Out (Blue: "Discard a shop member. Use its effect now. +1 blue."), whose effect fires for Round End members
 // (Claude's logged fill-in, Nov 11). Night Thieves and Press Gang run their Round End on core's allPlaced hook (before
-// scoring), which Test Drive's driveHook (market.js) does not look for; Paupers and Harlequin share the hook.
-describe('Test Drive on the Magenta Round End members', () => {
+// scoring), which Try Out's driveHook (market.js) does not look for; Paupers and Harlequin share the hook.
+describe('Try Out on the Magenta Round End members', () => {
   const QB = ['thieves', 'market', 'red', 'yellow'];
   // (was a bug: market.js driveHook read onRoundEnd only, not onAllPlaced, and the member was discarded with no effect)
-  it('Test Drive on Night Thieves in the shop: steal 3 now', () => {
+  it('Try Out on Night Thieves in the shop: steal 3 now', () => {
     const { s } = go('td-catburglars', { quads: QB, round: 1, turns: [0], shop: ['thieves.secondstory'], res: [{}, { red: 5 }] },
-      [/Test Drive/, /Night Thieves/, /take:1:red/, /take:1:red/, /take:1:red/]);
+      [/Try Out/, /Night Thieves/, /take:1:red/, /take:1:red/, /take:1:red/]);
     expect(s.players[0].res.red).toBe(3);
   });
-  it('Test Drive on Press Gang in the shop: a rival gives you a member now', () => {
+  it('Try Out on Press Gang in the shop: a rival gives you a member now', () => {
     const { s } = go('td-kidnappers', { quads: QB, round: 1, turns: [0], shop: ['thieves.kidnappers'], members: [[], ['red.intern']] },
-      [/Test Drive/, /Press Gang/, /Intern/]);
+      [/Try Out/, /Press Gang/, /Intern/]);
     expect(names(s, 0)).toContain('Intern');
   });
 });

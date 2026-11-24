@@ -66,9 +66,9 @@ describe('Richer and +1 any move every named member cost', () => {
     expect(shiftCosts('Swap any member for one costing up to 3 more', 2)).toBe('Swap any member for one costing up to 3 more');
     expect(shiftCosts('a shop member costing at most 2 less', 2)).toBe('a shop member costing at most 2 less');
   });
-  it('Initiation offers exactly the shop members its words allow, at both prices', () => {
+  it('Induct offers exactly the shop members its words allow, at both prices', () => {
     for (const econ of [undefined, 'rich', 'any1']) {
-      // members around the cap: Initiation's cap is 9 + MORE as printed, 2 more under Richer, 1 more under +1 any
+      // members around the cap: Induct's cap is 9 + MORE as printed, 2 more under Richer, 1 more under +1 any
       const s0 = sceneQ({ round: 3, rules: { ...base, econ }, quadrants: ['gold', 'red', 'market', 'echo'] });
       const cap = Number(/costing (\d+) or less/.exec(spacesOf(s0, 'red').find(a => a.key === 'take').text)[1]);
       expect(cap).toBe(9 + MORE + (econ ? ECON_SETS[econ].up : 0));

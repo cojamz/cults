@@ -13,7 +13,7 @@ const withCloak = (s, def, i = 0) => {
 };
 
 describe('Purple Cloak (Sleepyhead)', () => {
-  it('Sleep In: its holder takes the Goes Last token, +2 purple on top of the space (+3 until Nov 11)', () => {
+  it('Lie Abed: its holder takes the Goes Last token, +2 purple on top of the space (+3 until Nov 11)', () => {
     const base = take(sceneQ({ quadrants: Q }), 'purple.skip').players[0].res.purple;
     const s = take(withCloak(sceneQ({ quadrants: Q }), 'purple.pocketwatch'), 'purple.skip');
     expect(s.players[0].res.purple).toBe(base + 2);

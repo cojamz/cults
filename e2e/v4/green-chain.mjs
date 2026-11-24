@@ -1,6 +1,6 @@
-// A real browser must re-choose after Cover copies Reprise, then return to buying. (Sample copied actions until it
-// became "Copy the On Recruit of a rival's member"; Cover is the copy that can still land on Reprise. Since Nov 10 Cover
-// reads "Copy an action with a rival’s minion on it. +1 green.", so the rival takes Reprise first.)
+// A real browser must re-choose after Imitate copies Do It Again, then return to buying. (Sample copied actions until it
+// became "Copy the On Recruit of a rival's member"; Imitate is the copy that can still land on Do It Again. Since Nov 10 Imitate
+// reads "Copy an action with a rival’s minion on it. +1 green.", so the rival takes Do It Again first.)
 // The same pending nested choice resumes after reload; desktop and phone use actual clicks/taps.
 import { chromium, devices } from 'playwright';
 import { mkdirSync } from 'node:fs';
@@ -40,7 +40,7 @@ function fixture() {
   s = pass(move(s, `slot:${slot('echo', 'chant')}`));
   s = pass(move(s, `slot:${slot('gold', 'rush')}`));
   s = pass(move(s, `slot:${slot('gold', 'discount')}`));
-  // the rival's Reprise copies their own Build Up, then they pass the buy
+  // the rival's Do It Again copies their own Flock Together, then they pass the buy
   s = move(s, `slot:${slot('echo', 'refrain')}`);
   while (s.pending?.player === 1) s = s.pending.kind === 'buy' ? move(s, 'pass') : move(s, s.pending.options[0].id);
   if (s.pending?.player !== 0 || s.pending.kind !== 'place') throw new Error(`green-chain: setup left ${JSON.stringify(s.pending?.prompt)}`);
@@ -115,7 +115,7 @@ try {
     await page.locator('[data-option="pass"]:not([aria-disabled="true"])').first().waitFor();
     await page.screenshot({ path: `${out}/${tag}-settled.png` });
     if (errors.length) throw new Error(`${tag}: ${errors.join('; ')}`);
-    console.log(`${tag}: Cover → Reprise → own Golden Years; fresh choice, reload, exact gains, buying restored; no page errors.`);
+    console.log(`${tag}: Imitate → Do It Again → own Let It Grow; fresh choice, reload, exact gains, buying restored; no page errors.`);
     await ctx.close();
   }
 } catch (error) {

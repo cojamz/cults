@@ -1,7 +1,7 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
-// E2E: Trespasser (was Squatter) onto a rival's Greatest Hits does it for you (Cory's v0.9.1 playtest, Oct 27:
+// E2E: Trespasser (was Squatter) onto a rival's Replay All does it for you (Cory's v0.9.1 playtest, Oct 27:
 // "using squatter on greatest hits didnt seem to work… players actions werent copied"). Round III, you took two
-// spaces, a rival took Greatest Hits; you join it on the wheel. Since Nov 10 Greatest Hits reads "Choose a color other
+// spaces, a rival took Replay All; you join it on the wheel. Since Nov 10 Replay All reads "Choose a color other
 // than green. Copy every action with a minion on its spaces. +1 green.", so the joiner picks Gold and copies the Golden
 // Years it took.
 // Server: $V4_URL (a built preview). Shots: $V4_SHOTS/squat-hits.
@@ -53,7 +53,7 @@ try {
   await page.waitForFunction(() => { try { return !!JSON.parse(localStorage.getItem('patrons.v4.local')).state.build; } catch { return false; } });
   const stamp = await page.evaluate(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state.build);
   const save = squatSave(stamp);
-  if (!(save.pending?.player === 0 && save.pending.options.some(o => o.id === `squat:${GH}`))) throw new Error('squat-hits: setup never offered joining Greatest Hits');
+  if (!(save.pending?.player === 0 && save.pending.options.some(o => o.id === `squat:${GH}`))) throw new Error('squat-hits: setup never offered joining Replay All');
   await seedSave(page, { config: { seats: [{ kind: 'human', name: 'P1' }, { kind: 'bot', name: 'P2' }], speed: 'normal' }, state: save, undo: null, savedAt: Date.now() });
   await page.goto(`${base}/?botDelay=300&intro=0`);
   await page.waitForSelector('.lt-wheel, [data-home="resume"]');
@@ -83,10 +83,10 @@ try {
   await page.waitForTimeout(600);
   await page.screenshot({ path: `${SHOTS}/04-after.png` });
   const end = await page.evaluate(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state);
-  const log = end.log.slice(end.log.findIndex(l => /P1 joined P2 on Greatest Hits/.test(l)));
+  const log = end.log.slice(end.log.findIndex(l => /P1 joined P2 on Replay All/.test(l)));
   console.log(JSON.stringify(log.slice(0, 10)), JSON.stringify(end.players[0].res), JSON.stringify(before));
-  if (!log.includes("P1's Greatest Hits copies every action on Gold's spaces.")) fails.push('no "P1\'s Greatest Hits copies every action on Gold\'s spaces." after joining Greatest Hits');
-  if (!log.some(l => l.startsWith('P1 copied Golden Years'))) fails.push('no "P1 copied Golden Years" after joining Greatest Hits');
+  if (!log.includes("P1's Replay All copies every action on Gold's spaces.")) fails.push('no "P1\'s Replay All copies every action on Gold\'s spaces." after joining Replay All');
+  if (!log.some(l => l.startsWith('P1 copied Let It Grow'))) fails.push('no "P1 copied Let It Grow" after joining Replay All');
   if (!(end.players[0].res.gold > before.gold)) fails.push(`the copy gave no gold (${before.gold} -> ${end.players[0].res.gold})`);
   if (errors.length) fails.push(errors.join(' | '));
   await ctx.close();

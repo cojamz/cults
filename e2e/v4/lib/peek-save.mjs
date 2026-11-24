@@ -10,13 +10,13 @@ import { quadrant } from '../../../src/engine/v4/content/index.js';
 import { POOL_SPACES } from '../../../src/engine/v4/content/pool.js';
 import { wrapInPlace } from '../../../src/engine/v4/content/echo.js';
 
-// Peek left the wheel on Nov 10 (Markdown took its slot). It stays in the code for old saves, and its ordering and
+// Peek left the wheel on Nov 10 (Buy Secondhand took its slot). It stays in the code for old saves, and its ordering and
 // recruit screens still run from a save already at Peek's choice, so this save takes it with Peek put back in
-// Markdown's slot for the setup only (the test-only swap of src/test/engine/v4/helpers.js useRetired), then restores.
+// Buy Secondhand's slot for the setup only (the test-only swap of src/test/engine/v4/helpers.js useRetired), then restores.
 function withPeek(fn) {
   const acts = quadrant('market').actions, i = acts.findIndex(a => a.key === 'markdown');
   const peek = (POOL_SPACES.market || []).find(a => a.key === 'showroom');
-  if (i < 0 || !peek) throw new Error('peek-save: no Markdown slot or no retired Peek');
+  if (i < 0 || !peek) throw new Error('peek-save: no Buy Secondhand slot or no retired Peek');
   const old = acts[i]; acts[i] = wrapInPlace('market', peek, i);
   try { return fn(); } finally { acts[i] = old; }
 }

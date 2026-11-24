@@ -20,7 +20,8 @@
   "Out of Style": "Clear Out",
   "Markdown": "Buy Secondhand",
   "Word of Mouth": "Spread the Word",
-  "Spree": "Salvage"
+  "Spree": "Salvage",
+  "Recruit Twice": "Bring Back"
  },
  "purple.js": {
   "Sleep In": "Lie Abed",
@@ -39,7 +40,8 @@
   "Toast": "Raise a Glass",
   "Party Gifts": "Hand Out Gifts",
   "Buyout": "Hire Away",
-  "Largesse": "Throw Coins"
+  "Largesse": "Throw Coins",
+  "Polish": "Melt Down"
  },
  "thieves.js": {
   "Help Yourself": "Pilfer",
@@ -52,7 +54,8 @@
   "Splurge": "Spend Freely",
   "Nest Egg": "Put By",
   "Farewell": "Bid Farewell",
-  "Cash In": "Redeem"
+  "Cash In": "Redeem",
+  "Write-Off": "Give Away"
  },
  "yellow.js": {
   "Survey": "Count Heads",

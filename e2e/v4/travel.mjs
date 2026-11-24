@@ -4,10 +4,10 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 // default speed (Steady), for each move P1 makes, a piece (or the member itself) must fly from where the rules take it
 // to where they put it, and be in the air before the number it lands on changes:
 //  (t1) a steal in round I and (t2) one in round III: from the rival's stack to yours;
-//  (t3) a gift (Kickback): from the space's resource (its color's rim on the wheel, where a space's resources come
+//  (t3) a gift (Grease a Palm): from the space's resource (its color's rim on the wheel, where a space's resources come
 //       from since the wheel-slice rework) to the rival's stack;
 //  (t4) a member taken (Poach): the member flies from the rival's seat to its new chip in yours;
-//  (t5) a member given to a rival (Swindle's shop member; Shake Down's ransom left the wheel Nov 10): from the shop to
+//  (t5) a member given to a rival (Sleight of Hand's shop member; Shake Down's ransom left the wheel Nov 10): from the shop to
 //       their seat;
 //  (t6) a member's Use: from the member to your stack;
 //  (t7) a member recruited off the wheel (Borrow; Walk-In's draw off the deck left Nov 10): from the shop to your seat.
@@ -174,7 +174,7 @@ async function check(kind, label) {
     // destination, and that last leg is in the air before the destination's number changes
     // (a member on the stage is a wide card: what it gives leaves from its portrait, inside the card it landed as)
     const meet = (a, b) => Math.hypot(a.x1 - b.x0, a.y1 - b.y0) <= 48 || (!!a.box && near(b.x0, b.y0, a.box, 8));
-    // a member off the shop (t5 Swindle's gift, t7 Borrow) flies its card to the hub, opens there and goes home from the
+    // a member off the shop (t5 Sleight of Hand's gift, t7 Borrow) flies its card to the hub, opens there and goes home from the
     // stage: the card must leave the shop before the member shows in the seat
     // (a member handed to a rival goes straight from the shop card to their seat: that flight counts as well)
     const ok = from.kind === 'pile' || from.kind === 'shop' ? fl.filter(f => near(f.x0, f.y0, fromR) && f.t < landedAt && (/card-flight/.test(f.cls) || (from.kind === 'shop' && near(f.x1, f.y1, toBox)))) : fl.filter(f => near(f.x1, f.y1, toBox) && (f.t <= landedAt + 5 || f.frame <= landedFrame) &&

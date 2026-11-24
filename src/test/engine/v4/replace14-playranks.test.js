@@ -27,7 +27,7 @@ describe('REPLACE14: Ragpicker ("You may recruit the top member of the discard p
   it("offers the discard pile's top card beside the shop, and recruits it at its price", () => {
     let s = table(['red', 'market'], { n: 2, round: 2, res: [{ red: 9, blue: 9, gold: 9 }], members: [['market.ragpicker']] });
     const b = s.pile.pop(); s.discard.push(b); // the discard pile's top card (Nov 6: the pile's bottom became the discard pile)
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     const o = s.pending.options.find(x => x.id === `card:${b}`);
     expect(o?.label).toContain('(top of the discard pile)');
     s = payAll(answer(s, o.id));
@@ -50,7 +50,7 @@ describe('REPLACE14: Cutpurse, its color', () => {
 describe('REPLACE14: Cutpurse, steal 2', () => {
   it('recruiting a member starts a steal of 2', () => {
     let s = table(['red', 'thieves'], { n: 2, round: 2, res: [{ red: 9, magenta: 9 }, { gold: 5 }], members: [['thieves.shoptwo']], shop: ['thieves.crew'] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = payAll(answer(s, `card:${uidIn(s, 'thieves.crew', 'shop')}`));
     while (s.pending?.player === 0 && s.pending.prompt?.includes('Cutpurse')) s = answer(s, s.pending.options[0].id);
     expect(s.players[1].res.gold).toBe(3);
@@ -58,10 +58,10 @@ describe('REPLACE14: Cutpurse, steal 2', () => {
 });
 
 describe('REPLACE14: Open House', () => {
-  it("is on the wheel in Melting Pot's place", () => {
+  it("is on the wheel in Hold a Fair's place", () => {
     const names = quadrant('yellow').actions.map(a => a.name);
     expect(names).toContain('Open House');
-    expect(names).not.toContain('Melting Pot');
+    expect(names).not.toContain('Hold a Fair');
   });
   it('+2 yellow, then a free recruit costing up to 2 per member color', () => {
     let s = table(['red', 'yellow', 'market'], { n: 2, round: 2, members: [['red.mentor', 'market.windowshopper']] });

@@ -26,18 +26,18 @@ const q = (s, u) => defById(s.cards[u].def).quadrant;
 describe('Curtain Call (Green, round III)', () => {
   it('Copy every action you have a minion on (not a rival\'s)', () => {
     let s = sceneQ({ quadrants: ['echo', 'gold', 'purple', 'market'], round: 3, queue: [0, 1, 0, 1, 0].map(p => ({ t: 'turn', p })) });
-    s = passBuys(take(s, 'gold.rush')); // P1: Golden Years +6 gold
-    s = passBuys(take(s, 'gold.jv')); // P2: Kickback
+    s = passBuys(take(s, 'gold.rush')); // P1: Let It Grow +6 gold
+    s = passBuys(take(s, 'gold.jv')); // P2: Grease a Palm
     if (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     s = passBuys(s);
-    s = passBuys(take(s, 'echo.chant')); // P1: Build Up +2 green (one minion on Green, +1)
+    s = passBuys(take(s, 'echo.chant')); // P1: Flock Together +2 green (one minion on Green, +1)
     s = passBuys(take(s, 'purple.skip')); // P2
     const gold = s.players[0].res.gold, green = s.players[0].res.green;
     s = take(s, 'echo.curtaincall');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     expect(s.players[0].res.gold - gold).toBe(6);
     expect(s.players[0].res.green - green).toBe(2);
-    expect(named(s, 'Curtain Call')[0]).toBe("P1's Curtain Call: copies Golden Years, Build Up.");
+    expect(named(s, 'Curtain Call')[0]).toBe("P1's Curtain Call: copies Let It Grow, Flock Together.");
   });
 });
 
@@ -47,9 +47,9 @@ describe('Opening Act (Green)', () => {
     s = go(s, [{ t: 'round', r: 2 }]);
     expect(s.pending.prompt).toMatch(/Opening Act/);
     const names = s.pending.options.map(o => o.label.split(':')[0]);
-    expect(names).toEqual(expect.arrayContaining(['Golden Years', 'Collect Debts', 'Build Up']));
-    expect(names).not.toEqual(expect.arrayContaining(['Echo']));
-    s = move(s, s.pending.options.find(o => o.label.startsWith('Golden Years')).id);
+    expect(names).toEqual(expect.arrayContaining(['Let It Grow', 'Call In Debts', 'Flock Together']));
+    expect(names).not.toEqual(expect.arrayContaining(['Follow Suit']));
+    s = move(s, s.pending.options.find(o => o.label.startsWith('Let It Grow')).id);
     expect(s.players[0].res.gold).toBe(4);
   });
 });

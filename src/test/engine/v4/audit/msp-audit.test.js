@@ -59,8 +59,8 @@ describe('audit', () => {
     expect(s.log.some(l => /No extra minions in round I: P1 gets no extra turn from Night Owls/.test(l))).toBe(true);
   });
 
-  it('Bookkeeper pays once the extra (true last) minion\'s turn ends, not on the Overtime minion (Cory 2026-10-15)', () => {
-    // P1 has 2 on the board and 1 left; takes Overtime (3rd), then the extra turn places a 4th
+  it('Bookkeeper pays once the extra (true last) minion\'s turn ends, not on the Burn the Candle minion (Cory 2026-10-15)', () => {
+    // P1 has 2 on the board and 1 left; takes Burn the Candle (3rd), then the extra turn places a 4th
     let s = sc(QP, { round: 2, left: 1, slots: { '0-0': 0, '0-1': 0 }, members: [['purple.bookkeeper']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
     s = take(s, 'purple.overtime');
     expect(s.players[0].res.purple).toBe(0); // not the last minion: an extra turn is coming
@@ -87,7 +87,7 @@ describe('audit', () => {
 });
 
 describe('audit: log lines', () => {
-  it('Grand Host: Toast logs what the taker got, doubled', () => {
+  it('Grand Host: Raise a Glass logs what the taker got, doubled', () => {
     let s = take(sc(QP, { round: 2, members: [['silver.grandhost']] }), 'silver.toast');
     expect(s.players[0].res.silver).toBe(10); // +4 and +1, each doubled
     expect(s.log.some(l => /raised a toast: \+8 silver/.test(l))).toBe(true);

@@ -54,11 +54,11 @@ describe('Scavengers: "Whenever you recruit from the discard pile, +2 followers.
   const { spacesOf } = await import('../../../engine/v4/content/index.js');
   const { applyMove } = await import('../../../engine/v4/core.js');
   const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
-  it('pays on a recruit off the discard pile (Recruit Twice)', () => {
+  it('pays on a recruit off the discard pile (Bring Back)', () => {
     let s = table(['market', 'red', 'yellow', 'thieves'], { n: 2, round: 2, res: [{ blue: 20, red: 20 }], members: [['market.thrifthunters']] });
     const a = uidIn(s, 'red.seatfiller', 'pile');
     s = { ...s, pile: s.pile.filter(u => u !== a), discard: [...(s.discard || []), a] };
-    const i = spacesOf(s, 'market').findIndex(x => x.name === 'Recruit Twice');
+    const i = spacesOf(s, 'market').findIndex(x => x.name === 'Bring Back');
     expect(i).toBeGreaterThanOrEqual(0);
     const before = s.players[0].bonus;
     s = answer(s, `slot:${s.quadrants.indexOf('market')}-${i}`);

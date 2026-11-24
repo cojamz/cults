@@ -7,7 +7,7 @@ import { take } from './helpers.js';
 
 const turns = [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }];
 describe('Night Watch pays on a take, not a keep', () => {
-  it('a rival takes the token with Last Call: +1 per minion on it', () => {
+  it('a rival takes the token with Bide Your Time: +1 per minion on it', () => {
     let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 2, members: [[], ['purple.nightwatch']], queue: turns });
     s = take(s, 'purple.lastcall');
     expect(s.players[1].bonus).toBeGreaterThan(0);

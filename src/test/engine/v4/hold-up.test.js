@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Hold Up (Purple, round I; Cory, 2026-10-22): in Catch Up's spot, "1 purple per round", and "it has to be the next
+// Hold Up (Purple, round I; Cory, 2026-10-22): in Beg's spot, "1 purple per round", and "it has to be the next
 // TURN not even the next player": whoever's turn is next (you too, at a snake end) is passed over once and the snake
 // carries on; they still place every minion, their last one after everyone.
 import { describe, it, expect } from 'vitest';
@@ -13,8 +13,8 @@ import { useRetired } from './helpers.js';
 useRetired(['purple.holdup']);
 
 const Q = ['gold', 'red', 'purple', 'echo'];
-/** A bot move that takes a space moving turns (Sleep In, Hold Up) only when it is the last one open: round I fills
- *  every space, and Sleep In on the round's last placement has no turn left to skip. Recruits pass (see below). */
+/** A bot move that takes a space moving turns (Lie Abed, Hold Up) only when it is the last one open: round I fills
+ *  every space, and Lie Abed on the round's last placement has no turn left to skip. Recruits pass (see below). */
 function plain(s, rand) {
   const m = chooseBotMove(s, rand);
   const o = s.pending?.options?.find(x => x.id === m.option);

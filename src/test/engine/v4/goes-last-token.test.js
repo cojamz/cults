@@ -1,8 +1,8 @@
 // @vitest-environment node
 // The Goes Last token (Cory, Nov 1 2:16pm and 2:35pm: "Let's just try it with the goes last token"). "Its holder places
 // the minions on it once every hand is empty. If someone takes it, the minions on it go back to their owner's hand."
-// Last Call: "+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token and put your other
-// minions on it." Sleep In: "+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your other
+// Bide Your Time: "+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token and put your other
+// minions on it." Lie Abed: "+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your other
 // minions are placed after everyone else’s." (Nov 10; was "put your next minion on it"). Night Owls: "Once per round: after you place your last minion, take the Goes Last token with 1 more
 // minion on it." A pass because your hand is empty counts as a skipped turn (Sleepyhead, Gossip).
 import { describe, it, expect } from 'vitest';
@@ -27,7 +27,7 @@ function playOut(s) {
 }
 
 describe('the Goes Last token', () => {
-  it('Last Call: takes the token, every minion left waits on it, and each pass while rivals place is a skip', () => {
+  it('Bide Your Time: takes the token, every minion left waits on it, and each pass while rivals place is a skip', () => {
     const s = take(sceneQ({ quadrants: Q, round: 2, left: 3, members: [[], ['purple.gossip']], queue: [...turns(0, 1, 0, 1, 0, 1), { t: 'allPlaced' }] }), 'purple.lastcall');
     expect(s.goesLast).toEqual({ round: 2, pid: 0 });
     expect(s.queue.filter(t => t.t === 'turn' && t.p === 0).every(t => t.token)).toBe(true);
@@ -37,12 +37,12 @@ describe('the Goes Last token', () => {
     expect(end.players[1].bonus).toBe(2); // Gossip
   });
 
-  it('Sleep In takes the token from a Last Call: the caller’s minions go back to their hand and take their turns again', () => {
+  it('Lie Abed takes the token from a Bide Your Time: the caller’s minions go back to their hand and take their turns again', () => {
     let s = take(sceneQ({ quadrants: Q, round: 2, left: 4, queue: [...turns(0, 1, 0, 1, 0, 1, 0), { t: 'allPlaced' }] }), 'purple.lastcall');
     expect(s.goesLast.pid).toBe(0);
     s = toPlace(s);
     expect(s.pending.player).toBe(1);
-    s = applyMove(s, { player: 1, option: slot(s, 'Sleep In') });
+    s = applyMove(s, { player: 1, option: slot(s, 'Lie Abed') });
     expect(s.goesLast).toEqual({ round: 2, pid: 1 });
     expect(s.log.some(l => /takes the Goes Last token from P1, and the 3 minions on it go back to P1/.test(l))).toBe(true);
     const { s: end, placed } = playOut(s);
@@ -51,14 +51,14 @@ describe('the Goes Last token', () => {
     expect(skips(end).filter(l => /P1's turn/.test(l))).toHaveLength(0);
   });
 
-  it('Sleep In (Nov 10): all your other minions wait on the token and are placed after everyone else\'s', () => {
+  it('Lie Abed (Nov 10): all your other minions wait on the token and are placed after everyone else\'s', () => {
     const s = take(sceneQ({ quadrants: Q, round: 2, left: 3, members: [[], ['purple.gossip']], queue: [...turns(0, 1, 0, 1, 0, 1), { t: 'allPlaced' }] }), 'purple.skip');
     const { s: end, placed } = playOut(s);
     expect(placed).toEqual([1, 1, 1, 0, 0]);
-    expect(skips(end)).toEqual(["P1's turn is skipped (Sleep In).", "P1's turn is skipped (Sleep In)."]); // both waiting minions' turns
+    expect(skips(end)).toEqual(["P1's turn is skipped (Lie Abed).", "P1's turn is skipped (Lie Abed)."]); // both waiting minions' turns
   });
 
-  it('Early Birds: Last Call pays, nothing goes on the token, and the token stays with its holder', () => {
+  it('Early Birds: Bide Your Time pays, nothing goes on the token, and the token stays with its holder', () => {
     let s = sceneQ({ quadrants: Q, round: 2, left: 3, members: [['purple.earlybird']], queue: [...turns(0, 1, 0, 1), { t: 'allPlaced' }] });
     s.goesLast = { round: 2, pid: 1 };
     s = take(s, 'purple.lastcall');
@@ -69,7 +69,7 @@ describe('the Goes Last token', () => {
   });
 });
 
-// Cory, Nov 14 ("why is this happening still"): his seat showed one minion in hand beside the token. On a Roll took the
+// Cory, Nov 14 ("why is this happening still"): his seat showed one minion in hand beside the token. Keep Going took the
 // token, then Extra Hand added a minion after the take, and that minion's turn was not on the token. Every minion its
 // holder has left waits on the token, whenever it was gained (Nov 12), and a turn moved up to now that the token then
 // sends to the end isn't "now" any more.

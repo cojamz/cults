@@ -13,11 +13,11 @@ const Q = ['echo', 'gold', 'purple', 'market'];
 describe('Headliners (Green, round III)', () => {
   it('Copy any round III action, even if it\'s taken (a rival\'s taken space)', () => {
     let s = sceneQ({ quadrants: Q, round: 3, res: [{}, { gold: 5 }], queue: [1, 0].map(p => ({ t: 'turn', p })) });
-    s = passBuys(take(s, 'gold.strike')); // P2: Double Down, +5 gold
+    s = passBuys(take(s, 'gold.strike')); // P2: Multiply, +5 gold
     expect(s.players[1].res.gold).toBe(10);
     s = take(s, 'echo.headliners');
     expect(s.pending.prompt).toMatch(/^Headliners/);
-    const opt = s.pending.options.find(o => o.label.startsWith('Double Down (P2)'));
+    const opt = s.pending.options.find(o => o.label.startsWith('Multiply (P2)'));
     expect(opt).toBeTruthy();
     expect(s.pending.options.some(o => o.label.startsWith('Headliners'))).toBe(false);
     s = move(s, opt.id);
@@ -27,11 +27,11 @@ describe('Headliners (Green, round III)', () => {
   it('an open round III action is done', () => {
     let s = sceneQ({ quadrants: Q, round: 3, res: [{ gold: 4 }] });
     s = take(s, 'echo.headliners');
-    const opt = s.pending.options.find(o => o.label.startsWith('Double Down:'));
+    const opt = s.pending.options.find(o => o.label.startsWith('Multiply:'));
     expect(opt).toBeTruthy();
     s = move(s, opt.id);
     expect(s.players[0].res.gold).toBe(8);
-    expect(s.log.some(l => l.includes('copies Double Down'))).toBe(true);
+    expect(s.log.some(l => l.includes('copies Multiply'))).toBe(true);
   });
   it('+1 green', () => {
     let s = sceneQ({ quadrants: Q, round: 3 });

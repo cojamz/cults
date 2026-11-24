@@ -11,7 +11,7 @@ dockOff(() => { if (globalThis.history) history.replaceState(null, '', dockHref)
 it('keeps the producing member as the source when its resources fly from the stage', () => {
   const before = sceneQ({ quadrants: ['silver', 'gold'], members: [['silver.majordomo']] });
   const uid = before.players[0].members[0];
-  const after = applyMove(before, { player: 0, option: `slot:${spaceOf(before, 'Toast')}` }, { effects: true });
+  const after = applyMove(before, { player: 0, option: `slot:${spaceOf(before, 'Raise a Glass')}` }, { effects: true });
   const plan = planChain(before, after, { mine: [0] });
   const produced = plan.atoms.filter(a => a.op === 'piece' && a.r === 'silver' && a.from.kind === 'stage' && a.from.uid === uid);
   expect(produced.reduce((n, a) => n + a.n, 0)).toBe(2);

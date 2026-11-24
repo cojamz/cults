@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Blue Cloak ("Whenever you discard a member, +1 of its color (grey: any color)"). The player-agents review (r3g6, Nov 13)
 // found it paid 13 of 18: a discard that empties the deck shuffles the discard pile into a new deck before the cloak
-// pays (Out of Style's 3 discards paid 1, Test Drive's 1 paid 0), and Culler's Round Start discards paid 0
+// pays (Clear Out's 3 discards paid 1, Try Out's 1 paid 0), and Culler's Round Start discards paid 0
 // because nobody's turn has begun at Round Start.
 import { describe, it, expect } from 'vitest';
 import { move, take } from './helpers.js';
@@ -17,7 +17,7 @@ function wearCloak(s) {
 }
 
 describe('Blue Cloak', () => {
-  it('pays for each of Out of Style’s 3 discards when the deck runs out and the discard pile is shuffled back', () => {
+  it('pays for each of Clear Out’s 3 discards when the deck runs out and the discard pile is shuffled back', () => {
     let s = wearCloak(table(Q, { shop: ['red.host', 'red.intern', 'red.bigfamily', 'red.volunteer'] }));
     s.pile = []; s.discard = []; // every discard reshuffles straight back into the deck and the row
     s = take(s, 'market.restock');

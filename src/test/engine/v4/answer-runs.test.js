@@ -62,14 +62,14 @@ describe('answer runs', () => {
     const p = steal.pending.player, id = steal.pending.options[0].id;
     expect(() => applyMove(steal, { player: p, option: id, then: [id] })).toThrow();
   });
-  it('a steal hidden behind a player pick (Heist) is refused too', () => {
+  it('a steal hidden behind a player pick (Plunder) is refused too', () => {
     const heist = find(s => h(s) === 'thieves.heistSplit' && s.queue[0].data && s.queue[0].data.left >= 2);
     if (!heist) return;
     expect(runLength(heist)).toBe(0);
     const p = heist.pending.player, id = heist.pending.options[0].id;
     expect(() => applyMove(heist, { player: p, option: id, then: [id] })).toThrow(/one at a time/);
   });
-  it('Party Gifts hands out its silver in one move', () => {
+  it('Hand Out Gifts hands out its silver in one move', () => {
     const share = find(s => h(s) === 'silver.share');
     expect(share).toBeTruthy();
     expect(runLength(share)).toBeGreaterThan(1);
@@ -98,7 +98,7 @@ describe('answer runs', () => {
     expect(next.players[p.id].res[to]).toBe((p.res[to] || 0) + 1);
     expect(next.queue[0] && next.queue[0].h === 'yellow.swap' && next.pending?.player === p.id).toBeFalsy();
   });
-  it('a run cut by another question (Out of Style picking a grey member, which asks a color) keeps the rest for after it', () => {
+  it('a run cut by another question (Clear Out picking a grey member, which asks a color) keeps the rest for after it', () => {
     // the player-agents review (r3g1): seven such answers were dropped with no word
     let hit = null;
     find(s => {
@@ -117,7 +117,7 @@ describe('answer runs', () => {
     expect(r.played).toBe(1);
     expect(r.rest).toEqual([other.id]);
     expect(r.why).toMatch(/another question came up first/);
-    // answer the question in between; once Out of Style is back, the kept pick plays
+    // answer the question in between; once Clear Out is back, the kept pick plays
     let st = r.state;
     for (let k = 0; k < 6 && st.pending && st.pending.player === p && askKey(st) !== askKey(s); k++) st = applyMove(st, { player: p, option: st.pending.options[0].id });
     if (askKey(st) === askKey(s) && st.pending.options.some(x => x.id === other.id)) {
