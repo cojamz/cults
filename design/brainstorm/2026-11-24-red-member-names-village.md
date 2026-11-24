@@ -123,3 +123,126 @@ Verdict: send
 8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
 9. Biggest case: unchanged rule; up to 3 round starts a game, each trading up to a member costing up to 3 more for free (about 3 to 9 resources in all), the same as Seat Filler today, against a winner's 70 to 110 followers.
 Verdict: send
+
+## Second round (Cory 1:14pm)
+
+Cory: "Town Crier and Apprentice don't make sense. Horse Trader also not good. Recruiting Sergeant feels off. there have got to be better terms here, you are thinking too simply. I like the direction thoug. Pied Piper also good. We can swing slightly fairy-tale esque here"
+Read: the plain trade names were too literal (a job that does the card word for word). Richer means a character with a story people already know, whose story is the card: the Pied Piper leading someone away. Town Crier, Apprentice, Horse Trader, Recruiting Sergeant: refused, not reused. Tavern Keeper, Guild Master, Gatekeeper, Tailor were not answered; richer swaps offered for Gatekeeper and Tailor.
+Cut before sending: Soul Collector (darker than 5 to 10 percent), Old Woman in the Shoe for Host (her story is too many children, not more money), Wicked Witch for Panel (only turns people worse), Goblin Merchant (story not known well enough).
+
+## Idea: Ferryman
+
+1. Printed text: unchanged, "Whenever you recruit a member, +1 red." Replaces the name Recruiter. Backup: Soul Collector (darker).
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the ferryman of the old stories is paid a coin per soul; joining your cult is the crossing.
+5. Not refused: not a live member or space name, not in design/cuts.md, and not one of the refused Red names; a fairy-tale village character, inside the world he picked at 1:00pm and the swing he allowed at 1:14pm.
+6. Judged: recruit test: "You recruited the Ferryman, and of course he takes a coin for every soul he brings across: +1 red each time you recruit." It reads in one pass, a known story, playful with a slight dark edge.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; about 8 to 12 recruits in a big game, so 8 to 12 red, the same as Recruiter today, against member prices of 5 to 12.
+Verdict: send
+
+## Idea: Fairy Godmother
+
+1. Printed text: unchanged, "On Use, once per round: promote or demote another of your members." Replaces the name Panel. Also used as an example on Thrift Hunters in the step back (not picked, so free).
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: she turned a scullery maid into a lady and a pumpkin into a coach; here she turns one of your members into a different member up to 3 dearer or cheaper. It answers his Middle Manager note ("Promoting somebody doesnt change them into a different occupation"): magic does turn someone into someone else.
+5. Not refused: not a live member or space name, not in design/cuts.md, and not one of the refused Red names; a fairy-tale village character, inside the world he picked at 1:00pm and the swing he allowed at 1:14pm.
+6. Judged: recruit test: "You recruited a Fairy Godmother, and of course once a round she turns one of your people into someone grander, or someone humbler." It reads in one pass, a known story, playful with a slight dark edge.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; three uses a game, each swapping a member for one up to 3 dearer, the same as Panel today; about 1 follower and 3 resources of value each, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Hedge Witch
+
+1. Printed text: unchanged, "On Use, once per round: promote or demote another of your members." Replaces the name Panel. Second choice for Panel.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the village witch who turns princes into frogs and back: one member becomes a different one up to 3 dearer or cheaper.
+5. Not refused: not a live member or space name, not in design/cuts.md, and not one of the refused Red names; a fairy-tale village character, inside the world he picked at 1:00pm and the swing he allowed at 1:14pm.
+6. Judged: recruit test: "You recruited a Hedge Witch, and of course once a round she turns one of your people into someone better, or someone worse." It reads in one pass, a known story, playful with a slight dark edge.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; three uses a game, each swapping a member for one up to 3 dearer, the same as Panel today; about 1 follower and 3 resources of value each, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Hansel
+
+1. Printed text: unchanged, "On Recruit: recruit the cheapest member in the shop." Replaces the name Mentor (named Wingman). A swap for Wingman only if he wants one; Wingman stays the default.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: he never goes anywhere without his little sister: the cheapest member in the shop tags along.
+5. Not refused: not a live member or space name, not in design/cuts.md, and not one of the refused Red names; a fairy-tale village character, inside the world he picked at 1:00pm and the swing he allowed at 1:14pm.
+6. Judged: recruit test: "You recruited Hansel, and of course Gretel comes too: the cheapest member in the shop joins with him." It reads in one pass, a known story, playful with a slight dark edge.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; once, when it joins: one free member costing about 3 to 5 resources and worth 1 follower, the same as Mentor today, against a winner's 70 to 110 followers.
+Verdict: send
+
+## Idea: Mother Goose
+
+1. Printed text: unchanged, "On Recruit: recruit the cheapest member in the shop." Replaces the name Mentor (named Wingman). Second swap for Wingman.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: goslings trail behind her: the cheapest member in the shop follows her into your cult.
+5. Not refused: not a live member or space name, not in design/cuts.md, and not one of the refused Red names; a fairy-tale village character, inside the world he picked at 1:00pm and the swing he allowed at 1:14pm.
+6. Judged: recruit test: "You recruited Mother Goose, and of course a gosling follows her in: the cheapest member in the shop joins too." It reads in one pass, a known story, playful with a slight dark edge.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; once, when it joins: one free member costing about 3 to 5 resources and worth 1 follower, the same as Mentor today, against a winner's 70 to 110 followers.
+Verdict: send
+
+## Idea: Frog Prince
+
+1. Printed text: unchanged, "Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free." Replaces the name Seat Filler (named Temp). A swap for Temp only if he wants one; Temp stays the default.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the frog who becomes a prince: the card trades itself up for a pricier member.
+5. Not refused: not a live member or space name, not in design/cuts.md, and not one of the refused Red names; a fairy-tale village character, inside the world he picked at 1:00pm and the swing he allowed at 1:14pm.
+6. Judged: recruit test: "You recruited a Frog Prince, and of course at round start he can turn into someone grander: send him to the shop and take a member costing up to 3 more, free." It reads in one pass, a known story, playful with a slight dark edge.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; up to 3 round starts a game, each trading up to a member costing up to 3 more for free (about 3 to 9 resources in all), the same as Seat Filler today, against a winner's 70 to 110 followers.
+Verdict: send
+
+## Idea: Changeling
+
+1. Printed text: unchanged, "Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free." Replaces the name Seat Filler (named Temp). Second swap for Temp.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the fairy stand-in left in a cradle until the real child comes back: it holds the seat, then leaves for someone better.
+5. Not refused: not a live member or space name, not in design/cuts.md, and not one of the refused Red names; a fairy-tale village character, inside the world he picked at 1:00pm and the swing he allowed at 1:14pm.
+6. Judged: recruit test: "You recruited a Changeling, and of course at round start it can slip back to the shop and someone costing up to 3 more takes its place, free." It reads in one pass, a known story, playful with a slight dark edge.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; up to 3 round starts a game, each trading up to a member costing up to 3 more for free (about 3 to 9 resources in all), the same as Seat Filler today, against a winner's 70 to 110 followers.
+Verdict: send
+
+## Idea: Bridge Troll
+
+1. Printed text: unchanged, "Round End: if your members have 2 or fewer colors, +3 followers." Replaces the name Purists. A richer swap for Gatekeeper, which he didn't answer.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: the troll under the bridge decides who crosses: keep to 2 colors and he pays 3 followers a round.
+5. Not refused: not a live member or space name, not in design/cuts.md, and not one of the refused Red names; a fairy-tale village character, inside the world he picked at 1:00pm and the swing he allowed at 1:14pm.
+6. Judged: recruit test: "You recruited a Bridge Troll, and of course only two colors get across: +3 followers each round your members keep to 2 colors or fewer." It reads in one pass, a known story, playful with a slight dark edge.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; 3 rounds at most, so 9 followers, the same as Purists today, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Rumpelstiltskin
+
+1. Printed text: unchanged, "Your grey members count as members of your biggest color." Replaces the name Assimilators. A richer swap for Tailor, which he didn't answer.
+2. Played turn: a name change only; in a 4-player round III the card plays exactly as it does today, and its gain against the best other space is unchanged.
+3. Both sides: the card has the same choices as today; the name adds no choice and removes none, so nobody chooses differently.
+4. Who feels it: the same players as today; what the name tells a player: he spun straw into gold; here he spins plain grey members into your main color.
+5. Not refused: not a live member or space name, not in design/cuts.md, and not one of the refused Red names; a fairy-tale village character, inside the world he picked at 1:00pm and the swing he allowed at 1:14pm.
+6. Judged: recruit test: "You recruited Rumpelstiltskin, and of course he spins your grey members into your biggest color." It reads in one pass, a known story, playful with a slight dark edge.
+7. Public and certain: the rule is unchanged, so nothing drawn from a pile, random or hidden is added.
+8. Color interactions: none: a name change on a single-color Red card, no tie to another color.
+9. Biggest case: unchanged rule; with 3 grey members in round III it adds 3 to your biggest color for the Red contest (4/6/10 followers), the same as Assimilators today.
+Verdict: send
