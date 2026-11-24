@@ -125,7 +125,7 @@ function onSilver(ctx) {
 const lowest = (ctx, p) => Math.min(...others(ctx, p).map(o => ctx.followers(o)));
 /** Rivals gain up to `left` silver from the bank, split as the giver picks one at a time. */
 // Bot tests only (Largesse numbers thread, Nov 24): LARGESSE="<silver>/<followers>" changes Largesse's numbers. Env only, never live.
-const LG = (() => { const m = /^(\d+)\/(\d+)$/.exec(globalThis.process?.env?.LARGESSE || ''); return m ? { max: +m[1], flat: +m[2] } : { max: 10, flat: 7 }; })();
+const LG = (() => { const m = /^(\d+)\/(\d+)$/.exec(globalThis.process?.env?.LARGESSE || ''); return m ? { max: +m[1], flat: +m[2] } : { max: 12, flat: 10 }; })();
 function shareStep(ctx, p, data) {
   const given = data.given || {};
   const total = Object.values(given).reduce((s, n) => s + n, 0);
@@ -485,9 +485,8 @@ export const silverActions = [
     },
   },
   {
-    // Cory, Nov 6: "Largesse should have to give 12. And give 10 followers." All 12 must go; followers flat.
-    // Cory, Nov 24: "Let's make it +7 give 10 for now." (bot games: copied 4-6 times in one round III at +10 and +8)
-    key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Give rivals 10 silver from the bank, split as you choose. +7 followers.',
+    // Cory, Nov 6: "Largesse should have to give 12. And give 10 followers." All 12 must go; 10 followers flat.
+    key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Give rivals 12 silver from the bank, split as you choose. +10 followers.',
     estimate: ctx => 10 + LG.flat - spillCost(ctx, 1) * LG.max,
     resolve(ctx, p) { shareStep(ctx, p, { who: 'Largesse', max: LG.max, per: 0, flat: LG.flat, must: true }); },
   },

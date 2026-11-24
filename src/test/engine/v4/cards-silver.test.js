@@ -44,7 +44,7 @@ describe('Silver actions', () => {
     for (let i = 0; i < 6; i++) s = move(s, 'color:red');
     expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[0, 6], [1, 0], [2, 0]]);
   });
-  it('Buyout: recruit a rival member, paying them its cost in silver, +1 silver; Largesse: rivals must gain all 10 silver, +7 followers', () => {
+  it('Buyout: recruit a rival member, paying them its cost in silver, +1 silver; Largesse: rivals must gain all 12 silver, +10 followers', () => {
     let s = sc({ round: 2, res: [{ silver: 20 }], members: [[], ['silver.guest']] });
     const uid = s.players[1].members[0], k = s.cards[uid].def ? s.cards[uid].def.s + s.cards[uid].def.w : null;
     s = take(s, 'silver.buyout');
@@ -58,9 +58,9 @@ describe('Silver actions', () => {
     expect(t.players[1].members).toHaveLength(1);
     s = take(sc({ round: 3 }), 'silver.largesse');
     expect(s.pending.options.some(o => o.kind === 'done')).toBe(false); // Cory, Nov 6: "should have to give 12"
-    for (let i = 0; i < 10; i++) s = move(s, 'player:1');
-    expect(s.players[1].res.silver).toBe(10);
-    expect(s.players[0].bonus).toBe(7); // Cory, Nov 24: "+7 give 10"
+    for (let i = 0; i < 12; i++) s = move(s, 'player:1');
+    expect(s.players[1].res.silver).toBe(12);
+    expect(s.players[0].bonus).toBe(10);
   });
   // flat since Nov 11 (Cory: "i dont like Toast scaling so crazily"): the same in every round
   it.each([1, 2, 3])('Toast round %i: the same gift, with Guest, Caterer and Grand Host', round => {

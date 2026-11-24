@@ -46,13 +46,13 @@ describe('Party Gifts on the gift card', () => {
   });
 });
 
-describe('Largesse on the gift card (Cory, Nov 24: "+7 give 10")', () => {
-  it('asks for all 10, offers no way out, and says +7 followers once all are given', () => {
+describe('Largesse on the gift card (Cory, Nov 6: "should have to give 12. And give 10 followers.")', () => {
+  it('asks for all 12, offers no way out, and says +10 followers once all are given', () => {
     const s = move(take(scene(3), 'silver.largesse'), 'player:1');
     const { container } = view(s);
-    expect(container.querySelector('.gc-title').textContent).toBe('Largesse · 1 given · 9 left');
+    expect(container.querySelector('.gc-title').textContent).toBe('Largesse · 1 given · 11 left');
     expect(container.querySelector('.gc-rest')).toBeNull();
-    expect(container.querySelector('.gc-sub').textContent).toBe('One per click, from the bank. +7 followers once all 10 are given.');
+    expect(container.querySelector('.gc-sub').textContent).toBe('One per click, from the bank. +10 followers once all 12 are given.');
   });
 });
 

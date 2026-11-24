@@ -36,7 +36,7 @@ describe('picky words on hovers (Nov 4)', () => {
     expect(panelText('red', { key: 'hire' }).second).toBe('+1 red, rivals +1');
     // in line 1 since Nov 11 (picky bot: a tight ring dropped line 2 and showed only the giving)
     expect(panelText('silver', { key: 'partygifts' }).verb).toBe('Give rivals up to 3 silver, +2 @f per silver given');
-    expect(panelText('silver', { key: 'largesse' }).second).toBe('+7 @f'); // Cory, Nov 24: 7 followers flat
+    expect(panelText('silver', { key: 'largesse' }).second).toBe('+10 @f'); // Cory, Nov 6: 10 followers flat
   });
 
   it('a recolor says "in colors you choose", never one pick\'s colors (W25)', () => {
