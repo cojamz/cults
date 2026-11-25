@@ -8,6 +8,8 @@ Cory, Nov 25: "quality evals, crazy combo probers, etc. all the different tools 
 
 This skill is the front door. It points each question at the tool family that answers it, keeps the full tool list and the history of past runs, and holds the run log every thread appends to. The family skills hold the how-to.
 
+**Asked for a testing round, or more than one test? Start with the `plan-test-round` skill**: it reads what changed and picks the tools, depth and order. This page is the map it draws from.
+
 ## Before any test (checklist)
 1. **Write the question in Cory's words and the answer you expect** (.claude/rules/testing.md). If we already know the answer, don't run it.
 2. **Look it up first**: `grep -i <card or topic> .claude/skills/test-apparatus/runs.md references/history.md`. A run on the same question and a recent commit may already answer it; quote it instead of re-running.
