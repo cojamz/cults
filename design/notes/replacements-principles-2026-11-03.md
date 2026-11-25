@@ -51,3 +51,7 @@ Its color: Magenta steals from piles; this is a new way in, stealing from whoeve
 ## What's next after your yes
 - Batch 1: these three plus about seven more on the same checks, played in bot games only, results in plain words about 4 hours after your yes.
 - Every idea we pitch you from now on is checked against these six first.
+
+## The member bar (Cory, 2026-11-25, 8:45 to 8:48pm Eastern)
+"we need to aim for kind of unique but interactive members that tie to their theme. like ghost is super unique. a lot of the greys really." "some of them need to give resources, but they just need to be more unique. They're a little too trying to be built into the color, and instead they should be like unique concepts that are simple enough to understand, but like can also give resources." "more of them should be like scoring conditions... that lead you to take certain actions over others, but not necessarily directly tied to those actions" (Juggler is his model), "but they don't all have to be like active scoring hooks... They could be whatever." His summary: **"unique, simple to understand, somewhat tied to the color, but really stand on their own as an interesting idea."**
+How to read it: one short line that bends one rule everyone assumes (Ghost: owning a member is good; Lord of the Manor: turn order; Spoilsport: contests), so other players change what they do. A colored member may still give resources, but its idea stands on its own instead of restating its color's mechanic.
