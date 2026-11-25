@@ -19,11 +19,11 @@ Cory, 4:19pm: "and the action names. BIG overhaul." and 4:23pm: "remember the ac
 - **Guild Master** (+1 follower for recruiting a color you have): more of the same trade.
 - **Ferryman** (+1 red per recruit, "eh but ok"): a coin for every soul he brings across.
 - **Fairy Godmother** (promote or demote one of yours): turns someone grander or humbler; magic really does change who they are.
-- **Pied Piper** (send a rival's member to the shop for one as dear or dearer): leads one of theirs away.
+- **Pied Piper** (send a rival's member to the shop for one that costs the same or more): leads one of theirs away.
 - **Warden** (your members can't be swapped): keeps everyone locked in.
 - **Governess** (recruit the cheapest shop member with her): a child comes with her.
-- **Journeyman** (trade itself for a member up to 3 dearer): only stays a while, moves on; can be hired again.
-- **Swindler** (swap yours for a rival's dearer one each round): always gets the better end of a trade.
+- **Journeyman** (trade itself for a member costing up to 3 more): only stays a while, moves on; can be hired again.
+- **Swindler** (swap yours for a rival's that costs more, each round): always gets the better end of a trade.
 - **Abbess** (+2 when a rival's member joins you): takes in anyone a rival lets go.
 - **Dyer** (grey members count as your biggest color): colors the plain ones.
 
@@ -41,4 +41,5 @@ Cory, 4:19pm: "and the action names. BIG overhaul." and 4:23pm: "remember the ac
 3. Send one best name per member for the whole color at once, in a picture with each card's text and its "of course" line; flag at most two you're least sure of, with one backup each.
 4. Judges pick (Cory 4:17pm: "use judges to review based on the principles we've talked about or that are implied"): three fresh agents, given only this file, the cards, every live member name and all the candidates, each score every candidate; send the best average per member, flag the closest calls.
 5. Log his verdicts in design/pitch-ledger.md and add each new yes or no to this file the same turn.
+6. **Every new member or action, including one added from Cory's maybes, gets its name here before it is dealt**, and the name goes on design/names-approved.md; src/test/engine/v4/names-theme.test.js fails on any dealt name not on it (Cory, Nov 26, on Doorbusters, added from his maybes with its pitch name the night of the rename pass: "thats not on theme", "how did Doorbusters slip through the cracks?").
 `node .claude/hooks/name-check.mjs` (presend runs it) refuses a message that pitches a name he already turned down.

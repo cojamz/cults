@@ -32,6 +32,8 @@ if (internals) hard.push(`don't talk about internals ("${internals[0]}"); name t
 const JARGON = /\b(paired|pairs? of numbers|lift(?:s|ed|ing)?|paper check|pays? (?:it )?back|payback|holders?|takers?|seats?|variants?|deltas?|A\/B|typical (?:round I+ )?space|earns? per|instruments?|n\s?=\s?\d+)\b/i;
 const jar = prose.match(JARGON);
 if (jar) hard.push(`our own jargon ("${jar[0]}"): say what was done and what it means at the table in plain game words, as if he never saw our notes`);
+// Cory, Nov 26: 'what the fuck does "Dearer" mean why do you keep using tha tword?': say "costs more" / "costs less"
+if (/\bdear(er|est)?\b/i.test(prose)) hard.push('"dear"/"dearer" is not a word Cory uses: say "costs more" (or "costs less")');
 if (/\bworth \d+ to \d+\b/i.test(prose)) hard.push('"worth N to M" is shorthand; say "worth N followers today, tested at M"');
 if (/[+\-−]\d+(\.\d+)?\s*,\s*[+\-−]\d+(\.\d+)?/.test(prose)) hard.push('a bare pair of numbers ("+3.1, -4.0"): say what each number counts, in words, next to it');
 if (/\bv[34]\b(?!\.\d)/i.test(prose)) hard.push('"v3"/"v4" mean nothing to Cory; say "the old game" / "the game" (version numbers like v0.8.11 are fine)');
