@@ -130,7 +130,7 @@ const M = {
   drifters: ['🎒', '✨ Pick a color; these count as that color'],
   barterer: ['🔀', '♾️ A space gives you resources: change 1 to any color'],
   'customs-officer': ['🛃', '♾️ A rival steals or changes yours: +1 yellow'],
-  pilgrim: ['🥾', '✨🌅 +1 follower per color you hold'],
+  'spice-merchant': ['🌶️', '✨🌅 +1 follower per color you hold'],
   herald: ['🎺', '♾️ You recruit a yellow member: +2 wild, +3 followers'],
   storekeeper: ['🏪', '🏁 +1 follower per color you hold 3 of'],
   tastemaker: ['🎨', '♾️ You change rivals’ resources: +1 follower'],
