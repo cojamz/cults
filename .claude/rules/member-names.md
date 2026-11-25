@@ -19,11 +19,11 @@ Cory, 4:19pm: "and the action names. BIG overhaul." and 4:23pm: "remember the ac
 - **Guild Master** (+1 follower for recruiting a color you have): more of the same trade.
 - **Ferryman** (+1 red per recruit, "eh but ok"): a coin for every soul he brings across.
 - **Fairy Godmother** (promote or demote one of yours): turns someone grander or humbler; magic really does change who they are.
-- **Pied Piper** (send a rival's member to the shop for one as dear or dearer): leads one of theirs away.
+- **Pied Piper** (send a rival's member to the shop for one that costs the same or more): leads one of theirs away.
 - **Warden** (your members can't be swapped): keeps everyone locked in.
 - **Governess** (recruit the cheapest shop member with her): a child comes with her.
-- **Journeyman** (trade itself for a member up to 3 dearer): only stays a while, moves on; can be hired again.
-- **Swindler** (swap yours for a rival's dearer one each round): always gets the better end of a trade.
+- **Journeyman** (trade itself for a member costing up to 3 more): only stays a while, moves on; can be hired again.
+- **Swindler** (swap yours for a rival's that costs more, each round): always gets the better end of a trade.
 - **Abbess** (+2 when a rival's member joins you): takes in anyone a rival lets go.
 - **Dyer** (grey members count as your biggest color): colors the plain ones.
 
