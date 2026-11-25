@@ -49,5 +49,5 @@ def evictors():
     v.ell(28,9,1.6,1.6,'skin'); v.ell(42,9,1.6,1.6,'skin')
     v.inner('wh','skin'); v.inner('wh','red')
     return v.thick()
-ALL=lambda:[('Lackey',lackey()),('Doorbusters',doorbusters()),('Mendicant',mendicant()),('Evictors',evictors())]
+ALL=lambda:[('Lackey',lackey()),('Mendicant',mendicant()),('Evictors',evictors())]
 if __name__=='__main__': sheet(ALL(),'new4.png',sc=6,cols=4)

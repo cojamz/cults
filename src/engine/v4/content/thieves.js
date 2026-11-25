@@ -912,7 +912,7 @@ const thieves = {
     m('banditold', 'Bandit', 1, 1, 'On Recruit: steal 3 resources.', { retired: true,
       onRecruited(ctx, owner) { startSteal(ctx, owner, 'Bandit', 3 + stickyMore(ctx, owner), { fromAction: false }); },
     }),
-    m('accomplice', 'Tax Men', 1, 3, /* 7 as a player sees it (Cory, Nov 26: "Tax Men can go to 7"; was 5); stays in round I's deck */ 'Whenever a rival recruits a member costing 7 or more, they give you 2 resources of their choice.', { round: 1, ...old14('partners'),
+    m('accomplice', 'Tax Men', 1, 3, /* 7 as a player sees it (Cory, Nov 26: "Tax Men can go to 7"; was 5); joins the deck in round II, as its cost now says (round-decks.test.js) */ 'Whenever a rival recruits a member costing 7 or more, they give you 2 resources of their choice.', { ...old14('partners'),
       onAnyRecruit(ctx, owner, card, by, member) {
         if (!by || by === owner || !member) return;
         const d = defById(member.def?.id || member.def);

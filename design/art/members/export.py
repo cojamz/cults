@@ -31,10 +31,12 @@ NEW7.update({'Innkeeper':'red.innkeeper','Wet Nurse':'red.wetnurse','Chapman':'r
 import new3
 NEW7.update({'Shirker':'purple.shirker','Cutthroats':'thieves.cutthroats','Drifters':'yellow.drifters'})
 import new4
-NEW7.update({'Lackey':'echo.lackey','Doorbusters':'market.doorbusters','Mendicant':'trading.mendicant','Evictors':'trading.evictors'})
+NEW7.update({'Lackey':'echo.lackey','Mendicant':'trading.mendicant','Evictors':'trading.evictors'})
 import new5
 NEW7.update({'Spice Merchant':'yellow.tourists'})
-for n,v in new7.ALL()+new8.ALL()+new3.ALL()+new4.ALL()+new5.ALL():
+import new9
+NEW7.update({'Forestallers':'market.doorbusters'})
+for n,v in new7.ALL()+new8.ALL()+new3.ALL()+new4.ALL()+new5.ALL()+new9.ALL():
     pal={}; rev={}; rows=[]
     for row in v.g:
         s2=''
