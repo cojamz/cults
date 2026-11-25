@@ -6,3 +6,4 @@ Doc for Cory: https://claude.ai/artifact/746Tnv5nbGxWZrfhitMBvy ("Cults review: 
 - ai-player-themes.md: 4 games x 4 Sonnet players.
 - <color>.md: per-color keep / maybe / rework drafts (Sonnet, from context.md), edited into the doc.
 - Abuse re-run on the real Tax Men and Cutpurse: neither flagged (the stage had tested old same-name cards; fixed in e5307ae).
+- Dusk Buyer (real card, at 6): FLAGGED, abuser +17.5 vs best rival on 4 games (give or take 16.3).
