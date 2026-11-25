@@ -190,3 +190,55 @@ Verdict: send
 9. Biggest case: Round III, 6 minions on 5 colors: +5 a round, +13 over the game from round I, against a winner's 70 to 110 and a contest's 10.
 Verdict: send
 
+## Idea: Charmers
+
+1. Printed text: "Whenever you gift silver to rivals, +1 of any color per silver gifted." Silver, already written as a card, never dealt.
+2. Played turn: Round I: Hand Out Gifts gives rivals 3 silver from the bank, +6 followers, and Charmers adds 3 resources of your choice. Best other round I Silver space, Raise a Glass, gives +5 silver and rivals +2 each.
+3. Both sides: Your choice of colors only; rivals receive the silver as before and choose nothing.
+4. Who feels it: Rivals get the silver as usual (the sting of Fewest silver); you also get colors they want.
+5. Not refused: Big Spenders and Largesse-style giving were refused for being too much; this one reads every gift, so Throw Coins makes it pay 10.
+6. Judged: Intuitive: charm pays. Fun: gifting builds your own pile. Interacts: feeds whatever other colors you need. Its color: Silver's gifting.
+7. Public and certain: everything it reads is on the table (silver given); no pile draws, nothing hidden or random.
+8. Color interactions: none: a single-color card that reads only general pieces.
+9. Biggest case: Round III Throw Coins gives 10 silver: +10 resources of any colors on top of +7 followers, against a winner's 70 to 110 and a contest's 10: too much at its biggest.
+Verdict: send
+
+## Idea: Painted Faces
+
+1. Printed text: "Each of your members is also yellow." Yellow, already written as a card, never dealt. Cards it touches: Clan Chief "Round End: +1 follower per member in your biggest group of one color (grey is its own color).", Herald "Whenever you recruit a yellow member, +2 wild, +3 followers."
+2. Played turn: Round II with 5 members of 3 colors: Red's contest (most members of one color) counts 5 yellow instead of your best 2; Herald pays on every recruit.
+3. Both sides: No choices on the card.
+4. Who feels it: Red players lose the contest to a cult that counts all its members as one color.
+5. Not refused: not a contest strengthener of its own color; it reaches Red's contest and Herald.
+6. Judged: Intuitive: everyone wears the paint. Fun: combines with one-color cards. Interacts: Red, Herald, Tithe Collector.
+7. Public and certain: everything it reads is on the table (members); no pile draws, nothing hidden or random.
+8. Color interactions: Red's one-color group and Yellow's members, through the members you hold.
+9. Biggest case: Round III, 8 members: Clan Chief pays +8, the Red contest 10, and 3 recruits pay Herald +9 followers, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Cutthroats
+
+1. Printed text: "Whenever you steal resources, you may steal that many followers instead." Magenta, already written as a card, never dealt.
+2. Played turn: Round II: Pilfer with 3 minions placed steals 3; you take 3 followers from the leader instead of 3 resources. Best other: Plunder steals 3 followers and 3 resources.
+3. Both sides: Your choice each steal: resources for the Most resources contest and buys, or followers that count now.
+4. Who feels it: The rival you steal from loses followers, a real sting; a reason to take the card from you.
+5. Not refused: Cory asked for followers from stealing, done more elegantly (Nov 25).
+6. Judged: Intuitive: cutthroats take people. Fun: a real choice on every steal. Interacts: every steal. Its color: Magenta steals.
+7. Public and certain: everything it reads is on the table; no pile draws, nothing hidden or random.
+8. Color interactions: none: a single-color card that reads only general pieces.
+9. Biggest case: Round III, Pilfer for 5 and Night Thieves for 3: 8 followers taken, a 16-follower swing, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Drifters
+
+1. Printed text: "On Recruit: choose a color; these count as a member of that color." Yellow, already written as a card, never dealt.
+2. Played turn: Round II: you recruit it and name red, your biggest group, for Red's contest; or a color you lack for Yellow's.
+3. Both sides: Your choice of color, made once, public.
+4. Who feels it: Contest rivals see your count move by one.
+5. Not refused: Cory: "I like it. doesnt translate to tabletop but i like it" (Nov 25).
+6. Judged: Intuitive: drifters join whatever crowd. Fun: a flexible member. Interacts: any color count.
+7. Public and certain: the color is chosen in the open; at a table a color token on the card shows it.
+8. Color interactions: any color's count of members.
+9. Biggest case: One member of a color, worth at most one contest swing of 10 in round III, against a winner's 70 to 110.
+Verdict: send
+
