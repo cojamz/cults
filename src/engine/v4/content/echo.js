@@ -1003,13 +1003,13 @@ const echoQ = {
     pool(m('superfans', 'Superfans', 6, 2, 'You can place on Green spaces rivals have taken.', { squatGreen: true,
       ...see(info => 3 * endsAhead(info).length),
     }), 'pool7'),
-    m('packedhouse', 'Packed House', 4, 2, 'Round End: +1 follower per minion on Green spaces, anyone\u2019s.', {
+    pool(m('packedhouse', 'Packed House', 4, 2, 'Round End: +1 follower per minion on Green spaces, anyone\u2019s.', {
       onAllPlaced(ctx, owner) {
         const n = greenMinions(ctx);
         ctx.asMember(owner, 'Packed House', () => { owner.bonus += n; ctx.log(`${owner.name}'s Packed House: ${n} minion${n === 1 ? '' : 's'} on Green spaces, +${n} follower${n === 1 ? '' : 's'}.`); });
       },
       ...see(info => 4 * endsAhead(info).length),
-    }), // dealt since Cory, Nov 24 10:04pm
+    }), 'pool7'), // Cory, Nov 24 10:17pm: "Packed house is always going to max out. its a bit oto good."
     // Cory, 2026-11-24 10:04pm ("we add from the maybes"). Price is Claude's fill-in (3 green + 3 any). The color of the
     // space, whoever placed the minion before yours this round (core.js marks it as each minion goes down).
     m('lackey', 'Lackey', 2, 1, 'Whenever you place a minion on the same color as the minion placed just before yours, +2 green.', {

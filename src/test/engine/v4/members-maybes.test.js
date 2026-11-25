@@ -9,7 +9,7 @@ import { table, uidIn } from './cards-helpers-b.js';
 const fixture = (quads, opts) => { const s = table(quads, opts); s.queue = []; s.pending = null; return s; };
 
 describe('the maybes are dealt in the 10-card decks', () => {
-  for (const id of ['echo.lackey', 'echo.packedhouse', 'market.doorbusters', 'trading.mendicant', 'trading.evictors']) {
+  for (const id of ['echo.lackey', 'market.doorbusters', 'trading.mendicant', 'trading.evictors']) {
     it(id, () => {
       const d = defById(id);
       expect(d.retired).toBeFalsy();
