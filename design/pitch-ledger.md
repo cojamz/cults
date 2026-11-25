@@ -589,3 +589,4 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - 2026-11-24 10:25pm: **Superfans**: "no i dont like superfans" (no).
 - 2026-11-24 10:40pm: Green 12th, second pass: **Village Belle** ("Whenever a rival copies one of your actions, +2 followers.", 3 green + 3 any) sent; Backup Singers, Bait and three shapes cut on paper (design/brainstorm/2026-11-24-green-12th.md). Verdict pending.
 - (verdict, Cory 10:29pm Nov 24 Eastern) ❌ **Village Belle** ("actually no. you dont have control over it really."): a member must pay off something its owner controls, not what rivals choose to do.
+- 2026-11-24 11:16pm Eastern · Yellow name: Pilgrim → **Spice Merchant** (judges' pick of Spice Merchant / Jeweler / Draper / Haberdasher / Gem Cutter / Market Wife; Cory said yes to renaming) · Cutthroats cap: no ("let's keep") · tags: yellow, names, magenta

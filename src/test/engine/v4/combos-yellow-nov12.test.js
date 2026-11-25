@@ -64,13 +64,13 @@ describe('Hostages: "On Recruit: swap one of your members for a rival’s member
     const { s } = run('es-matchmaker-tourist', { quads: Q, queue: BUY, res: [{ yellow: 20, red: 1 }], shop: ['yellow.exchangestudents'],
       members: [['yellow.matchmaker', 'red.panel'], ['yellow.tourists']] },
       [/Hostages/, WILD, WILD, /Fairy Godmother/, WILD, WILD]);
-    expect(names(s, 0)).toEqual(['Herald', 'Hostages', 'Pilgrim']);
+    expect(names(s, 0)).toEqual(['Herald', 'Hostages', 'Spice Merchant']);
     expect(names(s, 1)).toEqual(['Fairy Godmother']);
     expect(s.log.filter(l => l === "P1's Herald: a yellow member, +3 followers.")).toHaveLength(2);
     // the swap is said first, then what it set off
-    const at = s.log.indexOf("P1's Hostages: swaps Fairy Godmother for P2's Pilgrim.");
+    const at = s.log.indexOf("P1's Hostages: swaps Fairy Godmother for P2's Spice Merchant.");
     expect(at).toBeGreaterThan(0);
-    expect(s.log.slice(at + 1, at + 3)).toEqual(["P1's Herald: a yellow member, +3 followers.", "P1's Pilgrim: +2 followers."]);
+    expect(s.log.slice(at + 1, at + 3)).toEqual(["P1's Herald: a yellow member, +3 followers.", "P1's Spice Merchant: +2 followers."]);
     // red and yellow held after paying (the +2 red wild from Herald keeps red): Pilgrim +2 followers
     expect(s.players[0].bonus).toBe(3 + 3 + 2);
     expect(s.players[1].bonus).toBe(0); // Fairy Godmother arrives in P2's cult: no recruit of theirs

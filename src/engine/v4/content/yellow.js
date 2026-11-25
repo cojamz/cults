@@ -711,10 +711,11 @@ export default {
     // Tourist's place. The price rule is core.js priceParts (flag dutyFree, read with isNewColor, grey a color).
     ...add11(m('dutyfree', 'Duty Free', 3, 3, 'Members of a color none of your members have cost you 3 less.', { round: 1, dutyFree: true,
       ...see(i => endsAhead(i).length * 3.5) })), // BOTSEE: about one new-color recruit a round, 3 off, plus the member it makes room for (0 of 9 bought at 2 a round)
-    m('tourists', 'Pilgrim', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { ...old11('dutyfree'), now: true, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
+    // renamed Pilgrim → Spice Merchant (Cory, Nov 25: "members shouldn't have the same name"; Pilgrims is Yellow too; three judges' pick)
+    m('tourists', 'Spice Merchant', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { ...old11('dutyfree'), now: true, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
       onRoundStart(ctx, owner) {
         const k = held(ctx, owner).length;
-        if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Pilgrim: +${k} follower${k === 1 ? '' : 's'}.`); }
+        if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Spice Merchant: +${k} follower${k === 1 ? '' : 's'}.`); }
       },
     }),
     // Cory, 2026-10-31: "make it 3 and add on recruit as well"

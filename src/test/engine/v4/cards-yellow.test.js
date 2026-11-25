@@ -229,7 +229,7 @@ describe('Yellow members', () => {
   it('Pilgrim: round start, +1 follower per color you hold (Cory, Nov 1 3:14pm)', () => {
     const s = sc({ members: [['yellow.tourists']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
     expect(s.players[0].bonus).toBe(2);
-    expect(s.log).toContain("P1's Pilgrim: +2 followers.");
+    expect(s.log).toContain("P1's Spice Merchant: +2 followers.");
   });
   it('Peddlers: rebased to worth 1 follower (Cory, Nov 12); round start +1 of each color (Cory, Nov 5: not only those you hold)', () => {
     const s = sc({ members: [['yellow.caravan']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
