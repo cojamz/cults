@@ -4,6 +4,8 @@ Read when choosing a tool or looking one up by name. Update the row in the same 
 
 Defaults unless a row says otherwise: deck 10 (`DECK=10`), By color contests (`CONTESTS=byColor`), 4 players, today's rules. Time is on this 4-CPU box. "Model" is who may run the turns around it: **code** = plain bot games, cost no tokens beyond the thread's own turns (run them on Sonnet or in a runner thread, never Fable); **Sonnet** = judge agents; **Opus** = only where Cory named it.
 
+**Table warning (Nov 25):** scripts that build tables from `makeTables` or `DEFAULT_QUADRANTS` (v4-reshuffle-count.mjs, v4-sim.mjs, v4-thinker-tables.mjs; v4-fair-price.mjs was fixed in 3ed1127b) can deal the retired Blue and Green 1.0 colors, and some ignore DECK. Check the tables a run dealt before quoting it, or pass the colors explicitly.
+
 Status: **live** (use it), **older twin** (works, prefer the named one), **legacy** (built for an older game or a finished question; read its results, don't run it without a reason).
 
 ## Balance (who wins) → skill `balance-run`, read with `game-feel`
@@ -34,7 +36,7 @@ Status: **live** (use it), **older twin** (works, prefer the named one), **legac
 | Tool | Question | Command | Time | Model | Status |
 |---|---|---|---|---|---|
 | scripts/v4-fair-price.mjs screen | Every member at once: does its price match its strength (prices jittered ±40%, demand curve and value fit, outlier list) | `DECK=10 node scripts/v4-fair-price.mjs screen --games=3000 --jitter=0.4 --out=` | ~1 h | code | live (Nov 25: deals the 10-card decks and grey test members; before, it dealt the full deck and crashed on them) |
-| scripts/v4-fair-price.mjs sweep | A few cards: the price where owning it stops helping (same seed with and without, price at printed −6…+4) | `DECK=10 node scripts/v4-fair-price.mjs sweep <keys> --level=hard --deltas=0,2,4 --games=200` (keys, not names) | Hard ~20-30 s a game: time 2 games first, then scale; long sweeps to the queue | code | live |
+| scripts/v4-fair-price.mjs sweep | A few cards: the price where owning it stops helping (same seed with and without, price at printed −6…+4) | `DECK=10 node scripts/v4-fair-price.mjs sweep <keys> --level=hard --deltas=0,2,4 --games=200` (keys, not names) | Hard forked at round II: ~70 s a game at --budget=60 (Nov 25); time 2 games first, then scale; long sweeps to the queue | code | live |
 | scripts/v4-balance.mjs PRICE= | Whole-game effect of a new price (moves the card's round deck as the game would) | `PRICE="key=4/2" DECK=10 LEVEL=hard node scripts/v4-balance.mjs …` | per batch | code | live |
 | scripts/v4-member-value.mjs | Followers one member is worth when handed to a seat at round II | `node scripts/v4-member-value.mjs 160 <keys> --level=hard` | ~30 min/card | code | live |
 | scripts/econ/play.mjs, sweep.mjs, compare.mjs, report.mjs, mixes.mjs, pair-n12.mjs, sheets.mjs, table-rows.mjs, plus1-summary.mjs | Economy dials (ECON, MEMBER_UP, MEMBER_COLOR): how the game feels with richer/poorer prices, on the same deals | `DECK=10 node scripts/econ/sweep.mjs --games=60`, then `node scripts/econ/compare.mjs <dir> base <mix>` | ~1-2 h | code | live |
