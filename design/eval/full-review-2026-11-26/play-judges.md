@@ -34,3 +34,7 @@
 ## Gleaner (both judges agree, built right)
 - Clear but quiet: widens recruit choices from the discard pile, never a moment, no rival noticed. Best case 4 discard recruits in one game (holder still finished behind). Adds nothing when Blue's Salvage or Bring Back already reach the discard pile. One bot misplay (took it as a free recruit with nothing left to spend).
 - Judge 2, batch D agrees (all built right). Pilgrims' best round +3 vs Hold a Fair +4 or +5 and Throw Coins +7; moved none of three results. Spice Merchant modest, unseen. Jester: text says "Counts as a member of every color" but Most member colors counts it as one color (Cory's Nov 7 call: "I think just counts as one") — the card text and the contest disagree; a reader is surprised.
+
+## Firstborn (judge 2; built right)
+- Plays as a 10-cost body worth 3 and counting as 3 members; it is a round III card in practice, so its Round Start recruit fires at most once (round III start). Nobody reacted to the recruit; the 3-member body drew a Poach steal worth about +15 in contests. Two of three sheets bot misplays (took it in round III when it could never fire; recruit spent on Conjurer instead of 10 followers).
+- Judge 1 agrees: at 10 it can fire only once (bought in round II, fires at round III start); bought later it never fires. Mostly plays as a member that counts 3.
