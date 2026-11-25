@@ -21,16 +21,16 @@ function plain(s, rand) {
 }
 
 describe('Make Haste', () => {
-  it("round I, 4 players: +2 purple, A places again at once, and still places 3 in all", () => {
+  it("round I, 4 players: +3 purple, A places again at once, and still places 3 in all", () => {
     let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 1, quadrants: Q });
     const rand = seededRandom(1);
     while (!(s.round === 1 && s.pending?.kind === 'place')) s = applyMove(s, chooseBotMove(s, rand));
     const base = s.order.slice(0, 4), A = s.pending.player;
     const i = quadrant('purple').actions.findIndex(a => a.key === 'again');
-    expect(quadrant('purple').actions[i].text).toBe('+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one.');
+    expect(quadrant('purple').actions[i].text).toBe('+3 purple. Your next turn comes right after this one.'); // flat, the middle value (Cory, Nov 24)
     const before = s.players[A].res.purple || 0;
     s = applyMove(s, { player: A, option: `slot:${s.quadrants.indexOf('purple')}-${i}` });
-    expect(s.players[A].res.purple).toBe(before + 2);
+    expect(s.players[A].res.purple).toBe(before + 3);
     const placed = [A];
     while (s.round === 1) {
       const next = plain(s, rand);

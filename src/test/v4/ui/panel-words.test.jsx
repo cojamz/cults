@@ -52,8 +52,13 @@ describe('panel words (w3)', () => {
       expect(panelText('echo', { key: 'chant' }, r).note).toBeNull();
     }
     // every space that grows carries its schedule (W18: only some did, and readers took the rest as flat)
-    for (const [qid, key] of [['red', 'turnout'], ['trading', 'stipend'], ['market', 'bargain'], ['purple', 'skip'], ['purple', 'holdup'], ['purple', 'again']]) { // Welcome Strangers went flat Nov 11
+    for (const [qid, key] of [['red', 'turnout'], ['trading', 'stipend'], ['market', 'bargain'], ['purple', 'holdup']]) { // Welcome Strangers went flat Nov 11; Lie Abed and Make Haste Nov 24
       expect(lines(panelText(qid, { key }, 2)).join(' '), `${qid}.${key}`).toMatch(/I\u00a0\+\d+\u00a0· II\u00a0\+\d+\u00a0· III\u00a0\+\d+/);
+    }
+    // flat at the middle value (Cory, Nov 24: "if any scalers are left just use the middle value")
+    for (const r of [1, 2, 3]) {
+      expect(panelText('purple', { key: 'skip' }, r).verb).toBe('+5 purple, take the Goes Last token');
+      expect(panelText('purple', { key: 'again' }, r).verb).toBe('+3 purple, your next turn right after');
     }
   });
 

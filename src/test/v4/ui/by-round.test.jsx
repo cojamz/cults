@@ -18,7 +18,7 @@ const everything = () => [
 describe('rules that grow by round', () => {
   it('every space and member whose rule grows by round has its three lines', () => {
     const found = everything().filter(([, d]) => GROWS.test(d.text || ''));
-    expect(found.length).toBeGreaterThanOrEqual(6); // Allowance left; Raise a Glass, Harvest and Welcome Strangers went flat (Nov 11)
+    expect(found.length).toBeGreaterThanOrEqual(2); // Allowance left; Raise a Glass, Harvest and Welcome Strangers went flat (Nov 11); Lie Abed and Make Haste (Nov 24)
     for (const [id, d] of found) {
       expect(d.byRound, id).toBeTruthy();
       expect(d.byRound.lines, id).toHaveLength(3);
@@ -31,10 +31,8 @@ describe('rules that grow by round', () => {
       const a = quadrant(qid).actions.find(x => x.key === key);
       for (const r of [1, 2, 3]) expect(num(a.byRound.lines[r - 1]), `${qid}.${key} round ${r}`).toBe(a.estimate({ state: { round: r } }));
     }
-    // Lie Abed (Nov 10): +4/+5/+6 purple, then the Goes Last token in the rest
-    const g = quadrant('purple').actions.find(x => x.key === 'skip');
-    for (const r of [1, 2, 3]) expect(g.byRound.lines[r - 1].match(/\d+/g).map(Number), `purple.skip round ${r}`).toEqual([r + 3]);
-    expect(g.byRound.rest).toMatch(/Goes Last token/);
+    // Lie Abed and Make Haste went flat at their middle values (Cory, Nov 24: "if any scalers are left just use the middle value")
+    for (const key of ['skip', 'again']) expect(quadrant('purple').actions.find(x => x.key === key).byRound, key).toBeUndefined();
     // Flock Together stopped growing by round (Nov 10: +1 green per minion on Green spaces), so it has no lines
     expect(quadrant('echo').actions.find(x => x.key === 'chant').byRound).toBeUndefined();
   });
@@ -74,18 +72,14 @@ describe('rules that grow by round', () => {
 
 // Each separate effect gets its own line in the hover cards (Cory, 2026-10-23: "the +1 resource should be its own line").
 describe('one effect per line', () => {
-  it('splits a rule at its sentences, and a scaling space reads as its three rounds, then the rest (Lie Abed)', async () => {
+  it('splits a rule at its sentences; Lie Abed, flat since Nov 24, reads as its two lines with no round lines', async () => {
     const { effectLines } = await import('../../../v4/game/Info.jsx');
     expect(effectLines('Swap any 2 members of equal cost. +1 red.')).toEqual(['Swap any 2 members of equal cost.', '+1 red.']);
     expect(effectLines('+3 gold, and +1 gold to a rival you choose.')).toHaveLength(1);
-    // Pilfer stopped growing by round (Nov 10), so Lie Abed is the scaling space here
     const sleep = quadrant('purple').actions.find(a => a.key === 'skip');
     const { container } = render(<RuleText def={sleep} round={2} lines />);
-    expect(container.textContent).toMatch(/^\+4\/\+5\/\+6 /); // the color is its icon
-    expect(container.querySelectorAll('[data-round-line]')).toHaveLength(3);
-    const rest = [...container.querySelectorAll('.br-rest')].map(e => e.textContent);
-    expect(rest).toHaveLength(1);
-    expect(rest[0]).toMatch(/Take the Goes Last token: your other minions are placed after everyone else’s\./);
+    expect(container.querySelectorAll('[data-round-line]')).toHaveLength(0);
+    expect(container.textContent).toMatch(/Take the Goes Last token: your other minions are placed after everyone else’s\./);
   });
   it('a member card puts each sentence on its own line', () => {
     const { container } = render(<RuleText def={defById('gold.investor')} round={1} lines />);

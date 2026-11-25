@@ -683,11 +683,11 @@ export default {
       // Cory, 2026-10-28: grows by round, "maybe more like 4/5/6", so a late skip is worth taking
       // Cory, Nov 1 2:35pm: the Goes Last token ("Let's just try it with the goes last token"): one minion waits on it,
       // so your hand empties a turn early and that snake turn is passed (a skip, for Pocket Watch and Gossip)
-      key: 'skip', copyDoesIt: true, ring: 1, name: 'Lie Abed', text: '+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your other minions are placed after everyone else’s.',
-      byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token: your other minions are placed after everyone else’s.' },
-      estimate: ctx => ctx.state.round + 3,
+      key: 'skip', copyDoesIt: true, ring: 1, name: 'Lie Abed', text: '+5 purple. Take the Goes Last token: your other minions are placed after everyone else’s.',
+      // Cory, 2026-11-24 7:37pm Eastern: "if any scalers are left just use the middle value": a flat +5
+      estimate: () => 5,
       resolve(ctx, p) {
-        ctx.gain(p, P, ctx.state.round + 3, { fromAction: true });
+        ctx.gain(p, P, 5, { fromAction: true });
         toToken(ctx, p, 1, 'Lie Abed');
       },
     },
@@ -726,10 +726,9 @@ export default {
       // Cory, 2026-10-22: "+1 purple, take another turn right after this one", in Roll Call's spot. One of your own
       // turns, moved up (his yes: you still place the same minions that round), like Crunch Time's two. Name: fill-in.
       // Cory, 2026-10-23: "Right Away should scale. +1 +2 +3" (Hold Up's wording).
-      key: 'again', copyDoesIt: true, ring: 1, name: 'Make Haste', text: '+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one.', // 2/3/4 (Cory, Nov 6: "it should scale more. like 2/3/4")
-      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Your next turn comes right after this one.' },
-      estimate: (ctx, p) => ctx.state.round + 1 + turnsNowEstimate(ctx, p, 1),
-      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round + 1, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Make Haste'); },
+      key: 'again', copyDoesIt: true, ring: 1, name: 'Make Haste', text: '+3 purple. Your next turn comes right after this one.', // flat +3, the middle value (Cory, 2026-11-24 7:37pm Eastern: "if any scalers are left just use the middle value"); was 2/3/4 (Cory, Nov 6: "it should scale more. like 2/3/4")
+      estimate: (ctx, p) => 3 + turnsNowEstimate(ctx, p, 1),
+      resolve(ctx, p) { ctx.gain(p, P, 3, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Make Haste'); },
     }, CALL_BACK),
     {
       // Cory, 2026-10-22: "+1 purple, you can play on occupied spaces this round" (+2 with the inherent +1; he may
@@ -777,11 +776,10 @@ export default {
     // comes after what the space already does: Right Away's and Crunch Time's turns come first, then the minion after
     // them waits on the token (Claude's reading, put to Cory the same turn).
     poolSpace({
-      key: 'holduplast', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple in round I, +3 in round II, +4 in round III. Whoever\u2019s turn is next skips it, even yours. Then take the Goes Last token: your other minions are placed after everyone else\u2019s.',
-      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Whoever\u2019s turn is next skips it, even yours. Then take the Goes Last token: your other minions are placed after everyone else\u2019s.' },
-      estimate: ctx => ctx.state.round + 2,
+      key: 'holduplast', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+3 purple. Whoever\u2019s turn is next skips it, even yours. Then take the Goes Last token: your other minions are placed after everyone else\u2019s.',
+      estimate: () => 4,
       resolve(ctx, p) {
-        ctx.gain(p, P, ctx.state.round + 1, { fromAction: true });
+        ctx.gain(p, P, 3, { fromAction: true });
         const who = nextTurnOf(ctx);
         if (who == null) ctx.log(`${p.name}'s Hold Up: no turn left to skip this round.`);
         else skipNext(ctx, ctx.player(who), 'Hold Up', p);
@@ -789,10 +787,9 @@ export default {
       },
     }, 'testset'),
     poolSpace({
-      key: 'againlast', copyDoesIt: true, ring: 1, name: 'Make Haste', text: '+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one. Then take the Goes Last token: your minions after that are placed after everyone else\u2019s.',
-      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Your next turn comes right after this one. Then take the Goes Last token: your minions after that are placed after everyone else\u2019s.' },
-      estimate: (ctx, p) => ctx.state.round + 1 + turnsNowEstimate(ctx, p, 1),
-      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round + 1, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Make Haste'); toToken(ctx, p, 1, 'Make Haste'); },
+      key: 'againlast', copyDoesIt: true, ring: 1, name: 'Make Haste', text: '+3 purple. Your next turn comes right after this one. Then take the Goes Last token: your minions after that are placed after everyone else\u2019s.',
+      estimate: (ctx, p) => 3 + turnsNowEstimate(ctx, p, 1),
+      resolve(ctx, p) { ctx.gain(p, P, 3, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Make Haste'); toToken(ctx, p, 1, 'Make Haste'); },
     }, 'testset'),
     poolSpace({
       key: 'rallylast', copyDoesIt: true, ring: 2, name: 'Flurry', text: '+2 purple. Your next two turns come right after this one. Then take the Goes Last token: your minions after those are placed after everyone else\u2019s.',

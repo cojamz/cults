@@ -102,7 +102,7 @@ const P = {
     // Cory, 2026-10-22: place on taken spaces for the rest of the round
     // Cory, 2026-10-22: the old game's "Gain 4 purple, skip next turn"
     // the token in line 1 (picky bot, Nov 11: a tight ring showed a bare "+5 purple")
-    skip: r => ({ verb: `+${r + 3} purple, take the Goes Last token`, note: run(n => `+${n + 3}`, 'purple: ') }),
+    skip: { verb: '+5 purple, take the Goes Last token' }, // flat, the middle value (Cory, Nov 24)
     // On a Roll (Nov 10, Cory's Purple plan): Hold Up's place
     // the token sat in line 3, which most rings drop (picky bot, Nov 11): line 1 says it
     onaroll: { verb: '+2 purple per turn in a row, then go last' },
@@ -113,7 +113,7 @@ const P = {
     crowdin: { verb: '+4 purple, +1 minion, then go last', second: 'the extra minion this round' },
     // its +2 in line 1, as Promote's +3 (picky bot, Nov 11: taken, line 2 hides and "Your next two turns, now" stood alone)
     rally: { verb: '+2 purple, your next 2 turns right after' },
-    again: r => ({ verb: `+${r + 1} purple, your next turn right after`, note: run(n => `+${n + 1}`, 'purple: ') }), // 2/3/4 since Nov 6 (Cory); the wheel said 1/2/3 (Cory, Nov 9)
+    again: { verb: '+3 purple, your next turn right after' }, // flat +3, the middle of 2/3/4 (Cory, Nov 24: "if any scalers are left just use the middle value")
   },
   silver: {
     // "others get 1" left "1 of what?" (live panel r1): silver

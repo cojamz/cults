@@ -19,7 +19,7 @@ describe('Lie Abed', () => {
     const i = quadrant('purple').actions.findIndex(a => a.key === 'skip');
     const before = s.players[A].res.purple || 0;
     s = applyMove(s, { player: A, option: `slot:${q}-${i}` });
-    expect(s.players[A].res.purple).toBe(before + 4); // round I (+4 / +5 / +6, Oct 28)
+    expect(s.players[A].res.purple).toBe(before + 5); // flat +5, the middle of the old +4 / +5 / +6 (Cory, Nov 24)
     const placed = [A];
     // (the others leave turn-moving spaces and copies of them alone while anything else is open)
     const moves = x => x.kind === 'slot' && x.q !== undefined && ['skip', 'holdup', 'onaroll', 'again', 'echo', 'refrain'].includes(actionAt(s, x.q, x.i).key);

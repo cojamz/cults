@@ -56,11 +56,11 @@ describe('Bury, reworded: "...Gain blue equal to its cost. +1 blue."', () => {
   });
 });
 
-describe('Make Haste, reworded: "+2 purple in round I, +3 in round II, +4 in round III. ..."', () => {
-  it('round I pays 2 purple, round III 4', () => {
+describe('Make Haste, flat at the middle value: "+3 purple. ..." (Cory, Nov 24: "if any scalers are left just use the middle value")', () => {
+  it('round I and round III both pay 3 purple', () => {
     const at = round => take(table(['purple', 'red', 'market', 'yellow'], { round, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] }), 'purple.again').players[0].res.purple;
-    expect(at(1)).toBe(2);
-    expect(at(3)).toBe(4);
+    expect(at(1)).toBe(3);
+    expect(at(3)).toBe(3);
   });
 });
 
