@@ -26,7 +26,9 @@ for name,fn,cf in gallery.SETS:
 # the test version's members (dealt by default since Nov 11), drawn Nov 25
 import new7
 NEW7={'Purifiers':'benders.purifiers','Gift Swappers':'benders.giftswappers','Mutineers':'benders.mutineers','Protesters':'benders.protesters','Monks':'trading.anchorites','Old Guard':'trading.oldguard','Repossessors':'market.repossessors'}
-for n,v in new7.ALL():
+import new8
+NEW7.update({'Innkeeper':'red.innkeeper','Wet Nurse':'red.wetnurse','Chapman':'red.chapman','Hoarder':'thieves.hoarder','Bargainer':'market.bargainer','Beggar':'silver.beggar','Night Porter':'purple.nightporter','Pilgrims':'yellow.pilgrims'})
+for n,v in new7.ALL()+new8.ALL():
     pal={}; rev={}; rows=[]
     for row in v.g:
         s2=''
