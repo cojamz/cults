@@ -28,7 +28,9 @@ import new7
 NEW7={'Purifiers':'benders.purifiers','Gift Swappers':'benders.giftswappers','Mutineers':'benders.mutineers','Protesters':'benders.protesters','Monks':'trading.anchorites','Old Guard':'trading.oldguard','Repossessors':'market.repossessors'}
 import new8
 NEW7.update({'Innkeeper':'red.innkeeper','Wet Nurse':'red.wetnurse','Chapman':'red.chapman','Hoarder':'thieves.hoarder','Bargainer':'market.bargainer','Beggar':'silver.beggar','Night Porter':'purple.nightporter','Pilgrims':'yellow.pilgrims'})
-for n,v in new7.ALL()+new8.ALL():
+import new3
+NEW7.update({'Shirker':'purple.shirker','Cutthroats':'thieves.cutthroats','Drifters':'yellow.drifters'})
+for n,v in new7.ALL()+new8.ALL()+new3.ALL():
     pal={}; rev={}; rows=[]
     for row in v.g:
         s2=''
