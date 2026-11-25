@@ -26,7 +26,10 @@ import { createGame, applyMove, followers, memberCount, paymentChoices } from '.
 import { chooseNormalMove } from '../src/engine/v4/bots.js';
 import { chooseThinkerMove } from '../src/engine/v4/thinker.js';
 import { seededRandom } from '../src/engine/v4/rng.js';
-import { allQuadrantIds, quadrant, guestMembers, registerQuadrant, DEFAULT_QUADRANTS } from '../src/engine/v4/content/index.js';
+import { allQuadrantIds, quadrant, guestMembers, allGuests, registerQuadrant, DEFAULT_QUADRANTS } from '../src/engine/v4/content/index.js';
+import { deckRules } from './lib/deck-choice.mjs';
+// the 10-card decks are the game (Cory, Nov 1): every game here is dealt with DECK's rules (refuses without DECK)
+const DECK_RULES = deckRules();
 
 // seats and the base table can change per run (--seats, --table); the worker threads read them from params
 let SEATS = 4;
@@ -37,7 +40,8 @@ let LEVEL = 'normal', BUDGET = 100;
 const botMove = (s, rand) => (LEVEL === 'hard' ? chooseThinkerMove(s, rand, { budget: BUDGET, maxMs: Infinity }) : chooseNormalMove(s, rand));
 const ROLLOUT = { noise: 0.6, payWays: 2, payOptions: 2 };
 const ALL_Q = allQuadrantIds();
-const allDefs = () => [...ALL_Q.flatMap(q => quadrant(q).members), ...guestMembers()];
+// allGuests: the game deals the test version's grey members too (core.js DEFAULT_RULES.testSet)
+const allDefs = () => [...ALL_Q.flatMap(q => quadrant(q).members), ...allGuests()];
 const priceOf = d => d.s + d.w;
 const split = (d, P) => { const T = priceOf(d); const s = T > 0 ? Math.round((P * d.s) / T) : 0; return { s, w: P - s }; };
 const bots = () => Array.from({ length: SEATS }, () => ({ kind: 'bot' }));
@@ -71,7 +75,7 @@ function screenGame(g, { jitter, tables }) {
   try {
     const quadrants = tables[g % tables.length];
     const rand = seededRandom(g * 7919 + 17);
-    let s = createGame({ seats: bots(), seed: 50000 + g, quadrants });
+    let s = createGame({ seats: bots(), seed: 50000 + g, quadrants, rules: DECK_RULES });
     const events = []; // [defId, price, round, bought]
     const got = s.players.map(() => new Map()); // uid -> [defId, round, paid]
     let buying = null; // uid being bought this turn
@@ -178,7 +182,7 @@ function analyseScreen(games, { boot = 200, printed = {} } = {}) {
   const ev = Object.fromEntries(ids.map(id => [id, []]));
   games.forEach(G => G.events.forEach(e => ev[e[0]]?.push(e)));
   const offeredIn = Object.fromEntries(ids.map(id => [id, 0]));
-  games.forEach(G => { for (const q of G.table) for (const d of quadrant(q).members) offeredIn[d.id]++; for (const d of guestMembers()) offeredIn[d.id]++; });
+  games.forEach(G => { for (const q of G.table) for (const d of quadrant(q).members) offeredIn[d.id]++; for (const d of allGuests()) offeredIn[d.id]++; });
   const q = (a, p) => { const s = [...a].sort((x, y) => x - y); return s[Math.min(s.length - 1, Math.floor(p * s.length))]; };
   const slopeCI = [q(bootSlope, 0.05), q(bootSlope, 0.95)];
   // followers per resource: the fitted surcharge slope when it's clearly positive, else the 4→3 follower buy (0.75)
@@ -229,7 +233,7 @@ const margin = (s, me) => followers(s, s.players[me]) - Math.max(...s.players.fi
 
 function forkAt(seed, quadrants, round) {
   const rand = seededRandom(seed * 7919 + 13);
-  let s = createGame({ seats: bots(), seed, quadrants });
+  let s = createGame({ seats: bots(), seed, quadrants, rules: DECK_RULES });
   while (!s.over && !(s.round === round && s.pending?.kind === 'place')) s = applyMove(s, chooseNormalMove(s, rand));
   return s;
 }
