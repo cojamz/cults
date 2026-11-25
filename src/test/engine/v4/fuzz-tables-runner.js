@@ -86,7 +86,9 @@ function checkSphereInvariants(s, prev, ctx, verified, fail = failHard) {
   const theftsAt = (verified.theftsAt ||= new Map());
   // the theft count when each space's window opened (the move that placed on it), for the chip check below
   if (s.echo) for (const e of Object.values(s.echo.now || {})) { const k = `${s.round}:${e.seq}`; if (!theftsAt.has(k)) theftsAt.set(k, (prev?.thefts || []).length); }
-  if (s.echo && s.pending?.kind === 'buy') {
+  // the ledger still holds last round's windows until the new round's first space reads it: a recruit before anyone
+  // places (Doorbusters) is no space's buy step
+  if (s.echo && s.pending?.kind === 'buy' && s.echo.round === s.round) {
     const L = s.echo;
     const e = L.open && L.now[L.open];
     if (e && e.p === s.pending.player && !e.echo && !e.redo && !verified.has(`${s.round}:${e.seq}`)) {

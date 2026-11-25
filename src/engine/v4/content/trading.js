@@ -481,10 +481,14 @@ const trading = {
     lastHurrah(ctx, p, uid, data) {
       if (!p.members.includes(uid)) return;
       const c = ctx.card(uid), who = data?.name || 'Last Hurrah';
+      // on its way out: a second Old Guard in the chain (Doppelganger copying it) can't pick it again, so the chain ends
+      // (Nov 25: Old Guard and a Doppelganger of it used each other forever, +2 white each time)
+      ctx.state.cards[uid].leaving = true;
       if (data?.roundOnly ? roundUse(c) : hasUse(c)) { ctx.log(`${p.name}'s ${who}: uses ${c.def.name} one last time.`); ctx.freeUse(p, uid); }
       ctx.defer(p, 'trading.lastHurrahGo', { uid, name: who });
     },
     lastHurrahGo(ctx, p, _v, data) {
+      delete ctx.state.cards[data.uid]?.leaving;
       if (!p.members.includes(data.uid)) return;
       const name = ctx.card(data.uid).def.name;
       ctx.buryMember(p, data.uid);
@@ -765,7 +769,7 @@ const trading = {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
-        const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid);
+        const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid && !ctx.state.cards[c.uid].leaving);
         if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Old Guard: no other member to discard.`); return; }
         ctx.gain(owner, W, 2);
         ctx.choose(owner, 'Old Guard: discard which member (its On Use first)?', list.map(c => ({

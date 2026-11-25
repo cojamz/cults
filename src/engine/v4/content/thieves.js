@@ -14,6 +14,7 @@ import { swap13, handlers13 } from './replace13.js';
 import { add14, old14 } from './replace14.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 import { pool, poolSpace, chooseRival } from './pool.js';
+import { givenHooks } from './silver.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
@@ -62,12 +63,12 @@ function onMagenta(ctx, o) {
 }
 /** Mug the Leader (REPLACE10): the rivals tied for the most followers among p's rivals, if p can steal from them. */
 /** Tax Men: rival o gives host 1 resource of their choice, `left` in all, asked one at a time on o's own turn. */
-function askTax(ctx, host, o, left, what) {
+function askTax(ctx, host, o, left, what, once = null) {
   const have = ctx.state.resources.filter(c => (o.res[c] || 0) > 0);
   if (!have.length) { ctx.log(`${o.name} has nothing to give ${host.name}'s Tax Men.`); return; }
   ctx.choose(o, `Tax Men: you recruited ${what}. Give ${host.name} ${left === 1 ? '1 more resource' : `${left} resources`}: which color?`, have.map(c => ({
-    id: `color:${c}`, label: `Give 1 ${c}`, kind: 'color', value: c, hint: 0.3 * (o.res[c] || 0),
-  })), 'thieves.taxGive', { host: host.id, left, what });
+    id: `color:${c}`, label: `Give 1 ${c}`, kind: 'color', value: c, spend: { [c]: 1 }, hint: 0.3 * (o.res[c] || 0),
+  })), 'thieves.taxGive', { host: host.id, left, what, ...(once ? { once } : {}) });
 }
 function mugTargets(ctx, p) {
   const rivals = ctx.rivals(p), top = Math.max(...rivals.map(o => ctx.followers(o)));
@@ -547,7 +548,9 @@ const thieves = {
       if (!host || !(o.res[color] > 0)) return;
       o.res[color] -= 1; ctx.gain(host, color, 1);
       ctx.log(`${o.name} gave ${host.name} 1 ${color} (${host.name}'s Tax Men).`);
-      if (data.left > 1) askTax(ctx, host, o, data.left - 1, data.what);
+      // a give, so the receiver's gift cards hear it (Beggar: "Whenever a rival gives you silver"), one gift for the 2
+      givenHooks(ctx, o, host, color, 1, data.once || `tax:${ctx.state.moves}:${o.id}`);
+      if (data.left > 1) askTax(ctx, host, o, data.left - 1, data.what, data.once || `tax:${ctx.state.moves}:${o.id}`);
     },
     // Cutthroats (pool 16): the stolen resources go back to the victim and that many of their followers come instead
     // (loose followers, as every follower steal takes; never below 0)

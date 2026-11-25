@@ -51,8 +51,13 @@ function giveTo(ctx, giver, to, color, n, once = null) {
   if (color === S && dry(ctx, giver, to)) { ctx.log(`${to.name}'s Teetotalers: ${giver.name} can't give ${to.name} silver.`); return false; }
   ctx.gain(to, color, n);
   // run as the member, so what it gives traces to it (Guest)
-  for (const [c, d] of hooks(ctx, to, 'onGiven')) ctx.asMember(to, d.name, () => d.onGiven(ctx, to, c, giver, color, n));
+  givenHooks(ctx, giver, to, color, n, once);
   if (color === S) for (const o of ctx.state.players) for (const [c, d] of hooks(ctx, o, 'onAnyGifted')) ctx.asMember(o, d.name, () => d.onAnyGifted(ctx, o, c, giver, once, n));
+}
+/** The receiver's gift hooks (Beggar): a gift by giveTo, or a give another color's card makes (Tax Men's payment). `once`
+ * names one gift event (a gift handed over a coin at a time is one gift). */
+export function givenHooks(ctx, giver, to, color, n, once = null) {
+  for (const [c, d] of hooks(ctx, to, 'onGiven')) ctx.asMember(to, d.name, () => d.onGiven(ctx, to, c, giver, color, n, once));
 }
 /** Teetotalers (idea pipeline pool 10, flag noSilverGifts; no live card has it): rivals can't give its owner silver. */
 const dry = (ctx, giver, to) => giver !== to && hooks(ctx, to, 'noSilverGifts').length > 0;
@@ -817,8 +822,11 @@ const silver = {
     // Cory, 2026-11-25 ("I like it"): price is Claude's fill-in (2 silver + 3 any). Words are Claude's: any gift of silver a
     // rival makes you (a space's or a member's), once per gift.
     m('beggar', 'Beggar', 1, 1, 'Whenever a rival gives you silver, +1 follower.', {
-      onGiven(ctx, to, card, giver, color) {
+      // once per gift (Good Samaritans or Pawnbrokers hand silver over a coin at a time: one gift; found Nov 25 in play)
+      onGiven(ctx, to, card, giver, color, n, once) {
         if (color !== S || !giver || giver === to) return;
+        const k = once || `${ctx.state.moves}:${giver.id}`;
+        if (card) { if (card.begged === k) return; card.begged = k; }
         to.bonus += 1; ctx.log(`${to.name}'s Beggar: ${giver.name} gave silver, +1 follower.`);
       },
       ...see(info => 2 * endsAhead(info).length),

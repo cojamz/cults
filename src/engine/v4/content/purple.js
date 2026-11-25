@@ -562,9 +562,10 @@ export default {
     placeKeep(ctx, p, k) {
       const st = ctx.state, n = st.players.length, base = st.order.slice(0, n).filter(id => id !== p.id);
       base.splice(k, 0, p.id);
-      const turns = st.queue.filter(t => t.t === 'turn' && t.workerSource === undefined);
-      turns.forEach((t, i) => { const pass = Math.floor(i / n), at = i % n; t.p = (pass % 2 ? [...base].reverse() : base)[at]; });
-      for (let i = 0; i < turns.length && i < st.order.length; i++) st.order[i] = turns[i].p;
+      // the round's own turns, by their place in the order (slot); a minion gained at Round Start (Extra Hand recruited by
+      // Journeyman or Doorbusters) keeps its owner (Nov 25: it went to whoever the snake's next place belonged to)
+      const turns = st.queue.filter(t => t.t === 'turn' && t.workerSource === undefined && Number.isInteger(t.slot));
+      for (const t of turns) { const pass = Math.floor(t.slot / n), at = t.slot % n; t.p = (pass % 2 ? [...base].reverse() : base)[at]; if (t.slot < st.order.length) st.order[t.slot] = t.p; }
       ctx.log(`${p.name}'s Usher: ${p.name} takes place ${k + 1} in this round's turn order (${base.map(id => st.players[id].name).join(', ')}).`);
     },
     switchTurn(ctx, p, id, data) {
