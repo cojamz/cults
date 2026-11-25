@@ -29,7 +29,7 @@ if (internals) hard.push(`don't talk about internals ("${internals[0]}"); name t
 // Cory, Nov 12 ("I hate when you take your own fucking stupid jargon that doesn't make sense, but was used by you in
 // your conversations and think it's going to be obvious. This happens so fucking often."): words coined in our own
 // work, and bare numbers that don't say what they count, bounce. Say what was done in game words.
-const JARGON = /\b(paired|pairs? of numbers|lift(?:s|ed|ing)?|paper check|pays? (?:it )?back|payback|holders?|takers?|seats?|variants?|deltas?|A\/B|typical (?:round I+ )?space|earns? per|instruments?|n\s?=\s?\d+)\b/i;
+const JARGON = /(?<![-\w])(paired|pairs? of numbers|lift(?:s|ed|ing)?|paper check|pays? (?:it )?back|payback|holders?|takers?|seats?|variants?|deltas?|A\/B|typical (?:round I+ )?space|earns? per|instruments?|n\s?=\s?\d+)\b/i;
 const jar = prose.match(JARGON);
 if (jar) hard.push(`our own jargon ("${jar[0]}"): say what was done and what it means at the table in plain game words, as if he never saw our notes`);
 // Cory, Nov 26: 'what the fuck does "Dearer" mean why do you keep using tha tword?': say "costs more" / "costs less"

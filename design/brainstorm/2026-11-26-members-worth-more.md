@@ -8,7 +8,7 @@ Rule this works inside: Cory, Nov 12, "rebase all members to 1. and then give so
 Evidence: the Nov 26 balance run on v0.99.807 (Normal and Hard bots, 10-card deck). "Holders' result" = followers whoever owned it ended with, against players holding as many members, with its spread.
 Candidates: members whose owners end behind or flat, with a group name already (so worth 2 needs no rename). Members already worth 2 or 3 today: Bride and Groom 2, Silver Tongues 2, Thief-Takers 2, Twins 2, Press Gang 2, Alchemists 3, Firstborn 3, Lord of the Manor 3.
 
-## Idea: Blue Bloods worth 2
+## Idea: Blue Bloods
 
 1. Printed text: "Blue Bloods [4 blue + 4 any, worth 2, counts as 2] Game End: +1 follower per blue member you have." Cards it touches: Most members contest "counts your members when the round ends"; Fewest members contest "counts your members when the round ends".
 2. Played turn: 4 players, round II, you hold 1 blue member and 9 resources. Blue Bloods today: 1 follower printed plus +2 at game end (itself and the other) = 3 for 8. Worth 2: 2 printed, counts as 2 blue members, so +3 at game end = 5 for 8. Buying followers with the same 8 resources gives about 4. Gain over buying followers: +1 instead of -1.
@@ -21,7 +21,7 @@ Candidates: members whose owners end behind or flat, with a group name already (
 9. Biggest case: round III, Blue player with 5 blue members (counting Blue Bloods as 2): +6 at game end plus 2 printed = 8 followers from one card, against a winner's 70 to 110. Under 10. Today's version at the same table pays 6.
 Verdict: send
 
-## Idea: Patron Saints worth 2
+## Idea: Patron Saints
 
 1. Printed text: "Patron Saints [4 silver + 4 any, worth 2, counts as 2] Game End: +1 follower per silver member, anyone's." Cards it touches: Most members contest, Fewest members contest (texts above).
 2. Played turn: round II, 4 players, 3 silver members on the table (yours and rivals'). Today: 1 printed + (3+1 itself) = 5 for 8. Worth 2: 2 printed + (3+2) = 7 for 8. Best other use, buying followers: about 4. Gain +3 over followers, up from +1.
@@ -34,7 +34,7 @@ Verdict: send
 9. Biggest case: round III, 7 silver members on the table: 2 + 8 = 10 followers. At the cut line; a game with 7 silver members is rare (most show 3 to 5). Flag it as the one to watch.
 Verdict: send
 
-## Idea: Thief-Takers worth 3
+## Idea: Thief-Takers
 
 1. Printed text: "Thief-Takers [6 magenta + 4 any, worth 3, counts as 3] Whenever a rival steals from you, steal 1 back from them." Cards it touches: Most members, Fewest members (above).
 2. Played turn: round II, you hold 10 resources. Today: 2 followers for 10, plus a few steals back. Worth 3: 3 for 10. Buying followers with 10: about 5. Still behind on followers alone; it closes half the gap and adds a third member to the count.
@@ -47,7 +47,7 @@ Verdict: send
 9. Biggest case: round III: 3 followers printed plus at most 3 to 4 steals back; well under 10.
 Verdict: send
 
-## Idea: Gift Swappers worth 2
+## Idea: Gift Swappers
 
 1. Printed text: "Gift Swappers [8 any, worth 2, counts as 2] On Use, once per game: every player, you too, gives one member they choose to the player on their left." Cards it touches: Most members, Fewest members.
 2. Played turn: round II, 8 resources: today 1 follower plus its swap; worth 2 gives 2 plus the swap. Buying followers: about 4.
@@ -60,7 +60,7 @@ Verdict: send
 9. Biggest case: 2 followers printed; well under 10.
 Verdict: send
 
-## Idea: Curfew Ringers worth 2
+## Idea: Curfew Ringers
 
 1. Printed text: "Curfew Ringers [2 purple + 4 any, worth 2, counts as 2] Round End: if you placed the round's last minion, +1 follower per purple member you have." Cards it touches: Most members, Fewest members.
 2. Played turn: round II, purple player with 2 purple members places last: today +3 that round (counting itself as 1); worth 2: +4 and 2 printed instead of 1.
@@ -73,7 +73,7 @@ Verdict: send
 9. Biggest case: round III, 5 purple members (itself as 2), last placement in rounds II and III: 6 + 6 + 2 printed = 14 followers from a 6-cost card. Over the line for a 6 cost.
 Verdict: cut (counting as 2 adds +1 every round it fires; the biggest case passes 10 for a cheap card)
 
-## Idea: Connoisseurs worth 2
+## Idea: Connoisseurs
 
 1. Printed text: "Connoisseurs [2 white + 8 any, worth 2, counts as 2] Game End: +2 followers per member you have costing 8 or more."
 2. Played turn: round III, 3 members costing 8+ including itself: today 1 + 6 = 7 for 10; worth 2: 2 + 6 = 8.
@@ -86,7 +86,7 @@ Verdict: cut (counting as 2 adds +1 every round it fires; the biggest case passe
 9. Biggest case: 2 + 10 = 12 at 5 costly members; already high today.
 Verdict: cut (it is White, and counting as 2 hurts White's own Fewest members plan)
 
-## Idea: Bride and Groom worth 3
+## Idea: Bride and Groom
 
 1. Printed text: "Bride and Groom [5 silver + 6 any, worth 3, counts as 3] On Use, once per game: double your silver. Each rival +2 silver."
 2. Played turn: round II, 11 resources: 3 followers against about 5 from buying followers.
@@ -99,7 +99,7 @@ Verdict: cut (it is White, and counting as 2 hurts White's own Fewest members pl
 9. Biggest case: 3 printed; small.
 Verdict: cut (a pair cannot count as 3; its fix is a price or effect change, already in the review's rework list)
 
-## Idea: Robbers, Peddlers, Pawnbrokers, Pilgrims worth 2
+## Idea: Robbers, Peddlers, Pawnbrokers, Pilgrims
 
 1. Printed text: unchanged effects at worth 2: Robbers "On Recruit: steal 5 resources."; Peddlers "On Recruit: +1 of each color. Round Start: +1 of each color."; Pawnbrokers "On Use, once per round: swap up to 5 of your silver for rivals' resources, one for one."; Pilgrims "Round End: +1 follower per color among the spaces your minions are on."
 2. Played turn: each already pays its cost back in resources or followers (Pilgrims 5.3 followers for 7).
