@@ -30,3 +30,11 @@ Check here before drafting. A rejected form comes back only if you can say what'
 
 ## Open
 - Growing-by-round panel line 2 (Oct 25, Claude gut call; Cory confirmed Oct 28): the schedule "I +2 · II +3 · III +4", this round's number on line 1. Rejected: "+4 next round" (reads as a promise to the taker), "more each round" (reads as extra, and unclear which part grows).
+
+## Nov 24 readability pass (three cold readers on screenshots)
+- Rejected "promote (cost up to +3)" / "demote (cost up to −3)": jargon, sign math. Now "swap a member for one costing up to 3 more/less".
+- Rejected "your next turn right after": "right after what?". Now "then go again right away" / "then go twice more right away".
+- Rejected "per consecutive turn" and "per turn in a row": turns alternate, so readers thought it impossible. Now "for this turn and each turn of yours right before it" (rule), "per turn of yours in a row" (wheel).
+- Rejected "per minion left": left where? Now "per minion left to place".
+- Rejected "Steal 1 per minion", "each rival discards 2 of each color": steal or discard what? Name the thing: "1 resource", "2 resources".
+- Hover badge: only the first taker's +1, after a whole sentence. "Each rival +1 silver." is part of its sentence.
