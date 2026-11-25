@@ -30,6 +30,10 @@ import { allQuadrantIds, quadrant, guestMembers, allGuests, registerQuadrant, DE
 import { deckRules } from './lib/deck-choice.mjs';
 // the 10-card decks are the game (Cory, Nov 1): every game here is dealt with DECK's rules (refuses without DECK)
 const DECK_RULES = deckRules();
+import { sphereVersion } from '../src/v4/tables.js';
+// the live colors (2.0) only: DEFAULT_QUADRANTS and the fuzz tables still name retired 1.0 colors (blue, green)
+const LIVE_Q = allQuadrantIds().filter(q => sphereVersion(q) === '2.0');
+const shuffled = (arr, seed) => { const r = seededRandom(seed), a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
 // seats and the base table can change per run (--seats, --table); the worker threads read them from params
 let SEATS = 4;
@@ -288,8 +292,9 @@ function playOut(fork, seed, seat, arm, uid, rollouts, think = 3) {
   };
 }
 
-function tableFor(def) {
-  const base = BASE_TABLE || DEFAULT_QUADRANTS;
+function tableFor(def, g = 0) {
+  // a fixed --table, else the live colors in a different order per seed (the card's own color always sits)
+  const base = BASE_TABLE || shuffled(LIVE_Q, 9001 + g);
   const r = def.guest ? null : quadrant(def.quadrant).resource;
   // the card's own sphere first, then the base table's spheres of other colors, as many as there are seats
   const others = base.filter(q => q !== def.quadrant && (!r || quadrant(q).resource !== r));
@@ -310,11 +315,12 @@ function sweepSeed(g, { cards, round, freeN, rollouts, deltas, think, printed })
   const seed = 1000 + g, seat = g % SEATS;
   const out = { g, seat, base: {}, A: {} };
   const byTable = new Map();
-  for (const id of cards) { const d = allDefs().find(x => x.id === id); const t = tableFor(d).join(','); if (!byTable.has(t)) byTable.set(t, []); byTable.get(t).push(d); }
+  for (const id of cards) { const d = allDefs().find(x => x.id === id); const t = tableFor(d, g).join(','); if (!byTable.has(t)) byTable.set(t, []); byTable.get(t).push(d); }
   for (const [t, defs] of byTable) {
     const fork = forkAt(seed, t.split(','), round);
     out.base[t] = playOut(fork, seed, seat, 'none');
     for (const d of defs) {
+      out.base[d.id] = out.base[t]; // the table changes per seed, so the report finds each card's control by its id
       const c = cloneFor(d);
       for (const P of gridFor(d, deltas, printed)) {
         Object.assign(c, split(d, P));
@@ -343,7 +349,7 @@ function linCross(ps, ds) {
 function analyseSweep(results, { cards, deltas, printed }) {
   const rows = [];
   for (const id of cards) {
-    const d = allDefs().find(x => x.id === id), t = tableFor(d).join(','), grid = gridFor(d, deltas, printed);
+    const d = allDefs().find(x => x.id === id), t = id, grid = gridFor(d, deltas, printed);
     const per = grid.map(P => {
       const arm = a => results.filter(r => r.A[`${id}|${P}|${a}`]).map(r => ({ a: r.A[`${id}|${P}|${a}`], b: r.base[t] }));
       const F = arm('forced'), R = arm('free');
@@ -401,7 +407,7 @@ if (!isMainThread) {
   if (params.table) BASE_TABLE = params.table;
   if (params.level) LEVEL = params.level;
   if (params.budget) BUDGET = params.budget;
-  if (kind === 'screen') { const { makeTables } = await import('../src/test/engine/v4/fuzz-tables-runner.js'); params.tables = params.table ? [params.table] : makeTables(4242, 2).tables; }
+  if (kind === 'screen') { const { makeTables } = await import('../src/test/engine/v4/fuzz-tables-runner.js'); params.tables = params.table ? [params.table] : Array.from({ length: 60 }, (_, i) => shuffled(LIVE_Q, 4242 + i).slice(0, 4)); }
   parentPort.on('message', g => {
     if (g < 0) { process.exit(0); }
     parentPort.postMessage(kind === 'screen' ? screenGame(g, params) : sweepSeed(g, params));
