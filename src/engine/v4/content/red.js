@@ -851,6 +851,17 @@ export default {
       },
       ...see(info => 3 * endsAhead(info).length),
     }),
+    // Cory, 2026-11-24 10:04pm ("we add from the maybes"). Price is Claude's fill-in (3 red + 3 any). The named cost moves
+    // with every member price (MORE, Richer).
+    pool(m('footman', 'Footman', 2, 1, `Whenever you recruit a member costing ${7 + MORE} or more, +4 red.`, {
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what.member || what.member.uid === card.uid) return;
+        const d = ctx.defOf(what.member);
+        if ((d.s || 0) + (d.w || 0) < 7 + MORE + richUp(ctx.state)) return;
+        ctx.gain(owner, 'red', 4); ctx.log(`${owner.name}'s Footman: recruited ${d.name}, +4 red.`);
+      },
+      ...see(info => 4 * endsAhead(info).length),
+    }), 'pool-maybe'),
     // Cory, 2026-11-25 ("I like Chapman"). Price is Claude's fill-in (3 red + 3 any). Any swap of one of your members, by
     // anyone's card or space, with a rival's member or a shop member; Chapman itself swapped away pays nothing.
     m('chapman', 'Chapman', 2, 2, 'Whenever one of your members is swapped, +2 followers.', {

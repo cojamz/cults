@@ -214,6 +214,16 @@ const M = {
   cutthroats: ['🔪', '♾️ You steal resources: you may steal that many followers instead'],
   shirker: ['🍃', '♾️ Your last minion down: +1 purple per minion rivals still have'],
   pilgrims: ['🗺️', '🌙 +1 follower per color of space your minions are on'],
+  // Nov 24 10:04pm: the maybes, added toward 15 a color
+  footman: ['🧤', '♾️ You recruit a member costing 8+: +4 red'],
+  lackey: ['🧹', '♾️ Same color as the minion before yours: +2 green'],
+  'packed-house': ['🎭', '🌙 +1 follower per minion on Green spaces'],
+  'rabble-rouser': ['📣', '🌙 Steal 2 followers from the leader'],
+  doorbusters: ['🚪', '🌅 Recruit once before anyone places'],
+  onlooker: ['👀', '♾️ A rival recruits a blue member: +2 blue'],
+  mendicant: ['🥣', '🌙 +1 follower per color you hold none of'],
+  successors: ['👑', '♾️ You discard one of yours: recruit one up to its cost, free'],
+  evictors: ['🪓', '✨ Discard a rival’s member; you both gain white equal to its cost'],
 };
 
 // Pixel versions (Cory, Nov 4: "match more the art style of the game ... pixel but with detail and recognizeable"): a

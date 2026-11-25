@@ -590,12 +590,12 @@ const trading = {
         turned(ctx, p);
       },
     }),
-    ...handlers6({
       successor(ctx, p, uid, data) {
         if (!ctx.state.shop.includes(uid) || cost(ctx, uid) > data.max) return;
         ctx.log(`${p.name}'s Successors: recruits ${ctx.card(uid).def.name} for free.`);
         ctx.recruit(p, uid, { free: true });
       },
+    ...handlers6({
       inquire(ctx, o, uid, data) {
         const owner = ctx.player(data.owner);
         if (o.members.includes(uid)) {
@@ -607,7 +607,6 @@ const trading = {
         inquireStep(ctx, owner, data.left);
       },
     }),
-    ...handlers3({
       evict(ctx, p, uid) {
         const o = ctx.ownerOf(uid);
         if (!o || o === p) return;
@@ -618,7 +617,6 @@ const trading = {
         ctx.gain(o, W, k);
         ctx.log(`${p.name}'s Evictors: ${p.name} and ${o.name} each +${k} white.`);
       },
-    }),
     raiders(ctx, p, id) {
       const t = raidTargets(ctx, p).find(o => o.id === id);
       if (t && (p.res[W] || 0) >= 2) raidersSteal(ctx, p, t);
@@ -1038,7 +1036,7 @@ const trading = {
     // REPLACE6 bot test (Nov 3, replacement batch 6): Cashier's place. 4 white + 1 any as a player sees it. Your own
     // cast-out of your own member (Farewell, Estate Sale, Appraiser; one Inquisitors makes you do): a shop member costing up
     // to its printed price, free (your recruit). A rival casting out your member (Evictors) isn't you casting out.
-    ...add6(m('successors', 'Successors', 3, 1, 'Whenever you discard one of your members, recruit a shop member costing up to its cost, for free.', {
+    pool(m('successors', 'Successors', 3, 1, 'Whenever you discard one of your members, recruit a shop member costing up to its cost, for free.', {
       onCastOut(ctx, owner, card, { from, actor, cost: k, name }) {
         if (from !== owner || actor !== owner) return;
         const list = ctx.shopCards().filter(c => cost(ctx, c.uid) <= k);
@@ -1047,7 +1045,7 @@ const trading = {
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(ctx, c.uid),
         })), 'trading.successor', { max: k, was: name });
       },
-    })),
+    }), 'pool-maybe'), // a maybe (Nov 24); White reached 12 with Mendicant and Evictors (Cory, 10:11pm: "lets get everything to 12")
     m('cashier', 'Cashier', 2, 0, 'On Recruit: turn all your white into followers.', { ...old6,
       onRecruited(ctx, owner) {
         const n = owner.res[W] || 0;
@@ -1170,7 +1168,7 @@ const trading = {
     // REPLACE3 bot test (Nov 3, replacement batch 3): Hoarder's place. 5 white + 3 any as a player sees it. Any rival's
     // member (casting out isn't a steal or a swap, so Bodyguards and Loyalists don't stop it); its cost is its printed
     // price. It leaves its cult as a cast-out does (Martyrs pays its owner), then both players gain the white.
-    ...add3(m('evictors', 'Evictors', 4, 3, "On Use, once per game: discard a rival's member. You and that rival each gain white equal to its cost.", {
+    m('evictors', 'Evictors', 4, 3, "On Use, once per game: discard a rival's member. You and that rival each gain white equal to its cost.", {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o).map(c => [o, c]));
@@ -1181,7 +1179,16 @@ const trading = {
         })), 'trading.evict');
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.membersOf(o).some(c => c.def.s + c.def.w >= 6 + MORE + richUp(ctx.state))),
-    })),
+    }), // dealt since Cory, Nov 24 10:04pm
+    // Cory, 2026-11-24 10:04pm ("we add from the maybes"). Price is Claude's fill-in (3 white + 3 any). Counts the colors
+    // on this table.
+    m('mendicant', 'Mendicant', 2, 1, 'Round End: +1 follower per color of resource you hold none of.', {
+      onRoundEnd(ctx, owner) {
+        const n = ctx.state.resources.filter(c => !((owner.res[c] || 0) > 0)).length;
+        if (!n) return;
+        owner.bonus += n; ctx.log(`${owner.name}'s Mendicant: none of ${n} color${n === 1 ? '' : 's'}, +${n} follower${n === 1 ? '' : 's'}.`);
+      },
+    }),
     // cut by Cory (2026-10-22); kept defined for old records and card tests
     m('dealer', 'Dealer', 2, 0, 'Whenever you sell followers, +1 white per follower sold.', {
       onSell(ctx, owner, card, k) { ctx.gain(owner, W, k); },

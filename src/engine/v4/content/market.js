@@ -1223,7 +1223,7 @@ const market = {
     // REPLACE2 bot test (Nov 3, replacement batch 2): Shopaholics' place. 5 blue + 3 any as a player sees it. Core runs it
     // (flag roundStartBuy): at each round start after the fresh row is dealt, one buy step (a member or followers) per
     // holder, in that round's turn order, before the first placement.
-    ...add2(m('doorbusters', 'Doorbusters', 4, 3, 'Round Start: recruit once, before anyone places.', { f: 2, roundStartBuy: true })),
+    m('doorbusters', 'Doorbusters', 4, 3, 'Round Start: recruit once, before anyone places.', { f: 2, roundStartBuy: true }), // dealt since Cory, Nov 24 10:04pm
     // REPLACE4 bot test (Nov 3, replacement batch 4): Window Dressers' place. 3 blue + 1 any as a player sees it. Core asks
     // it in the recruit step (askOutbid, core.js): a rival's shop member chosen and paid for there.
     ...add4(m('outbidders', 'Outbidders', 2, 1, 'Whenever a rival recruits a shop member, you may pay its cost plus 2 to recruit it instead. They get back what they paid and recruit again.', { outbids: true })),

@@ -928,6 +928,20 @@ const thieves = {
       },
       ...see(info => 2 * endsAhead(info).length),
     }),
+    // Cory, 2026-11-24 10:04pm ("we add from the maybes"). Price is Claude's fill-in (4 magenta + 4 any). Nothing when you
+    // lead; a tie for the lead takes from the first of them in seat order (Claude's fill-in). Only loose followers move.
+    pool(m('rabblerouser', 'Rabble-Rouser', 3, 2, 'Round End: steal 2 followers from the player with the most followers.', {
+      onRoundEnd(ctx, owner) {
+        const top = Math.max(...ctx.state.players.map(o => ctx.followers(o)));
+        if (ctx.followers(owner) >= top) return;
+        const o = ctx.rivals(owner).find(r => ctx.followers(r) === top);
+        const n = Math.min(2, Math.max(0, o.bonus));
+        if (!n) return;
+        o.bonus -= n; owner.bonus += n;
+        ctx.log(`${owner.name}'s Rabble-Rouser: steals ${n} follower${n === 1 ? '' : 's'} from ${o.name}, who leads.`);
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    }), 'pool-maybe'),
     // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-misers-accomplice.md, paper 15 vs 12; BOTSMART A/B of an
     // above-bar idea): Accomplice's place, same price. Spread the steal for followers, or focus it on one rival.
     ...add14(m('partners', 'Bandit', 1, 1, 'On Recruit: steal 3 resources. +1 follower per rival you stole from.', {
