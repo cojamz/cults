@@ -25,7 +25,7 @@ export const CUT = new Set([
   'benders.squatter', 'purple.bouncer', // Cory, Nov 7 ("Yes"): Scouts and Latecomers take their places
   'benders.insider', 'benders.straggler', // Straggler: Cory, 2026-10-28, to the bench (design/bench.md)
   // Cory, Nov 5 backlog ("Yes to the member changes"): his cut list from the member notes; replacements are his pick
-  'thieves.grifter', 'thieves.cutpurse', 'yellow.drifters', /* Counterfeiters in its slot, Nov 5 */ 'market.doorman', /* Power Shoppers in its slot, Nov 5 */ 'silver.charityball', 'silver.creditors', 'silver.hostesses', 'yellow.ringleader',
+  'thieves.grifter', 'thieves.cutpurse', /* Drifters back in (Cory, Nov 25 9:55pm: "yes", with a color token on the card) */ 'market.doorman', /* Power Shoppers in its slot, Nov 5 */ 'silver.charityball', 'silver.creditors', 'silver.hostesses', 'yellow.ringleader',
   'yellow.gardener', 'market.shopaholic', 'trading.raider', 'purple.earlybird', 'red.volunteer', // Seat Filler takes Volunteer's place
   'trading.bulkbuyer', 'trading.appraiser', 'market.makeover', 'market.stylist', // Cory, 2026-10-24 / Stylist 2026-10-25: thinning ("I like Closer rest can go"); Restockers replaces Makeover
   // Cory, 2026-11-11 member sort: Silver 2:29pm (Debt Collectors, Ballroom Dancers, High Society, Toastmaster go; Guest of

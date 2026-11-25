@@ -211,6 +211,8 @@ const M = {
   bargainer: ['💲', '🏁 +1 follower per member of yours costing 5 or less'],
   beggar: ['🫙', '♾️ A rival gives you silver: +1 follower'],
   'night-porter': ['🗝️', '♾️ Each minion you place after every rival is out: +2 followers'],
+  cutthroats: ['🔪', '♾️ You steal resources: you may steal that many followers instead'],
+  shirker: ['🍃', '♾️ Your last minion down: +1 purple per minion rivals still have'],
   pilgrims: ['🗺️', '🌙 +1 follower per color of space your minions are on'],
 };
 

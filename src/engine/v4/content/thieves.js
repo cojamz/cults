@@ -775,7 +775,8 @@ const thieves = {
   members: [
     // idea pipeline pool 16 (Nov 7; ideas/magenta-r2.md; price a fill-in): after any steal of yours that took resources,
     // you choose; reactions to the steal already ran on the resources (a table settles the steal, then the swap)
-    pool(m('cutthroats', 'Cutthroats', 3, 2, 'Whenever you steal resources, you may steal that many followers instead.', {
+    // Cory, 2026-11-25 9:55pm Eastern ("really interesting. probably yes", then "yes"): dealt in the decks
+    m('cutthroats', 'Cutthroats', 3, 2, 'Whenever you steal resources, you may steal that many followers instead.', {
       onSteal(ctx, owner, card, info) {
         if (info.thief !== owner || info.victim === owner) return;
         const n = Object.values(info.took || {}).reduce((a, b) => a + b, 0);
@@ -787,7 +788,7 @@ const thieves = {
         ], 'thieves.cutthroats', { vid: info.victim.id, took: { ...info.took }, n });
       },
       ...see(info => 2 * endsAhead(info).length),
-    }), 'pool16'),
+    }),
     // idea pipeline pool 10 (Nov 7). Bagmen (the brief's Skimmers, renamed: Skimmers is the REPLACE2 test's card, 3 not 2):
     // a buy of 10 followers by a rival, 2 of them stolen through the shared steal, as Skimmers. Fat Cats: Magenta's
     // contest (Most resources by color) counts its owner's resources twice (core scoreContest, flag doubleMagenta).

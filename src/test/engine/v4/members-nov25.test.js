@@ -10,7 +10,7 @@ const fixture = (quads, opts) => { const s = table(quads, opts); s.queue = []; s
 const R = ['red', 'market', 'purple', 'silver'];
 
 describe('the new members are dealt in the 10-card decks', () => {
-  for (const id of ['red.innkeeper', 'red.wetnurse', 'red.chapman', 'thieves.hoarder', 'market.bargainer', 'silver.beggar', 'purple.nightporter', 'yellow.pilgrims']) {
+  for (const id of ['red.innkeeper', 'red.wetnurse', 'red.chapman', 'thieves.hoarder', 'market.bargainer', 'silver.beggar', 'purple.nightporter', 'yellow.pilgrims', 'purple.shirker', 'thieves.cutthroats', 'yellow.drifters']) {
     it(id, () => {
       const d = defById(id);
       expect(d.retired).toBeFalsy();
@@ -94,5 +94,20 @@ describe('Beggar: "Whenever a rival gives you silver, +1 follower."', () => {
     d.onGiven(c, p, null, p, 'silver', 2);
     d.onGiven(c, p, null, o, 'red', 2);
     expect(p.bonus).toBe(1);
+  });
+});
+
+describe('Shirker: "When you place your last minion of the round, +1 purple per minion rivals still have to place."', () => {
+  it('pays once, when your last minion goes down, for the minions rivals still hold', () => {
+    const s = fixture(R, { n: 3, members: [['purple.shirker']] });
+    const [p, a, b] = s.players, c = contextFor(s), d = defById('purple.shirker'), card = c.card(uidIn(s, 'purple.shirker', 0));
+    p.left = 1; a.left = 2; b.left = 3;
+    d.afterAction(c, p, card);
+    expect(p.res.purple || 0).toBe(0);
+    p.left = 0;
+    d.afterAction(c, p, card);
+    expect(p.res.purple).toBe(5);
+    d.afterAction(c, p, card);
+    expect(p.res.purple).toBe(5);
   });
 });

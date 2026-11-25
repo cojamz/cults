@@ -1316,6 +1316,18 @@ export default {
         ctx.log(`${owner.name}'s Last Orders: the round's last minion, so ${owner.name} recruits once more this turn.`);
       },
     })),
+    // Cory, 2026-11-25 9:55pm Eastern ("interesting. probably yes", then "yes"). Price is Claude's fill-in (3 purple + 3 any).
+    // Pays once a round, when your last minion goes down (a minion gained later that round doesn't pay again).
+    m('shirker', 'Shirker', 2, 1, 'When you place your last minion of the round, +1 purple per minion rivals still have to place.', {
+      afterAction(ctx, owner, card) {
+        if (owner.left > 0 || card.paidRound === ctx.state.round) return;
+        card.paidRound = ctx.state.round;
+        const n = ctx.rivals(owner).reduce((a, o) => a + Math.max(0, o.left || 0), 0);
+        if (!n) return;
+        ctx.gain(owner, P, n); ctx.log(`${owner.name}'s Shirker: done early, rivals still have ${n} minion${n === 1 ? '' : 's'} to place, +${n} purple.`);
+      },
+      ...see(info => 3 * endsAhead(info).length),
+    }),
     m('nightporter', 'Night Porter', 2, 2, 'Each minion you place once all rivals are out of minions: +2 followers.', {
       afterAction(ctx, owner) {
         if (ctx.rivals(owner).some(o => o.left > 0)) return;
