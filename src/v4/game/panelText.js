@@ -54,10 +54,10 @@ const P = {
     // Nov 10 round I (Cory): Borrow, Trending and Gather
     // the catch in line 1 (picky bot, Nov 11: a tight ring or a taken space shows line 1 alone, and it read as a member to
     // keep; decisions Oct 25 and Nov 1: a space's catch is on the wheel)
-    borrow: { verb: 'Recruit the cheapest for free, this round only', second: 'it returns to the shop at round end', note: '+1 red' },
+    borrow: { verb: 'Recruit the cheapest for free, until round end', second: 'then it goes back to the shop', note: '+1 red' },
     trending: { verb: '+1 per shop member of', second: 'the most common color', note: '+1 red' },  // off the wheel since Nov 11 (Late Shift)
     // Cory's words, split later (picky bot, Nov 11: taken, line 1 alone read "Free member costing up to" with no number)
-    lateshift: { verb: 'Recruit for free, costing up to 2 per minion', second: 'you placed this round, this one included', note: '+1 red' }, // Cory, Nov 11
+    lateshift: { verb: 'Recruit for free, costing up to 2 per minion you placed', second: 'this round, this one included', note: '+1 red' }, // Cory, Nov 11
     gather: { main: '+3 red', second: '+4 @f if you recruit a color you have', note: '+1 red' }, // New Blood's form
     // the +2 red sat in line 3, which drops on the outer ring (round I review, Oct 25): it takes line 2, as Right Away's purple
     evenswap: { verb: 'Use a shop member’s On Recruit', second: '+2 red', note: 'it stays in the shop' },
@@ -67,18 +67,18 @@ const P = {
     // took a second line and dropped on the outer ring; "pile" as its card says
     hire: { verb: 'Recruit the top of the pile', second: '+1 red, rivals +1' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
     // the gain first, then the action, split by a comma (wording pass, Nov 12: "…3 more +3 red" ran together)
-    hireup: { verb: '+3 red, promote (cost up to +3)' }, // whole in line 1: ring II drops line 2
-    trade: { verb: '+3 red, demote (cost up to −3)' },
+    hireup: { verb: '+3 red, swap a member for one costing up to 3 more' }, // whole in line 1: ring II drops line 2
+    trade: { verb: '+3 red, swap a member for one costing up to 3 less' },
     take: { verb: `Recruit for free, costing ${9 + MORE} or less`, second: '+1 red' },
   },
   market: {
     // Nov 10 (Cory): Test Drive, the new Out of Style, Word of Mouth and the recruit ladder from the discard pile (3/5/7)
-    testdrive: { verb: 'Discard a shop member', second: 'use its effect now', note: '+1 blue' },
+    testdrive: { verb: 'Use a shop member’s effect now, then discard it', note: '+1 blue' },
     // Recruit Twice's and Spree's shape, whole in line 1 (picky bot, Nov 11: a tight ring showed a bare "+3 blue")
-    markdown: { verb: '+3 blue, recruit from the discard pile, 2 less' }, // whole in line 1 (picky bot, Nov 11)
+    markdown: { verb: '+3 blue, recruit from the discard pile, paying 2 less' }, // whole in line 1 (picky bot, Nov 11)
     wordofmouth: { verb: '+1 @f per 2 members', note: '+1 blue' },
     bargain: r => ({ main: `+${r + 1} blue`, second: 'Discard 1 shop member', note: run(n => `+${n + 1}`, 'blue: ') }), // Cory, Oct 31 ("may" made line 2 too long; it dropped)
-    restock: { verb: 'Discard 3 shop members', second: '+1 of each one’s color', note: '+1 blue' },
+    restock: { verb: 'Discard 3 shop members, +1 of each one’s color', note: '+1 blue' },
     // line 2 was too long and dropped whole at the wheel's bottom, taking the blue with it (round I review, Oct 25)
     showroom: r => ({ main: `+${r + 2} blue`, second: 'peek at the top 4', note: run(n => `+${n + 2}`, 'blue: ') }), // +3/+4/+5 (Nov 5)
     clearance: { verb: '+3 blue, recruit from the discard pile' },
@@ -97,7 +97,7 @@ const P = {
     // line 1 alone must not read as a flat +2 (text review, 2026-10-23: line 2 drops on ring II)
     // its "+1 purple." leads the card, so it's the space's own gain, not the first taker's +1 (picky bot, Nov 11: the face
     // stripped it as if it were); it takes line 2 as Crunch Time's +2 did, the token said in line 1
-    lastcall: { verb: '+1 @f and +1 purple per minion left, then go last', second: '+1 purple' }, // 'skip till others are out' didn't fit line 2 and dropped (blind panel, Nov 1)
+    lastcall: { verb: '+1 @f and +1 purple per minion left to place, then go last', second: '+1 purple' }, // 'skip till others are out' didn't fit line 2 and dropped (blind panel, Nov 1)
     // the center drops line 2, so it's whole in line 1. Your own next turns, moved up, not extra ones (Cory, 2026-10-15)
     // Cory, 2026-10-22: place on taken spaces for the rest of the round
     // Cory, 2026-10-22: the old game's "Gain 4 purple, skip next turn"
@@ -105,15 +105,15 @@ const P = {
     skip: { verb: '+5 purple, take the Goes Last token' }, // flat, the middle value (Cory, Nov 24)
     // On a Roll (Nov 10, Cory's Purple plan): Hold Up's place
     // the token sat in line 3, which most rings drop (picky bot, Nov 11): line 1 says it
-    onaroll: { verb: '+2 purple per turn in a row, then go last' },
+    onaroll: { verb: '+2 purple per turn of yours in a row, then go last' },
     holdup: r => ({ main: `+${r + 1} purple`, second: 'the next turn is skipped, even yours', note: run(n => `+${n + 1}`, 'purple: ') }),
     // the center ring can drop line 2 (round III since Oct 22): line 1 says it whole
     // Cory, 2026-10-28: +5 purple and a minion this round
     // that minion goes on the Goes Last token (Cory, Nov 6): said in line 1 (picky bot, Nov 11)
-    crowdin: { verb: '+4 purple, +1 minion, then go last', second: 'the extra minion this round' },
+    crowdin: { verb: '+4 purple, +1 extra minion this round, then go last' },
     // its +2 in line 1, as Promote's +3 (picky bot, Nov 11: taken, line 2 hides and "Your next two turns, now" stood alone)
-    rally: { verb: '+2 purple, your next 2 turns right after' },
-    again: { verb: '+3 purple, your next turn right after' }, // flat +3, the middle of 2/3/4 (Cory, Nov 24: "if any scalers are left just use the middle value")
+    rally: { verb: '+2 purple, then go twice more right away' },
+    again: { verb: '+3 purple, then go again right away' }, // flat +3, the middle of 2/3/4 (Cory, Nov 24: "if any scalers are left just use the middle value")
   },
   silver: {
     // "others get 1" left "1 of what?" (live panel r1): silver
@@ -131,11 +131,11 @@ const P = {
     sweetnothings: { main: '+3 silver', second: 'give rivals up to 3: +2 any per silver given' },  // off the wheel since Nov 11 (Flaunt)
     // Cory's words, as a verb with the rate in line 1: as a gain the words set huge, and a tight ring dropped the rate so
     // it read as a flat +1 of each (picky bot, Nov 11)
-    flaunt: { verb: '+1 each other color per 3 silver held', second: 'up to 3' }, // Cory, Nov 11
+    flaunt: { verb: '+1 of each other color per 3 silver you hold', second: 'up to 3 each' }, // Cory, Nov 11
     // ring II's line 2 drops at some turns of the wheel and left a bare "+3 silver" (picky bot, Nov 4): whole in line 1
     tongue: { verb: '+3 silver, then turn silver into colors' }, // off the wheel since Nov 11 (Buyout)
     // (all in line 1 it ran six lines deep on a tight ring II, past its panel: picky bot, Nov 11; shorter words are Cory's)
-    buyout: { verb: "Recruit a rival's member", second: 'pay them its cost in silver' }, // Cory, Nov 11
+    buyout: { verb: 'Recruit a rival’s member, paying them its cost in silver' }, // Cory, Nov 11
     // Largesse keeps "+1 @f each": the center ring holds about ten letters there, and "per silver given" dropped line 2
     // whole (picky bot, Nov 4); its hover says per silver you give
     largesse: { verb: 'Give rivals 10 silver', second: '+7 @f', note: 'from the bank' },
@@ -151,9 +151,9 @@ const P = {
     housewarming: { main: '+2 yellow', second: `free new-color member, up to ${4 + MORE}` }, // off the wheel since Nov 11 (Makeover)
     // Cory's words on one line: taken, line 2 hides and "Per member color:" stood alone (picky bot, Nov 11)
     meltingpot: { verb: 'Per member color: +1 @f and +1 of it' }, // Cory, Nov 11; grey: 1 of any (hover)
-    makeover: { verb: '+4 yellow, turn up to 8', second: "of rivals' resources yellow" },
+    makeover: { verb: '+4 yellow, turn up to 8 of rivals’ resources yellow' },
     // Cory's words, "rivals discard" moved up to line 1: the center ring showed a bare "+5 yellow" (picky bot, Nov 11)
-    offering: { verb: '+5 yellow, each rival discards', second: '2 of each of your member colors' }, // Cory, Nov 11
+    offering: { verb: '+5 yellow, each rival discards 2 resources', second: 'of each of your members’ colors' }, // Cory, Nov 11
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),
     // Match the current rule: the yellow arrives before the optional swaps.
     // the condition sat in line 3, which the wheel drops: the board read "pick a color: each rival" (Cory, Nov 3: "wtf is
@@ -166,13 +166,13 @@ const P = {
     flourish: { verb: '+1 each other color, per full set' },
   },
   thieves: {
-    pickpocket: { verb: 'Steal 1 per minion you placed', second: 'this round, this one included', note: '+1 magenta' }, // Nov 10 (Cory)
+    pickpocket: { verb: 'Steal 1 resource per minion you placed', second: 'this round, this one included', note: '+1 magenta' }, // Nov 10 (Cory)
     catchup: { main: '+2 magenta', second: 'per rival with more resources', note: '+1 magenta' }, // Nov 10 (Cory)
     // the give-back in line 1 (picky bot, Nov 11: a tight ring showed only the steal)
-    swindle: { verb: `Steal a member up to ${6 + MORE} for a shop member`, second: 'you give them one', note: '+1 magenta' }, // Nov 10 (Cory)
+    swindle: { verb: `Steal a rival’s member costing up to ${6 + MORE}, give them a shop member`, second: 'of your choice, in its place', note: '+1 magenta' }, // Nov 10 (Cory)
     tipoff: { main: '+3 magenta' }, // a plain stand-in for the open round I space (Cory, Nov 10 10:42pm)
     hideout: { verb: 'Steal 1, then safe from steals', second: 'this round', note: '+1 magenta' },
-    rob: { verb: 'Steal 4 @f and 4 resources', note: '+1 magenta' }, // Nov 10 (Cory) // any rivals (Nov 5) // Nov 4: followers, not half a pile
+    rob: { verb: 'Steal 3 @f and 3 resources', note: '+1 magenta' }, // Nov 10 (Cory) // any rivals (Nov 5) // Nov 4: followers, not half a pile
     ransom: { verb: `Rival pays or loses a member costing ${6 + MORE} or less`, note: '+1 magenta' },
     heist: { verb: 'Recruit a rival’s member for free', note: '+1 magenta' },
   },
@@ -201,7 +201,7 @@ const P = {
     farewell: { verb: 'Discard a member for its cost in @f', note: '+1 white' },
     estatesale: { verb: 'Discard a member for its cost in white', note: '+1 white' },
     writeoff: { verb: 'Give a member to a rival for its cost in white', note: '+1 white' },
-    cashin: { verb: 'Turn all your white into @f', note: '+1 white' },
+    cashin: { verb: 'Turn all your white into @f, 1 for 1', note: '+1 white' },
   },
   echo: {
     // whose minion in line 1: taken, line 2 hides, and Cover and Reprise both read "Copy an action" (picky bot, Nov 11)
@@ -213,11 +213,11 @@ const P = {
     echo: { verb: 'Copy the previous action', note: '+1 green' },
     // Cory, 2026-10-28: a rival member's On Recruit, not a space
     encore: { verb: 'Copy a rival member’s On Recruit', note: '+1 green' },
-    crowd2: { main: '+3 green', second: '+1 @f per minion on Green', note: 'this one included' }, // Crowd, Sample's place (Nov 10, Cory)
+    crowd2: { verb: '+3 green, +1 @f per minion on Green', second: 'this one included' }, // Crowd, Sample's place (Nov 10, Cory)
     // one word for it, the hover's (w3a #22: "redo" here, "copy" there)
     refrain: { verb: 'Copy an action with your minion', note: '+1 green' }, // whose minion in line 1 (picky bot, Nov 11)
     // "not green" in line 1: the center ring drops line 2 (picky bot, Nov 11)
-    eternity: { verb: 'Copy your actions on a color, not green', note: '+1 green' }, // your own minions only (Cory, Nov 11 11:20pm)
+    eternity: { verb: 'Copy all your minions’ spaces on one color, not green', note: '+1 green' }, // your own minions only (Cory, Nov 11 11:20pm)
   },
 };
 

@@ -215,7 +215,7 @@ describe('v4 format helpers', () => {
 
   it('the log names a space by the words the board shows on it too (panel r1: "Sample", now Draw a Crowd; wave-2 B#3: "which is Plunder?")', () => {
     const log = ['Round II begins. Bo picks first.', 'P1 took Draw a Crowd (Green).', "Cy copied Throw Coins (Di's): +7 followers.", 'P1 took Grease a Palm (Gold).', 'P1 took Nowhere (Gold).'];
-    expect(plainLine(log, 1)).toBe('P1 took Draw a Crowd (+3 green, +1 follower per minion on Green).');
+    expect(plainLine(log, 1)).toBe('P1 took Draw a Crowd (+3 green, +1 follower per minion on Green this one included).');
     expect(plainLine(log, 2)).toBe('Cy copied Di\'s Throw Coins (Give rivals 10 silver: +7 followers): +7 followers.');
     expect(plainLine(log, 3)).toBe('P1 took Grease a Palm (+3 gold, +1 gold to a rival).');
     expect(plainLine(log, 4)).toBe('P1 took Nowhere (Gold).'); // no such space: the line as the engine wrote it

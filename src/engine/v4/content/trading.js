@@ -452,7 +452,7 @@ const trading = {
       },
     }, swap11(YARD_SALE, CASH_OUT)),
     {
-      key: 'cashin', copyDoesIt: true, ring: 3, name: 'Redeem', text: 'Turn all your white into followers. +1 white.',
+      key: 'cashin', copyDoesIt: true, ring: 3, name: 'Redeem', text: 'Turn all your white into followers, 1 for 1. +1 white.',
       estimate: (ctx, p) => (p.res[W] || 0) * fv(ctx) + 1,
       resolve(ctx, p) {
         const n = p.res[W] || 0;

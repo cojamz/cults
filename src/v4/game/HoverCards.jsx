@@ -600,7 +600,10 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
   const flatEnd = !a.byRound && /^(.*?)\s*\+(\d+) ([a-z]+)\.\s*$/.exec(String(a.text || ''));
   // not when the sentence leads into it ("…none of your members have: +3 yellow." read as ending on a colon), and not a
   // once-a-game +1 someone already claimed (it stayed after the first taker, beside the missing dot: picky bot, Nov 11)
-  const ownPlus = flatEnd && flatEnd[1] && flatEnd[3] === Q.resource && !/:$/.test(flatEnd[1]);
+  // only the first taker's printed +1, after a whole sentence: Melt Down's "Each rival +1 silver." lost its +1 to the badge
+  // and the rule read "Each rival", and Draw a Crowd's "+3 green." sat as a badge three cold readers took for a cost
+  // (readability pass, Nov 24)
+  const ownPlus = flatEnd && flatEnd[1] && flatEnd[3] === Q.resource && /[.!?]$/.test(flatEnd[1]) && printsPlus1(a, qid);
   const claimed = ownPlus && flatEnd[2] === '1' && plus1Mode(state) === 'game' && printsPlus1(a, qid) && !plus1Open(state, q, i);
   const plus = ownPlus ? `+${flatEnd[2]} ${flatEnd[3]}` : null;
   // under Space +1 "Once a game" the badge says whose it is (Cory, Nov 12: action wording; it read as every taker's +1)

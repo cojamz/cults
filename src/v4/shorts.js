@@ -27,7 +27,7 @@ const S = {
   blue: { a1: '+3 blue', a2: '+2 blue +1 red', a3: '+2 blue +1 green', a4: '+5 blue', a5: '+4 blue +1 gold', a6: '+8 blue' },
   green: { a1: '+3 green', a2: '+2 green +1 gold', a3: '+2 green +1 blue', a4: '+5 green', a5: '+4 green +1 red', a6: '+8 green' },
   purple: {
-    hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+1 follower and +1 purple per minion left; take the Goes Last token with the rest on it; +1 purple', skip: r => `+${r + 3} purple; take the Goes Last token with your other minions on it`, onaroll: '+2 purple per turn in a row; take the Goes Last token', holdup: r => `+${r + 1} purple, whoever is next skips, even you`, crowdin: '+4 purple, +1 minion this round; take the Goes Last token', rally: '+2 purple, two turns after this one', again: r => `+${r + 1} purple, your next turn right after this one`,
+    hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+1 follower and +1 purple per minion left to place; take the Goes Last token with the rest on it; +1 purple', skip: '+5 purple; take the Goes Last token with your other minions on it', onaroll: '+2 purple per turn of yours in a row; take the Goes Last token', holdup: r => `+${r + 1} purple, whoever is next skips, even you`, crowdin: '+4 purple, +1 minion this round; take the Goes Last token', rally: '+2 purple, then go twice more right away', again: '+3 purple, then go again right away',
   },
   silver: {
     toast: '+4 silver · others +2 silver · +1 silver', polish: '+2 silver · all silver → one color · +1 silver', buyout: "recruit a rival's member, pay its cost in silver", partygifts: 'give rivals up to 3 silver, +2 followers each', favors: '+2 silver · each rival gives 1', sweetnothings: '+3 silver · give rivals up to 3, +2 any each', flaunt: '+1 each other color per 3 silver held (up to 3) · +1 silver', tongue: '+3 silver · turn into colors', largesse: 'give rivals 10 silver, +7 followers',
@@ -55,29 +55,29 @@ const S = {
 const LIVE_WORDS = {
   gold: { jv: '+3 gold; +1 gold to a rival you choose', steal: 'steal up to 3 gold from rivals' },
   red: {
-    borrow: 'recruit the cheapest for free; back to the shop at round end', lateshift: 'recruit for free, costing up to 2 per minion you placed this round',
-    gather: '+3 red; +4 followers if you recruit a color you have', hireup: '+3 red; promote a member to one costing up to 3 more',
-    trade: '+3 red; demote a member to one costing up to 3 less', take: `recruit for free, costing ${9 + MORE} or less`,
+    borrow: 'recruit the cheapest for free until round end, then it goes back to the shop', lateshift: 'recruit for free, costing up to 2 per minion you placed this round',
+    gather: '+3 red; +4 followers if you recruit a color you have', hireup: '+3 red; swap a member for one costing up to 3 more',
+    trade: '+3 red; swap a member for one costing up to 3 less', take: `recruit for free, costing ${9 + MORE} or less`,
   },
-  purple: { rally: '+2 purple; your next 2 turns right after', again: r => `+${r + 1} purple; your next turn right after`, crowdin: '+4 purple; +1 minion this round; take the Goes Last token' },
-  silver: { toast: '+4 silver; each rival +2 silver', polish: '+2 silver; then turn all your silver into one color', flaunt: '+1 of each other color per 3 silver held (up to 3 each)' },
+  purple: { rally: '+2 purple; then go twice more right away', again: '+3 purple; then go again right away', crowdin: '+4 purple; +1 extra minion this round; take the Goes Last token' },
+  silver: { toast: '+4 silver; each rival +2 silver', polish: '+3 silver; then turn all your silver into one color; each rival +1 silver', flaunt: '+1 of each other color per 3 silver held (up to 3 each)' },
   yellow: {
-    dilute: '+2 yellow; +3 yellow if you recruit a new color', makeover: '+4 yellow; then rearrange your resources into any colors',
-    meltingpot: 'per member color: +1 follower and +1 of it', offering: '+5 yellow; each rival discards 2 of each of your member colors',
+    dilute: '+2 yellow; +3 yellow if you recruit a new color', makeover: '+4 yellow; turn up to 8 of rivals’ resources yellow',
+    meltingpot: 'per member color: +1 follower and +1 of it', offering: '+5 yellow; each rival discards 2 resources of each of your members’ colors',
   },
   market: {
-    testdrive: 'discard a shop member, use its effect now', markdown: '+3 blue; recruit from the discard pile, paying 2 less',
+    testdrive: 'use a shop member’s effect now, then discard it', markdown: '+3 blue; recruit from the discard pile, paying 2 less',
     restock: 'discard 3 shop members; +1 of each one’s color', wordofmouth: '+1 follower per 2 members',
-    clearance: '+5 blue; recruit from the discard pile', spree: '+7 blue; recruit 2 from the discard pile',
+    clearance: '+3 blue; recruit from the discard pile', spree: '+7 blue; recruit 2 from the discard pile',
   },
   thieves: {
-    pickpocket: 'steal 1 per minion you placed this round, this one included', catchup: '+2 magenta per rival with more resources',
-    swindle: `steal a member costing up to ${6 + MORE}, give them a shop member`, rob: 'steal 3 followers and 3 resources', heist: 'recruit a rival’s member for free',
+    pickpocket: 'steal 1 resource per minion you placed this round, this one included', catchup: '+2 magenta per rival with more resources',
+    swindle: `steal a rival’s member costing up to ${6 + MORE}, give them a shop member in its place`, rob: 'steal 3 followers and 3 resources', heist: 'recruit a rival’s member for free',
   },
-  trading: { farewell: 'discard a member for its cost in followers', writeoff: 'give a member to a rival for its cost in white', cashin: 'turn all your white into followers' },
+  trading: { farewell: 'discard a member for its cost in followers', writeoff: 'give a member to a rival for its cost in white', cashin: 'turn all your white into followers, 1 for 1' },
   echo: {
     hum: 'copy an action with a rival’s minion', chant: '+1 green per minion on Green, this one included', echo: 'copy the previous action',
-    crowd2: '+3 green; +1 follower per minion on Green', refrain: 'copy an action with your minion', eternity: 'copy every action of yours on one color (not green)',
+    crowd2: '+3 green; +1 follower per minion on Green', refrain: 'copy an action with your minion', eternity: 'copy every space of one color with your minion (any color but green)',
   },
 };
 for (const [q, m] of Object.entries(LIVE_WORDS)) S[q] = { ...(S[q] || {}), ...m };
@@ -90,7 +90,7 @@ const PIPS = {
   purple: { lastcall: '+1 follower, +1 purple per minion left; take the Goes Last token' },
   silver: { partygifts: 'give rivals up to 3 silver, +2 followers each', largesse: 'give rivals 10 silver, +7 followers' },
   yellow: { gather: '+1 per member' },
-  market: { clearance: '+5 blue; recruit from the discard pile', pricecheck: 'bury for half its cost', spree: '+7 blue; recruit 2 from the discard pile', wordofmouth: '+1 follower per 2 members' },
+  market: { clearance: '+3 blue; recruit from the discard pile', pricecheck: 'bury for half its cost', spree: '+7 blue; recruit 2 from the discard pile', wordofmouth: '+1 follower per 2 members' },
   thieves: { rob: 'steal 3 followers and 3 resources', swindle: 'steal a member, give a shop member', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member for free' },
   trading: { nestegg: '+3 white', modestmeans: '+2, +1 per bigger rival', stipend: r => `+${r + 2} white; +${r} if you recruit a member`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid`, exchange: r => `up to ${r} into 2 followers each`, farewell: 'discard one for followers', estatesale: 'discard one for white', writeoff: 'give one away for white', cashin: 'all white for followers', sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower', boom: 'all for followers' },
   echo: { refrain: 'copy yours', eternity: 'copy your actions on a color' },

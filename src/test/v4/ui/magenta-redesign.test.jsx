@@ -14,23 +14,23 @@ describe('Magenta action wording and one-stack theft', () => {
       const pick = panelText('thieves', { key: 'pickpocket' }, round);
       // Nov 10: "Steal 1 resource per minion you've placed this round, this one included. +1 magenta." (any rivals: a
       // steal splits among rivals as you choose, Cory Nov 10); the same words every round
-      expect(pick.verb).toBe('Steal 1 per minion you placed');
+      expect(pick.verb).toBe('Steal 1 resource per minion you placed'); // what is stolen in line 1 (readability pass, Nov 24)
       expect(pick.second).toBe('this round, this one included');
       const safe = panelText('thieves', { key: 'hideout' }, round);
       expect(safe.verb).toBe('Steal 1, then safe from steals'); // Cory, Nov 1; the protection in line 1 (line 2 dropped every round, text audit Nov 1)
       expect(safe.second).toBe('this round');
       expect(safe.note).toBeNull(); // the +1 of its color is the hover's badge, off the wheel (Cory, Nov 9)
-      expect(shortEffect('thieves', { key: 'pickpocket' }, round)).toBe('steal 1 per minion you placed this round, this one included');
+      expect(shortEffect('thieves', { key: 'pickpocket' }, round)).toBe('steal 1 resource per minion you placed this round, this one included');
     }
     const stash = panelText('thieves', { key: 'tipoff' }, 1);
     expect(stash.main).toBe('+3 magenta'); // a plain stand-in (Cory, Nov 10 10:42pm)
     expect(stash.second).toBeNull();
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toContain(`costing ${6 + MORE} or less`);
-    expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 4 @f and 4 resources'); // Plunder, Nov 10 3:46pm
+    expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 3 @f and 3 resources'); // Plunder, 3 and 3 since Cory's Nov 13 (the wheel said 4 until Nov 24)
     expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 3 followers and 3 resources');
     // Beg (Nov 10) and Sleight of Hand (Nov 10, Shake Down's slot)
     expect(panelText('thieves', { key: 'catchup' }, 1)).toMatchObject({ main: '+2 magenta', second: 'per rival with more resources' });
-    expect(panelText('thieves', { key: 'swindle' }, 2)).toMatchObject({ verb: `Steal a member up to ${6 + MORE} for a shop member`, second: 'you give them one' }); // the give-back in line 1 (picky bot, Nov 11)
+    expect(panelText('thieves', { key: 'swindle' }, 2)).toMatchObject({ verb: `Steal a rival’s member costing up to ${6 + MORE}, give them a shop member`, second: 'of your choice, in its place' }); // the give-back in line 1 (picky bot, Nov 11); whose member and what is given said plainly (readability pass, Nov 24)
   });
 
   it('shows each exact half-stack amount without a Take All or coin-by-coin plan', () => {

@@ -36,7 +36,7 @@ describe('White: the printed cards', () => {
     expect(text('splurge')).toBe('+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).');
     expect(text('farewell')).toBe('Discard a member for its cost in followers. +1 white.');
     expect(text('writeoff')).toBe('Give a member to a rival for its cost in white. +1 white.');
-    expect(text('cashin')).toBe('Turn all your white into followers. +1 white.');
+    expect(text('cashin')).toBe('Turn all your white into followers, 1 for 1. +1 white.');
     expect(W.scoring.label).toBe('Most white');
   });
 });

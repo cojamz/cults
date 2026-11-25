@@ -695,7 +695,7 @@ export default {
       // Cory, Nov 10 12:43am: Purple's third round I space, "+2 purple * consecutive turn. so it's always at least 2 purple
       // but could get up to like 10"; 12:45am: a skipped turn doesn't break a streak (consecutive means no other player
       // placed in between: skips aren't turns); 12:48am: it takes the Goes Last token. Hold Up's place. Name is Claude's fill-in.
-      key: 'onaroll', copyDoesIt: true, ring: 1, name: 'Keep Going', text: '+2 purple per consecutive turn, this one included. Take the Goes Last token: your other minions are placed after everyone else’s.',
+      key: 'onaroll', copyDoesIt: true, ring: 1, name: 'Keep Going', text: '+2 purple for this turn and each turn of yours right before it. Take the Goes Last token: your other minions are placed after everyone else’s.',
       estimate: (ctx, p) => 2 * (inARow(ctx, p) + 1),
       resolve(ctx, p) {
         const n = inARow(ctx, p) + 1;
@@ -735,7 +735,7 @@ export default {
       // raise it to +3 after play). Any taken space, yours or a rival's, for the rest of this round. Name is Claude's fill-in.
       // Cory, 2026-10-28 9:31pm Eastern: "It should just be like, +5 purple and gain a minion this round" (placing on
       // taken spaces copied too much with Greatest Hits). Extra minions stop when the round's spare spaces run out.
-      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Burn the Candle', text: '+4 purple. +1 minion this round. Take the Goes Last token: your other minions are placed after everyone else’s.', // +4 (Cory, Nov 5: "give a little more purple"); the token (Cory, Nov 6: "Overtime is good. I like it", a third way to take it)
+      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Burn the Candle', text: '+4 purple. +1 extra minion to place this round. Take the Goes Last token: your other minions are placed after everyone else’s.', // +4 (Cory, Nov 5: "give a little more purple"); the token (Cory, Nov 6: "Overtime is good. I like it", a third way to take it)
       estimate: ctx => 4 + (spareSpace(ctx) ? turnValue(ctx) : 0),
       resolve(ctx, p) {
         ctx.gain(p, P, 4, { fromAction: true });
@@ -749,7 +749,7 @@ export default {
       // Cory, 2026-10-22: a follower bonus for taking the rest of your turns last ("YES now you're cooking"), in his
       // words ("take the remainder of your turns when others are out of minions"), "let's just try it at 2 followers
       // per minion left". Replaces Rush Hour. Name is Claude's fill-in.
-      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Bide Your Time', text: '+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token: your other minions go after everyone else’s.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
+      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Bide Your Time', text: '+1 purple. +1 follower and +1 purple per minion you have left to place. Take the Goes Last token: your other minions go after everyone else’s.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
       estimate: (ctx, p) => 1 + 2 * Math.max(0, p.left - 1),
       resolve(ctx, p) {
         ctx.gain(p, P, 1 + p.left, { fromAction: true });
