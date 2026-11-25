@@ -12,7 +12,7 @@ const Q = ['gold', 'red', 'thieves', 'yellow'];
 // Twins, Dabblers, Revelers, Plague Bearer) and the ones given back (keepCount). Retired cards keep their old numbers (Triplets 3).
 describe('A member counts as many members as its followers (Cory, 2026-11-01: "member count = follower count, for members")', () => {
   it('a live member is rebased to worth 1 follower and 1 member (Cory, Nov 12)', () => {
-    for (const id of ['red.panel', 'red.mob', 'echo.agents', 'echo.mirror', 'market.snob', 'silver.highsociety']) {
+    for (const id of ['red.panel', 'red.mob', 'echo.agents', 'echo.mirror', 'silver.highsociety']) {
       const d = defById(id);
       expect(d.retired, id).toBeFalsy();
       expect([d.f, d.n], id).toEqual([1, 1]);
@@ -24,9 +24,10 @@ describe('A member counts as many members as its followers (Cory, 2026-11-01: "m
   });
   it('cards whose text gives the number, and the five given back, keep it, members equal to followers', () => {
     const want = { 'red.bigfamily': 4, 'thieves.crew': 2, 'benders.dabblersold': 2, 'silver.revelers': 3, 'silver.retinue': 3,
-      'yellow.bookcooker': 3, 'silver.gala': 2, 'silver.smoothtalker': 2, 'thieves.watchdog': 2, 'thieves.kidnappers': 2 };
+      'yellow.bookcooker': 3, 'silver.gala': 2, 'silver.smoothtalker': 2, 'thieves.watchdog': 2, 'thieves.kidnappers': 2,
+      'market.snob': 2, 'silver.patronsaints': 2 }; // Blue Bloods and Patron Saints given back to 2 (Cory, Nov 25: "making some of them worth more followers, where relevant")
     for (const [id, n] of Object.entries(want)) expect([defById(id).f, defById(id).n], id).toEqual([n, n]);
-    for (const id of ['yellow.bookcooker', 'silver.gala', 'silver.smoothtalker', 'thieves.watchdog', 'thieves.kidnappers']) expect(defById(id).keepCount, id).toBe(true);
+    for (const id of ['market.snob', 'silver.patronsaints', 'yellow.bookcooker', 'silver.gala', 'silver.smoothtalker', 'thieves.watchdog', 'thieves.kidnappers']) expect(defById(id).keepCount, id).toBe(true);
   });
   it('a retired card keeps its old numbers, members equal to followers (Triplets 3)', () => {
     const d = defById('red.twins');

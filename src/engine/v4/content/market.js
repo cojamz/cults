@@ -1078,7 +1078,7 @@ const market = {
       onGameEnd: (ctx, owner) => ctx.membersOf(owner).filter(c => (c.def.s || 0) + (c.def.w || 0) <= 4 + MORE + richUp(ctx.state)).length,
       ...see(() => 3),
     }),
-    m('snob', 'Blue Bloods', 3, 2, SNOBS_TEXT, { f: 2, ...old11('snob2'), ...old11('snobs3'), ...old9('market.snob'),
+    m('snob', 'Blue Bloods', 3, 2, SNOBS_TEXT, { f: 2, n: 2, keepCount: true, /* worth 2, counts 2 (Cory, Nov 25: "making some of them worth more followers, where relevant"; he flagged only Gift Swappers and Thief-Takers as weak) */ ...old11('snob2'), ...old11('snobs3'), ...old9('market.snob'),
       // REPLACE12 rewords (lane D2, Nov 4, pitches/D2-batch2.md, passed paper): snobsup "trading up", snobsround the
       // same count at every Round End. Unset: the live Game End count.
       ...(on12('snobsup') ? {

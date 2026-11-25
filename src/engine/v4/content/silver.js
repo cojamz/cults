@@ -1210,7 +1210,7 @@ const silver = {
     }),
     // Game End, cost 7 = 4 silver + 3 any as a player sees it (Cory, Nov 6 8:18pm Eastern: "Patron Saints is supposed to be
     // game end!!", "and keep cost at 7")
-    m('patronsaints', 'Patron Saints', 3, 2, 'Game End: +1 follower per silver member, anyone’s.', { f: 1, // worth 1 (Cory, Nov 12 10:31am Eastern, yes to "worth 2 → 1")
+    m('patronsaints', 'Patron Saints', 3, 2, 'Game End: +1 follower per silver member, anyone’s.', { f: 2, n: 2, keepCount: true, /* worth 2, counts 2 (Cory, Nov 25: "making some of them worth more followers, where relevant") */ // was worth 1 (Cory, Nov 12 10:31am Eastern, yes to "worth 2 → 1")
       onGameEnd: ctx => ctx.state.players.reduce((a, o) => a + ctx.countMembersOfColor(o, S), 0),
     }),
     m('saint', 'Patron Saint', 4, 2, 'Game End: +1 follower per 2 silver members, anyone’s.', {

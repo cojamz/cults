@@ -273,7 +273,7 @@ describe('Blue members', () => {
   });
   it('Blue Bloods: game end, +1 follower per blue member (itself included)', () => {
     const s = scene({ members: [['market.snob', 'market.stylist', 'gold.midas', 'gold.tycoon', 'red.intern']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.total).toBe(2); // Blue Bloods (rebased to worth 1: Cory, Nov 12) and Stylist
+    expect(s.players[0].final.total).toBe(3); // Blue Bloods (counts as 2 blue members: Cory, Nov 25) and Stylist
   });
   it('Recluse: game end, +2 followers per rival with more members', () => {
     const s = scene({ n: 3, members: [['market.recluse'], ['red.intern', 'red.drive'], ['red.twins', 'red.bigfamily']], queue: [{ t: 'finish' }] });

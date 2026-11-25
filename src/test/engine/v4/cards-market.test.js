@@ -410,7 +410,7 @@ describe('Blue members', () => {
   const finish = members => table(Q, { members, shop: ROW, n: members.length, queue: [{ t: 'finish' }] });
   it('Blue Bloods: game end, +1 follower per blue member', () => {
     const s = finish([['market.snob', 'market.stylist', 'gold.tycoon', 'red.twins'], []]);
-    expect(s.players[0].final.parts).toContain('Blue Bloods +2'); // Blue Bloods itself (rebased to worth 1, Cory Nov 12) and Stylist; not Baron or Twins
+    expect(s.players[0].final.parts).toContain('Blue Bloods +3'); // Blue Bloods itself (counts as 2 blue members, Cory Nov 25) and Stylist; not Baron or Twins
   });
   it('Recluse: game end, +2 followers per rival with more members', () => {
     const s = finish([['market.recluse'], ['red.twins', 'red.intern'], ['red.volunteer', 'red.bigfamily'], ['echo.doppel']]);
