@@ -62,7 +62,7 @@ Cut any candidate that:
 - is a job inside a cult (Missionaries, Elders, Den Mother);
 - is the mechanic word as a job title (Recruiting Sergeant, Restockers);
 - is already live, or a near-twin of a live name a player would mix up (Warden and Watchmen; Early Birds beside Early Riser), or shares a word with an action (Swindler and Swindle). `scripts/check-names.mjs` flags exact and shared-word clashes and every name on file as refused;
-- reuses a retired card's name for a card that does something similar (it confuses anyone who played the old one).
+- reuses a retired card's name for a card that does something similar (it confuses anyone who played the old one). Find old uses with `git log --oneline -S"'<Name>'" -- src/engine/v4/content` and `grep -n "<Name>" design/decisions.md`, and say so when you report the name (Cory, Nov 25, on Alchemists: "I thought we already had Alchemist? or no": Gold's Alchemist, deleted with Gold, and the grey card now called Conjurer once wore the name).
 
 ### 5. Blind first read (the step that replaced judges' taste)
 
