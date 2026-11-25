@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.796 — 2026-11-24
+
+- Action text reads at a glance: clearer wheel lines and hovers for 25 actions (same effects); Plunder's wheel now says 3 and 3; Melt Down's hover shows each rival's +1 silver
+
 ## v0.99.795 — 2026-11-24
 
 - Lie Abed and Make Haste pay their middle amounts in every round; the tutorial and home screen use Yellow in Gold's place.
