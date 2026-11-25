@@ -30,7 +30,9 @@ import new8
 NEW7.update({'Innkeeper':'red.innkeeper','Wet Nurse':'red.wetnurse','Chapman':'red.chapman','Hoarder':'thieves.hoarder','Bargainer':'market.bargainer','Beggar':'silver.beggar','Night Porter':'purple.nightporter','Pilgrims':'yellow.pilgrims'})
 import new3
 NEW7.update({'Shirker':'purple.shirker','Cutthroats':'thieves.cutthroats','Drifters':'yellow.drifters'})
-for n,v in new7.ALL()+new8.ALL()+new3.ALL():
+import new4
+NEW7.update({'Lackey':'echo.lackey','Doorbusters':'market.doorbusters','Mendicant':'trading.mendicant','Evictors':'trading.evictors'})
+for n,v in new7.ALL()+new8.ALL()+new3.ALL()+new4.ALL():
     pal={}; rev={}; rows=[]
     for row in v.g:
         s2=''
