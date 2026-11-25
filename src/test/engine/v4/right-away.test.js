@@ -22,8 +22,8 @@ function plain(s, rand) {
 
 describe('Make Haste', () => {
   it("round I, 4 players: +3 purple, A places again at once, and still places 3 in all", () => {
-    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 1, quadrants: Q });
-    const rand = seededRandom(1);
+    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 2, quadrants: Q }); // seed 2 since Shirker, Cutthroats and Drifters (Nov 25)
+    const rand = seededRandom(2);
     while (!(s.round === 1 && s.pending?.kind === 'place')) s = applyMove(s, chooseBotMove(s, rand));
     const base = s.order.slice(0, 4), A = s.pending.player;
     const i = quadrant('purple').actions.findIndex(a => a.key === 'again');
