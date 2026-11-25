@@ -115,3 +115,18 @@ Cory, 8:48pm: "more of them should be like scoring conditions... that lead you t
 8. Color interactions: none: it reads the four colors on any wheel.
 9. Biggest case: round III, 5 minions on 4 colors: +8 a round end, 8 + 8 = 16 over rounds II and III, against a winner's 70 to 110 and a contest's 10; never 10+ in one turn.
 Verdict: send
+
+Cory, 8:52pm, on Hanger-On: "it should like be -4 when it joins your, it's kind of like Ghost... otherwise it goes at the beginning of the round and then you just trade it away and it feels bad. It's like a big swing that people would forget about."
+
+## Idea: Hanger-On v2
+
+1. Printed text: "Round Start: it joins the cult with the most followers. That player loses 4 followers." Worth 1 follower like any member. White, 2 white + 3 any (Claude's fill-in). Compared with Plague Bearer: "Worth 0 members. Whenever this member joins your cult, −5 followers."
+2. Played turn: 4 players, round II, P3 (12 behind) recruits it; no loss to P3, who is not leading. Round III starts: it joins P1, the leader: P1 −4 once, and that's the end of it if P1 still leads at the next round start (it is already there, so it doesn't join again). The buyer pays 5 resources to take 4 from the leader; the 5-follower card would give P3 +5 instead, so it's a choice between gaining and stopping the leader.
+3. Both sides: no choices on the card; only a trailing player buys it, since the leader would hit themselves.
+4. Who feels it: the leader, once, at a visible moment (round start), the same moment every player can remember; nothing standing to forget.
+5. Not refused: his own correction; a one-time loss like Plague Bearer's, which he likes.
+6. Judged: unique, simple, a table can track it (move the card, take 4 followers off).
+7. Public and certain: follower counts are public; nothing hidden or random.
+8. Color interactions: White, the color that gives members away (Matchmaker, Dowry-Givers); it reads only follower counts.
+9. Biggest case: bought in round I or II, it can hit at round II start and again at round III start if the lead changes: −8 at most over the game, spread over two leaders, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
