@@ -18,7 +18,7 @@ import { memberScoring } from './member-scoring.js';
 //   round-end and game-end hooks. That's why the loan lives on a member (Lender), not on a space.
 import { registerQuadrant, defById } from './index.js';
 import { add3, old3, handlers3 } from './replace3.js';
-import { add6, old6, handlers6 } from './replace6.js';
+import { add6, old6, handlers6, REPLACE6 } from './replace6.js';
 import { add9, old9 } from './replace9.js';
 import { swap11, handlers11, add11, old11 } from './replace11.js';
 import { swap14, handlers14, add14, old14 } from './replace14.js';
@@ -1036,7 +1036,7 @@ const trading = {
     // REPLACE6 bot test (Nov 3, replacement batch 6): Cashier's place. 4 white + 1 any as a player sees it. Your own
     // cast-out of your own member (Farewell, Estate Sale, Appraiser; one Inquisitors makes you do): a shop member costing up
     // to its printed price, free (your recruit). A rival casting out your member (Evictors) isn't you casting out.
-    pool(m('successors', 'Successors', 3, 1, 'Whenever you discard one of your members, recruit a shop member costing up to its cost, for free.', {
+    (d => (REPLACE6 ? d : pool(d, 'pool-maybe')))(m('successors', 'Successors', 3, 1, 'Whenever you discard one of your members, recruit a shop member costing up to its cost, for free.', {
       onCastOut(ctx, owner, card, { from, actor, cost: k, name }) {
         if (from !== owner || actor !== owner) return;
         const list = ctx.shopCards().filter(c => cost(ctx, c.uid) <= k);
@@ -1045,7 +1045,7 @@ const trading = {
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(ctx, c.uid),
         })), 'trading.successor', { max: k, was: name });
       },
-    }), 'pool-maybe'), // a maybe (Nov 24); White reached 12 with Mendicant and Evictors (Cory, 10:11pm: "lets get everything to 12")
+    })), // a maybe (Nov 24), dealt only in the REPLACE6 bot test; White reached 12 with Mendicant and Evictors (Cory, 10:11pm: "lets get everything to 12")
     m('cashier', 'Cashier', 2, 0, 'On Recruit: turn all your white into followers.', { ...old6,
       onRecruited(ctx, owner) {
         const n = owner.res[W] || 0;
