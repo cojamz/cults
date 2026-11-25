@@ -219,7 +219,7 @@ const M = {
   lackey: ['🪣', '♾️ Same color as the minion before yours: +2 green'],
   'packed-house': ['🎪', '🌙 +1 follower per minion on Green spaces'],
   'rabble-rouser': ['🪧', '🌙 Steal 2 followers from the leader'],
-  doorbusters: ['👣', '🌅 Recruit once before anyone places'],
+  forestallers: ['🥬', '🌅 Recruit once before anyone places'],
   onlooker: ['👀', '♾️ A rival recruits a blue member: +2 blue'],
   mendicant: ['🙏', '🌙 +1 follower per color you hold none of'],
   successors: ['👑', '♾️ You discard one of yours: recruit one up to its cost, free'],
