@@ -1748,6 +1748,8 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   if (reservedFor(state, p, uid)) throw new Error(`Card ${uid} is reserved by Snobs`);
   const idx = state.shop.indexOf(uid);
   const fromPile = idx < 0 ? state.pile.indexOf(uid) : -1;
+  // Wet Nurse: was it the cheapest shop member when taken (ties count)? Read before it leaves the row and the row refills.
+  const cheapest = idx >= 0 && state.shop.every(u => cardDef(state, u).s + cardDef(state, u).w >= cardDef(state, uid).s + cardDef(state, uid).w);
   // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
   // the discard pile's top card (Ragpicker's flag pileBottom)
   const bottom = idx < 0 && fromPile < 0 && discardOf(state).at(-1) === uid && sumMemberFlag(state, p, 'pileBottom') > 0;
@@ -1813,12 +1815,12 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   const def = cardDef(state, uid);
   log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the discard pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : picker !== undefined ? ` from the discard pile with ${p.name}'s ${cardDef(state, picker).name}` : gleaned ? ` from the discard pile with ${p.name}'s ${flagName(state, p, 'discardAny')}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
   if (state.cards[uid].offPile !== undefined) delete state.cards[uid].offPile; // takeFromDiscard just above marked it
-  memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall, silverForColor, fromDiscard: offPile });
+  memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall, silverForColor, fromDiscard: offPile, cheapest });
   // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code
   memberJoined(state, p, uid);
 }
 /** A member recruit: p took it (shop, free, a steal) or swapped it in with their own red action (see recruited). */
-function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop = false, silverForColor = false, fromDiscard = false } = {}) {
+function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop = false, silverForColor = false, fromDiscard = false, cheapest = false } = {}) {
   state.recruits += memberWeight(state, uid);
   p.turnRecruits += memberWeight(state, uid);
   const card = state.cards[uid], def = defById(card.def);
@@ -1832,7 +1834,7 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
   const w = wrap(state, card);
   // spent: what the recruit paid (Collector reads silver in it); null when free
   // fromShop: a member taken from the face-up shop (Red Cloak, Cory Nov 1)
-  recruited(state, p, { member: w, spent, fromShop, silverForColor, ...(fromDiscard ? { fromDiscard: true } : {}) });
+  recruited(state, p, { member: w, spent, fromShop, silverForColor, ...(fromDiscard ? { fromDiscard: true } : {}), ...(cheapest ? { cheapest: true } : {}) });
   // a when-recruited effect leaves a trace like any other member hook (Seed Money, Pilgrim, Retinue…)
   // A member's On Recruit happens once a turn for the same player: Double Agent swapped away and swapped straight back
   // (Stunt Double copying Reprise copying Promote) looped forever (Nov 12, found by a seeded game). Claude's engine guard.

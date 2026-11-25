@@ -918,6 +918,15 @@ const thieves = {
       // BOTSEE: a member costing 7+ is recruited by some rival about twice a round from round II
       ...see(info => endsAhead(info).filter(r => r >= 2).length * 3),
     }),
+    // Cory, 2026-11-25 ("Okay, now we're talking... Good idea"): Magenta followers. Price is Claude's fill-in (3 magenta + 4 any).
+    m('hoarder', 'Hoarder', 2, 2, 'Round End: if you hold 10 or more resources, +3 followers.', {
+      onRoundEnd(ctx, owner) {
+        const held = Object.values(owner.res).reduce((a, b) => a + (b || 0), 0);
+        if (held < 10) return;
+        owner.bonus += 3; ctx.log(`${owner.name}'s Hoarder: ${held} resources held, +3 followers.`);
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    }),
     // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-misers-accomplice.md, paper 15 vs 12; BOTSMART A/B of an
     // above-bar idea): Accomplice's place, same price. Spread the steal for followers, or focus it on one rival.
     ...add14(m('partners', 'Bandit', 1, 1, 'On Recruit: steal 3 resources. +1 follower per rival you stole from.', {

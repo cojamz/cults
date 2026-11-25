@@ -1073,6 +1073,11 @@ const market = {
         if (by !== owner && d.s + d.w <= 4 + MORE + richUp(ctx.state)) { owner.bonus += 1; ctx.log(`${owner.name}'s Blue Bloods: ${by.name} recruited ${d.name}, +1 follower.`); }
       },
     })),
+    // Cory, 2026-11-25 ("cool"): price is Claude's fill-in (2 blue + 3 any). "5 or less" is a named cost (moves with Richer).
+    m('bargainer', 'Bargainer', 1, 1, 'Game End: +1 follower per member you have costing 5 or less.', {
+      onGameEnd: (ctx, owner) => ctx.membersOf(owner).filter(c => (c.def.s || 0) + (c.def.w || 0) <= 4 + MORE + richUp(ctx.state)).length,
+      ...see(() => 3),
+    }),
     m('snob', 'Blue Bloods', 3, 2, SNOBS_TEXT, { f: 2, ...old11('snob2'), ...old11('snobs3'), ...old9('market.snob'),
       // REPLACE12 rewords (lane D2, Nov 4, pitches/D2-batch2.md, passed paper): snobsup "trading up", snobsround the
       // same count at every Round End. Unset: the live Game End count.

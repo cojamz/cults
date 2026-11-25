@@ -833,6 +833,33 @@ export default {
         ctx.gain(owner, 'red', 1); ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Ferryman')}: +1 red.`);
       },
     }),
+    // Cory, 2026-11-25 (likely in, "I like Innkeeper"): Red resources. Price is Claude's fill-in (3 red + 3 any). A member
+    // of yours going back to the shop (Borrow's return, a swap with the shop, Promote, Demote, Journeyman), never the discard pile.
+    m('innkeeper', 'Innkeeper', 2, 1, 'Whenever one of your members goes back to the shop, +3 red.', {
+      onCultMove(ctx, owner, card, { uid, from, to }) {
+        if (from !== owner || to || uid === card.uid || !ctx.state.shop.includes(uid)) return;
+        ctx.gain(owner, 'red', 3); ctx.log(`${owner.name}'s Innkeeper: ${ctx.card(uid).def.name} went back to the shop, +3 red.`);
+      },
+      ...see(info => 3 * endsAhead(info).length), // about one a round for a Red player (Borrow's return alone)
+    }),
+    // Cory, 2026-11-25 (likely in, "I like... Wet Nurse"). Price is Claude's fill-in (2 red + 3 any). Cheapest: no shop
+    // member cost less at the moment you took it (ties count).
+    m('wetnurse', 'Wet Nurse', 1, 1, 'Whenever you recruit the cheapest member in the shop, +3 red.', {
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what.member || !what.cheapest) return;
+        ctx.gain(owner, 'red', 3); ctx.log(`${owner.name}'s Wet Nurse: recruited the cheapest shop member, +3 red.`);
+      },
+      ...see(info => 3 * endsAhead(info).length),
+    }),
+    // Cory, 2026-11-25 ("I like Chapman"). Price is Claude's fill-in (3 red + 3 any). Any swap of one of your members, by
+    // anyone's card or space, with a rival's member or a shop member; Chapman itself swapped away pays nothing.
+    m('chapman', 'Chapman', 2, 2, 'Whenever one of your members is swapped, +2 followers.', {
+      onCultMove(ctx, owner, card, { uid, from, swappedWith }) {
+        if (from !== owner || swappedWith == null || uid === card.uid) return;
+        owner.bonus += 2; ctx.log(`${owner.name}'s Chapman: ${ctx.card(uid).def.name} was swapped, +2 followers.`);
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    }),
     m('drive', 'Pied Piper', 2, 2, 'Whenever you recruit 2 or more members in one turn, +2 red.', {
       // pays the moment your second recruit of the turn lands, so the red can still be spent this turn
       onAnyRecruit(ctx, owner, card, by, recruited) {

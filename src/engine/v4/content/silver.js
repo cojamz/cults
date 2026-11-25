@@ -814,6 +814,15 @@ const silver = {
     })),
     // Cory, Nov 1: "whenever a player is gifted silver +1 silver", then +2 after the test read −4; one gift per space counts once
     // words and +1 (Cory, Nov 1, 2:25pm: "Whenever silver is gifted, +1 silver."), once per gift event
+    // Cory, 2026-11-25 ("I like it"): price is Claude's fill-in (2 silver + 3 any). Words are Claude's: any gift of silver a
+    // rival makes you (a space's or a member's), once per gift.
+    m('beggar', 'Beggar', 1, 1, 'Whenever a rival gives you silver, +1 follower.', {
+      onGiven(ctx, to, card, giver, color) {
+        if (color !== S || !giver || giver === to) return;
+        to.bonus += 1; ctx.log(`${to.name}'s Beggar: ${giver.name} gave silver, +1 follower.`);
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    }),
     m('caterer', 'Almsgiver', 2, 2, 'Whenever you gift silver, +2 silver.', {
       onAnyGifted(ctx, owner, card, giver, once) {
         const k = once || `${ctx.state.moves}:${giver.id}`;

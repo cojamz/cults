@@ -621,14 +621,15 @@ export default {
     // whose spaces hold your minions (joined spots count), as Tag Along counts them. Joneses: each table color you hold
     // less of than the rival who holds the most of it, raised to match. Painted Faces: every color count reads your
     // members as yellow too (core countMembersOfColor, flag allAlsoYellow); "a yellow member" triggers read printed colors.
-    pool(m('pilgrims', 'Pilgrims', 2, 2, 'Round End: +1 follower per color among the spaces your minions are on.', {
+    // Cory, 2026-11-25: Tinker ("so good... Tinker should be yellow") is this card at +2; dealt at +1 as written (likely in)
+    m('pilgrims', 'Pilgrims', 2, 2, 'Round End: +1 follower per color among the spaces your minions are on.', {
       onAllPlaced(ctx, owner) {
         const cs = colorsWith(ctx, owner);
         if (!cs.length) return;
         ctx.asMember(owner, 'Pilgrims', () => { owner.bonus += cs.length; ctx.log(`${owner.name}'s Pilgrims: minions on ${cs.join(', ')}, +${cs.length} follower${cs.length > 1 ? 's' : ''}.`); });
       },
       ...see(info => 3 * endsAhead(info).length), // BOTSEE: about 3 colors at each round end still ahead
-    }), 'pool11'),
+    }),
     pool(m('joneses', 'Joneses', 5, 2, 'On Use, once per game: raise each of your colors to match the rival who holds the most of it.', {
       activate: 'game',
       onActivate(ctx, owner) {

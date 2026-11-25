@@ -203,6 +203,15 @@ const M = {
   mourners: ['🥀', '♾️ One of your members leaves your cult: +2 white'], // Nov 11: White
   connoisseurs: ['🍷', '🏁 +2 followers per member you have costing 8 or more'],
   trumpeters: ['🎊', '♾️ You win a contest: +2 followers'],
+  // Nov 25: the likely-ins, added toward 15 a color
+  innkeeper: ['🍺', '♾️ One of yours goes back to the shop: +3 red'],
+  'wet-nurse': ['🍼', '♾️ You recruit the cheapest shop member: +3 red'],
+  chapman: ['🪢', '♾️ One of yours is swapped: +2 followers'],
+  hoarder: ['🐿️', '🌙 Holding 10+ resources: +3 followers'],
+  bargainer: ['💲', '🏁 +1 follower per member of yours costing 5 or less'],
+  beggar: ['🫙', '♾️ A rival gives you silver: +1 follower'],
+  'night-porter': ['🗝️', '♾️ Each minion you place after every rival is out: +2 followers'],
+  pilgrims: ['🗺️', '🌙 +1 follower per color of space your minions are on'],
 };
 
 // Pixel versions (Cory, Nov 4: "match more the art style of the game ... pixel but with detail and recognizeable"): a

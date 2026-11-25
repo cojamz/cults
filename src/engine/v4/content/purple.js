@@ -1316,13 +1316,13 @@ export default {
         ctx.log(`${owner.name}'s Last Orders: the round's last minion, so ${owner.name} recruits once more this turn.`);
       },
     })),
-    ...add13(m('nightporter', 'Night Porter', 2, 2, 'Each minion you place once all rivals are out of minions: +2 followers.', {
+    m('nightporter', 'Night Porter', 2, 2, 'Each minion you place once all rivals are out of minions: +2 followers.', {
       afterAction(ctx, owner) {
         if (ctx.rivals(owner).some(o => o.left > 0)) return;
         owner.bonus += 2;
         ctx.log(`${owner.name}'s Night Porter: every rival is out of minions, +2 followers.`);
       },
-    })),
+    }),
     ...add13(m('closingact', 'Closing Act', 2, 2, 'When you place the last minion of the round: +2 followers in round I, +4 in round II, +6 in round III.', {
       afterAction(ctx, owner, card) {
         if (card.paidRound === ctx.state.round || ctx.state.players.some(o => o.left > 0)) return;
