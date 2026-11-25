@@ -9,7 +9,7 @@ import echo, { install, VARIANT } from '../../src/engine/v4/content/echo.js';
 install();
 if (process.env.PLUS) VARIANT.plus = Number(process.env.PLUS);
 
-const N = Number(process.argv[2] || 120), SEATS = 4, QUADS = ['gold', 'red', 'blue', 'echo'];
+const N = Number(process.argv[2] || 120), SEATS = 4, QUADS = ['yellow', 'red', 'blue', 'echo'];
 function play(seed, giveDef, seat) {
   const rand = seededRandom(seed * 7919 + 13);
   let s = createGame({ seats: Array.from({ length: SEATS }, () => ({ kind: 'bot' })), seed, quadrants: QUADS });
@@ -34,7 +34,7 @@ function play(seed, giveDef, seat) {
 }
 const only = process.argv[3] ? process.argv[3].split(',') : null;
 // reference cards from the priced spheres, to read the scale against (member-costs.md)
-const REF = (process.env.REF ?? 'gold.banker,gold.speculator,gold.tycoon,red.host').split(',').filter(Boolean);
+const REF = (process.env.REF ?? 'yellow.caravan,silver.gala,yellow.spiceroute,red.host').split(',').filter(Boolean);
 const ids = [...echo.members.map(d => d.id).filter(i => !only || only.some(o => i.endsWith('.' + o))), ...(only && !process.env.REF ? [] : REF)];
 const control = [];
 for (let g = 0; g < N; g++) control.push(play(1000 + g));

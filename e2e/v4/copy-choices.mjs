@@ -1,7 +1,7 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: a copy card's hover names what it could copy right now (Cory, Nov 4: "hovering over copy a rival members on
 // recruit should show you the available options in the hover over"). Round II at 1270×700, P1 to recruit; P2 holds
-// Treasurer and Hustler, P3 holds Busker and Baron. Sample (the space this gate was written for) left the wheel on
+// Tavern Keeper and Peddlers, P3 holds Busker and Gilder. Sample (the space this gate was written for) left the wheel on
 // Nov 10, so the same checks run on Impersonator ("On Recruit: choose a rival's member. Do its On Recruit, and this
 // member gains its ability."), which picks from every rival member:
 //  (h1) Impersonator's shop hover lists exactly the rival members its choice would offer, each with its owner and text;
@@ -17,11 +17,11 @@ import { seedSave } from './lib/seed.mjs';
 const SHOTS = process.env.GH_SHOTS || `${process.env.V4_SHOTS || '/tmp/patrons-shots/v4'}/copy-choices`;
 mkdirSync(SHOTS, { recursive: true });
 const base = (process.env.V4_URL || 'http://localhost:5532/').replace(/\/$/, '');
-const QUADS = ['gold', 'red', 'purple', 'echo'];
+const QUADS = ['yellow', 'red', 'purple', 'echo'];
 const key = (q, k) => `${QUADS.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.key === k)}`;
 let IMP = null;
-const HOLD = [[], ['gold.seed', 'gold.hustler'], ['echo.evergreen', 'gold.tycoon']];
-const WANT = ['Treasurer', 'Hustler', 'Busker', 'Baron'];
+const HOLD = [[], ['red.host', 'yellow.caravan'], ['echo.evergreen', 'yellow.dyer']];
+const WANT = ['Tavern Keeper', 'Peddlers', 'Busker', 'Gilder'];
 
 function save(stamp) {
   const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }];
@@ -76,8 +76,8 @@ try {
     const rows = await page.$$eval('[data-copy-choice]', els => els.map(e => ({ uid: Number(e.dataset.copyChoice), text: e.innerText.replace(/\s+/g, ' ') })));
     const names = WANT.filter(n => rows.some(r => r.text.includes(n)));
     if (rows.length !== WANT.length || names.length !== WANT.length) fail(`hover lists ${JSON.stringify(rows.map(r => r.text))}, want ${WANT.join(', ')}`, 'h1');
-    const t = rows.find(r => r.text.includes('Treasurer'));
-    if (t && !(/^P2’s Treasurer/.test(t.text) && t.text.includes('you have, this one included'))) fail(`Treasurer's line lacks its owner or text: ${t.text}`, 'h1');
+    const t = rows.find(r => r.text.includes('Tavern Keeper'));
+    if (t && !(/^P2’s Tavern Keeper/.test(t.text) && t.text.includes('per 2 members you have'))) fail(`Tavern Keeper's line lacks its owner or text: ${t.text}`, 'h1');
     // (h2) lit on the seats
     for (const n of WANT) {
       const lit = await page.$(`.cs-member[data-uids~="${uidOf(n)}"][data-aim]`);

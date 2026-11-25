@@ -5,10 +5,8 @@ The road to 1.0 (bar, gaps, order, Cory's calls): design/1.0.md. It sets the ord
 Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design/archive/todo-before-2026-10-20.md.
 
 ## Gold is deleted (Cory, 2026-11-24 7:34pm Eastern: "delete all the gold shit. why is gold still around?")
-The game, screens, art and names have no Gold. Left to do (engineering, nothing for Cory):
-1. Browser gates that still build games with Gold's cards (they fail until moved onto live cards): red-actions, members, pay, squat-hits, copy-choices, info, red-members, payflow, backlog-ui, impersonator-shows, scoring, and the saves in e2e/v4/lib (snake, dialog, travel, shop, members).
-2. About 100 unit test files use Gold's old cards as plain examples through the test-only fixture src/test/engine/v4/fixtures/gold.js (opt-in import of fixtures/gold-on.js). Move each onto live cards, then delete the fixture.
-3. Dev scripts that still name Gold cards: scripts/spheres/echo-value.mjs; the color lists in scripts/quality/* and scripts/picky/checks.mjs.
+The game, screens, art, names, browser gates and dev scripts have no Gold (Nov 25). Left, by choice (coordinator, Nov 25: "Leave the other 96 on the test-only fixture … No full move"):
+1. 96 unit test files still use Gold's old cards as plain examples through the test-only fixture src/test/engine/v4/fixtures/gold.js (opt-in import of fixtures/gold-on.js); the game never loads it. Move a file onto live cards only when it is touched for another reason; delete the fixture when none import it.
 
 ## Tonight at reset, 7pm Eastern (Cory, 2026-11-10 3:57pm: "Our main priority tonight will be updating the remainder of the actions of our 8 colors")
 1. Finish actions design with Cory: Magenta's open round I spot (stand-in "+3 magenta." since Nov 10 10:42pm; he wants a forward action taken early in the round, tied to most resources; refused so far in design/pitch-ledger.md and design/notes/magenta-round1-open-slot-2026-11-10.md); then new Green and Red members for the ranking's gaps (Cory, Nov 10 10:03pm: right after Magenta; https://claude.ai/artifact/95rmfxgWQxLB25HSVJYF2u); then Silver, White, Yellow (the colors left).

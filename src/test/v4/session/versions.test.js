@@ -1,6 +1,5 @@
 // Saves and rooms outlive the code that made them: every deploy can change cards. A save or room from other rules
 // content is never resumed, joined or hosted by this build; it's set aside (record kept) or refused with a message.
-import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createLocalSession, createRoom, joinRoom, rejoinRoom, createMemoryStore, createMemoryTransport, ROOM_ROOT } from '../../../v4/session/index.js';
 import { VERSION_MISMATCH } from '../../../v4/session/online.js';
@@ -21,7 +20,7 @@ describe('content hash and stamps', () => {
   });
 
   it('changes when a cost, a flag or an id changes, but not when wording does', () => {
-    const def = defById('gold.' + contentManifest().quadrants.find(q => q.id === 'gold').members[0].id.split('.')[1]);
+    const def = defById('yellow.' + contentManifest().quadrants.find(q => q.id === 'yellow').members[0].id.split('.')[1]);
     const base = hashContent(contentManifest());
     expect(base).toBe(SHAPE_HASH); // the shape part; CONTENT_HASH adds the rules-source hash (content-hash.test.js)
     const text = def.text;
@@ -44,7 +43,7 @@ describe('content hash and stamps', () => {
     const { build, ...unstamped } = st; // eslint-disable-line no-unused-vars
     expect(stateProblem(unstamped).kind).toBe('version');
     const renamed = structuredClone(st);
-    renamed.cards[0].def = 'gold.renamedAway';
+    renamed.cards[0].def = 'yellow.renamedAway';
     expect(stateProblem(renamed)).toMatchObject({ kind: 'broken' });
     expect(stateProblem(renamed).message).toMatch(/Unknown member/);
     const noQuad = structuredClone(st);

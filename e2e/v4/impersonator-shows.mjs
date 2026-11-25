@@ -1,9 +1,9 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: Impersonator shows what it copies (Cory's playtest, Nov 5: "impersonator doesnt show what it copied?"). Round II
-// at 1270×700; P1 recruits Impersonator, P2 holds Treasurer and Hustler, P3 Baron:
+// at 1270×700; P1 recruits Impersonator, P2 holds Tavern Keeper and Busker, P3 Peddlers:
 //  (i1) the choice lays the rivals' members out as whole cards to pick, rules showing (as Sample's does);
-//  (i2) once Treasurer is picked, Impersonator's seat row reads "Has Treasurer's ability: …";
-//  (i3) its hover card shows Treasurer's rule and "Has the ability of Treasurer".
+//  (i2) once Tavern Keeper is picked, Impersonator's seat row reads "Has Tavern Keeper's ability: …";
+//  (i3) its hover card shows Tavern Keeper's rule and "Has the ability of Tavern Keeper".
 // Server: $V4_URL (a built preview). Shots: $V4_SHOTS/impersonator-shows.
 import { mkdirSync } from 'node:fs';
 import { createGame } from '../../src/engine/v4/index.js';
@@ -13,8 +13,8 @@ import { seedSave } from './lib/seed.mjs';
 const SHOTS = process.env.GH_SHOTS || `${process.env.V4_SHOTS || '/tmp/patrons-shots/v4'}/impersonator-shows`;
 mkdirSync(SHOTS, { recursive: true });
 const base = (process.env.V4_URL || 'http://localhost:5532/').replace(/\/$/, '');
-const QUADS = ['gold', 'red', 'purple', 'echo'];
-const HOLD = [[], ['gold.seed', 'gold.hustler'], ['gold.tycoon']];
+const QUADS = ['yellow', 'red', 'purple', 'echo'];
+const HOLD = [[], ['red.host', 'echo.evergreen'], ['yellow.caravan']];
 const add = (s, def) => { const u = Math.max(...Object.keys(s.cards).map(Number)) + 1; s.cards[u] = { uid: u, def }; return u; };
 
 function save(stamp) {
@@ -50,7 +50,7 @@ try {
   await page.waitForFunction(() => { try { return !!JSON.parse(localStorage.getItem('patrons.v4.local')).state.build; } catch { return false; } });
   const stamp = await page.evaluate(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state.build);
   const { s, imp, config } = save(stamp);
-  const treasurer = s.players[1].members[0];
+  const keeper = s.players[1].members[0];
   await seedSave(page, { config, state: s, undo: null, savedAt: Date.now() });
   await page.goto(`${base}/?botDelay=300&intro=0`);
   await page.waitForSelector('.lt-wheel, [data-home="resume"]');
@@ -63,10 +63,10 @@ try {
   else {
     const laid = await page.$$eval('.lt-shop-cards[data-tray="members"] .lt-card[data-uid]', els => els.map(e => ({ uid: Number(e.dataset.uid), opt: !!e.dataset.option, rule: !!e.querySelector('.lt-pick-ability') })));
     if (laid.length !== 3 || laid.some(x => !x.opt || !x.rule)) fail(`tray ${JSON.stringify(laid)}, want the rivals' three members, pickable, rules showing`, 'i1');
-    await page.click(`.lt-shop-cards[data-tray="members"] .lt-card[data-uid="${treasurer}"]`);
+    await page.click(`.lt-shop-cards[data-tray="members"] .lt-card[data-uid="${keeper}"]`);
   }
-  const took = await page.waitForFunction(u => { const st = JSON.parse(localStorage.getItem('patrons.v4.local')).state; return st.cards[u].ability === 'gold.seed'; }, imp, { timeout: 6000 }).then(() => true, () => false);
-  if (!took) fail('Impersonator never took Treasurer\'s ability', 'i1');
+  const took = await page.waitForFunction(u => { const st = JSON.parse(localStorage.getItem('patrons.v4.local')).state; return st.cards[u].ability === 'red.host'; }, imp, { timeout: 6000 }).then(() => true, () => false);
+  if (!took) fail('Impersonator never took Tavern Keeper\'s ability', 'i1');
   await page.waitForTimeout(1500);
   // (i2) the seat row
   const seatText = await page.$$eval(`.cs-member[data-uids~="${imp}"]`, els => els.map(e => (e.getAttribute('aria-label') || '') + ' ' + (e.getAttribute('title') || '') + ' ' + e.innerText).join(' | '));
@@ -80,7 +80,7 @@ try {
     if (!card) fail(`Impersonator's hover doesn't say whose ability it has (seat: ${seatText})`, 'i3');
     else {
       const t = await page.evaluate(() => document.querySelector('[data-ability-of]').closest('.card-face').innerText.replace(/\s+/g, ' '));
-      if (!/Has the ability of Treasurer/.test(t) || !/per .* you have/.test(t)) fail(`hover reads "${t}"`, 'i3');
+      if (!/Has the ability of Tavern Keeper/.test(t) || !/per .* you have/.test(t)) fail(`hover reads "${t}"`, 'i3');
     }
   }
   await ctx.close();

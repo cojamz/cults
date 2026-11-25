@@ -10,7 +10,7 @@ import { takeCard } from './lib/take.mjs';
 const base=(process.env.V4_URL||'http://localhost:5325').replace(/\/$/,'');
 const out=`${process.env.V4_SHOTS||'/tmp/cults-red-members'}/red-members`;mkdirSync(out,{recursive:true});
 const seats=['You','Bo','Cy','Di'].map(name=>({name,kind:'human'}));
-const quads=['gold','red','thieves','echo'];
+const quads=['yellow','red','thieves','echo'];
 const action=k=>`slot:1-${quadrant('red').actions.findIndex(a=>a.key===k)}`;
 const cmp=s=>({players:s.players.map(p=>({members:p.members,res:p.res,bonus:p.bonus})),shop:s.shop,cards:s.cards});
 function scenario(name){
@@ -21,7 +21,7 @@ function scenario(name){
  const deal=(def,who)=>{const u=takeCard(s,def);(who==='shop'?s.shop:s.players[who].members).push(u);return u;};
  const initial=[],picks=[];let pair;
  if(name==='panel'){
-  deal('red.recruitbonus',0);deal('red.recruiter',0);const host=deal('gold.merchant',0); // 6, so Promote (up to 2 more) reaches Mentor's 8
+  deal('red.recruitbonus',0);deal('red.recruiter',0);const host=deal('yellow.jack',0); // Jack-of-All-Trades, 6, so Promote (up to 2 more) reaches Mentor's 8
   const panel=deal('red.panel','shop'),mentor=deal('red.mentor','shop');
   for(const d of ['red.seatfiller','red.twins','red.loyalists','red.mob','red.movementpenalty','red.patriarch'])deal(d,'shop');
   initial.push(action('take'),`card:${panel}`,`use:${panel}`,'promote'); // Panel is On Use (Cory, Nov 5)pair=`trade:${host}:${mentor}`;picks.push(pair);

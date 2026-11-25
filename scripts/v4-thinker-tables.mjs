@@ -52,7 +52,7 @@ function playGame({ g, quadrants, budget, buyer }) {
       // other bonus (actions, member abilities, steals) goes to the action's sphere, or 'other' between actions
       add(i, actionQ || 'other', (x.bonus - before[i].bonus) - (x.contest - before[i].contest) - ((x.bought || 0) - before[i].bought));
     });
-    // ring contests: "Round II ends. Most gold: P1 & P3 +4 · ..."
+    // ring contests: "Round II ends. Most yellow: P1 & P3 +4 · ..."
     for (const line of newLines(s, next)) {
       const mt = /^Round \w+ ends\. (.*)$/.exec(line);
       if (!mt) continue;

@@ -1,7 +1,6 @@
 // Previews on screen never stall: the cards a hovered space would unlock brighten when the space's dry run lands (the shop
 // subscribes to the preview store), and a preview worker that fails or goes silent hands its work to the main thread
 // (never an endless "You'd get: …").
-import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import { render, cleanup, act } from '@testing-library/react';
 import ShopCards from '../../../v4/game/ShopCards.jsx';
@@ -81,18 +80,18 @@ describe('previews reach the screen', () => {
 
   it('the rivals line prints only what is sure: no "−1 to 0" per color, even when no pick of yours decides it (w3b: Lie Low)', () => {
     const z = [0, 0];
-    const st = { resources: ['gold', 'red', 'blue', 'green'], players: [{}, {}, {}, {}] };
-    const pv = { you: { res: { gold: [2, 2], red: z, blue: z, green: z }, followers: z, members: z, turns: z }, others: { res: { gold: [-1, 0], red: [-1, 0], blue: [-1, 0], green: z }, followers: z, members: z }, asks: [], theirAsks: [], exact: true, partial: false };
+    const st = { resources: ['silver', 'red', 'blue', 'green'], players: [{}, {}, {}, {}] };
+    const pv = { you: { res: { silver: [2, 2], red: z, blue: z, green: z }, followers: z, members: z, turns: z }, others: { res: { silver: [-1, 0], red: [-1, 0], blue: [-1, 0], green: z }, followers: z, members: z }, asks: [], theirAsks: [], exact: true, partial: false };
     expect(previewWords(pv, st).others).toBeNull();
-    const gift = { ...pv, others: { res: { gold: [1, 1], red: z, blue: z, green: z }, followers: z, members: z } };
-    expect(previewWords(gift, st).others).toBe('rivals +1 gold in all');
+    const gift = { ...pv, others: { res: { silver: [1, 1], red: z, blue: z, green: z }, followers: z, members: z } };
+    expect(previewWords(gift, st).others).toBe('rivals +1 silver in all');
   });
 
   it('names who gets what, with the member that pays it (Cory, Nov 9, Make Haste: "rivals +1 in all" and a separate Why)', () => {
     const z = [0, 0];
-    const st = { resources: ['gold', 'purple'], players: [{ name: 'P1' }, { name: 'P2' }, { name: 'P3' }, { name: 'P4' }] };
-    const row = g => ({ res: { gold: z, purple: g }, followers: z, members: z });
-    const pv = { you: { res: { gold: z, purple: [2, 2] }, followers: z, members: z, turns: z }, others: { res: { gold: z, purple: [1, 1] }, followers: z, members: z }, othersBy: { 1: row([1, 1]), 2: row(z), 3: row(z) }, theirReasons: ['P2’s Turnpike Keeper: +1 purple'], asks: [], theirAsks: [], exact: true, partial: false };
+    const st = { resources: ['silver', 'purple'], players: [{ name: 'P1' }, { name: 'P2' }, { name: 'P3' }, { name: 'P4' }] };
+    const row = g => ({ res: { silver: z, purple: g }, followers: z, members: z });
+    const pv = { you: { res: { silver: z, purple: [2, 2] }, followers: z, members: z, turns: z }, others: { res: { silver: z, purple: [1, 1] }, followers: z, members: z }, othersBy: { 1: row([1, 1]), 2: row(z), 3: row(z) }, theirReasons: ['P2’s Turnpike Keeper: +1 purple'], asks: [], theirAsks: [], exact: true, partial: false };
     const w = previewWords(pv, st);
     expect(w.others).toBe('P2 +1 purple (Turnpike Keeper)');
     expect(w.inlined).toEqual(['P2’s Turnpike Keeper: +1 purple']);
@@ -100,35 +99,19 @@ describe('previews reach the screen', () => {
     expect(previewWords(toast, st).others).toBe('each rival +2 purple');
   });
 
-  it('a contest line never reads a pick off its first branch: Grease a Palm\'s +1 goes to the one you pick (w3b #10), in plain words (w3a #28)', () => {
-    const T = ['gold', 'red', 'market', 'echo'];
-    const q = T.indexOf('gold'), i = quadrant('gold').actions.findIndex(a => a.key === 'jv');
-    const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
-    let s = createGame({ seats, seed: 4, quadrants: T });
-    const rand = seededRandom(4);
-    const ready = st => st.pending && st.pending.player === 0 && st.pending.kind === 'place' && st.pending.options.some(o => o.id === `slot:${q}-${i}`);
-    for (let n = 0; n < 400 && !ready(s); n++) s = applyMove(s, chooseBotMove(s, rand));
-    expect(ready(s)).toBe(true);
-    const pv = cachedPreview(s, 0, q, i);
-    const r = raceAfter(s, pv.race, 'gold', 0, true);
-    expect(r.you).toMatch(new RegExp(`^You’d have ${s.players[0].res.gold + 3}\\b`));
-    // every rival at what they hold now (the gift isn't theirs yet), and the gift said once
-    for (const o of s.players.slice(1)) expect(r.them.some(t => t.text === `${o.name} has ${o.res.gold}`)).toBe(true);
-    expect(r.tail).toBe(', and +1 goes to the one you pick');
-    expect([r.you, ...r.them.map(t => t.text), r.tail].join(' ')).not.toMatch(/·/);
-  });
+  // Grease a Palm's "+1 goes to the one you pick" left with Gold (Cory, Nov 24): no live space gives one chosen rival a gift.
 
   it('a forecast never promises what only your best pick gives, and a swap is never "nothing" (w4 skeptic #10, A#35)', () => {
-    const st = { resources: ['gold', 'red', 'blue', 'green'], players: [{}, {}, {}, {}], cards: {} };
+    const st = { resources: ['silver', 'red', 'blue', 'green'], players: [{}, {}, {}, {}], cards: {} };
     const z = [0, 0];
-    const res = (red, f = 0, m = 0) => ({ res: { gold: 0, red, blue: 0, green: 0 }, followers: f, members: m, turns: 0, discount: 0, swapped: 1, joined: [] });
+    const res = (red, f = 0, m = 0) => ({ res: { silver: 0, red, blue: 0, green: 0 }, followers: f, members: m, turns: 0, discount: 0, swapped: 1, joined: [] });
     // Even Swap: +1 red sure; a follower only if you swap for a member worth more
-    const even = { exact: false, tied: false, partial: false, asks: ['x'], theirAsks: [], you: { res: { gold: z, red: [1, 1], blue: z, green: z }, followers: [0, 1], members: z, turns: z, discount: z },
-      others: { res: { gold: z, red: z, blue: z, green: z }, followers: [-1, 0], members: z }, best: res(1, 1), likely: res(1, 1) };
+    const even = { exact: false, tied: false, partial: false, asks: ['x'], theirAsks: [], you: { res: { silver: z, red: [1, 1], blue: z, green: z }, followers: [0, 1], members: z, turns: z, discount: z },
+      others: { res: { silver: z, red: z, blue: z, green: z }, followers: [-1, 0], members: z }, best: res(1, 1), likely: res(1, 1) };
     expect(youdWords(even, st).text).toBe('+1 red, up to +1 follower, 1 member swapped');
     // Swap Sides: the counts don't move, but a member does
-    const sides = { exact: true, tied: true, partial: false, asks: ['x'], theirAsks: [], you: { res: { gold: z, red: z, blue: z, green: z }, followers: z, members: z, turns: z, discount: z },
-      others: { res: { gold: z, red: z, blue: z, green: z }, followers: z, members: z }, best: res(0), likely: res(0) };
+    const sides = { exact: true, tied: true, partial: false, asks: ['x'], theirAsks: [], you: { res: { silver: z, red: z, blue: z, green: z }, followers: z, members: z, turns: z, discount: z },
+      others: { res: { silver: z, red: z, blue: z, green: z }, followers: z, members: z }, best: res(0), likely: res(0) };
     expect(youdWords(sides, st).text).toBe('1 member swapped');
   });
 });

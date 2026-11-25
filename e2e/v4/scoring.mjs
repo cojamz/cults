@@ -11,19 +11,19 @@ import { seedSave } from './lib/seed.mjs';
 import { freeCard } from './lib/deal.mjs';
 import { countMembersOfColor } from '../../src/engine/v4/core.js';
 
-/** Seed 21 at P1's last placement of round III, with Mob (+1 per red member; P1 holds two more) and Baron (+1 per 2
- *  gold; P1 gets 10) in P1's cult, minted if the cull leaves them out of the deck (lib/deal.mjs). */
+/** Seed 21 at P1's last placement of round III, with Chronicler (members of a color) and Storekeeper (+1 per color held 3
+ *  or more of; P1 gets 10 yellow; Baron's place since Gold left, Nov 24) in P1's cult, minted if the cull leaves them out of the deck (lib/deal.mjs). */
 function scoringSave() {
   const save = lateSave(21, 3);
   const s = save.state;
-  // a game-end source per kind: Chronicler counts members of a color (Mob was this until it became Round End, Nov 4); Baron reads held gold
-  for (const def of ['echo.chronicler', 'gold.tycoon']) {
+  // a game-end source per kind: Chronicler counts members of a color (Mob was this until it became Round End, Nov 4); Storekeeper reads held resources
+  for (const def of ['echo.chronicler', 'yellow.spiceroute']) {
     const uid = freeCard(s, def);
     s.shop = s.shop.filter(u => u !== uid); s.pile = s.pile.filter(u => u !== uid);
     s.players[0].members.push(uid); s.cards[uid].recruitedRound = 0; s.cards[uid].recruitedBy = 0;
   }
   while (s.shop.length < 10 && s.pile.length) s.shop.push(s.pile.shift()); // a shop copy taken is refilled
-  s.players[0].res.gold = 10;
+  s.players[0].res.yellow = 10;
   return save;
 }
 
@@ -92,7 +92,7 @@ async function toReckoning() {
   page.on('pageerror', e => errors.push(`pageerror: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`console: ${m.text()}`); });
   const save = scoringSave();
-  const sources = ['echo.chronicler', 'gold.tycoon'].map(def => ({ uid: save.state.players[0].members.find(u => save.state.cards[u].def === def), def }));
+  const sources = ['echo.chronicler', 'yellow.spiceroute'].map(def => ({ uid: save.state.players[0].members.find(u => save.state.cards[u].def === def), def }));
   await page.addInitScript(WATCH);
   await seedSave(page, save);
   await page.goto(`${base}/?botDelay=20&intro=0&speed=steady`);
@@ -100,11 +100,12 @@ async function toReckoning() {
   await page.waitForSelector('.lt-wheel .slot');
   const t0 = Date.now();
   while (!(await page.$('.lt-reckon')) && Date.now() - t0 < 60000) {
-    const o = await page.$('.slot.can, [data-option]:not([disabled]):not([data-option^="toggle:"]):not([data-option^="release:"]):not([data-option="back"])');
+    // a sheet's own send button first (Harvest's color picker comes filled in; a pay sheet; a gift sheet), else any option
+    const o = await page.$('[data-split-take]:not([disabled]), [data-share-give]:not([disabled]), .pay-go:not([disabled])') || await page.$('.slot.can, [data-option]:not([disabled]):not([data-option^="toggle:"]):not([data-option^="release:"]):not([data-option="back"])');
     if (o) await o.click({ timeout: 800 }).catch(() => {});
     await page.waitForTimeout(80);
   }
-  if (!(await page.$('.lt-reckon'))) throw new Error('round-III Reckoning never appeared');
+  if (!(await page.$('.lt-reckon'))) { await page.screenshot({ path: `${SHOTS}/stuck-before-reckoning.png` }).catch(() => {}); throw new Error(`round-III Reckoning never appeared (stuck at: ${await page.evaluate(() => { try { const p = JSON.parse(localStorage.getItem('patrons.v4.local')).state.pending; return p ? `P${p.player + 1} ${p.kind}: ${p.prompt || ''}` : 'nothing pending'; } catch { return '?'; } })})`); }
   return { page, sources };
 }
 
@@ -138,7 +139,7 @@ try {
   const expected = state.players.flatMap(p => (p.final?.cards || []).filter(g => g.n).map(g => ({ ...g, pid: String(p.id), uid: String(g.uid) })));
   for (const source of sources) {
     const grant = expected.find(g => g.uid === String(source.uid) && g.pid === '0');
-    const amount = source.def === 'gold.tycoon' ? Math.floor(state.players[0].res.gold / 2) : countMembersOfColor(state, state.players[0], 'echo'); // Chronicler counts its own color, Green (echo), not the old test table's 'green' sphere
+    const amount = source.def === 'yellow.spiceroute' ? Object.values(state.players[0].res).filter(n => n >= 3).length : countMembersOfColor(state, state.players[0], 'echo'); // Chronicler counts its own color, Green (echo), not the old test table's 'green' sphere
     if (!grant || grant.n <= 0 || grant.n !== amount) errors.push(`fixture: ${source.def} should grant ${amount}, engine recorded ${grant?.n}`);
   }
   // Two kinds of member step follow the contests (Reckoning.jsx reckonSteps): the members that answer the contests
@@ -151,7 +152,8 @@ try {
   for (const b of afters) {
     const who = b.pid === '0' ? 'P1' : `P${+b.pid + 1}`;
     const amount = b.verdict.match(/\+(\d+) follower/);
-    const line = amount && new RegExp(`${who}'s ${b.name}: \\+${amount[1]} follower`);
+    // (the engine's line may say why first: "P4's Comforter: didn’t win 4 contests, +8 followers.")
+    const line = amount && new RegExp(`${who}'s ${b.name}: (.*, )?\\+${amount[1]} follower`);
     if (!line || !state.log.some(l => line.test(l))) errors.push(`${b.name} (P${+b.pid + 1}): After contests step "${b.verdict}" matches no engine log line`);
   }
   if (gameEnd.length !== expected.length) errors.push(`showed ${gameEnd.length} Game End steps; engine granted ${expected.length}`);

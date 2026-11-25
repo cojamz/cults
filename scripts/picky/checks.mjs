@@ -3,7 +3,7 @@
 // something by design gets an exception here with the reason, never a weaker test.
 import { defById, followers, memberCount } from '../../src/engine/v4/index.js';
 
-const COLORS = ['gold', 'red', 'blue', 'green', 'magenta', 'silver', 'yellow', 'purple', 'white'];
+const COLORS = ['red', 'blue', 'green', 'magenta', 'silver', 'yellow', 'purple', 'white'];
 const STOP = new Set('a an the of to your you per and or is it its it’s on in for with that this each one any when from by at as be can’t'.split(' '));
 const words = s => String(s || '').toLowerCase().replace(/[’']/g, '’').match(/[a-z’]+/g) || [];
 const content = s => words(s).filter(w => !STOP.has(w) && w.length > 2);

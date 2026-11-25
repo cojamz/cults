@@ -1,7 +1,6 @@
 // Saves never crash-loop: an older-version or unreadable save is never resumed (not even by a reload mid-game), the
 // player is told to start fresh with the game record still copyable, and a crash anywhere shows a recovery screen
 // instead of a blank page.
-import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, cleanup, act, waitFor } from '@testing-library/react';
 import App from '../../../v4/App.jsx';
@@ -52,7 +51,7 @@ describe('stale saves', () => {
   });
 
   it('a save naming a card this build no longer has opens the home screen (no crash, no loop)', () => {
-    savedMidGame(s => { const t = structuredClone(s); t.cards[Object.keys(t.cards)[0]].def = 'gold.killedCard'; return t; });
+    savedMidGame(s => { const t = structuredClone(s); t.cards[Object.keys(t.cards)[0]].def = 'yellow.killedCard'; return t; });
     const { container } = render(<App />);
     expect(container.querySelector('.app.game')).toBe(null);
     expect(screen.getByRole('button', { name: 'Play on this device' })).toBeTruthy();

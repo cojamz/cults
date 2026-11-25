@@ -1,5 +1,5 @@
 // A saved hot-seat game for the turn-story gate (e2e/v4/turnstory.mjs): P1 (the only person) sits last in round I's
-// first pass, so the snake turns round on P1 (two placements in a row), and P1 holds Midas (switched on) and enough of
+// first pass, so the snake turns round on P1 (two placements in a row), and P1 holds Translator (switched on; Midas's place since Gold left, Nov 24) and enough of
 // every color to buy. Bots have already placed before P1. The round-start snapshot is saved too, with the moves since
 // it, so the table can retell the rivals' moves after the resume.
 import { createGame, applyMove, chooseBotMove } from '../../../src/engine/v4/index.js';
@@ -19,9 +19,9 @@ export function snakeSave(from = 1) {
     const rand = seededRandom(seed);
     for (let n = 0; n < 200 && !(s.round === 1); n++) s = play(s, chooseBotMove(s, rand));
     if (s.round !== 1 || s.order[SEATS.length - 1] !== 0) continue;
-    // P1 holds Midas (on) and 6 of every color; set before any placement, so the round-start snapshot agrees
+    // P1 holds Translator (on) and 6 of every color; set before any placement, so the round-start snapshot agrees
     s = structuredClone(s);
-    const midas = freeCard(s, 'gold.midas'); // the cull leaves Midas out of the deck: minted if so
+    const midas = freeCard(s, 'echo.translator'); // minted if the deck leaves it out
     s.shop = s.shop.filter(u => u !== midas);
     s.pile = s.pile.filter(u => u !== midas);
     while (s.shop.length < 10 && s.pile.length) s.shop.push(s.pile.shift());

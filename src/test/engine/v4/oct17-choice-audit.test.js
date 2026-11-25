@@ -1,6 +1,5 @@
 // @vitest-environment node
 // Reported misclicks: follow real options into their board models and resulting engine state.
-import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { sceneQ, buy } from './cards-helpers.js';
 import { take, move, uidOf, pinCosts } from './helpers.js';
@@ -15,12 +14,12 @@ useRetired(['thieves.ransom']);
 
 useRetiredRollCall(); // Roll Call, a plain purple space, kept for these tests (it left the board 2026-10-22)
 
-const rich = { gold: 30, red: 30, purple: 30, green: 30 };
+const rich = { yellow: 30, red: 30, purple: 30, green: 30 };
 describe('October 17 reported choices', () => {
   it('Shake Down artwork and real member targets agree at the 7-cost limit (5 until Nov 5)', () => {
     const restore = pinCosts({ 'red.twins': [2, 3], 'red.intern': [4, 4], 'red.bigfamily': [2, 2] });
     try {
-      const s = take(sceneQ({ quadrants: ['gold', 'red', 'thieves', 'green'], round: 2,
+      const s = take(sceneQ({ quadrants: ['yellow', 'red', 'thieves', 'green'], round: 2,
         members: [[], ['red.twins', 'red.intern', 'red.bigfamily']] }), 'thieves.ransom');
       const action = quadrant('thieves').actions.find(a => a.key === 'ransom');
       const printed = Number(stripFor('thieves', action).flat().find(x => x.startsWith('tag:≤')).slice(5));
@@ -37,7 +36,7 @@ describe('October 17 reported choices', () => {
 
 
   it('Errand Boy bought after your last scheduled placement remains usable when the board has room', () => {
-    let s = take(sceneQ({ quadrants: ['gold', 'red', 'purple', 'green'], round: 2, left: 1,
+    let s = take(sceneQ({ quadrants: ['yellow', 'red', 'purple', 'green'], round: 2, left: 1,
       res: [rich], shop: ['purple.secondwind'], queue: [{ t: 'turn', p: 0 }, { t: 'allPlaced' }] }), 'purple.windup');
     s = buy(s, 'purple.secondwind');
     const uid = uidOf(s, 'purple.secondwind', 0);
@@ -56,7 +55,7 @@ describe('October 17 reported choices', () => {
     expect(s.pending.options.some(o => o.id === `use:${uid}`)).toBe(false);
   });
   it('post-purchase Done ends the turn without a second purchase or forced activation', () => {
-    let s = take(sceneQ({ quadrants: ['gold', 'red', 'purple', 'green'], round: 2, left: 1,
+    let s = take(sceneQ({ quadrants: ['yellow', 'red', 'purple', 'green'], round: 2, left: 1,
       res: [rich], shop: ['purple.secondwind'], queue: [{ t: 'turn', p: 0 }, { t: 'allPlaced' }] }), 'purple.windup');
     s = buy(s, 'purple.secondwind');
     const uid = uidOf(s, 'purple.secondwind', 0);
@@ -68,7 +67,7 @@ describe('October 17 reported choices', () => {
     expect(s.players[0].turnBuys).toBe(1);
   });
   it('does not offer an unusable Errand Boy activation when the board is full', () => {
-    const qs = ['gold', 'red', 'purple', 'green'], slots = {};
+    const qs = ['yellow', 'red', 'purple', 'green'], slots = {};
     qs.forEach((qid, q) => quadrant(qid).actions.forEach((a, i) => {
       if (a.ring <= 2 && !(qid === 'purple' && a.key === 'windup')) slots[`${q}-${i}`] = 1;
     }));
@@ -81,18 +80,18 @@ describe('October 17 reported choices', () => {
   });
 
   it('Cutpurse offers every held color of the richest eligible rival and steals the chosen one', () => {
-    const s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'green'], n: 3,
-      res: [{}, { red: 4, gold: 1 }, { green: 3 }], members: [['thieves.cutpurse']],
+    const s = sceneQ({ quadrants: ['yellow', 'red', 'thieves', 'green'], n: 3,
+      res: [{}, { red: 4, yellow: 1 }, { green: 3 }], members: [['thieves.cutpurse']],
       queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.player).toBe(0);
-    expect(s.pending.options.map(o => o.id).sort()).toEqual(['take:1:gold', 'take:1:red']);
-    const next = move(s, 'take:1:gold');
-    expect(next.players[0].res.gold).toBe(1);
+    expect(s.pending.options.map(o => o.id).sort()).toEqual(['take:1:red', 'take:1:yellow']);
+    const next = move(s, 'take:1:yellow');
+    expect(next.players[0].res.yellow).toBe(1);
     expect(next.players[0].res.magenta).toBe(0);
-    expect(next.players[1].res.gold).toBe(0);
+    expect(next.players[1].res.yellow).toBe(0);
     expect(next.players[1].res.red).toBe(4);
     expect(next.players[2].res.green).toBe(3);
-    expect(next.log.some(l => l.includes('Cutpurse stole 1 (1 gold from P2)'))).toBe(true);
+    expect(next.log.some(l => l.includes('Cutpurse stole 1 (1 yellow from P2)'))).toBe(true);
   });
 
 });

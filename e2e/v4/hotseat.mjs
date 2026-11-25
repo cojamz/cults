@@ -218,13 +218,18 @@ try {
         }
         // how the column stood: each chair's --y, its transform, height and fractional top, and the column's height
         const column = [...document.querySelectorAll('.lt > .lt-seat[data-pid]')].map(e => `${e.dataset.region} y${e.style.getPropertyValue('--y')} t${new DOMMatrixReadOnly(getComputedStyle(e).transform).m42} h${e.getBoundingClientRect().height.toFixed(1)} top${e.getBoundingClientRect().top.toFixed(1)}`).join(', ') + ` | column ${document.querySelector('.lt > .lt-snake')?.getBoundingClientRect().height.toFixed(1)}`;
-        return { vp, regions, phase, round, animating, bad, column };
+        // the turn order the column stands in: each chair's place (--y), for a round-start choice that re-sorts it
+        const order = [...document.querySelectorAll('.lt > .lt-seat[data-pid]')].map(e => `${e.dataset.region}${e.style.getPropertyValue('--y')}`).sort().join(' ');
+        return { vp, regions, phase, round, animating, bad, column, order };
       });
       if (r.vp === '1270x700' && !r.animating && r.phase && !['over', 'reckon', 'setup'].includes(r.phase)) {
-        if (!regionBoxes) regionBoxes = { ...r.regions, phase: r.phase, round: r.round, column: r.column };
+        if (!regionBoxes) regionBoxes = { ...r.regions, phase: r.phase, round: r.round, column: r.column, order: r.order, placed: false };
         // the chairs stand in the round's turn order (Cory, 2026-10-15: "position IS order"): a new round may re-sort
         // them, so their boxes are re-read at each round start; within a round, and for every other region, never
-        if (r.round !== regionBoxes.round) {
+        // ...and a round-start choice that sets the turn order (Usher: "Round Start: choose your place in this round's
+        // turn order.") re-sorts them before the round's first minion goes down; after that, never
+        const resorted = r.round === regionBoxes.round && !regionBoxes.placed && r.order !== regionBoxes.order;
+        if (r.round !== regionBoxes.round || resorted) {
           // let the re-sort finish (a .35s slide), then take the chairs' new places as this round's baseline. Waiting a
           // fixed 900ms measured mid-slide on a loaded box (the slide's frames lag), which read as chairs moving 3–9px
           // within the round: wait until every chair stands where the column put it (its transform reached --y)
@@ -232,10 +237,13 @@ try {
           await chairsStand();
           const now = await page.evaluate(() => Object.fromEntries(['seat-0', 'seat-1', 'seat-2', 'seat-3'].map(k => { const e = document.querySelector(`.lt [data-region="${k}"]`); if (!e) return [k, null]; const b = e.getBoundingClientRect(); return [k, [b.left, b.top, b.width, b.height].map(Math.round).join(',')]; })));
           for (const k of Object.keys(now)) { regionBoxes[k] = now[k]; r.regions[k] = now[k]; }
+          if (r.round !== regionBoxes.round) regionBoxes.placed = false;
           regionBoxes.round = r.round;
+          regionBoxes.order = await page.evaluate(() => [...document.querySelectorAll('.lt > .lt-seat[data-pid]')].map(e => `${e.dataset.region}${e.style.getPropertyValue('--y')}`).sort().join(' '));
           regionBoxes.column = await page.evaluate(() => [...document.querySelectorAll('.lt > .lt-seat[data-pid]')].map(e => `${e.dataset.region} y${e.style.getPropertyValue('--y')} t${new DOMMatrixReadOnly(getComputedStyle(e).transform).m42} h${e.getBoundingClientRect().height.toFixed(1)} top${e.getBoundingClientRect().top.toFixed(1)}`).join(', ') + ` | column ${document.querySelector('.lt > .lt-snake')?.getBoundingClientRect().height.toFixed(1)}`);
         }
         for (const k of Object.keys(r.regions)) if (r.regions[k] !== regionBoxes[k]) { const m = `the ${k} region moved between ${regionBoxes.phase} and ${r.phase} (${regionBoxes[k]} -> ${r.regions[k]})${/^seat/.test(k) ? ` [was ${regionBoxes.column}; now ${r.column}]` : ''}`; if (!errors.includes(m)) { errors.push(m); await shot('zz-region-moved'); } }
+        if (r.phase === 'place' && regionBoxes.order === r.order) regionBoxes.placed = true; // the order holds once a minion can go down
         phasesSeen.add(r.phase);
       }
       for (const b of r.bad) { const m = `space not readable without hover: ${b}`; if (!errors.includes(m)) errors.push(m); }

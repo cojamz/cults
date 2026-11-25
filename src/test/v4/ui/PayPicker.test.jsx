@@ -1,7 +1,6 @@
 // Paying (dialogs pod, 2026-10-15): the cost as sockets at the engine's price, the default way already in (one tap
 // pays), a stack click or a coin click swaps to the nearest other legal way (the payment never goes short), every
 // rule-changer named in a line, Cancel goes back, and a single way to pay skips the dialog.
-import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
 import { createGame, applyMove, chooseBotMove, memberPrice, TIERS } from '../../../engine/v4/index.js';

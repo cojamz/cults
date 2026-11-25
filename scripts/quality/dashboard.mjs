@@ -10,7 +10,7 @@ const out = args.out || `${Q}/dashboard.md`;
 const read = (p, d = null) => { try { return fs.readFileSync(p, 'utf8'); } catch { return d; } };
 const json = (p, d = null) => { const t = read(p); try { return t ? JSON.parse(t) : d; } catch { return d; } };
 const pct = x => x == null ? '-' : `${Math.round(x * 100)}%`;
-const COLORS = ['gold', 'red', 'purple', 'silver', 'yellow', 'blue', 'magenta', 'white', 'green', 'guests'];
+const COLORS = ['red', 'purple', 'silver', 'yellow', 'blue', 'magenta', 'white', 'green', 'guests'];
 const ALIAS = { market: 'blue', thieves: 'magenta', trading: 'white', echo: 'green', benders: 'guests' };
 const norm = c => ALIAS[String(c).toLowerCase()] || String(c).toLowerCase();
 

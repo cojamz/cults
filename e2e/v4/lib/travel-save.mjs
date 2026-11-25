@@ -1,5 +1,5 @@
 // Saved hot-seat games stopped where P1 (the only person) is about to make a move that sends something to someone, for
-// the travel gate (e2e/v4/travel.mjs): a steal (round I and round III), a gift (Grease a Palm), a member taken (Poach), a
+// the travel gate (e2e/v4/travel.mjs): a steal (round I and round III), a gift (Raise a Glass), a member taken (Poach), a
 // member given to a rival (Sleight of Hand), a member's Use, and a member recruited off the wheel (Borrow). Each comes from real bot games (P1 played by the Normal bot until the moment), with
 // the engine's own effect stream saying what must travel from where to where.
 import { createGame, applyMove, chooseBotMove } from '../../../src/engine/v4/index.js';
@@ -13,22 +13,23 @@ const fx = n => n.effects || [];
 // kind → the table, and which of P1's moves it is: (state before, move, state after) → { from, to } of what travels
 export const TRAVEL = {
   // a take: a rival's stack to yours (it may arrive as magenta)
-  steal1: { q: ['gold', 'thieves', 'red', 'purple'], hit: (s, mv, n) => s.round === 1 && takeOf(n) },
-  steal3: { q: ['gold', 'thieves', 'red', 'purple'], hit: (s, mv, n) => s.round === 3 && takeOf(n) },
-  // a gift: Grease a Palm's +1 gold to the rival you pick, from the space to their gold
-  gift: { q: ['gold', 'red', 'blue', 'green'], hit: (s, mv, n) => /^Grease a Palm: give/.test(prompt(s)) && (g => g && { from: g.from, to: g.to })(fx(n).find(e => e.type === 'gain' && e.to.pid !== 0)) },
+  steal1: { q: ['yellow', 'thieves', 'red', 'purple'], hit: (s, mv, n) => s.round === 1 && takeOf(n) },
+  steal3: { q: ['yellow', 'thieves', 'red', 'purple'], hit: (s, mv, n) => s.round === 3 && takeOf(n) },
+  // a gift: Raise a Glass ("+4 silver. Each rival +2 silver."): a rival's +2 from the space to their silver (Grease a
+  // Palm's gold until Gold left the game, Nov 24)
+  gift: { q: ['silver', 'red', 'blue', 'green'], hit: (s, mv, n) => (n.log || []).slice(-8).some(l => /^P1 took Raise a Glass/.test(l)) && (g => g && { from: g.from, to: g.to })(fx(n).find(e => e.type === 'gain' && e.to.pid !== 0)) },
   // a member taken: Poach, a rival's member to your crowd
-  member: { q: ['gold', 'thieves', 'red', 'purple'], hit: (s, mv, n) => /^Poach: (take|recruit) which/.test(prompt(s)) && (e => e && { from: { kind: 'crowd', pid: e.from.pid }, to: { kind: 'member', pid: 0, uid: e.what.uid } })(fx(n).find(e => e.type === 'member-move' && e.to.pid === 0)) },
+  member: { q: ['yellow', 'thieves', 'red', 'purple'], hit: (s, mv, n) => /^Poach: (take|recruit) which/.test(prompt(s)) && (e => e && { from: { kind: 'crowd', pid: e.from.pid }, to: { kind: 'member', pid: 0, uid: e.what.uid } })(fx(n).find(e => e.type === 'member-move' && e.to.pid === 0)) },
   // a member given to a rival (Sleight of Hand, Nov 10, in Shake Down's old place: "give them a shop member of your choice in its
   // place"): the shop card goes to the rival's crowd
-  swindle: { q: ['gold', 'thieves', 'red', 'purple'], hit: (s, mv, n) => /^Sleight of Hand: give /.test(prompt(s)) && (e => e && { from: { kind: 'shop', uid: e.from.uid }, to: { kind: 'member', pid: e.to.pid, uid: e.what.uid } })(fx(n).find(e => e.type === 'recruit' && e.from.kind === 'shop' && e.to.pid !== 0)) },
-  // a member's Use: what it gives flies from the member to your stack. P1 holds Gambler ("On Use, once per game:
-  // double your gold"), used at its first buy step with gold in hand: the live On Use members that gain at once are rare
+  swindle: { q: ['yellow', 'thieves', 'red', 'purple'], hit: (s, mv, n) => /^Sleight of Hand: give /.test(prompt(s)) && (e => e && { from: { kind: 'shop', uid: e.from.uid }, to: { kind: 'member', pid: e.to.pid, uid: e.what.uid } })(fx(n).find(e => e.type === 'recruit' && e.from.kind === 'shop' && e.to.pid !== 0)) },
+  // a member's Use: what it gives flies from the member to your stack. P1 holds Bride and Groom ("On Use, once per game:
+  // double your silver. Each rival +2 silver."; Gambler's place since Gold left, Nov 24), used at its first buy step with silver in hand: the live On Use members that gain at once are rare
   // in bot games (the others ask a question first)
-  use: { q: ['gold', 'red', 'blue', 'green'], give: 'gold.speculator', forceUse: true, hit: (s, mv, n) => String(mv.option).startsWith('use:') && (g => g && { from: { kind: 'member', pid: 0, uid: g.cause.uid }, to: g.to })(fx(n).find(e => e.type === 'gain' && e.cause.kind === 'member' && e.to.pid === 0)) },
+  use: { q: ['silver', 'red', 'blue', 'green'], give: 'silver.gala', forceUse: true, hit: (s, mv, n) => String(mv.option).startsWith('use:') && (g => g && { from: { kind: 'member', pid: 0, uid: g.cause.uid }, to: g.to })(fx(n).find(e => e.type === 'gain' && e.cause.kind === 'member' && e.to.pid === 0)) },
   // a member recruited off the wheel (Borrow, Nov 10: "Recruit the cheapest shop member, for free"; Walk-In's draw off
   // the deck left the game): its card leaves the shop for your crowd
-  borrow: { q: ['red', 'gold', 'blue', 'green'], hit: (s, mv, n) => (n.log || []).slice(-8).some(l => /^P1 took Borrow/.test(l)) && (e => e && { from: { kind: 'shop', uid: e.from.uid }, to: { kind: 'member', pid: 0, uid: e.what.uid } })(fx(n).find(e => e.type === 'recruit' && e.from.kind === 'shop' && e.to.pid === 0)) },
+  borrow: { q: ['red', 'yellow', 'blue', 'green'], hit: (s, mv, n) => (n.log || []).slice(-8).some(l => /^P1 took Borrow/.test(l)) && (e => e && { from: { kind: 'shop', uid: e.from.uid }, to: { kind: 'member', pid: 0, uid: e.what.uid } })(fx(n).find(e => e.type === 'recruit' && e.from.kind === 'shop' && e.to.pid === 0)) },
 };
 function takeOf(n) {
   const t = fx(n).find(e => e.type === 'transfer' && e.to.pid === 0);
@@ -51,7 +52,7 @@ export function travelSave(kind) {
     const turn = [];
     for (let k = 0; k < 3000 && !s.over; k++) {
       let mv = chooseBotMove(s, rand);
-      if (sc.forceUse && s.pending && s.pending.player === 0 && s.pending.kind === 'buy' && (s.players[0].res.gold || 0) > 0) { const u = s.pending.options.find(o => String(o.id).startsWith('use:')); if (u) mv = { player: 0, option: u.id }; }
+      if (sc.forceUse && s.pending && s.pending.player === 0 && s.pending.kind === 'buy' && (s.players[0].res.silver || 0) > 0) { const u = s.pending.options.find(o => String(o.id).startsWith('use:')); if (u) mv = { player: 0, option: u.id }; }
       let n;
       try { n = applyMove(s, mv, { effects: true }); } catch { break; }
       if (s.pending && s.pending.player === 0) {

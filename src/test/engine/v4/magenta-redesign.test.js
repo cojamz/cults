@@ -1,5 +1,4 @@
 // @vitest-environment node
-import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { resume } from '../../../engine/v4/core.js';
 import { quadrant } from '../../../engine/v4/content/index.js';
@@ -10,7 +9,7 @@ import { placed } from './placed-helpers.js';
 const AV = ['thieves', 'echo'];
 useRetired(['thieves.hideout', 'thieves.ransom']);
 
-const Q = ['gold', 'red', 'thieves', 'echo'];
+const Q = ['yellow', 'red', 'thieves', 'echo'];
 const shop = ['red.volunteer', 'red.twins'];
 const turns = (...ps) => ps.map(p => ({ t: 'turn', p }));
 const pass = s => s.pending?.kind === 'buy' ? move(s, 'pass') : s;
@@ -38,7 +37,7 @@ describe('Magenta redesign edge cases', () => {
     expect(s.pending.kind).toBe('buy');
   });
   it('copying Stash gives its magenta', () => {
-    let s = table(Q, { res: [{}, { gold: 8 }, { red: 8 }], n: 3, shop, queue: turns(1, 0) });
+    let s = table(Q, { res: [{}, { yellow: 8 }, { red: 8 }], n: 3, shop, queue: turns(1, 0) });
     s = pass(take(s, 'thieves.tipoff'));
     expect(s.players[1].res.magenta).toBe(3);
     s = take(s, 'echo.echo');
@@ -46,37 +45,37 @@ describe('Magenta redesign edge cases', () => {
     expect(s.players[0].res).toMatchObject({ green: 1, magenta: 3 });
   });
   it('copying Pilfer grants its resource once, with fresh rival choices and no followers', () => {
-    let s = table(Q, { round: 2, n: 3, res: [{}, {}, { gold: 9, red: 9 }], bonus: [0, 0, 5], shop, queue: turns(1, 0) });
+    let s = table(Q, { round: 2, n: 3, res: [{}, {}, { yellow: 9, red: 9 }], bonus: [0, 0, 5], shop, queue: turns(1, 0) });
     s = take(placed(s, 1, 3, AV), 'thieves.pickpocket'); // P2's fourth minion: steal 4
-    for (let k = 0; k < 4; k++) s = move(s, 'take:2:gold');
+    for (let k = 0; k < 4; k++) s = move(s, 'take:2:yellow');
     s = pass(s);
     s = take(placed(s, 0, 3, AV), 'echo.echo'); // the copy counts P1's own minions: steal 4
     s = move(s, s.pending.options.find(o => o.kind === 'space' && o.label.startsWith(actionName('thieves.pickpocket'))).id);
     s = restored(s);
     for (let k = 0; k < 4; k++) s = move(s, 'take:2:red');
     expect(s.pending?.kind).not.toBe('choose');
-    expect(s.players[0].res).toMatchObject({ green: 1, magenta: 1, red: 4, gold: 0 });
-    expect(s.players[1].res).toMatchObject({ magenta: 1, gold: 4 });
+    expect(s.players[0].res).toMatchObject({ green: 1, magenta: 1, red: 4, yellow: 0 });
+    expect(s.players[1].res).toMatchObject({ magenta: 1, yellow: 4 });
     expect(s.players.map(p => p.bonus)).toEqual([0, 0, 5]);
   });
   it('JSON resume mid-theft neither repeats base grants nor loses the chosen colors', () => {
-    let s = table(Q, { round: 3, n: 3, res: [{}, { gold: 7 }, { red: 7 }], bonus: [0, 5, 5], shop });
-    s = move(take(placed(s, 0, 4, AV), 'thieves.pickpocket'), 'take:1:gold'); // the fifth minion: steal 5
+    let s = table(Q, { round: 3, n: 3, res: [{}, { yellow: 7 }, { red: 7 }], bonus: [0, 5, 5], shop });
+    s = move(take(placed(s, 0, 4, AV), 'thieves.pickpocket'), 'take:1:yellow'); // the fifth minion: steal 5
     const before = JSON.stringify(s);
-    const finish = x => ['take:1:gold', 'take:1:gold', 'take:1:gold', 'take:1:gold'].reduce(move, x); // one rival (Nov 5)
+    const finish = x => ['take:1:yellow', 'take:1:yellow', 'take:1:yellow', 'take:1:yellow'].reduce(move, x); // one rival (Nov 5)
     const direct = finish(s), loaded = finish(restored(s));
     expect(JSON.stringify(s)).toBe(before);
     expect(loaded.players.map(p => p.res)).toEqual(direct.players.map(p => p.res));
-    expect(loaded.players[0].res).toMatchObject({ magenta: 1, gold: 5, red: 0 });
+    expect(loaded.players[0].res).toMatchObject({ magenta: 1, yellow: 5, red: 0 });
     expect(loaded.players[0].bonus).toBe(0);
   });
   it('Starveling adds 2 to Pilfer\'s 3 while tied for fewest followers', () => {
-    let s = table(Q, { round: 1, res: [{}, { gold: 8 }], members: [['thieves.desperado']], bonus: [0, 1], shop });
+    let s = table(Q, { round: 1, res: [{}, { yellow: 8 }], members: [['thieves.desperado']], bonus: [0, 1], shop });
     s = take(placed(s, 0, 2, AV), 'thieves.pickpocket'); // the third minion: 3, and Starveling's 2
     expect(s.pending.count.left).toBe(5);
-    for (let k = 0; k < 5; k++) s = move(s, 'take:1:gold');
+    for (let k = 0; k < 5; k++) s = move(s, 'take:1:yellow');
     expect(s.players[0].bonus).toBe(0);
-    expect(s.players[0].res).toMatchObject({ gold: 5, magenta: 1 });
+    expect(s.players[0].res).toMatchObject({ yellow: 5, magenta: 1 });
   });
   it('Plunder offers only rivals with followers to steal, never a protected one, and takes 3 (Nov 13)', () => {
     let s = table(Q, { round: 2, n: 4, res: [{}, {}, {}, {}], bonus: [0, 5, 0, 6], shop });
@@ -101,32 +100,32 @@ describe('Magenta redesign edge cases', () => {
   });
   it('Lie Low blocks resource theft as well as member taking and ransom', () => {
     for (const key of ['pickpocket', 'rob', 'ransom', 'heist']) {
-      const t = table(Q, { round: 3, res: [{}, { gold: 10 }], members: [[], ['red.twins']], shop });
+      const t = table(Q, { round: 3, res: [{}, { yellow: 10 }], members: [[], ['red.twins']], shop });
       t.players[1].hideout = t.round;
       const s = take(t, `thieves.${key}`);
       expect(s.pending.kind).toBe('buy');
-      expect(s.players[1].res.gold).toBe(10);
+      expect(s.players[1].res.yellow).toBe(10);
       expect(owns(s, 1, 'red.twins')).toBe(true);
       expect(s.players[0].res.magenta).toBe(1);
     }
   });
   it('ransom includes total cost five (the cap is 6 since the Nov 5 +1), excludes nine, and resumes for the victim without repeating the grant', () => {
-    let s = table(Q, { round: 2, res: [{}, { gold: 3, red: 2 }], members: [[], ['red.mentor', 'red.patriarch']], shop });
+    let s = table(Q, { round: 2, res: [{}, { yellow: 3, red: 2 }], members: [[], ['red.mentor', 'red.patriarch']], shop });
     s = take(s, 'thieves.ransom');
     // one rival, one member at 6 or less: no picks, straight to the holder's answer
     expect(s.pending.player).toBe(1);
     expect(ids(s)).toEqual(['pay', 'let']);
     s = move(restored(s), 'pay');
     expect(owns(s, 1, 'red.mentor')).toBe(true);
-    expect(s.players[0].res).toMatchObject({ magenta: 1, gold: 3, red: 2 });
-    expect(s.players[1].res).toMatchObject({ gold: 0, red: 0 });
+    expect(s.players[0].res).toMatchObject({ magenta: 1, yellow: 3, red: 2 });
+    expect(s.players[1].res).toMatchObject({ yellow: 0, red: 0 });
   });
   it('Lie Low expires when the round changes', () => {
-    let s = table(Q, { res: [{ gold: 4 }, {}], shop, queue: turns(0, 1) });
+    let s = table(Q, { res: [{ yellow: 4 }, {}], shop, queue: turns(0, 1) });
     s = pass(take(s, 'thieves.hideout'));
     s.round = 2;
     s = take(placed(s, 1, 3, AV), 'thieves.pickpocket'); // P2's fourth minion: steal 4
-    for (let k = 0; k < 4; k++) s = move(s, 'take:0:gold');
-    expect(s.players[1].res).toMatchObject({ magenta: 1, gold: 4 });
+    for (let k = 0; k < 4; k++) s = move(s, 'take:0:yellow');
+    expect(s.players[1].res).toMatchObject({ magenta: 1, yellow: 4 });
   });
 });

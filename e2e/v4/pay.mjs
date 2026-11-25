@@ -81,7 +81,7 @@ async function click(page, sel) {
 const vec = (res, id) => Object.fromEntries(id.slice(4).split('-').map((n, i) => [res[i], Number(n)]));
 
 try {
-  // (p1) a member: Gold Panner, 3 gold + 2 any (the color cost, Nov 2), with several ways to pay
+  // (p1) a member: Tithe Collector, 3 yellow + 4 any (Gold Panner's place since Gold left, Nov 24), with several ways to pay
   {
     const save = paySave();
     const st = save.state, p = st.players[0], res = st.resources;
@@ -122,7 +122,7 @@ try {
   }
   // (p2) a follower buy: 4 → 3
   {
-    const save = paySave({ tier: 'mid', res: { gold: 2, red: 3, blue: 1, green: 2 } });
+    const save = paySave({ tier: 'mid', res: { yellow: 2, red: 3, blue: 1, green: 2 } });
     const { ctx, page } = await open('p2', save, '.dialog.pay');
     const n = await page.$$eval('.dialog.pay .ps-out .ps-coin', els => els.length);
     const want = TIERS.find(t => t.key === 'mid').cost;
@@ -132,8 +132,8 @@ try {
   }
   // (p3) one way to pay: straight through, coins flying
   {
-    // the rivals hold more gold and green, so the one way gives up no lead (p4: the one way that does asks)
-    const save = paySave({ res: { gold: 3, red: 0, blue: 0, green: 3 }, rivals: { gold: 4, green: 4 }, discount: 1 }); // Gold Panner costs 7 now; 1 off keeps the 6-coin payment
+    // the rivals hold more yellow and green, so the one way gives up no lead (p4: the one way that does asks)
+    const save = paySave({ res: { yellow: 3, red: 0, blue: 0, green: 3 }, rivals: { yellow: 4, green: 4 }, discount: 1 }); // Tithe Collector costs 7; 1 off keeps the 6-coin payment
     if (save.state.pending.options.filter(o => o.kind === 'pay').length !== 1) errors.push('(p3) the save has more than one way to pay');
     if (save.state.pending.options.some(o => o.breaks)) errors.push('(p3) the one way gives up a lead (the save should keep every lead)');
     const ctx = await browser.newContext({ viewport: { width: 1270, height: 700 } });
@@ -154,9 +154,9 @@ try {
   }
   // (p4) one way to pay that gives up a lead: the sheet asks, and says why
   {
-    const save = paySave({ res: { gold: 3, red: 3, blue: 0, green: 0 }, rivals: { gold: 1 }, discount: 1 }); // Gold Panner costs 7 now; 1 off keeps the one way
+    const save = paySave({ res: { yellow: 3, red: 3, blue: 0, green: 0 }, rivals: { yellow: 1 }, discount: 1 }); // Tithe Collector costs 7; 1 off keeps the one way
     const ways = save.state.pending.options.filter(o => o.kind === 'pay');
-    if (ways.length !== 1 || !(ways[0].breaks || []).includes('gold')) errors.push(`(p4) the save is not one way that gives up the gold lead (${ways.map(o => o.id).join(' ')})`);
+    if (ways.length !== 1 || !(ways[0].breaks || []).includes('yellow')) errors.push(`(p4) the save is not one way that gives up the gold lead (${ways.map(o => o.id).join(' ')})`);
     const { ctx, page } = await open('p4', save, '.dialog.pay');
     // the sheet asks, without the lost-lead prose (Cory, 2026-10-17 #32: "You lose your tie for silver" is unnecessary)
     const prose = await page.$eval('.dialog.pay', e => (e.querySelector('[data-pay-lead]') ? 'data-pay-lead' : '') + (/gives up your (lead|tie)|lose your (lead|tie)/i.test(e.innerText) ? ' prose' : '')).catch(() => '');
@@ -167,8 +167,8 @@ try {
     await click(page, '.pay-cancel');
     await page.waitForFunction(() => !document.querySelector('.dialog.pay'), null, { timeout: 4000 }).catch(() => errors.push('(p4) Cancel left the sheet up'));
     await page.waitForTimeout(300);
-    const left = await page.$eval('.lt-seat[data-pid="0"] .cs-stack[data-res="gold"] b', e => Number(e.textContent)).catch(() => NaN);
-    if (left !== 3) errors.push(`(p4) after Cancel P1 holds ${left} gold, want 3`);
+    const left = await page.$eval('.lt-seat[data-pid="0"] .cs-stack[data-res="yellow"] b', e => Number(e.textContent)).catch(() => NaN);
+    if (left !== 3) errors.push(`(p4) after Cancel P1 holds ${left} yellow, want 3`);
     await ctx.close();
   }
   // ((g1) and (g2), Good Deed's gift card and lit seats, went with Good Deed: Silver's rework cut it, Cory Oct 31)
@@ -408,9 +408,9 @@ try {
     await page.screenshot({ path: `${SHOTS}/d1-double-agent.png` });
     await ctx.close();
   }
-  // (h1) w3a #14: Hustler's long question gives way to what to do ("Hustler: pick a color") and where to click, whole
+  // (h1) w3a #14: an On Recruit color question (Hustler's until Gold left, Drifters' since Nov 24) gives way to what to do ("Hustler: pick a color") and where to click, whole
   {
-    const save = paySave({ def: 'gold.hustler', res: { gold: 5, red: 2, blue: 2, green: 3 } }); // (Hustler costs 5 gold since the color cost, Nov 2; cut from the deck, so minted)
+    const save = paySave({ def: 'yellow.drifters', res: { yellow: 5, red: 2, blue: 2, green: 3 } }); // Drifters' color question in Hustler's place since Gold left (Nov 24); minted if the deck leaves it out
     const { applyMove } = await import('../../src/engine/v4/index.js');
     const way = save.state.pending.options.find(o => o.default) || save.state.pending.options.find(o => o.kind === 'pay');
     save.state = applyMove(save.state, { player: 0, option: way.id });
@@ -419,19 +419,19 @@ try {
       const sub = document.querySelector('.lt-prompt .pick-how');
       return { cap: document.querySelector('.seat-pick.docked .pick-cap').textContent.replace(/\s+/g, ' ').trim(), how: sub ? sub.textContent : '', cut: sub ? sub.scrollWidth > sub.clientWidth + 1 : true };
     });
-    if (got.cap !== 'Hustler: pick a color') errors.push(`(h1) the caption reads "${got.cap}"`);
+    if (got.cap !== 'Drifters: pick a color') errors.push(`(h1) the caption reads "${got.cap}"`);
     if (!/^Click one of your lit stacks/.test(got.how) || got.cut) errors.push(`(h1) the line under it reads "${got.how}"${got.cut ? ' (cut)' : ''}`);
     await ctx.close();
   }
   // (a1) Wave-2 tester A: an instant buy flies its coins and closes the hover. The hover says the cost and nothing else
   //      about paying (Cory, 03:40: cut "You pay"; info.mjs (q) holds it too)
   {
-    const save = paySave({ res: { gold: 3, red: 0, blue: 0, green: 3 }, rivals: { gold: 4, green: 4 }, discount: 1 }); // Gold Panner costs 7 now; 1 off keeps the 6-coin payment // (no lead lost: p3)
+    const save = paySave({ res: { yellow: 3, red: 0, blue: 0, green: 3 }, rivals: { yellow: 4, green: 4 }, discount: 1 }); // Tithe Collector costs 7; 1 off keeps the 6-coin payment // (no lead lost: p3)
     const st = save.state;
     st.queue[0] = { t: 'buy', p: 0 }; // back to the buy step: the card is clicked from the shop
     const { resume } = await import('../../src/engine/v4/core.js');
     resume(st);
-    const uid = st.shop.find(u => st.cards[u].def === 'gold.prospector');
+    const uid = st.shop.find(u => st.cards[u].def === 'yellow.dutycollector');
     const { ctx, page } = await open('a1', save, `.lt-shop .card[data-uid="${uid}"]`);
     await page.hover(`.lt-shop .card[data-uid="${uid}"]`);
     await page.waitForSelector(`[data-hover-layer][data-open="1"] [data-card-hover="${uid}"]`, { timeout: 3000 }).catch(() => errors.push('(a1) the card opened no hover'));
