@@ -23,3 +23,5 @@ Chat threads don't load the /brainstorm skill, so read .claude/skills/brainstorm
 Send only what survives (often 2 to 4), unless Cory set a count: then keep generating until exactly that many survive. If nothing survives, say so and ask one sharp question. Two nos on a slot in a row: stop and redo steps 1 to 4 before the next list. Log each pitch in design/pitch-ledger.md the same turn.
 
 11. **The member bar** (Cory, Nov 25): "unique, simple to understand, somewhat tied to the color, but really stand on their own as an interesting idea." One line that bends one rule everyone assumes, so the table plays around it (Ghost, Lord of the Manor, Spoilsport); colored members may give resources but must not just restate their color's mechanic. Details: design/notes/replacements-principles-2026-11-03.md.
+
+12. **Colored, and on a table** (Cory, Nov 25): "I like our grays, so I would rather make like color ones than more gray ones." New members go in a color, not grey. Every member must translate to tabletop play (Hanger-On does; "places next to you" was "so confusing").
