@@ -15,6 +15,9 @@ import { seededRandom } from '../src/engine/v4/rng.js';
 import { sphereVersion } from '../src/v4/tables.js';
 import { deckRules } from './lib/deck-choice.mjs';
 import { POOL_ACTIVE, rotateIn } from './lib/pool-rotate.mjs';
+// Bots push back on a cult with the fewest members when White is dealt (Nov 25, coordinator after Cory's "it's your bots
+// over indexing on that"; design/eval/follower-only-2026-11-25): on by default in tests, PUNISH=0 turns it off.
+process.env.PUNISH ??= '0.6';
 // SWAP=1 turns on the swap card table setting (Cory, Nov 1); SWAPCOST=n sets its price (default 2)
 const DECK_RULES = { ...deckRules(), ...(process.env.SWAP === '1' ? { swapCard: true } : {}), ...(process.env.SWAPCOST ? { swapCardCost: Number(process.env.SWAPCOST) } : {}), ...(process.env.CONTESTS ? { contests: process.env.CONTESTS } : {}), ...(process.env.CONTESTFIX ? { contestFix: JSON.parse(process.env.CONTESTFIX) } : {}) };
 

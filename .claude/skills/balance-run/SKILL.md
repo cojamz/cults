@@ -21,4 +21,5 @@ It writes .balance-runs/<id>/report.md (also design/eval/balance-runs/<id>.md an
 ## Rules
 - Deck 10. Bots only report; nothing changes a card without Cory.
 - Every number names where it came from. Bot findings on interaction cards need a played-out turn.
+- Bots push back on the cult with the fewest members when White is dealt (PUNISH=0.6, on by default in scripts/v4-balance.mjs and v4-fair-price.mjs since Nov 25; PUNISH=0 for the old bots). Without it a follower-only seat won 48% of White games against Normal bots; with it 29% (design/eval/follower-only-2026-11-25). Runs before Nov 25 7:45am used bots that didn't push back: say so when comparing with them.
 - Compare against the last run (.balance-runs/last.json) when there is one: say what's new, better or worse.

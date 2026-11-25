@@ -29,6 +29,7 @@ Cory sets prices; this gives him the evidence. His standing rules: prices are ed
 - Name collisions send the run to the wrong card (step 1).
 - Bot pricing was over-trusted once: Cory, Oct 21, "let's not overdo it. we'll use humans to refine". Report a direction and a size, not a final number.
 - Seats that only buy followers distort the other seats' numbers; balance batches count them only for that seat (Oct 29).
+- Bots push back on the cult with the fewest members when White is dealt (PUNISH=0.6, on by default in scripts/v4-balance.mjs and v4-fair-price.mjs since Nov 25; PUNISH=0 for the old bots). Without it a follower-only seat won 48% of White games against Normal bots; with it 29% (design/eval/follower-only-2026-11-25). Runs before Nov 25 7:45am used bots that didn't push back: say so when comparing with them.
 - Shared-folder appends broke result lines (Nov 7): write runs to local disk, copy to /mnt/project-files after.
 - Price changes need the deck limits and named costs moved too (setup-combos.test.js checks); a bot test of a price doesn't do that for you.
 

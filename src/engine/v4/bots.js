@@ -794,7 +794,9 @@ let DECIDER = -1;
 // PUNISH bot test (Nov 25, the coordinator after Cory: real players punish a cult sitting at 0 members): with White on
 // the table, the deciding bot also counts the rival with the fewest members (fewer than its own) against itself, at
 // weight PUNISH, so gifts of members, contest races and steals aimed at that rival score higher.
-const PUNISH_W = Number(globalThis.process?.env?.PUNISH || 0);
+// read per decision, so a test script can turn it on (scripts/v4-balance.mjs and v4-fair-price.mjs default it to 0.6)
+const punishW = () => Number(globalThis.process?.env?.PUNISH || 0);
+let PUNISH_W = 0;
 let PUNISH_TARGET = -1;
 let MINION_FIX = globalThis.process?.env?.BOTMINION !== '0';
 export const setMinionFix = on => { MINION_FIX = !!on; };
@@ -1219,6 +1221,7 @@ export function chooseNormalMove(state, rand = Math.random, opts = {}) {
   if (!pend) return null;
   DECIDER = pend.player;
   PUNISH_TARGET = -1;
+  PUNISH_W = punishW();
   if (PUNISH_W > 0 && state.quadrants?.includes('trading')) {
     const n = state.players.map(o => memberCount(state, o));
     let t = -1;

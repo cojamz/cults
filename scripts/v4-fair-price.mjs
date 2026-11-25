@@ -31,6 +31,9 @@ import { deckRules } from './lib/deck-choice.mjs';
 // the 10-card decks are the game (Cory, Nov 1): every game here is dealt with DECK's rules (refuses without DECK)
 const DECK_RULES = deckRules();
 import { sphereVersion } from '../src/v4/tables.js';
+// Bots push back on a cult with the fewest members when White is dealt (Nov 25, coordinator after Cory's "it's your bots
+// over indexing on that"; design/eval/follower-only-2026-11-25): on by default in tests, PUNISH=0 turns it off.
+process.env.PUNISH ??= '0.6';
 // the live colors (2.0) only: DEFAULT_QUADRANTS and the fuzz tables still name retired 1.0 colors (blue, green)
 const LIVE_Q = allQuadrantIds().filter(q => sphereVersion(q) === '2.0');
 const shuffled = (arr, seed) => { const r = seededRandom(seed), a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };

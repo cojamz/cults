@@ -4,6 +4,8 @@ Read when choosing a tool or looking one up by name. Update the row in the same 
 
 Defaults unless a row says otherwise: deck 10 (`DECK=10`), By color contests (`CONTESTS=byColor`), 4 players, today's rules. Time is on this 4-CPU box. "Model" is who may run the turns around it: **code** = plain bot games, cost no tokens beyond the thread's own turns (run them on Sonnet or in a runner thread, never Fable); **Sonnet** = judge agents; **Opus** = only where Cory named it.
 
+**Bot pushback (Nov 25):** v4-balance.mjs and v4-fair-price.mjs default PUNISH=0.6 (bots go after the cult with the fewest members when White is dealt); PUNISH=0 gives the old bots. Bot test flags in bots.js, all off unless set: TIEHALF=1, WHITEBLIND=<seat>, PUNISH=<w>. Evidence: design/eval/follower-only-2026-11-25.
+
 **Table warning (Nov 25):** scripts that build tables from `makeTables` or `DEFAULT_QUADRANTS` (v4-reshuffle-count.mjs, v4-sim.mjs, v4-thinker-tables.mjs; v4-fair-price.mjs was fixed in 3ed1127b) can deal the retired Blue and Green 1.0 colors, and some ignore DECK. Check the tables a run dealt before quoting it, or pass the colors explicitly.
 
 Status: **live** (use it), **older twin** (works, prefer the named one), **legacy** (built for an older game or a finished question; read its results, don't run it without a reason).
