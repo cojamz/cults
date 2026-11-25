@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.807 — 2026-11-25
+
+- Round End: a minion gained at Round End is no longer placed. Night Thieves costs 9, Comforter 8, Cutpurse 10, Dusk Buyer 6, Tax Men 7 (now joins in round II). Lord of the Manor and the renamed Forestallers (was Doorbusters) are worth 3.
+
 ## v0.99.806 — 2026-11-25
 
 - A Doppelganger copying Lackey now pays its own +2 green when you place on the same color as the minion before
