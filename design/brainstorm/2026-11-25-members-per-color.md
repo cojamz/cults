@@ -369,3 +369,70 @@ Verdict: send
 8. Color interactions: none: a single-color card that reads only general pieces.
 9. Biggest case: Small.
 Verdict: cut (Flatterers, #20)
+
+# Batch 2: the thin colors (Purple, Magenta, Yellow, Green)
+
+## Idea: Nightwalker
+
+1. Printed text: "Your last minion each round may go on a space a rival has taken." Purple, 4 purple + 4 any (Claude's fill-in). Compared with Crowd In (his own idea, liked): "you can place on taken spaces this round".
+2. Played turn: round II, 4 players, your 4th and last minion: Flurry and Promote are taken; you place on Promote anyway: +3 red and a swap up to 3 dearer, against the best open space (about +2 to +3 of a color). Gain about 3 to 5.
+3. Both sides: you choose which taken space; going last (Purple's Goes Last token) gives the most taken spaces to pick from, so it pulls you to go last.
+4. Who feels it: rivals can't block you out of a space with your last minion; whoever took the best space sees you share it.
+5. Not refused: #45 refused placing on taken spaces of your own contest's color (Green on Green, every minion); this is any color, last minion only, once a round. Same shape as Crowd In, which he liked.
+6. Judged: Intuitive: wanders in at night where it shouldn't be (Sleepwalker is an old card name, so not that). Fun: your last minion always lands well. Interacts: blocking stops working on you. Powerful: the best space each round. Engine: Goes Last and Went last. Its color: Purple's going last.
+7. Public and certain: the wheel is public; nothing hidden or random.
+8. Color interactions: none: a single-color card on any wheel.
+9. Biggest case: round III, last minion on a taken Induct ("Recruit a shop member costing 10 or less, for free.") : a free 10-cost member, about 3 to 5 followers' worth, once that round, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Clock-Winder
+
+1. Printed text: "Round Start: choose who goes first this round." Purple.
+2. Played turn: the draft order and who places last both move with the first player; Lord of the Manor already goes first.
+3. Both sides: hard to see for a first-time player which choice wins Went last.
+4. Who feels it: everyone, but nobody can tell how.
+5. Not refused, but #1 risk: misreads how the round's order and Went last interact; conflicts with Lord of the Manor.
+6. Judged: not simple.
+7. Public and certain: yes.
+8. Color interactions: none.
+9. Biggest case: one round's order a round; unclear payoff.
+Verdict: cut (not simple; clashes with Lord of the Manor)
+
+## Idea: Tallyman
+
+1. Printed text: "Round End: if you hold exactly 10 resources, +6 followers." Magenta, 3 magenta + 4 any (Claude's fill-in).
+2. Played turn: round II end, you hold 12: you buy the 1-follower card twice to land on 10: +6. A rival steals 1 from you on their last turn: you're at 9 and get nothing.
+3. Both sides: you choose what to spend to land on 10; rivals choose whether to steal from you to knock you off it.
+4. Who feels it: rivals, who can stop it with one steal; you, who must count.
+5. Not refused: not built on contest leaders (#30); a fixed number anyone can count.
+6. Judged: Intuitive: a tallyman counts it to the coin. Fun: a puzzle everyone can spoil. Interacts: every steal. Powerful: +6. Engine: Stash and steals. Its color: Magenta's resources.
+7. Public and certain: resources are public; nothing hidden or random.
+8. Color interactions: none: any colors count.
+9. Biggest case: rounds II and III: +12 in all, never more than 6 at once, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Cobbler
+
+1. Printed text: "Game End: +3 followers per color you have exactly 2 members of." Yellow, 3 yellow + 4 any (Claude's fill-in). Compared with Patchworker (batch 1): "Round End: if no two of your members share a color, +4 followers."
+2. Played turn: game end with 2 red, 2 blue, 2 yellow, 1 white: +9. A third red member would cost 3.
+3. Both sides: no choices on the card; each recruit is a choice between a better member and keeping pairs.
+4. Who feels it: rivals can break a pair by taking one of yours (Poach) or adding a third by gift.
+5. Not refused: not a running count that collapses (#41); Jack-of-All-Trades pays per color with 1 to 3 members, this only exact pairs.
+6. Judged: Intuitive: a cobbler makes pairs. Fun: a set to build. Interacts: takes and gifts break it. Powerful: up to 12. Engine: Welcome Strangers. Its color: Yellow's many colors.
+7. Public and certain: members are public; nothing hidden or random.
+8. Color interactions: none: reads your own members' colors.
+9. Biggest case: game end with 4 pairs: +12, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Ballad Singer (Green)
+
+1. Printed text: "Whenever an action is copied, +1 green." Green.
+2. Played turn: round II: about 3 copies a round: +3 green.
+3. Both sides: no choices.
+4. Who feels it: nobody; the copier loses nothing.
+5. Pitching step 4: nothing felt means cut.
+6. Judged: small and silent; Cory said Green's members are already close.
+7. Public and certain: yes.
+8. Color interactions: none.
+9. Biggest case: round III: about 5 green.
+Verdict: cut (nobody feels it)
