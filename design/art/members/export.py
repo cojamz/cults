@@ -23,5 +23,19 @@ for name,fn,cf in gallery.SETS:
             rows.append(s)
         for i in cand:
             out.append({'id':i,'name':n,'kind':'member','sphere':i.split('.')[0],'px':rows,'pal':pal,'grid':len(rows)})
+# the test version's members (dealt by default since Nov 11), drawn Nov 25
+import new7
+NEW7={'Purifiers':'benders.purifiers','Gift Swappers':'benders.giftswappers','Mutineers':'benders.mutineers','Protesters':'benders.protesters','Monks':'trading.anchorites','Old Guard':'trading.oldguard','Repossessors':'market.repossessors'}
+for n,v in new7.ALL():
+    pal={}; rev={}; rows=[]
+    for row in v.g:
+        s2=''
+        for c in row:
+            if c is None: s2+='.'; continue
+            h='#%02x%02x%02x'%tuple(c[:3])
+            if h not in rev: k=chars[len(rev)]; rev[h]=k; pal[k]=h
+            s2+=rev[h]
+        rows.append(s2)
+    i=NEW7[n]; out.append({'id':i,'name':n,'kind':'member','sphere':i.split('.')[0],'px':rows,'pal':pal,'grid':len(rows)})
 print(len(out),'entries; missing:',miss)
 json.dump(out,open('members48.json','w'))
