@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.803 — 2026-11-24
+
+- Rule fixes from testing the new members: Beggar pays once per gift (not per coin) and counts silver paid to Tax Men; Usher no longer hands away a minion gained at Round Start; Old Guard and a Doppelganger of it can't use each other forever
+
 ## v0.99.802 — 2026-11-24
 
 - Green, Blue and White reach 12 members: Lackey (Green), Doorbusters (Blue), Mendicant and Evictors (White); browser checks and long shop names tidied
