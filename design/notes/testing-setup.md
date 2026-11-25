@@ -1,6 +1,6 @@
 # How we test Cults: six checks, and when to use each
 
-Everything below already exists; this page puts it in one order so we can pick pieces per change.
+Everything below already exists; this page puts it in one order so we can pick pieces per change. The full catalogue of tools, past runs and the run log: .claude/skills/test-apparatus/SKILL.md (Nov 25).
 
 Every tool is one command: `node scripts/eval.mjs` lists them, `node scripts/eval.mjs <rules|words|trial|balance|ladder|feel> [args]` runs one.
 

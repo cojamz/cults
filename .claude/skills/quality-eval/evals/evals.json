@@ -1,0 +1,4 @@
+[
+  {"prompt": "run quality evals on the new members", "expect": ["fires check first", "paper ranking with fresh Sonnet card-judges", "play judges on the flagged cards from Hard sheets", "no Cory taste data given to judges", "logs runs"]},
+  {"prompt": "is Spice Merchant better than the card it replaced?", "expect": ["card trial on the same deals", "blind A/B play judges", "report with both full texts and a played turn"]}
+]

@@ -16,7 +16,7 @@ It writes .balance-runs/<id>/report.md (also design/eval/balance-runs/<id>.md an
 2. Critic: one Agent (general-purpose) gets the report path, the three games in .balance-runs/<id>/packet/, design/rulebook.md and design/strategy.md, and writes: what feels good, what feels flat or decided-for-you, where a player has nothing to do, where design time pays off most. Every claim points at a number in the report or a line in a game log.
 3. Findings: from the flags, the critic and the sections, pick at most 10, most important first. Each one: the card's full text (`node .claude/skills/brainstorm/scripts/live-board.mjs <color>`), one played-out turn (4 players, a named round, what it gives against the best other choice, by name and number), which sources agree (Normal, Hard, abuse, trust, critic), and what kind of change would fix it. Number tweaks need Normal and Hard to agree on direction. A rework needs two sources.
 4. Skeptic: one Agent gets only the findings and the report and knocks each down if it can (only one source? only Normal? the played turn doesn't hold? price, not design?). Drop what falls.
-5. Write the findings into the report's Findings section, append dropped ones to design/watch.md, commit, and send Cory the link with the top three in plain words (presend, plain reader).
+5. Write the findings into the report's Findings section, append dropped ones to design/watch.md, add a row to the run log (`node .claude/skills/test-apparatus/scripts/log-run.mjs`), commit, and send Cory the link with the top three in plain words (presend, plain reader).
 
 ## Rules
 - Deck 10. Bots only report; nothing changes a card without Cory.

@@ -1,0 +1,5 @@
+[
+  {"prompt": "bring the full weight of our testing apparatus to bear on the latest version", "expect": ["reads the family table and picks balance-run, price-test, combo-probe, quality-eval", "greps runs.md for recent answers", "names control and change per run", "appends a row per run"]},
+  {"prompt": "didn't we already test Night Owls?", "expect": ["greps runs.md and references/history.md", "answers with the run, date, version and link, and says if rules changed since"]},
+  {"prompt": "I built a new probe script scripts/v4-foo.mjs", "expect": ["adds its row to references/tools.md in the same commit", "drift.mjs shows nothing missing"]}
+]

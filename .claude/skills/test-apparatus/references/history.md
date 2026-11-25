@@ -1,0 +1,205 @@
+# Past tests and reviews, by date
+
+Read before saying something was never tested, or when Cory asks "didn't we test that". Each line: date, what it asked, where it lives. `design/eval/<x>` is in the repo; `pf/<x>` is /mnt/project-files/<x>. Many older runs predate today's rules (Gold deleted Nov 24, names changed Nov 24, new members Nov 25): quote their method, re-run their numbers.
+
+New runs go in ../runs.md, not here. Add a line here when a run leaves a folder worth finding later.
+
+## Where the big runs live
+- Balance runs (balance-run skill): pf/balance-runs/<id>/ (report, packet games) and design/eval/balance-runs/<id>.md. Last full deep run: **nov6-v606-deep** (v0.99.606). Fast runs: 2026-11-02 fast (plus color cost, old prices), 2026-11-03 deep 46d689f7 (Night Owls 59%, cloak swing ~25 points), 2026-11-03 By color vs As printed, nov5 before v600 / after v601, quality-baseline-09cc4619, menu-live-12ed4778.
+- Card trials: pf/trials/ and `node scripts/trial/trial.mjs status`.
+- Quality loop: pf/quality/ (principles.md is the rubric; ranking.md the live ranking; evals/ gate, play, ab, set-check, r1, r2).
+- Idea pipeline pools: pf/idea-pipeline/<batch>/.
+- AI-player and player-agent games: design/eval/expert-games, design/eval/balance-1.0/expert/g*, design/eval/feel-games-2026-11-11, design/eval/player-agents, pf/player-agents.
+- Abuse reports: design/eval/abuse/<key>.md (written by v4-abuse.mjs).
+- Perf: design/eval/perf/ (rig, freeze, frames reports).
+
+## October: the evaluator, bots and first balance
+- 10-09 Quadrant evaluator (rubric, value model, spec format, graveyard): design/eval/rubric.md, value-model.md, runs/ — legacy.
+- 10-14 Bot levels and the big-followers target: design/eval/bots.md, top-tier.md, follower-buy-variants.md (does buying the 6-follower pack every turn win).
+- 10-14 Card ledgers A and B, Cory's first play diagnoses: design/eval/card-ledger-a.md, card-ledger-b.md, cory-notes-2026-10-14.md.
+- 10-14/15 Blind panels and critics: ui-critic rounds 1-2, boardgame-enthusiast rounds 2-3, game-skeptic w4, RC1 panel (newcomer, saboteur, strategist, triage), panel-live, overnight waves 2-3: design/eval/.
+- 10-15 Balance passes 1-3, economy claims measured (design/eval/bench/economy-claims.md), card audit of the culled deck, member feel audit, critic calibration (answer key of Cory's catches).
+- 10-15 Words: decipher passes (design/eval/words, rollout), wording pass 10-16.
+- 10-17 No follower shop, paired Normal-bot test: design/eval/2026-10-17-no-follower-shop.md.
+- 10-18/20 Per-version verification pages (green-v070 … straggler-v089).
+- 10-21 Member prices: pf/member-balance/prices-2026-10-21.md; member concepts for every color; member sims.
+- 10-22/23 152 Hard games on random tables: design/eval/hard-batch, pf/hard-bot-batch. First /review-text run: design/eval/text-review/2026-10-23.md.
+- 10-25/26 Normal and Hard bot reads v0.8.78, v0.8.86: pf/bot-batch-oct25, oct26. Tester panel 10-26.
+- 10-28 Release check v0.9.2; live audit.
+- 10-29 Overnight balance runs v0.9.842-846 and v0.9.88x; bots and member swaps before/after; expert games read: design/eval/balance-oct29, oct29b, bot-swaps, expert-games.
+- 10-30/31 Hard bots that plan and learn, learn position value, Yellow 2.0 reads: design/eval/hard-learn*, hard-value*, balance-yellow-oct31.
+
+## November 1-6: the 10-card deck and the balance system
+- 11-01 Balance round on 10-card decks (Normal 800 games at 2-4 players), artifact tests and audit: pf/balance-nov1, balance-0.99, balance-0.99.5, balance-1.0 (also design/eval/balance-1.0 with expert games g1-g12).
+- 11-01 A stronger Very Hard: design/eval/vh-duel. Cloaks under each shop: design/eval/piles. Blind panel v0.9.908: pf/blind-panel-nov1. AI-player bug playtest: design/eval/playtest-nov1. Harness review.
+- 11-02 One balance system built (pf/balance-bots/plan.md); the critic's review (every turn is "biggest number"): design/eval/critic-review-2026-11-02.
+- 11-03 Balance of live v0.99.513 and v0.99.520; By color vs As printed; color cost test; replacement batch 1 trial: design/eval/balance-live-2026-11-03, balance-v520-2026-11-03, balance-runs/, color-cost, replacements.
+- 11-03/04 Setup audit (every option with every other): design/eval/setup-matrix, pf/setup-audit. Wallflower audit. Actions worth changing: design/eval/action-review-2026-11-03.
+- 11-04 Quality loop born (paper gate, play judges, A/B, ranking): design/eval/quality-loop, pf/quality. Picky UI bot: design/eval/picky. Smarter bot decisions (BOTSMART): design/eval/bots-smart. Do bots hoard resources: design/eval/bots/leftovers-2026-11-04.md. Card trials on the queue: pf/trials, pf/queue. Game critique sample: pf/game-critique.
+- 11-05/06 Balance before v600 / after v601; express Hard-only test of the new +1 price (pf/balance-express); deep run v0.99.606 (design/eval/balance-v601/report-v606.md).
+
+## November 7-14: ideas at scale, economy, skill
+- 11-07 Card-judging calibration (paper judges match Cory only at chance on unseen calls): design/eval/card-judging. Idea pipeline: pf/idea-pipeline, scripts/ideas/README.md. Economy test: design/eval/economy-test, pf/economy-test.
+- 11-09 Richer economy + test cards (paused for lag): pf/rich-economy. Runaway leader read (scripts/runaway.mjs).
+- 11-10 Game recaps: pf/game-recaps.
+- 11-11 First action test (per space): design/eval/action-balance-2026-11-11, pf/action-balance. Economy baseline and +1 timing. Feel games with AI players: design/eval/feel-games-2026-11-11. Combo run (16 scenes, 425 games): pf/combos/2026-11-11-combo-run.md.
+- 11-11/12 Bot and AI-player audit: design/eval/bot-audit-2026-11-11, ai-audit-2026-11-12.
+- 11-12 Body Snatchers check; cloak rebalance plan; Cory's four price settings (economy-n12); initiation cap 10 vs 8; member lifts; members that pay for themselves (design/eval/member-payback, pf/member-payback); Polish, Purifiers, strong/weak members on the action harness; contest margins and the first habit test (pf/skill, design/eval/skill-2026-11-12).
+- 11-13 Player agents, pilot and matrix: design/eval/player-agents, pf/player-agents.
+
+## November 24-25: names, Gold out, new members
+- 11-24 Largesse numbers by bot games (shipped 10 silver +7): design/eval/largesse, pf/largesse. Action readability on the wheel: design/eval/action-readability-2026-11-24.
+- 11-25 New members in play: 3,800 + 2,000 games with every invariant (scripts/members/nov25-hunt.mjs), combo tests in src/test/engine/v4/new-members-combos-nov25.test.js; read: Tax Men strong, Bargainer weak, Doorbusters no read (thread "Test the new members in play").
+- 11-25 Full test pass on v0.99.804 (balance, price screen and sweeps, abuse, combos, quality and play judges): pf/full-test-pass/plan.md (thread "Balance and price-test the new members").
+
+## Every design/eval entry, by the date it was added
+Generated from git on 2026-11-25; add a line when you add a folder (drift.mjs checks). Title is the folder's first report heading.
+
+- 2026-10-09 design/eval/graveyard.md — Graveyard
+- 2026-10-09 design/eval/meta-notes.md — Meta notes on the evaluator
+- 2026-10-09 design/eval/rubric.md — Quadrant Evaluator: Rubric v2
+- 2026-10-09 design/eval/runs/b0-v2.md — Batch 0: Quadrants v2 (Gold, Shadow, Verdant, Sunlight)
+- 2026-10-09 design/eval/spec-format.md — Quadrant Spec Format
+- 2026-10-09 design/eval/value-model.md — Value Model v2
+- 2026-10-14 design/eval/action-names-calibration.md — Action names: calibration batch (Gold, Red, Magenta)
+- 2026-10-14 design/eval/boardgame-enthusiast-round2.md — Board game enthusiast (game and fun critic), round 2
+- 2026-10-14 design/eval/bots-repro-open-door.json — (screens or data, no report)
+- 2026-10-14 design/eval/bots.md — Bots: levels, the big-followers target, all-Hard tables
+- 2026-10-14 design/eval/card-ledger-a.md — Card ledger A: Gold, Red, Purple, Silver, Yellow, guest members
+- 2026-10-14 design/eval/card-ledger-b.md — Card ledger B: Blue (market), Magenta (thieves), White (trading), Green (echo)
+- 2026-10-14 design/eval/cory-notes-2026-10-14.md — Cory's first play (2026-10-14): diagnoses and solves
+- 2026-10-14 design/eval/emoji-pick — (screens or data, no report)
+- 2026-10-14 design/eval/engineering-review-round2.md — Engineering review, round 2: Cults at 4fa162a (worktree `.v4-wt/4fa162a`)
+- 2026-10-14 design/eval/engineering-review.md — Patrons v4 engineering review
+- 2026-10-14 design/eval/follower-buy-variants.md — Follower-buy variants: does buying the 6-follower pack every turn win?
+- 2026-10-14 design/eval/member-names.md — Member names: people and groups only
+- 2026-10-14 design/eval/meta-round2.md — Meta synthesis, round 2
+- 2026-10-14 design/eval/multiplayer-readiness.md — Multiplayer readiness (friends build)
+- 2026-10-14 design/eval/neutral-members.md — Neutral members in the Straggler mold (Claude's proposals, 2026-10-14; REJECTED by Cory)
+- 2026-10-14 design/eval/panel-rc-briefs.md — Release-candidate panel briefs (v0.2)
+- 2026-10-14 design/eval/purple-members.md — Purple members: Relay's replacement and a reprice (Claude, 2026-10-14; nothing approved)
+- 2026-10-14 design/eval/rework-candidates.md — Rework candidates (tentative, 2026-10-14)
+- 2026-10-14 design/eval/top-tier.md — Top tier and the big-followers target
+- 2026-10-14 design/eval/two-device — (screens or data, no report)
+- 2026-10-14 design/eval/two-device-check.md — Two-device online check (emulator), 2026-10-14
+- 2026-10-14 design/eval/ui-critic-round1.md — Blind expert UI critic, round 1 (frozen build 49c94c3, 2026-10-14)
+- 2026-10-14 design/eval/ui-critic-round2 — (screens or data, no report)
+- 2026-10-14 design/eval/ui-critic-round2.md — UI critic, round 2
+- 2026-10-14 design/eval/ui-research.md — UI research: information access in digital board games
+- 2026-10-14 design/eval/ux-shots — (screens or data, no report)
+- 2026-10-15 design/eval/action-looks — (screens or data, no report)
+- 2026-10-15 design/eval/balance-pass-1.md — Balance pass 1 (2026-10-15)
+- 2026-10-15 design/eval/balance-pass-2.md — Balance pass 2 (2026-10-15)
+- 2026-10-15 design/eval/balance-pass-3.md — Balance pass 3: proposed, not applied (2026-10-15, 12:05 UTC)
+- 2026-10-15 design/eval/bench/economy-claims.md — Five economy claims from the blind game-feel reviewer, measured
+- 2026-10-15 design/eval/bench-618a8f5-provisional.md — Bench pooled on 618a8f5 (2 runs, 2026-10-15 ~06:50 UTC): provisional
+- 2026-10-15 design/eval/boardgame-enthusiast-w3-moves.md — Move log — boardgame-enthusiast w3
+- 2026-10-15 design/eval/boardgame-enthusiast-w3.md — Boardgame enthusiast — wave 3 (blind, laptop 1270×700, v4-eyes)
+- 2026-10-15 design/eval/card-audit/2026-10-15.md — Card audit, culled deck (2026-10-15)
+- 2026-10-15 design/eval/cory-feedback-status.md — Cory's play notes: where each one stands (2026-10-15, 11:15 UTC)
+- 2026-10-15 design/eval/critic-calibration/results.md — Critic calibration results
+- 2026-10-15 design/eval/design-pod/details.md — Detail designer's log
+- 2026-10-15 design/eval/dialogs — (screens or data, no report)
+- 2026-10-15 design/eval/game-skeptic-w4.md — Game skeptic — wave 4 (laptop 1270×700, quiet box)
+- 2026-10-15 design/eval/harness-metrics.md — Harness metrics
+- 2026-10-15 design/eval/member-feel.md — Member feel audit (2026-10-15)
+- 2026-10-15 design/eval/members-ux — (screens or data, no report)
+- 2026-10-15 design/eval/morning-fixes — (screens or data, no report)
+- 2026-10-15 design/eval/motion-gaps — (screens or data, no report)
+- 2026-10-15 design/eval/overnight-wave2.md — Wave 2: merged findings (2026-10-15, ~07:20 UTC)
+- 2026-10-15 design/eval/overnight-wave3.md — Wave 3: merged findings (2026-10-15, ~09:40 UTC)
+- 2026-10-15 design/eval/panel-live/README.md — Live blind panel (2026-10-15 evening)
+- 2026-10-15 design/eval/panel-rc1-newcomer.md — RC1 blind panel: laptop newcomer (3 Normal bots, Classic), 2026-10-15
+- 2026-10-15 design/eval/panel-rc1-saboteur.md — RC1 blind panel: saboteur, 2026-10-15
+- 2026-10-15 design/eval/panel-rc1-strategist.md — RC1 blind panel: laptop strategist vs 3 Hard bots (Classic), 2026-10-15
+- 2026-10-15 design/eval/panel-rc1-triage.md — RC1 panel triage (2026-10-15)
+- 2026-10-15 design/eval/panel1 — (screens or data, no report)
+- 2026-10-15 design/eval/perf/README.md — Perf: making slowness visible
+- 2026-10-15 design/eval/qa — (screens or data, no report)
+- 2026-10-15 design/eval/rc2-ui — (screens or data, no report)
+- 2026-10-15 design/eval/rollout/r2-decipher.md — R2 decipher test: panel lines vs the real rule (2026-10-15)
+- 2026-10-15 design/eval/wave2 — (screens or data, no report)
+- 2026-10-15 design/eval/wave3 — (screens or data, no report)
+- 2026-10-15 design/eval/wave4 — (screens or data, no report)
+- 2026-10-15 design/eval/words/decipher-w3.md — W3 decipher pass: every space's panel and hover, read cold (2026-10-15)
+- 2026-10-16 design/eval/performance/animation-review-2026-10-16.md — Animation review — 2026-10-16
+- 2026-10-16 design/eval/wording-pass-2026-10-16.md — Wording pass — 2026-10-16
+- 2026-10-17 design/eval/2026-10-17-no-follower-shop.md — No follower shop: paired Normal-bot experiment
+- 2026-10-17 design/eval/handoff-2026-10-17 — (screens or data, no report)
+- 2026-10-18 design/eval/green-v070/verification.md — Green v0.7.0 — shipped October 18, 2026
+- 2026-10-18 design/eval/red-v080/verification.md — Red v0.8.0 verification
+- 2026-10-18 design/eval/resource-v081/verification.md — Resource contests — v0.8.1
+- 2026-10-19 design/eval/backlog-ui-v084/verification.md — v0.8.4 backlog UI batch
+- 2026-10-19 design/eval/magenta-v087/verification.md — v0.8.7 verification — October19
+- 2026-10-19 design/eval/magenta-v088/verification.md — v0.8.8 verification — October 19
+- 2026-10-19 design/eval/opening-v085/verification.md — v0.8.5 — Retinue / Yellow / opening draft
+- 2026-10-19 design/eval/red-members-v082/verification.md — Red members / Green / shop — v0.8.2
+- 2026-10-19 design/eval/shop-sizing-v083/verification.md — v0.8.3 shop sizing
+- 2026-10-20 design/eval/straggler-v089/verification.md — Straggler v0.8.9 — October 19
+- 2026-10-21 design/eval/member-concepts-2026-10-21.md — Member concepts for Cory's cut (Oct 21, overnight)
+- 2026-10-21 design/eval/member-concepts-other-colors-2026-10-21.md — Gold, Silver, Yellow, Purple, White: members up to 12
+- 2026-10-21 design/eval/member-sims — (screens or data, no report)
+- 2026-10-21 design/eval/rework-panel-2026-10-21/README.md — Rework panel, Oct 20–21: what's here (for the "Better design process" thread)
+- 2026-10-22 design/eval/purple-oct22/README.md — Purple member prices, Oct 22
+- 2026-10-23 design/eval/hard-batch/152-games.md — 152 Hard bot games, random 4-color tables (Oct 22, 8:42pm)
+- 2026-10-23 design/eval/text-review/2026-10-23.md — Text review, 2026-10-23 (first run of /review-text)
+- 2026-10-23 design/eval/white-members — (screens or data, no report)
+- 2026-10-26 design/eval/panel-2026-10-26/summary.md — Tester panel, Oct 26 (v0.8.86)
+- 2026-10-26 design/eval/snappy-pair/README.md — Snappy pair, 2026-10-25 (UX expert + architecture engineer)
+- 2026-10-28 design/eval/release-qa/report-v0.9.2.md — v0.9.2 release check (Oct 28)
+- 2026-10-29 design/eval/balance-oct29/README.md — Balance runs, Oct 29 overnight (v0.9.842 to v0.9.846)
+- 2026-10-29 design/eval/balance-oct29b/README.md — Balance run, Oct 29 afternoon (v0.9.88x)
+- 2026-10-29 design/eval/bot-swaps/README.md — Bots and member swaps, before vs after v0.9.857 (Oct 29)
+- 2026-10-29 design/eval/expert-games/findings-2026-10-29.md — Expert games and bot batches: balance read (Oct 29, overnight)
+- 2026-10-31 design/eval/balance-yellow-oct31/README.md — Yellow 2.0 balance run, Oct 31 (2b115989)
+- 2026-10-31 design/eval/hard-learn/README.md — Hard bots that plan and learn (Oct 30)
+- 2026-10-31 design/eval/hard-learn-mix-after/report.md — Planning Hard vs the Hard before plans: 24 games (design/eval/hard-learn-mix-after)
+- 2026-10-31 design/eval/hard-learn-mix-before/report.md — Planning Hard vs the Hard before plans: 24 games (design/eval/hard-learn-mix-before)
+- 2026-10-31 design/eval/hard-search — (screens or data, no report)
+- 2026-10-31 design/eval/hard-value/README.md — Hard that learns what a position is worth (Oct 31)
+- 2026-10-31 design/eval/hard-value-yellow/README.md — Yellow 2.0 reads: learning Hard bots, 40 games (Oct 31)
+- 2026-11-01 design/eval/balance-1.0/report-hard-4p.md — (screens or data, no report)
+- 2026-11-01 design/eval/bots/leftovers-2026-11-04.md — Do bots hoard resources? (Nov 4, coordinator's ask from the rival-resources audit)
+- 2026-11-01 design/eval/harness/review-2026-11-01.md — How we operate: review (Nov 1, 2026)
+- 2026-11-01 design/eval/panel-2026-11-01/README.md — Blind panel, 2026-11-01 (live v0.9.908, 3415621)
+- 2026-11-01 design/eval/piles/cloaks-report.md — Cloaks under each shop
+- 2026-11-01 design/eval/playtest-nov1/README.md — Playtest for bugs, Nov 1 (AI players)
+- 2026-11-01 design/eval/vh-duel/README.md — A stronger Very Hard (Nov 1)
+- 2026-11-02 design/eval/critic-review-2026-11-02/review.md — Cults: a critic's review
+- 2026-11-03 design/eval/balance-live-2026-11-03/findings.md — Balance test of the live game (v0.99.513 rules), Nov 3
+- 2026-11-03 design/eval/balance-runs/2026-11-03-bycolor-vs-printed-numbers.md — By color contests vs printed contests: the numbers (deck 10, one fast run each, same code 0f94cfcd)
+- 2026-11-03 design/eval/balance-v520-2026-11-03/findings.md — Second balance pass, Nov 3: live v0.99.520 (build d108efab), deck 10
+- 2026-11-03 design/eval/color-cost/report.md — Color cost test: 1 of every member's "any" cost moved to its own color
+- 2026-11-03 design/eval/replacements/batch1-results.md — Batch 1: what the bots did with the 8 new cards
+- 2026-11-04 design/eval/action-review-2026-11-03/list.md — Actions worth changing (Nov 3 evening)
+- 2026-11-04 design/eval/anim-audit-2026-11-04 — (screens or data, no report)
+- 2026-11-04 design/eval/bots-smart/README.md — Smarter bot decisions (BOTSMART, Nov 4)
+- 2026-11-04 design/eval/members-d/songrequest-c2.md — Card trial: q-d-songrequest-c2
+- 2026-11-04 design/eval/picky/findings.md — Picky UI bot: running list
+- 2026-11-04 design/eval/quality-loop/calibration-split.md — Cory's past calls, split for the taste check
+- 2026-11-04 design/eval/setup-matrix/findings.md — Setup audit (Nov 3, live in v0.99.547)
+- 2026-11-04 design/eval/wallflower-2026-11-03/audit.md — What Wallflower doubles: audit (Nov 3, from Cory's "copying Polish didnt double with Wallflower. gotta audit what wallflower works with")
+- 2026-11-06 design/eval/balance-v601/report-v606.md — Balance report: tonight's cards (v0.99.606)
+- 2026-11-07 design/eval/card-judging/answer-key.md — Card-judging calibration: answer key
+- 2026-11-07 design/eval/economy-test/results-2026-11-07.md — Economy test: results (Nov 7)
+- 2026-11-07 design/eval/review2/BRIEF.md — Review 2 brief: one color, every card, then replacements (Nov 8)
+- 2026-11-11 design/eval/action-balance-2026-11-11/findings.md — First action test: today's game, before White, Yellow and Red finish (Nov 11)
+- 2026-11-11 design/eval/economy-baseline-2026-11-11/README.md — Economy baseline (Nov 11)
+- 2026-11-11 design/eval/economy-plus1/README.md — Space +1 timing, economy test (2026-11-11)
+- 2026-11-11 design/eval/feel-games-2026-11-11/feel-nov11-1.md — Feel report: game feel-nov11-1
+- 2026-11-11 design/eval/pitch-gate — (screens or data, no report)
+- 2026-11-12 design/eval/ai-audit-2026-11-12/game1.md — AI-player audit: feel-nov11-1
+- 2026-11-12 design/eval/bodysnatchers-2026-11-12/README.md — Body Snatchers check, Nov 12
+- 2026-11-12 design/eval/bot-audit-2026-11-11/README.md — Bot and AI-player audit (Nov 11-12)
+- 2026-11-12 design/eval/cloaks-2026-11-12/plan.md — Cloak rebalance: plan (Nov 12)
+- 2026-11-12 design/eval/economy-n12/README.md — Economy test, Cory's four price settings (2026-11-12)
+- 2026-11-12 design/eval/initiation-cap-2026-11-12/findings.md — Initiation cap 10 vs 8 (Nov 12)
+- 2026-11-12 design/eval/member-lifts-2026-11-12/base.md — Action balance: 200 games, 9736 placements
+- 2026-11-12 design/eval/member-payback/2026-11-12-pays-for-itself.md — Can each member pay for its own price? (Nov 12)
+- 2026-11-12 design/eval/polish-2026-11-12/base.md — Action balance: 300 games, 14612 placements
+- 2026-11-12 design/eval/purifiers-2026-11-12/base.md — Action balance: 200 games, 9734 placements
+- 2026-11-12 design/eval/skill-2026-11-12 — (screens or data, no report)
+- 2026-11-12 design/eval/strong-weak-2026-11-12/base.md — Action balance: 150 games, 7305 placements
+- 2026-11-13 design/eval/player-agents/facts-pilot1.md — pilot1: yellow, thieves, trading, purple
+- 2026-11-24 design/eval/largesse/plan-2026-11-24.md — Largesse numbers: test plan (Nov 24)
+- 2026-11-25 design/eval/action-readability-2026-11-24/wheel-after.md — Wheel print at 1270×700

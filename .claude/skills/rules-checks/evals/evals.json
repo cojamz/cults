@@ -1,0 +1,4 @@
+[
+  {"prompt": "I changed Tax Men's text and code; ship it", "expect": ["unit tests per sentence", "quick check with --related or named files", "fire audit", "card-diff against Cory's words", "check:v4 --commit before ship"]},
+  {"prompt": "Cory's saved game crashed in round II", "expect": ["v4-replay on the record to find the first illegal move", "a test that reproduces it before the fix"]}
+]

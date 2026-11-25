@@ -1,0 +1,4 @@
+[
+  {"prompt": "test whether 'take what a rival needs' makes the bot better", "expect": ["builds the principle into Very Hard as an option", "duel against today's Very Hard on the same tables with seats swapped", "time limit per game", "no level-vs-level run"]},
+  {"prompt": "Hard vs Normal, how much better is Hard?", "expect": ["declines: known answer, testing.md rule 1", "offers the trust stage or a principle test instead"]}
+]

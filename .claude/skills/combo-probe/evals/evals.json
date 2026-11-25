@@ -1,0 +1,4 @@
+[
+  {"prompt": "Cory: Doppelganger plus Wallflower seems broken", "expect": ["writes a vitest scene for the pair at round III's biggest state", "reports the played turn with both full card texts and numbers", "treats as-printed strength as a question for Cory, not a fix"]},
+  {"prompt": "run the crazy combo probers on the new members", "expect": ["lists pairs with copy/give/steal/count cards first", "scenes, then v4-abuse per new card at Hard, then a seeded invariant hunt with time limits", "logs each run in runs.md"]}
+]
