@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.802 — 2026-11-24
+
+- Green, Blue and White reach 12 members: Lackey (Green), Doorbusters (Blue), Mendicant and Evictors (White); browser checks and long shop names tidied
+
 ## v0.99.801 — 2026-11-24
 
 - Eleven new members join the decks: Innkeeper, Wet Nurse, Chapman (Red); Hoarder, Cutthroats (Magenta); Bargainer (Blue); Beggar (Silver); Night Porter, Shirker (Purple); Pilgrims, Drifters (Yellow)
