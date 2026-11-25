@@ -93,8 +93,12 @@ function extraHooks(ctx, p) {
 
 /** One more minion for p this round, placed after everyone else's (the snake carries on until every minion is placed).
  *  Only while the board has a free space for it, so a round never hands out more extra minions than it has spare spaces. */
+// Cory, Nov 26: "you can't play again when round end is reached": once the last minion is placed (allPlaced ran),
+// nothing more is placed that round, so a minion gained then (Dusk Buyer recruiting Extra Hand) is lost
+export const placingOver = ctx => !!ctx.state.placingOver;
 export function extraMinion(ctx, p, what) {
   if (ctx.state.round === 1) { ctx.log(`No extra minions in round I: ${p.name} gets no extra minion from ${what}.`); return 0; }
+  if (placingOver(ctx)) { ctx.log(`${p.name}'s ${what}: Round End has been reached, so no extra minion.`); return 0; }
   if (!spareSpace(ctx)) { ctx.log(`${p.name}'s ${what}: no free space this round, so no extra minion.`); return 0; }
   // before the round closes: ahead of allPlaced, or, once that has run (a recruit during Straggler's after-the-last-minion
   // step), ahead of the round's end; never after it (a seeded game placed a minion after the game was over, Nov 4)
@@ -117,6 +121,7 @@ const turnEnd = q => q.findIndex(t => t.t === 'endTurn' || t.t === 'previewHold'
 export function extraTurns(ctx, p, n = 1, why = null, { quiet = false } = {}) {
   // no extra minions in round I (Cory, 2026-10-15): every space there is already spoken for
   if (ctx.state.round === 1) { ctx.log(`No extra minions in round I: ${p.name} gets no extra turn${why ? ` from ${why}` : ''}.`); return 0; }
+  if (placingOver(ctx)) { ctx.log(`Round End has been reached: ${p.name} gets no extra turn${why ? ` from ${why}` : ''}.`); return 0; }
   let k = 0;
   for (; k < n && spareSpace(ctx); k++) {
     const q = ctx.state.queue;

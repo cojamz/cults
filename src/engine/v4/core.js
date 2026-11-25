@@ -1207,6 +1207,7 @@ function runTask(state, task) {
       return;
     }
     case 'allPlaced': {
+      state.placingOver = true; // no minion is placed after this, this round (Cory, Nov 26; extraMinion)
       // after the round's last placement, before its contests: members that act then (Straggler), in turn order. Each
       // player's step is its own task, so one player's Round End members finish, choices included, before the next
       // player's start (Cory, Nov 4: "Round Start / Round End effects resolve in turn order."): a later player's Paupers
@@ -1244,6 +1245,7 @@ function runTask(state, task) {
 
 function startRound(state, r) {
   state.round = r;
+  delete state.placingOver;
   if (REPLACE9) delete state.hypno; // Hypnotist's pick never carries into the next round
   // Fresh face-up market between rounds; the old row goes on the discard pile (Cory, Nov 6).
   if (r > 1) {
