@@ -13,7 +13,7 @@ Short version:
 1. Concepts first, light: keep what he praised, change what his notes name, add only counters and the ends of the power range.
 2. Send numbered picks with the strong-to-weak order. No prices yet.
 3. Build his cut on `claude/members-<color>`, never live.
-   Before any member is dealt (his cut, or a card added from his maybes), name it through .claude/rules/member-names.md (five candidates, three fresh judges, old village, no modern words) and add the name to design/names-approved.md; names-theme.test.js fails otherwise (Doorbusters shipped with its pitch name, Nov 26).
+   Before any member is dealt (his cut, or a card added from his maybes), name it with the naming skill (.claude/skills/naming/SKILL.md: plain old-village words, the blind first read, Claude picks) and add the name to design/names-approved.md; names-theme.test.js fails otherwise (Doorbusters shipped with its pitch name, Nov 26).
 4. Sweep prices with scripts/v4-fair-price.mjs at 2, 3 and 4 seats; buy-followers-only win rate with scripts/v4-big-followers.mjs.
 5. Price with three levers, all tuned in the price tests toward the 2× target (a member returns about 2× its cost in followers): the total cost; the mix of its color and "any" in that cost (its own color is scarcer than any, so a colored-heavy cost is pricier than the same total in any); and the followers it's worth, 1 to 4, 5 only rarely. Raise a weak card's followers before cutting its cost. Don't get crazy with any lever (Cory, Oct 22).
 6. Report each price with its instrument. Nothing ships until he says yes.

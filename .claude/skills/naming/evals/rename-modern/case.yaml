@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: rename-modern
+expected_outcome: |
+  One name per card, decided (no pick list to Cory): plain old-village words a casual player knows, each passed through the blind first read (a fresh reader saw only shuffled names and guessed the card), checked with check-names.mjs for clashes and refused names, with an "of course" line, built everywhere apply.md lists, with new art. None of: Doorbusters-style modern idioms, Forestallers-style obscure words, concept names (Clique), live names or near-twins.
