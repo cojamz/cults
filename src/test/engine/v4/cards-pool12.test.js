@@ -133,7 +133,7 @@ describe('White, Red, Green and Blue candidates', () => {
     let k = 0;
     while (!/^Retirees/.test(s.pending?.prompt || '') && k++ < 10) s = move(s, s.pending.options[0].id);
     expect(s.pending.prompt).toMatch(/^Retirees: discard Robbers/);
-    let t = sceneQ({ quadrants: ['trading', 'gold', 'red', 'echo'], members: [['trading.retirees']], res: [{ gold: 20, red: 20, white: 20, green: 20 }], queue: [] });
+    let t = sceneQ({ quadrants: ['trading', 'gold', 'red', 'echo'], members: [['trading.retirees']], res: [{ gold: 20, red: 20, white: 20, green: 20 }], shop: ['echo.regulars', 'red.volunteer'], queue: [] }); // a set shop since the Nov 24 decks (the dealt row had no plain member)
     const u = t.shop.find(x => plain(t, x));
     t = take(go(t, turn(0, 1)), 'gold.rush');
     t = move(t, `card:${u}`);

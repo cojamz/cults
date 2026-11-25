@@ -1015,8 +1015,7 @@ function resolveTask(state, task, optionId) {
       p.left -= 1;
       state.lastPlaced = { round: state.round, pid: p.id }; // Purple's By color contest: whoever placed the round's last minion
       // Lackey (Nov 24): did this minion go on the same color as the one placed just before it this round?
-      p.sameColorAsPrev = !!(state.prevPlacedQ && state.prevPlacedQ.round === state.round && state.prevPlacedQ.q === q);
-      state.prevPlacedQ = { round: state.round, q };
+      state.placedQ = { round: state.round, q, prev: state.placedQ && state.placedQ.round === state.round ? state.placedQ.q : null };
       const a = actionAt(state, q, i);
       log(state, squat ? `${p.name} joined ${state.players[state.slots[key]].name} on ${a.name} (${quadrant(state.quadrants[q]).name}).`
         : `${p.name} took ${a.name} (${quadrant(state.quadrants[q]).name}).`);

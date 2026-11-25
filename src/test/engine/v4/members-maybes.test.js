@@ -23,7 +23,7 @@ describe('Lackey: "Whenever you place a minion on the same color as the minion p
   it('pays once for a same-color placement', () => {
     const s = fixture(['red', 'echo', 'purple', 'silver'], { members: [['echo.lackey']] });
     const p = s.players[0], c = contextFor(s), d = defById('echo.lackey');
-    p.sameColorAsPrev = true;
+    s.placedQ = { round: s.round, q: 1, prev: 1 }; s.lastPlaced = { round: s.round, pid: p.id }; c.placement = { key: '1-0' };
     d.afterAction(c, p);
     expect(p.res.green).toBe(2);
     d.afterAction(c, p);

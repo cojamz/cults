@@ -1014,8 +1014,11 @@ const echoQ = {
     // space, whoever placed the minion before yours this round (core.js marks it as each minion goes down).
     m('lackey', 'Lackey', 2, 1, 'Whenever you place a minion on the same color as the minion placed just before yours, +2 green.', {
       afterAction(ctx, owner) {
-        if (!owner.sameColorAsPrev) return;
-        owner.sameColorAsPrev = false;
+        const pl = ctx.state.placedQ, key = ctx.placement?.key;
+        // only the space this minion went on (a copy or a later step on the same turn pays nothing more)
+        if (!pl || pl.round !== ctx.state.round || pl.prev !== pl.q || !key || Number(key.split('-')[0]) !== pl.q || ctx.state.lastPlaced?.pid !== owner.id) return;
+        if (pl.paid) return;
+        pl.paid = true;
         ctx.gain(owner, 'green', 2); ctx.log(`${owner.name}'s Lackey: same color as the minion before, +2 green.`);
       },
       ...see(info => 2 * endsAhead(info).length),

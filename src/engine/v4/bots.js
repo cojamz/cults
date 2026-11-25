@@ -262,6 +262,9 @@ function givenAway(state, me) {
     const line = raw.replace(/ used the swap card \(paid [^)]*\):/, ' used the swap card:'); // its price (Nov 1 8:25pm)
     const m = line.startsWith(`${p.name} traded `) && line.match(/ traded (.+) for .+'s (.+)\.$/);
     if (m) { given.add(m[1]); continue; }
+    // Old-Clothes Dealers: "P1's Old-Clothes Dealers: swaps X for Y from the discard pile." (market.js)
+    const oc = line.startsWith(`${p.name}'s Old-Clothes Dealers: swaps `) && line.match(/: swaps (.+) for (.+) from the discard pile\.$/);
+    if (oc) { given.add(oc[1]); continue; }
     // Anarchist logs "P1's Anarchist swapped P1's X and P2's Y." (benders.js anarchy): the same body
     const head = [`${p.name} swapped `, `${p.name}'s Meddler swapped `, `${p.name} used the swap card: swapped `].find(h => line.startsWith(h));
     if (!head || !line.endsWith('.')) continue;
