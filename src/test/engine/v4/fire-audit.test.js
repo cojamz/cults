@@ -141,6 +141,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'trading.appraiser', // cut; under 3 holds when Mourners, Connoisseurs and Last Callers (Nov 11) moved the games; cards-trading (Appraiser) covers it
       'market.swapshoppers', 'trading.heiress', // under 3 holds when Nov 11's Blue, Green and White members moved the games; blue-new-members (Old-Clothes Dealers) and cards-trading cover them (Heiresses is cut)
       'market.repeatcustomers', // under 3 holds (2, named in 1) when every member was rebased to worth 1 (Cory, Nov 12) moved the games; blue-new-members and barker cover it
+      'market.trendsetter', 'trading.evictors', // under 3 holds when Green, Blue and White reached 12 members (Nov 24) moved the games; replace14 and spree-uses (Trendsetters) and replace3 / members-maybes (Evictors) cover them
       'thieves.robinhood']); // under 3 holds when Sleepyheads and Hurriers joined Purple and Victors left (Nov 6) moved the games; cards-thieves covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
@@ -224,6 +225,8 @@ const ALLOW = {
   'yellow.puppeteer': 'new Nov 1; recruited in 2 seeded games without its moment (cards-yellow: Puppeteers)',
   'silver.guest': 'Hangers-On pays only when a rival gives its owner something; recruited once after Collector went to 6 (cards-silver: Hangers-On)',
   'red.recruiter': 'pays only when a member leaves a rival’s cult (Poach, a rival swap, a steal); rare in the sample (cards-red: Ferryman)',
+  // the Nov 24-25 new members moved the seeded games: recruited in 1, no rival took a Silver space after
+  'silver.silversmith': 'pays only when a rival takes a Silver space (cards-silver: Silversmith)',
   'red.loyalists': 'only removes its cult from swap options (red-members-hooks / red-members-pressure: Warden)',
   // needs its holder to Promote/Demote a rival's member out of their cult; the 5/6/7 shop (2026-10-21) moved the
   // seeded games where a bot did
