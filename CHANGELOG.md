@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.805 — 2026-11-24
+
+- Spice Merchant gets its own picture: a merchant behind a tray of spices in every color
+
 ## v0.99.804 — 2026-11-24
 
 - Yellow's Pilgrim is now Spice Merchant, so it isn't confused with Pilgrims
