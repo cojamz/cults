@@ -47,7 +47,7 @@ Status: **live** (use it), **older twin** (works, prefer the named one), **legac
 ## Combos and abuse ("crazy combo probers") → skill `combo-probe`
 | Tool | Question | Command | Time | Model | Status |
 |---|---|---|---|---|---|
-| scripts/v4-abuse.mjs | Can a player trying hard break this card: same game with and without a private copy, the abuser tries every option | `DECK=10 node scripts/v4-abuse.mjs <key> --games=12 --rivals=hard --workers=2` → design/eval/abuse/<key>.md | ~10-20 min/card; only flagged cards | code | live |
+| scripts/v4-abuse.mjs | Can a player trying hard break this card: same game with and without a private copy, the abuser tries every option | `DECK=10 node scripts/v4-abuse.mjs <key> --games=12 --rivals=hard --workers=2` → design/eval/abuse/<key>.md | ~10-20 min/card; only flagged cards | code | live; a name now finds the dealt card first (before Nov 25 it could test an old card of the same name: Tax Men, Cutpurse, Dusk Buyer) |
 | balance-run abuse stage | The same hunt across every card, ranked | inside `run.mjs --size=fast` | — | code | live |
 | Hand-built combo scenes (src/test/engine/v4/combos-*.test.js, new-members-combos-nov25.test.js) | Do two named cards chain into a runaway or broken turn, through the real handlers | `npx vitest run src/test/engine/v4/combos-nov11.test.js` | seconds | code (written by the thread) | live: add one per new pair |
 | scripts/members/nov25-hunt.mjs | New members in thousands of seeded games, every engine and color invariant after every move | `node scripts/members/nov25-hunt.mjs 1 500 mixed hard out.jsonl 240` | ~1 h / 1,000 | code | live (copy for the next batch) |
