@@ -29,7 +29,7 @@ Verdict: send
 4. Who feels it: rivals holding silver members feed you; silver players may hold off. White's Fewest members player is hurt by recruiting it.
 5. Not refused: no ledger line on its worth; holders' result -2 ±3 (Normal), -3 ±9 (Hard); bots took it in 73% of games and still came out behind.
 6. Judged: plain (saints watching over the silver trade, a group); stays one trigger, one effect. Feels bigger at game end. Round I: costs 8, not bought.
-7. Public and certain: yes.
+7. Public and certain: printed values only; no draws, randomness or hidden cards.
 8. Color interactions: none: single-color card.
 9. Biggest case: round III, 7 silver members on the table: 2 + 8 = 10 followers. At the cut line; a game with 7 silver members is rare (most show 3 to 5). Flag it as the one to watch.
 Verdict: send
@@ -42,8 +42,8 @@ Verdict: send
 4. Who feels it: thieves pay 1 back each time; White players avoid it.
 5. Not refused: no worth line; holders' result -7 ±6 (Normal), too few owners on Hard; bots owned it in 23% of games.
 6. Judged: a band of thief-catchers, a group name that fits 3. Same one-line effect.
-7. Public and certain: yes.
-8. Color interactions: none.
+7. Public and certain: printed values only; no draws, randomness or hidden cards.
+8. Color interactions: none: a single-color card; the count change touches the member contests by rule only.
 9. Biggest case: round III: 3 followers printed plus at most 3 to 4 steals back; well under 10.
 Verdict: send
 
@@ -55,9 +55,9 @@ Verdict: send
 4. Who feels it: as today; White players lose ground if they recruit it.
 5. Not refused: holders' result -3 ±3 (Normal), +1 ±8 (Hard); recruited in 16% of games it showed.
 6. Judged: a plural name already; a small lift.
-7. Public and certain: yes.
-8. Color interactions: none (guest).
-9. Biggest case: 2 followers printed; well under 10.
+7. Public and certain: every member and its worth is face up; no draws or hidden cards.
+8. Color interactions: none: a guest card in no color; the count change touches the member contests by rule only.
+9. Biggest case: round III, it pays 2 followers printed (1 more than today) whoever ends up holding it after the swap; against a winner's 70 to 110 and a contest's 4/6/10, well under 10.
 Verdict: send
 
 ## Idea: Curfew Ringers
@@ -68,8 +68,8 @@ Verdict: send
 4. Who feels it: rivals fight harder for the last placement; White as above.
 5. Not refused: holders' result -1 ±4 (Normal), -6 ±8 (Hard); class REAL CHOICE.
 6. Judged: plural, reads fine. But it is cheap (6) and fires each round; counting as 2 raises every payout by 1.
-7. Public and certain: yes.
-8. Color interactions: none.
+7. Public and certain: printed values only; no draws, randomness or hidden cards.
+8. Color interactions: none: a single-color card; the count change touches the member contests by rule only.
 9. Biggest case: round III, 5 purple members (itself as 2), last placement in rounds II and III: 6 + 6 + 2 printed = 14 followers from a 6-cost card. Over the line for a 6 cost.
 Verdict: cut (counting as 2 adds +1 every round it fires; the biggest case passes 10 for a cheap card)
 
@@ -81,8 +81,8 @@ Verdict: cut (counting as 2 adds +1 every round it fires; the biggest case passe
 4. Who feels it: nobody new; and it is a White card that now hurts its own color's Fewest members contest.
 5. Not refused: holders' result -1 ±4 / +0 ±8.
 6. Judged: the extra count works against White's own plan of few members. Wrong color for this fix.
-7. Public and certain: yes.
-8. Color interactions: none.
+7. Public and certain: printed values only; no draws, randomness or hidden cards.
+8. Color interactions: none: a single-color card; the count change touches the member contests by rule only.
 9. Biggest case: 2 + 10 = 12 at 5 costly members; already high today.
 Verdict: cut (it is White, and counting as 2 hurts White's own Fewest members plan)
 
@@ -94,8 +94,8 @@ Verdict: cut (it is White, and counting as 2 hurts White's own Fewest members pl
 4. Who feels it: as today.
 5. Not refused: holders' result -10 ±6, the worst of the set.
 6. Judged: a couple counting as 3 members fails the name test (Cory: worth N means counts as N; a pair is 2).
-7. Public and certain: yes.
-8. Color interactions: none.
+7. Public and certain: printed values only; no draws, randomness or hidden cards.
+8. Color interactions: none: a single-color card; the count change touches the member contests by rule only.
 9. Biggest case: 3 printed; small.
 Verdict: cut (a pair cannot count as 3; its fix is a price or effect change, already in the review's rework list)
 
@@ -107,8 +107,8 @@ Verdict: cut (a pair cannot count as 3; its fix is a price or effect change, alr
 4. Who feels it: nobody new.
 5. Not refused: Robbers +1 ±2 and bought in 97% of games; Peddlers +2 ±4; Pawnbrokers +1 ±7; Pilgrims -1 ±5 but pays 5.3.
 6. Judged: not weak; lifting them makes strong cards stronger.
-7. Public and certain: yes.
-8. Color interactions: none.
+7. Public and certain: printed values only; no draws, randomness or hidden cards.
+8. Color interactions: none: a single-color card; the count change touches the member contests by rule only.
 9. Biggest case: Robbers worth 2 would add a follower to the most-bought guest.
 Verdict: cut (not weak in the tests; Cory said "where relevant")
 
