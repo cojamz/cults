@@ -34,7 +34,7 @@ Status: **live** (use it), **older twin** (works, prefer the named one), **legac
 | Tool | Question | Command | Time | Model | Status |
 |---|---|---|---|---|---|
 | scripts/v4-fair-price.mjs screen | Every member at once: does its price match its strength (prices jittered ±40%, demand curve and value fit, outlier list) | `node scripts/v4-fair-price.mjs screen --games=3000 --jitter=0.4 --out=` | ~1 h | code | live |
-| scripts/v4-fair-price.mjs sweep | A few cards: the price where owning it stops helping (same seed with and without, price at printed −6…+4) | `node scripts/v4-fair-price.mjs sweep <keys> --level=hard --deltas=-4,-2,0,2,4 --games=200` | ~2 h for 8 cards at Hard | code | live |
+| scripts/v4-fair-price.mjs sweep | A few cards: the price where owning it stops helping (same seed with and without, price at printed −6…+4) | `node scripts/v4-fair-price.mjs sweep <keys> --level=hard --deltas=0,2,4 --games=200` (keys, not names) | Hard ~20-30 s a game: time 2 games first, then scale; long sweeps to the queue | code | live |
 | scripts/v4-balance.mjs PRICE= | Whole-game effect of a new price (moves the card's round deck as the game would) | `PRICE="key=4/2" DECK=10 LEVEL=hard node scripts/v4-balance.mjs …` | per batch | code | live |
 | scripts/v4-member-value.mjs | Followers one member is worth when handed to a seat at round II | `node scripts/v4-member-value.mjs 160 <keys> --level=hard` | ~30 min/card | code | live |
 | scripts/econ/play.mjs, sweep.mjs, compare.mjs, report.mjs, mixes.mjs, pair-n12.mjs, sheets.mjs, table-rows.mjs, plus1-summary.mjs | Economy dials (ECON, MEMBER_UP, MEMBER_COLOR): how the game feels with richer/poorer prices, on the same deals | `DECK=10 node scripts/econ/sweep.mjs --games=60`, then `node scripts/econ/compare.mjs <dir> base <mix>` | ~1-2 h | code | live |
@@ -43,7 +43,7 @@ Status: **live** (use it), **older twin** (works, prefer the named one), **legac
 ## Combos and abuse ("crazy combo probers") → skill `combo-probe`
 | Tool | Question | Command | Time | Model | Status |
 |---|---|---|---|---|---|
-| scripts/v4-abuse.mjs | Can a player trying hard break this card: same game with and without a private copy, the abuser tries every option | `DECK=10 node scripts/v4-abuse.mjs <card> --games=12 --rivals=hard` → design/eval/abuse/<key>.md | ~10-20 min/card | code | live |
+| scripts/v4-abuse.mjs | Can a player trying hard break this card: same game with and without a private copy, the abuser tries every option | `DECK=10 node scripts/v4-abuse.mjs <key> --games=12 --rivals=hard --workers=2` → design/eval/abuse/<key>.md | ~10-20 min/card; only flagged cards | code | live |
 | balance-run abuse stage | The same hunt across every card, ranked | inside `run.mjs --size=fast` | — | code | live |
 | Hand-built combo scenes (src/test/engine/v4/combos-*.test.js, new-members-combos-nov25.test.js) | Do two named cards chain into a runaway or broken turn, through the real handlers | `npx vitest run src/test/engine/v4/combos-nov11.test.js` | seconds | code (written by the thread) | live: add one per new pair |
 | scripts/members/nov25-hunt.mjs | New members in thousands of seeded games, every engine and color invariant after every move | `node scripts/members/nov25-hunt.mjs 1 500 mixed hard out.jsonl 240` | ~1 h / 1,000 | code | live (copy for the next batch) |
@@ -81,7 +81,7 @@ Status: **live** (use it), **older twin** (works, prefer the named one), **legac
 | scripts/ideas/ (pool-report, judges, feel-logs, tiers, page, keep-working.sh) + scripts/lib/pool-rotate.mjs | The idea pipeline: many candidate cards rotated into bot games, judged against the live cards' bar, tiered for Cory | see scripts/ideas/README.md | hours per pool | code + Sonnet judges | live |
 | scripts/v4-expert.mjs | AI players play a real game; transcript and per-card feel ratings | `DECK=10 node scripts/v4-expert.mjs new <dir> --colors a,b,c,d` then one agent per seat | ~2 h a game | Sonnet (Opus only if Cory asks) | live |
 | scripts/players/ (play, run-matrix, facts, merge-findings, moves-text, page, watch-data) | Player agents: experienced and new AI players, one model call per decision, feel notes, a watch page | `node scripts/players/run-matrix.mjs <games dir> <out> --parallel 4` | hours | Opus 5.5 (Cory, Nov 12) | live |
-| scripts/v4-critique.mjs | A saved game written out decision by decision for one seat, to critique play | `node scripts/v4-critique.mjs <save> <seat>` | seconds | code | live |
+| scripts/v4-critique.mjs | A saved game written out decision by decision for one seat, to critique play | `node scripts/v4-critique.mjs <save.txt\|record.json> --seat <n> --out sheet.md` (or `botgame <out.txt> --seed N` for a sample) | seconds | code | live |
 | scripts/econ/ (feel goals A-G) | How economy dials feel | see Prices | — | code | live |
 | .claude/skills/eval-quadrant | Paper evaluator for whole quadrants (Oct 9) | — | — | — | legacy (quadrant era) |
 
@@ -122,6 +122,8 @@ Status: **live** (use it), **older twin** (works, prefer the named one), **legac
 | scripts/status.mjs, scripts/desk/ | Thread board and work desk | `node scripts/status.mjs set …` |
 | scripts/lib/ (slots, procs, unit-cache, vitest-slot, deck-choice, box-id) | Shared plumbing for the above | — |
 | .claude/skills/test-apparatus/scripts/log-run.mjs | Append a run to runs.md | see SKILL.md |
+| .claude/skills/test-apparatus/scripts/card-key.mjs | A card's key, id, price and live/retired/pool status by name (names collide) | `node …/card-key.mjs "Tax Men"` |
+| .claude/skills/plan-test-round/scripts/plan.mjs (+ dump-cards.mjs) | What changed between two commits, by kind and color, run-log hits, suggested depth | `node …/plan.mjs --since=<sha>` |
 | .claude/skills/test-apparatus/scripts/drift.mjs | What the catalogue doesn't name yet | `node .claude/skills/test-apparatus/scripts/drift.mjs` |
 
 ## Not testing tools (named so drift stays quiet)

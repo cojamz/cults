@@ -17,4 +17,10 @@ description: Measure and look at the Cults screen the way a player feels it: fre
 8. Browser gates (e2e/v4/) run inside check:v4; a changed look runs its own gate.
 9. **Log the run** (`node .claude/skills/test-apparatus/scripts/log-run.mjs …`); perf reports in design/eval/perf/.
 
+## Pitfalls we hit
+- A day of click-speed work while Cory meant freezes and slow pace (Oct 28): run the freeze probe and watch a clip before tuning anything.
+- The rig's own frame loop hid a fix to how often the game draws (Oct 28): use `--no-frame-loop` for frame, timer or idle changes.
+- Firefox stalled 200-330 ms six to nine times per 35 s on the compositor, which Chrome profiles never showed (Nov 8): every motion or perf change runs in Firefox too.
+- Judges looking at a few still frames missed a copy turn's broken story card (Nov 6): film the whole turn (picky/film.mjs, e2e/v4/cardframes.mjs).
+
 Bars and details: .claude/rules/harness.md "Checks" (100 ms clicks and hovers, 33 ms frames, wheel lands in 400 ms, motion 150-350 ms per beat). Taste: design/taste.md.

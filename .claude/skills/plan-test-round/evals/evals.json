@@ -1,0 +1,5 @@
+[
+  {"prompt": "Cory: let's run balance evaluations and then price testing on the game now with the new members. bring the full weight of our testing apparatus to bear on the latest version", "expect": ["runs plan.mjs with --since the last balance report's build", "depth Full", "rows with question, control, one change, model per run", "skipped list with reasons (skill ladder, As printed, 15 deck)", "order: gates, words, scenes, bot runs one at a time, judges on flagged", "plan written to /mnt/project-files/<round>/plan.md"]},
+  {"prompt": "Cory: I reworded Swindler and Night Thieves, test it", "expect": ["plan.mjs shows text changes; checks the code diff to see wording only", "depth Light: quick gate and review-text, no bot runs"]},
+  {"prompt": "Cory: Doorbusters should cost 6+5 now, test it", "expect": ["depth Numbers", "Hard sweep on market.doorbusters with deltas around the new price", "whole-game confirm only if the sweep says move", "no balance run, no judges"]}
+]
