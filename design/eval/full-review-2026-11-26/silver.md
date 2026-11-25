@@ -1,0 +1,23 @@
+## Silver
+Contest: Fewest silver — counts the silver you hold when the round ends — it played badly: in round III four players tied at 0 silver and each got +5 in one game, and three tied at 0 in another ("a +10 contest that everyone zeroes out is pointless"); it also pulls against the silver spaces, which hand rivals silver or want you to hold it.
+**Works and is interesting**
+- **Flaunt** (round II space) "+1 of each other color per 3 silver you hold, up to 3 each. +1 silver." — with the normal bots its owner won 11 more games in every 100 (flagged strong), with the strongest bots 5 more but with a wide margin; players left it unused in one round III, so it is a sure pick for a bot but not always for a person.
+- **Throw Coins** (round III space) "Give rivals 10 silver from the bank, split as you choose. +7 followers." — with the strongest bots won 9 more in every 100 (normal bots: no difference), and 3 AI players called it exciting or a huge swing.
+- **Hand Out Gifts** (round I space) "Give rivals up to 3 silver from the bank. +2 followers per silver given." — slightly positive with both bot levels (2 and 1 more wins in every 100) and an AI player called it exciting.
+**Maybe**
+- **Melt Down** (round I space) "+3 silver. Turn all your silver into one other color. Each rival +1 silver." — normal bots lost 2 more games in every 100, strongest bots won 2 more; one AI player called it almost too efficient, so the tests disagree.
+- **Hire Away** (round II space) "Recruit a rival's member, paying them its cost in silver. +1 silver." — normal bots won 3 more in every 100, strongest bots lost 3 more; an AI player left it unused and the paper judges say nothing; too few games to tell.
+- **Beggar** (2 silver + 3 any) "Whenever a rival gives you silver, +1 follower." — small win in both bot levels (3 and 4 more wins in every 100), but the AI players call it clear but tiny, 0 to 5 followers a game, and one called it dead.
+- **Almsgiver** (3 silver + 4 any) "Whenever you gift silver, +2 silver." — bots rarely bought it and no test showed anything either way.
+- **Silver Tongues** (6 silver + 6 any) "Your silver pays for any color." — normal bots lost 4 more in every 100 with a wide margin and bought it in 18% of games; too few strongest-bot games to say.
+- **Good Samaritans** (3 silver + 3 any) "Round End: give rivals up to 3 of your silver, split as you choose. +1 follower per silver given." — normal bots no difference, strongest bots lost 4 more in every 100 with a wide margin; bought often but never clearly good or bad.
+- **Paupers** (3 silver + 3 any) "Round End: if you hold no silver, +3 followers." — normal bots +1, strongest bots lost 4 more; one AI player won with it (9 followers total) while it was weak for another who was gifted silver, so tests disagree.
+- **Camp Followers** (3 silver + 4 any) "Whenever any player buys followers with silver, +1 follower." — no difference in games; one AI player called it dead.
+- **Pawnbrokers** (5 silver + 4 any) "On Use, once per round: swap up to 5 of your silver for rivals' resources, one for one." — no difference, bought in only 20% of games, too few strongest-bot games.
+- **Indulgence Seller** (4 silver + 4 any) "On Recruit: turn in up to 4 silver for 2 followers each." — no difference in either bot level; no test showed it felt either way.
+- **Purse-Switchers** (3 silver + 4 any) "On Recruit: swap all your silver with a rival's." — normal bots won 2 more in every 100 within chance, too few strongest-bot games; no test showed anything either way.
+**Cut, replace or rework**
+- **Raise a Glass** (round I space) "+4 silver. Each rival +2 silver. +1 silver." — no difference in either bot level, 3 AI players found it confusing ("I can't tell if it helps them or me"), and the silver it hands out works against the Fewest silver contest. Fix: rework the effect.
+- **Bride and Groom** (5 silver + 6 any) "On Use, once per game: double your silver. Each rival +2 silver." — normal bots lost 10 more games in every 100 than players with as many members, and bought it only 21% of the time; the one-shot doubling also feeds every rival. Fix: +1 follower printed (worth 3 and counts as 3, no other change).
+- **Patron Saints** (4 silver + 4 any) "Game End: +1 follower per silver member, anyone's." — bots buy it a lot (73% and 56% of the time) yet lost 2 and 3 more games in every 100 than players with as many members; a trap. Fix: +1 follower printed (worth 2).
+- **Wastrels** (3 silver + 3 any) "Whenever you recruit a silver member, you may also buy followers." — lost in both bot levels (3 and 2 more in every 100) and the paper judges scored it under the bar. Fix: rework the effect.
