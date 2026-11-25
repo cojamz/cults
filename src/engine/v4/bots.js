@@ -791,6 +791,11 @@ const TIE_HALF = globalThis.process?.env?.TIEHALF === '1';
 // bots value White's contest too highly.
 const WHITE_BLIND = globalThis.process?.env?.WHITEBLIND === undefined ? -1 : Number(globalThis.process.env.WHITEBLIND);
 let DECIDER = -1;
+// PUNISH bot test (Nov 25, the coordinator after Cory: real players punish a cult sitting at 0 members): with White on
+// the table, the deciding bot also counts the rival with the fewest members (fewer than its own) against itself, at
+// weight PUNISH, so gifts of members, contest races and steals aimed at that rival score higher.
+const PUNISH_W = Number(globalThis.process?.env?.PUNISH || 0);
+let PUNISH_TARGET = -1;
 let MINION_FIX = globalThis.process?.env?.BOTMINION !== '0';
 export const setMinionFix = on => { MINION_FIX = !!on; };
 const NORMAL_LEAD = globalThis.process?.env?.BOTLEAD !== '0'; // on for Normal and Easy since Nov 12
@@ -849,7 +854,7 @@ const marginOf = (vals, me, spite = SPITE) => {
   const best = Math.max(...vals.filter((_, i) => i !== me));
   let k = spite;
   if (LEADSPITE && vals[me] < best) { const gap = best - vals[me]; k = spite * (gap <= 10 ? 1.75 : gap <= 25 ? 1.25 : 0.6); }
-  return vals[me] - k * best;
+  return vals[me] - k * best - (PUNISH_TARGET >= 0 && PUNISH_TARGET !== me ? PUNISH_W * vals[PUNISH_TARGET] : 0);
 };
 
 // Resolve follow-up choices a hypothetical move queued (Hand-pick, Open Door ties, Kickback's gift…) by their hints.
@@ -1213,6 +1218,13 @@ export function chooseNormalMove(state, rand = Math.random, opts = {}) {
   const pend = state.pending;
   if (!pend) return null;
   DECIDER = pend.player;
+  PUNISH_TARGET = -1;
+  if (PUNISH_W > 0 && state.quadrants?.includes('trading')) {
+    const n = state.players.map(o => memberCount(state, o));
+    let t = -1;
+    for (let i = 0; i < n.length; i++) if (i !== pend.player && (t < 0 || n[i] < n[t])) t = i;
+    if (t >= 0 && n[t] < n[pend.player]) PUNISH_TARGET = t;
+  }
   const move = o => ({ player: pend.player, option: o.id });
   switch (pend.kind) {
     case 'setup': return setupPick(pend, rand);

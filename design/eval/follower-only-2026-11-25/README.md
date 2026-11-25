@@ -26,3 +26,12 @@ White dealt in every game (MUST=trading), Normal, 4 seats, seeds 1-500, DECK=10,
 - WHITEBLIND=0: seat 0 ignores White's contest when deciding; same seeds, 400 games without the follower-only seat. Seat 0 wins 121 (30%) today vs 108 (27%) blind; members 5.2 -> 6.5; lead over best rival -2.2 +- 1.8 followers. So shrinking with White out is right, not a bot over-valuation.
 - Normal seats hold 5.9 members with White dealt vs 8.7 without (bisect pooled).
 - Agent primer (design/notes/expert-primer.md) says nothing pushing fewest members; its line "Grey members are not a color" is stale against Yellow's live contest "(grey is a color)".
+
+## Bots that push back (Nov 25, 7:35am; coordinator after Cory: real opponents punish a cult at 0 members)
+PUNISH=w (bots.js, off by default): with White dealt, the deciding Normal bot also subtracts w x the value of the rival with the fewest members (fewer than its own). Same seeds 1-500, MUST=trading, 100 follower-only games each:
+| arm | follower-only wins | its followers | winner's followers | it got a member in |
+|---|---|---|---|---|
+| today | 48% | 81.4 | 87.4 | 59 games |
+| PUNISH=0.6 | 32% | 75.0 | 86.3 | 50 |
+| PUNISH=1.2 | 29% | 73.8 | 85.5 | 49 |
+White contest share barely moves (86% -> 82%): the pushback works by racing the other contests and steals, not by handing it members. 29/100 is inside chance of a fair 25%. No rule question to Cory. Next if wanted: the same principle in Hard, and whether PUNISH should be on for in-game bots (it changes the opponents players face).
