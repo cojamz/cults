@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.809 — 2026-11-25
+
+- Wet Nurse no longer pays +3 when you recruit it, or another member, from the discard pile
+
 ## v0.99.808 — 2026-11-25
 
 - Five members renamed with new pictures: Firstborn (was Forestallers), Market Sweeper (was Restockers), Penny-Pincher (was Regular), Laggard (was Last Callers), Alchemists (was Book Cookers)
