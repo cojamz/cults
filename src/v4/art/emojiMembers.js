@@ -82,9 +82,9 @@ const M = {
   hawker: ['🍎', '🔁 Offer a shop member: rivals may buy it for its cost +2 to you; if none does, it’s yours free'],
   'rag-and-bone-man': ['🗑️', '♾️ Members go to the discard pile: +1 blue'],
   critic: ['🧐', '♾️ A rival recruits a blue member: +1 follower'],
-  'penny-pincher': ['🪙', '♾️ You buy followers: +1 blue'],
+  'penny-pincher': ['🤏', '♾️ You buy followers: +1 blue'],
   tagalongs: ['🧑‍🤝‍🧑', '✨ Recruit again this turn'],
-  'market-sweeper': ['🧹', '☝️ Send the whole shop to the discard pile, then refill'],
+  'market-sweeper': ['💨', '☝️ Send the whole shop to the discard pile, then refill'],
   trendsetters: ['💅', '♾️ You recruit: send 1 shop member to the discard pile'],
   'window-dressers': ['🪟', '✨ Send 3 shop members to the discard pile'],
   culler: ['🧹', '✨🌅 Send 2 shop members to the discard pile, +1 of each one’s color'],
@@ -198,7 +198,7 @@ const M = {
   'guild-master': ['🫂', '♾️ You recruit a member of a color you already have: +1 follower'], // Nov 11: Red
   bannermen: ['🚩', '🌙 Your members have 2 or fewer colors: +3 followers'],
   dyer: ['🖌️', '♾️ Your greys count as your biggest color'], // Nov 12: Red
-  laggard: ['🐌', '🔁 Take the Goes Last token'], // Nov 11: Purple
+  laggard: ['🦥', '🔁 Take the Goes Last token'], // Nov 11: Purple
   usher: ['🪑', '🌅 Choose your place in the turn order'], // Nov 12: Purple
   mourners: ['🥀', '♾️ One of your members leaves your cult: +2 white'], // Nov 11: White
   connoisseurs: ['🍷', '🏁 +2 followers per member you have costing 8 or more'],
