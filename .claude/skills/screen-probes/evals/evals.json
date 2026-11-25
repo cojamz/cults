@@ -1,0 +1,4 @@
+[
+  {"prompt": "Cory: the page feels laggy after the last ship", "expect": ["freeze probe on the live build in Chrome 4x and Firefox", "compares with the build before", "before/after clip, not click p95 alone"]},
+  {"prompt": "hover on Spice Merchant says its effect twice", "expect": ["picky bot or a frozen-build screenshot to confirm", "fix and a gate or check that catches it next time"]}
+]

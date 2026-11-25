@@ -1,0 +1,5 @@
+[
+  {"prompt": "Cory: Tax Men feels too cheap. Test it.", "expect": ["writes the question and expected direction first", "greps runs.md for Tax Men", "runs a Hard paired sweep on Tax Men (screen optional for one card)", "reports a price in a table with full card text and a played number", "logs the run"]},
+  {"prompt": "price test all the new members", "expect": ["runs the screen first on every card", "sweeps only the outliers plus any Cory named, at Hard", "ends with a price list by color", "no Fable tokens on the runs"]},
+  {"prompt": "what if every member cost 1 more?", "expect": ["uses scripts/econ (economy dial), not fair-price", "same deals against today's prices", "leads with how the game feels at the table"]}
+]
