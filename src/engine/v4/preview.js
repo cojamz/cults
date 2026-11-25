@@ -61,6 +61,10 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
     base.players[pid].left -= 1;
     base.lastPlaced = { round: base.round, pid }; // as the engine's placement does: Purple's "Went last" (Racket's preview counted it as a rival's, Nov 4)
     base.current = pid;
+    // a preview off your turn is a turn of yours to come: it goes on the turn record as the engine's turn task does, so
+    // Keep Going counts only turns already taken. Without it, a rival's turn now read as your own just before (Cory,
+    // Nov 24: "it like counts the later turns you'll have, but you might not have them")
+    if (state.current !== pid) base.turns = [...(base.turns || []), pid];
     // the pile is face down: the cards past what pid may look at (Insider, Peek) run as a blank stand-in, so a recruit
     // from the top (Walk-In, a copy of it) never shows the real card's worth, name or On Recruit (picky bot, Nov 4)
     for (const u of base.pile.slice(pileReach(state, state.players[pid]))) base.cards[u] = { uid: u, def: FACE_DOWN };
