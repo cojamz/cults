@@ -26,6 +26,7 @@ Three tools, from cheap and certain to expensive and broad. A combo found here i
 ## Pitfalls we hit
 - A copy turn's story card repeated lines and showed payouts with no cause; still-frame judges missed it and Cory caught it in minutes (Nov 6). Read the log lines in your scene, not just the totals.
 - Echo copying Last Call was reported as "double followers" from an AI player's quote; it was wrong (Oct 29). Every interaction claim gets a scene.
+- Before Nov 25 a name could match an old card of the same name in another file (Tax Men, Cutpurse, Dusk Buyer); the script now takes the dealt card first. Check the quoted text at the top of each result against the live card.
 - Running v4-abuse on every new card by hand burns hours of CPU the balance run's abuse stage already spends.
 
 ## Past runs

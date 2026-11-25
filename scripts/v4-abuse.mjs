@@ -25,7 +25,9 @@ import { deckRules } from './lib/deck-choice.mjs';
 const args = Object.fromEntries(process.argv.slice(3).map(a => a.replace(/^--/, '').split('=')));
 const SEATS = 4;
 const allDefs = () => [...allQuadrantIds().flatMap(q => quadrant(q).members), ...guestMembers()];
-const findDef = name => allDefs().find(d => [d.key, d.name, d.id].some(x => String(x).toLowerCase() === name.toLowerCase()));
+// the dealt card first (2.0 colors, not cut): several names have old variants in other files (Tax Men, Cutpurse, Dusk Buyer; found Nov 25)
+const { findCard } = await import('./quality/board.mjs');
+const findDef = name => findCard(name)?.def || allDefs().find(d => [d.key, d.name, d.id].some(x => String(x).toLowerCase() === name.toLowerCase()));
 const mean = a => a.reduce((x, y) => x + y, 0) / (a.length || 1);
 const sd = a => { const m = mean(a); return Math.sqrt(mean(a.map(x => (x - m) ** 2)) * a.length / Math.max(1, a.length - 1)); };
 const margin = (s, me) => followers(s, s.players[me]) - Math.max(...s.players.filter(p => p.id !== me).map(p => followers(s, p)));
