@@ -50,9 +50,9 @@ export const LEAD_UP = [-16, -18];
 /** Where the three minions wait around the leader (centres; a minion is 16×16), as CultSeat's LeaderRing does. */
 export const RING = [[-27, 2], [0, -27], [27, 2]];
 export const ringTL = i => [RING[i][0] - 8, RING[i][1] - 8];
-/** The wheel in beat 3 (centre, radius) and its round-I spaces: quadrant mids blue 270°, green 0°, gold 90°, red 180°. */
+/** The wheel in beat 3 (centre, radius) and its round-I spaces: quadrant mids blue 270°, green 0°, yellow 90°, red 180°. */
 export const WHEEL = { cx: -90, cy: 10, r: 40 };
-export const QUAD = { blue: 270, green: 0, gold: 90, red: 180 };
+export const QUAD = { blue: 270, green: 0, yellow: 90, red: 180 }; // Gold is gone (Cory, Nov 24: "delete all the gold shit")
 /** Centre of a round-I space: quadrant q, k = -1 / 0 / +1 (27.5° steps). */
 export const space = (q, k = 0) => {
   const a = (QUAD[q] + 27.5 * k) * Math.PI / 180, rr = WHEEL.r * 0.748;
@@ -77,15 +77,15 @@ export const INIT_RING = [44, 33];
 export const SWIRL = [-34, -16];
 
 // ---------- the cast's members (sprite ids; a member keeps its own sphere colors) ----------
-const SPHERE = { gold: 'gold', red: 'red', blue: 'blue', green: 'green', silver: 'silver', thieves: 'magenta', yellow: 'yellow', purple: 'purple' };
+const SPHERE = { red: 'red', blue: 'blue', green: 'green', silver: 'silver', thieves: 'magenta', yellow: 'yellow', purple: 'purple' };
 export const sphereOf = id => SPHERE[String(id).split('.')[0]] || 'colorless';
 /** Yours, in the order they join: the first through the full initiation (beat 3), two in round II, three in round III. */
-export const YOU_MEMBERS = ['gold.prospector', 'red.proselytizer', 'silver.toastmaster', 'thieves.robinhood', 'yellow.farmer', 'purple.lamplighter'];
+export const YOU_MEMBERS = ['yellow.tinker', 'red.proselytizer', 'silver.toastmaster', 'thieves.robinhood', 'yellow.farmer', 'purple.lamplighter'];
 /** The rivals in beat 4: members (in join order), followers, and how many of each they hold after rounds I and II. */
 export const RIVALS = {
   a: { members: ['silver.caterer', 'yellow.pilgrim', 'red.intern', 'thieves.mole'], followers: 6, m: [1, 3, 4], f: [3, 5, 6] },
-  b: { members: ['purple.foreman', 'gold.merchant', 'red.host', 'silver.dowager', 'yellow.sower'], followers: 7, m: [2, 3, 5], f: [3, 5, 7] },
-  c: { members: ['thieves.sticky', 'gold.underdog', 'yellow.gleaner'], followers: 5, m: [1, 2, 3], f: [2, 4, 5] },
+  b: { members: ['purple.foreman', 'market.bargainbin', 'red.host', 'silver.dowager', 'yellow.sower'], followers: 7, m: [2, 3, 5], f: [3, 5, 7] },
+  c: { members: ['thieves.sticky', 'echo.regulars', 'yellow.gleaner'], followers: 5, m: [1, 2, 3], f: [2, 4, 5] },
 };
 /** Yours after rounds I, II, III: members and followers (the leader is one more follower). */
 export const YOU_COUNTS = { m: [1, 3, 6], f: [6, 8, 10] };

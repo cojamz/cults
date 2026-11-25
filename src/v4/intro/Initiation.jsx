@@ -1,4 +1,4 @@
-// The initiation (beat 3's recruit): the member card (back: the cult mark) rises at CARD and flips; two gold glyphs
+// The initiation (beat 3's recruit): the member card (back: the cult mark) rises at CARD and flips; two yellow glyphs
 // arc from the pile into its cost; the leader beckons; the member steps off the card into a small ring of arcane
 // light at INIT_RING; it bows to the leader; the cult's mark (your emoji) blooms above its head; it walks to its slot
 // in the crowd once the mark has sunk into it, and "+1 [follower]" rises. One thing at a time, slow and eased.
@@ -38,13 +38,13 @@ const CardBack = ({ emoji }) => (
     <span style={{ ...box, left: W / 2 - 4, top: H / 2 - 5, transform: 'scale(2)', transformOrigin: '50% 50%' }}><Emblem emoji={emoji} /></span>
   </span>
 );
-// the face: gold band, a warm art panel the member stands on, two cost slots the glyphs drop into
+// the face: yellow band, a warm art panel the member stands on, two cost slots the glyphs drop into
 const SLOT = [[3, 25], [14, 25]]; // 9 × 9 slot top-lefts on the card
 const CardFace = () => (
   <span style={{ ...box, position: 'relative', width: W, height: H, borderRadius: 2.5, overflow: 'hidden',
     background: 'linear-gradient(180deg, #f4ebd7, #eadfc4)',
     boxShadow: 'inset 0 1px 0 rgba(255,255,255,.5), 0 0 0 .5px rgba(80,60,30,.45), 0 3px 6px -2px rgba(0,0,0,.7)' }}>
-    <span style={{ ...box, left: 0, right: 0, top: 0, height: 2, background: '#c99327' }} />
+    <span style={{ ...box, left: 0, right: 0, top: 0, height: 2, background: '#cdb82c' }} />
     <span style={{ ...box, left: 1.5, top: 3.5, width: W - 3, height: 20, borderRadius: 1.5,
       background: 'radial-gradient(circle at 50% 72%, #ecd6a2, #e6d8b6 72%)', boxShadow: 'inset 0 0 0 .5px rgba(42,31,23,.2)' }} />
     {SLOT.map(([x, y], i) => <span key={i} style={{ ...box, left: x, top: y, width: 9, height: 9, borderRadius: '50%', boxShadow: 'inset 0 0 0 .6px rgba(42,31,23,.45)' }} />)}
@@ -61,7 +61,7 @@ const PlusOne = () => (
 
 /**
  * <Initiation at={3100} member={YOU_MEMBERS[0]} slot={0} pile={[4, 5]} />: at = the beat-3 ms it starts; slot = the
- * MSLOT it ends in; pile = the two PILE slots it pays from (gold, the third landing's).
+ * MSLOT it ends in; pile = the two PILE slots it pays from (yellow, the third landing's).
  */
 export default function Initiation({ at = 3100, member = YOU_MEMBERS[0], slot = 0, pile = [4, 5] }) {
   const { you } = useCast();
@@ -82,13 +82,13 @@ export default function Initiation({ at = 3100, member = YOU_MEMBERS[0], slot = 
       <Act track={[{ x: cx, y: cy, sx: 0 }, [flipIn, 180, { sx: 1 }, 'out'], cardGone]} origin="50% 50%">
         <CardFace />
       </Act>
-      {/* the price: two gold glyphs arc from the pile into the card's slots */}
+      {/* the price: two yellow glyphs arc from the pile into the card's slots */}
       {pile.map((p, i) => {
         const [px, py] = PILE(p);
         const go = t('pay') + 100 * i;
         return (
           <Act key={p} track={[{ x: px - 4.5, y: py - 4.5, o: 0 }, [go, 1, { o: 1 }, 'lin'], [go, 600, { x: cx + SLOT[i][0], y: cy + SLOT[i][1] }, 'io', 12], cardGone]}>
-            <Res r="gold" />
+            <Res r="yellow" />
           </Act>
         );
       })}

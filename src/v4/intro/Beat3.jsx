@@ -2,12 +2,12 @@
 // more powerful." It opens where beat 2 rests (leader, minions on their ring, three followers, the violet glow) and
 // tells it one thing at a time (design/prototypes/intro2/storyboard.md, beat 3; Cory: a first-timer must see
 // "minion on a space → that space's resources come to me"):
-//   actions   the camera comes to the wheel; ONE minion floats from the leader onto ONE space (Kickback, gold); the
-//             space lights and says what it gives, big: "+3 [gold]"; exactly those three glyphs lift off the space,
+//   actions   the camera comes to the wheel; ONE minion floats from the leader onto ONE space (Harvest, yellow); the
+//             space lights and says what it gives, big: "+3 [yellow]"; exactly those three glyphs lift off the space,
 //             one after another, into the cult's pile, which counts up. A second minion does it again, faster, on a
 //             green space (Build Up in round II, +3 green), so the pattern is learned;
 //   recruit   the wheel dims, the camera pulls back to the cult, and <Initiation/> plays (card, beckon, bow, mark,
-//             slot), paid with two of the gold; the followers step back a row to make room for the new member;
+//             slot), paid with two of the yellow; the followers step back a row to make room for the new member;
 //   followers the four other glyphs rise into a small arcane glow, circle once and dissolve; three followers appear
 //             there and hop into the crowd: "+3";
 //   power     a warm aura blooms behind the leader as it rises two units (LEAD → LEAD_UP).
@@ -41,7 +41,7 @@ export const stillShot = { ...CAM.wheelAndCult };
 // ---------- the actions: which minion, which space, what it pays, and when ----------
 // a minion floats (f ms), lands; the space lights; the plaque pops; the glyphs lift off one by one (gap apart)
 const ACTS = [
-  { m: 0, q: 'gold', k: 0, r: 'gold', n: 3, name: 'Grease a Palm', at: A1, float: 900, arc: 14, gap: 230, pop: 150, fly: 520, pile: [0, 1, 2] },
+  { m: 0, q: 'yellow', k: 0, r: 'yellow', n: 3, name: 'Harvest', at: A1, float: 900, arc: 14, gap: 230, pop: 150, fly: 520, pile: [0, 1, 2] },
   { m: 2, q: 'green', k: 1, r: 'green', n: 3, name: 'Flock Together', at: A2, float: 450, arc: 10, gap: 100, pop: 80, fly: 400, pile: [3, 4, 5] },
 ].map(a => {
   const land = a.at + a.float;
@@ -51,9 +51,9 @@ const ACTS = [
   return { ...a, land, plaque, lift, lands, done: lands[2] + (a.m ? 0 : 70) };
 });
 const rnd = ([x, y]) => [Math.round(x), Math.round(y)];
-const INK = { green: '#3d8c66', blue: '#4f7ea8', gold: '#c99327', red: '#b4533e' };
-const PAID = [0, 1]; // the PILE slots the initiation pays from (two gold)
-const SPENT = [2, 3, 4, 5]; // what's left: one gold and three green buy the followers
+const INK = { green: '#3d8c66', blue: '#4f7ea8', yellow: '#cdb82c', red: '#b4533e' };
+const PAID = [0, 1]; // the PILE slots the initiation pays from (two yellow)
+const SPENT = [2, 3, 4, 5]; // what's left: one yellow and three green buy the followers
 
 // ---------- the wheel: a small printed paper disc (the game's look), drawn in world units ----------
 const R = { rim0: 36.6, rim1: 40, i0: 22.6, ii0: 13.4, hub: 6.5 };
@@ -206,7 +206,7 @@ export default function Beat3() {
         <LeadFrames emoji={you} seq={SEQ} stillAs="idle" />
       </Act>
 
-      {/* recruit: the full ceremony (it takes two gold from the pile; drawn after the leader, before the followers) */}
+      {/* recruit: the full ceremony (it takes two yellow from the pile; drawn after the leader, before the followers) */}
       <Initiation at={INIT} member={YOU_MEMBERS[0]} slot={0} pile={PAID} />
 
       {/* the followers from beat 2, stepping back a row for the member */}

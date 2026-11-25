@@ -71,7 +71,7 @@ export function Home({ onLocal, onHost, onJoin, onlineReady, saved, onResume, la
     <div className="app home">
       <div className="hero">
         <svg className="mark" viewBox="0 0 100 100" aria-hidden="true">
-          {['gold', 'red', 'blue', 'green'].map((c, q) => (
+          {['yellow', 'red', 'blue', 'green'].map((c, q) => (
             <path key={c} d={wedge(q)} fill={`var(--${c})`} fillOpacity=".8" />
           ))}
           <circle cx="50" cy="50" r="14" fill="var(--table)" />
