@@ -436,3 +436,96 @@ Verdict: send
 8. Color interactions: none.
 9. Biggest case: round III: about 5 green.
 Verdict: cut (nobody feels it)
+
+# Batch 3: filling every color toward 5 (coordinator relayed: about 5 per color, Green included)
+
+## Idea: Latecomer
+
+1. Printed text: "Whenever you place a minion after every rival is out of minions, +2 followers." Purple, 3 purple + 4 any (Claude's fill-in). Compared with Bide Your Time: "+1 purple. +1 follower and +1 purple per minion you have left to place. Take the Goes Last token: your other minions go after everyone else's."
+2. Played turn: round II, you take Lie Abed's Goes Last token on your first minion: your other 3 minions come after every rival is out: +6 followers on top of Lie Abed's +5 purple. The best other round II space pays about +3; the token turn plus Latecomer pays far more over the round.
+3. Both sides: no choices; every round you choose whether to grab Goes Last early.
+4. Who feels it: rivals who wanted Goes Last (Went last contest) and now must race you for it; a reason to take Lie Abed first.
+5. Not refused: rides the Goes Last token, a piece Cory made; not an upgrade of one space (any way of going after everyone pays).
+6. Judged: Intuitive: turns up after everyone's gone. Fun: makes going last a plan. Interacts: a race for the token. Powerful: +2 per minion. Engine: Lie Abed, Bide Your Time. Its color: Purple's going last.
+7. Public and certain: minions left are counted on the table; nothing hidden or random.
+8. Color interactions: none: Purple's own token.
+9. Biggest case: round III, token on the first minion, 4 minions after: +8, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Horse Thief
+
+1. Printed text: "Whenever you take a rival's member, +3 followers." Magenta, 3 magenta + 4 any (Claude's fill-in). Compared with Poach: "Recruit a rival's member you choose, for free. +1 magenta."
+2. Played turn: round II, Sleight of Hand takes a rival's 7-cost member: +3 followers on top.
+3. Both sides: no choices; it pulls you to Sleight of Hand and Poach over other spaces.
+4. Who feels it: the rival losing the member feels it more; everyone guards their best member from you.
+5. Not refused: not an upgrade of one space (any take counts: Poach, Sleight of Hand, Pied Piper, Hire Away).
+6. Judged: Intuitive: a horse thief takes the best one. Fun: makes takes a plan. Interacts: aims at rivals' members. Powerful: +3. Engine: Poach, Sleight of Hand. Its color: Magenta's taking.
+7. Public and certain: members are public; nothing hidden or random.
+8. Color interactions: none: any take counts, whichever color's space.
+9. Biggest case: round III, Poach plus a Green copy: 2 takes, +6, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Market Inspector
+
+1. Printed text: "Round End: discard the dearest member in the shop." Blue, 3 blue + 3 any (Claude's fill-in). Compared with Clear Out: "Discard 3 shop members and refill. +1 of each discarded member's color. +1 blue."
+2. Played turn: round II end: the 12-cost member a rival was saving for goes to the discard pile, where Bring Back and Gleaner can reach it.
+3. Both sides: no choices (a tie: you pick).
+4. Who feels it: the rival saving for the dearest member; Blue players who recruit from the discard pile gain a target.
+5. Not refused: not a space; a round-end tidy that feeds Blue's discard pile.
+6. Judged: Intuitive: an inspector throws out what's overpriced. Fun: saving up becomes a race. Interacts: the shared shop. Powerful: moves a big member. Engine: feeds Bring Back and Salvage. Its color: Blue's shop and discard pile.
+7. Public and certain: the shop and discard pile are public; nothing hidden or random.
+8. Color interactions: none: Blue's own pile.
+9. Biggest case: one member a round end, 2 or 3 a game; you can Bring Back a 12-cost member for its cost, no free gain, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Usurer
+
+1. Printed text: "Whenever you give a rival silver, take 1 resource of another color from them." Silver, 3 silver + 3 any (Claude's fill-in). Compared with Hand Out Gifts: "Give rivals up to 3 silver from the bank. +2 followers per silver given."
+2. Played turn: round I to III: Raise a Glass gives each rival +2 silver: you take 1 non-silver from each of 3 rivals: +3 resources.
+3. Both sides: you pick which color you take, on your own turn; the rival makes no choice.
+4. Who feels it: each rival trades a useful color for silver they don't want (Fewest silver): a real sting.
+5. Not refused: nobody acts on your turn (you choose the color you take); not a space upgrade (any silver gift counts).
+6. Judged: Intuitive: a usurer's gift comes with a price. Fun: turns gifts into trades. Interacts: every rival. Powerful: +1 per rival per gift. Engine: Raise a Glass, Throw Coins. Its color: Silver's giving.
+7. Public and certain: resources are public; nothing hidden or random.
+8. Color interactions: none: Silver's own gifts.
+9. Biggest case: round III, Throw Coins to 3 rivals plus Raise a Glass: about 6 takes, +6 resources, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Spendthrift
+
+1. Printed text: "Round End: if you hold no silver, +4 followers." Silver, 2 silver + 3 any (Claude's fill-in).
+2. Played turn: round II end at 0 silver: +4 (and you likely win Fewest silver too). A rival's Raise a Glass gives you 2 silver late in the round: you must spend it or lose the +4.
+3. Both sides: you choose how to dump silver; rivals choose whether to give you silver to break it.
+4. Who feels it: rivals who can spoil it with a gift, and you, who must spend every silver.
+5. Not refused: a fixed number anyone can see, not a contest leader (#30).
+6. Judged: Intuitive: spends every coin. Fun: Silver's gifts become an attack on you. Interacts: every Silver gift. Powerful: +4. Engine: Melt Down. Its color: Fewest silver.
+7. Public and certain: silver is public; nothing hidden or random.
+8. Color interactions: none: Silver's own resource.
+9. Biggest case: rounds II and III: +8 in all, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Mummer
+
+1. Printed text: "On Use, once per round: copy an action no minion is on." Green, 3 green + 4 any (Claude's fill-in). Compared with Imitate: "Copy an action with a rival's minion on it. +1 green."
+2. Played turn: round III: Induct is still empty; you copy it: a free shop member costing 10 or less, without using a minion there. Best other: Do It Again copies one of yours.
+3. Both sides: you choose the empty action: a real read of the wheel.
+4. Who feels it: rivals waiting to take that space still can, but you got its effect first.
+5. Not refused: Green copies actions with minions; this copies empty ones, a new piece. Not a space (once per round, on a member).
+6. Judged: Intuitive: plays a part nobody took. Fun: a free action. Interacts: the open wheel. Powerful: a whole action. Engine: Green copying. Its color: Green's copying.
+7. Public and certain: the wheel is public; nothing hidden or random.
+8. Color interactions: none: any color's action.
+9. Biggest case: round III, copying an empty Induct: a free 10-cost member, about 3 to 5 followers, once that round, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Green Man
+
+1. Printed text: "Round End: if most of your minions are on Green spaces, +3 followers." Green, 3 green + 3 any (Claude's fill-in).
+2. Played turn: round II, 3 of your 4 minions on Green spaces: +3, and Most minions on green likely too.
+3. Both sides: no choices; each placement chooses between Green and the best space.
+4. Who feels it: rivals racing for Green spaces; you block them by filling Green.
+5. Not refused: your own minions, not contest leaders (#30).
+6. Judged: Intuitive: the Green Man of the woods. Fun: go all in on Green. Interacts: the race for Green's spaces. Powerful: +3. Engine: Flock Together, Draw a Crowd. Its color: Green's contest.
+7. Public and certain: the wheel is public; nothing hidden or random.
+8. Color interactions: none: Green's own spaces.
+9. Biggest case: rounds II and III: +6 in all, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
