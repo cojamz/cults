@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Card-by-card: every Red action and member, through real moves, against the printed text, with a log line naming
 // the card whenever it changes a number. Plus one cross-sphere case per member.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { followers, memberCount, resume, countMembersOfColor } from '../../../engine/v4/core.js';
 import { defById } from '../../../engine/v4/content/index.js';

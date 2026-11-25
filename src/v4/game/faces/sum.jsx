@@ -31,8 +31,8 @@ import './sum.css';
 import { pixelPaths } from '../../art/index.js';
 
 const INK = '#2a1f17', INK2 = '#5f4e3d', CARD = '#f8f0dd', HOODC = '#6b5440', LAMP = '#ffcf6b', TAG = '#7a2f22', CREAM = '#fff6e4';
-const INKS = { gold: '#c99327', red: '#b4533e', blue: '#4f7ea8', green: '#3d8c66', magenta: '#b2386c', purple: '#7d5ba6', silver: '#8794a2', yellow: '#c4a93a', white: '#e6dcc6' };
-const RAINBOW = ['gold', 'red', 'magenta', 'purple', 'blue', 'green'];
+const INKS = { red: '#b4533e', blue: '#4f7ea8', green: '#3d8c66', magenta: '#b2386c', purple: '#7d5ba6', silver: '#8794a2', yellow: '#c4a93a', white: '#e6dcc6' };
+const RAINBOW = ['yellow', 'red', 'magenta', 'purple', 'blue', 'green'];
 const RES = new Set(Object.keys(INKS));
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -57,13 +57,6 @@ const plus = v => `+${v}`;
 // text flows through), d when the text has none. r is the current round (1–3).
 // ---------------------------------------------------------------------------------------------------------------
 const SUMS = {
-  // gold: coins
-  'gold.jv': ({ n }) => [R('gold', plus(n(0, 3))), DOT, HOOD(), R('gold', plus(n(1, 1)))], //   +3● · ☗+1●   (a gift to a player you pick)
-  'gold.rush': ({ n, r }) => [R('gold', plus(n(0, 2) * r))], //                            +4●
-  'gold.discount': ({ n }) => [TAGT(`−${n(0, 4)}`), MEM()], //                                    [−4] ▢        (your next member)
-  'gold.steal': ({ n }) => [HOOD(), ARROW, R('gold', n(0, 3))], //                                ☗ → 3●        (split as you like)
-  'gold.windfall': ({ n }) => [R('gold', plus(n(0, 1))), PER, MEM()], //                          +1● / ▢
-  'gold.strike': () => [R('gold'), X(2)], //                                                       ● ×2
   // red: members change hands
   'red.evenswap': () => [MEM(), SWAP, MEM(), TAGT('=')],
   'red.turnout': ({ r }) => [R('red', plus(r + 1))],

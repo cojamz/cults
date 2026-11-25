@@ -2,6 +2,7 @@
 // Wave-2 blind tester B (design/eval/wave2/tester-b/report.md): steal limits that match their cards (#6, #7), steal
 // reasons that give the true limit (#38), a results breakdown that adds up (#18), and a member Use that would do
 // nothing says so (#19). Each reproduced on a seeded scene first.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { applyMove, followers, createGame, resume } from '../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';

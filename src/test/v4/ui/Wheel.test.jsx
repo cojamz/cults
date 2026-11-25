@@ -45,7 +45,7 @@ describe('Wheel', () => {
   });
 
   it('prints primary contest rules and prizes without retired tiebreakers', () => {
-    const s = createGame({ seats, seed: 3, quadrants: ['red', 'yellow', 'market', 'gold'] });
+    const s = createGame({ seats, seed: 3, quadrants: ['red', 'yellow', 'market', 'purple'] });
     const { container } = render(<Wheel state={s} legal={new Map()} onPick={() => {}} flash={new Set()} facing={0} onFacing={() => {}} />);
     const rim = q => container.querySelector(`[data-plaque="${q}"]`).textContent;
     // Red's contest scores the red you hold at round end (Cory, 2026-10-18 resource-contest trial)
@@ -73,8 +73,8 @@ describe('Wheel', () => {
     expect(ring2).toBeTruthy();
     expect(deniedText(s, '0-1', 0)).toBe(null);
     expect(clauses('+2 green +1 blue')).toEqual(['+2 green', '+1 blue']);
-    expect(clauses('+3 gold · gift 1')).toEqual(['+3 gold', 'gift 1']);
-    expect(clauses('+1 gold/member')).toEqual(['+1 gold', '/member']);
+    expect(clauses('+3 purple · gift 1')).toEqual(['+3 purple', 'gift 1']);
+    expect(clauses('+1 purple/member')).toEqual(['+1 purple', '/member']);
   });
 
   // Online, a placement waits for "Place here" on its card (no Undo online). A choice answered on a space (a copy's
@@ -110,7 +110,7 @@ describe('Wheel', () => {
 });
 
 it('holds legal light and taken dimming together while the new minion is physically landing', () => {
-  const before = createGame({ seats, seed: 3, quadrants: ['red', 'yellow', 'market', 'gold'] });
+  const before = createGame({ seats, seed: 3, quadrants: ['red', 'yellow', 'market', 'purple'] });
   before.round = 1;
   const after = { ...before, slots: { ...before.slots, '0-0': 0 } };
   const props = { onPick: vi.fn(), flash: new Set(), facing: 0, onFacing: vi.fn(), look: 'panels' };
@@ -149,7 +149,7 @@ it('keeps Squatter targets fully lit and marks their occupied-space color distin
 describe('rim pictures', () => {
   it('a rim\'s other-way-up copy is the same text the rim shows once the board has turned it over', async () => {
     const { pictureKey } = await import('../../../v4/game/rimPictures.js');
-    const s = createGame({ seats, seed: 3, quadrants: ['red', 'yellow', 'market', 'gold'] });
+    const s = createGame({ seats, seed: 3, quadrants: ['red', 'yellow', 'market', 'purple'] });
     const props = facing => ({ state: s, legal: new Map(), onPick: () => {}, flash: new Set(), facing, onFacing: () => {}, look: 'panels' });
     const a = render(<Wheel {...props(0)} />);
     const altKeys = [0, 1, 2, 3].map(q => pictureKey(a.container.querySelector(`[data-rim-alt="${q}"]`), a.container.querySelector(`#rim-arc-${q}-alt`), 2));

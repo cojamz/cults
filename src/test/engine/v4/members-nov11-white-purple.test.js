@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Cory's Nov 11 member calls for White and Purple (design/decisions.md, 9:10pm and 9:12pm Eastern):
 // Mourners replaces Undertaker, Connoisseurs fills White's last slot, Last Callers fills Purple's open slot.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { contextFor } from '../../../engine/v4/core.js';
 import { defById } from '../../../engine/v4/content/index.js';

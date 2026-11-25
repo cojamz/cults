@@ -10,7 +10,7 @@ import { MemberCard } from '../../../v4/game/Info.jsx';
 
 afterEach(cleanup);
 const scene = () => {
-  const s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], members: [['yellow.bigtent', 'red.intern']] });
+  const s = sceneQ({ quadrants: ['purple', 'red', 'yellow', 'green'], members: [['yellow.bigtent', 'red.intern']] });
   const lent = s.players[0].members[1];
   s.borrowed = [{ uid: lent, pid: 0, round: s.round }];
   return { s, lent };

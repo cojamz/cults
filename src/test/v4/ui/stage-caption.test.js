@@ -15,7 +15,7 @@ const speed = motionSpeed();
 afterEach(() => setMotionSpeed(speed));
 const captions = effects => {
   setMotionSpeed('steady');
-  const before = sceneQ({ quadrants: ['gold', 'silver'] });
+  const before = sceneQ({ quadrants: ['yellow', 'silver'] });
   const plan = planChain(before, { ...before, moves: before.moves + 1, effects }, { mine: [0] });
   return plan.atoms.filter(a => a.op === 'stage' && a.kind === 'member').map(a => a.got);
 };

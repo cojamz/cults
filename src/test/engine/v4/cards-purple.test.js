@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Card-by-card: every Purple action and member, through real moves, against the printed text, with a log line naming
 // the card whenever it changes a number (an extra turn is a number too: workers this round). Plus a cross-sphere case each.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { followers, turnRail } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';

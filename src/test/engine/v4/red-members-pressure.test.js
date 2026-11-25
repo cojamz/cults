@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Bounded, real-choice regressions for the Red acquisition deck and its Green interactions.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, expect, it } from 'vitest';
 import { contextFor, createGame, followers, memberCount, resume } from '../../../engine/v4/core.js';
 import { defById, quadrant, EXTRA_WILD } from '../../../engine/v4/content/index.js';

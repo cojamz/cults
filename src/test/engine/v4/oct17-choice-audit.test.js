@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Reported misclicks: follow real options into their board models and resulting engine state.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { sceneQ, buy } from './cards-helpers.js';
 import { take, move, uidOf, pinCosts } from './helpers.js';

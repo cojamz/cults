@@ -1,6 +1,7 @@
 // @vitest-environment node
 // The members from Cory's member structure (2026-10-24): Red, Magenta and Blue's once per game, Blue's round start,
 // and the go-deep game end for Purple and White. Each against its printed text, through real legal moves.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { defById, quadrant } from '../../../engine/v4/content/index.js';
 import { contextFor } from '../../../engine/v4/core.js';

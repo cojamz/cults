@@ -8,7 +8,7 @@ import { panelText } from '../../../v4/game/panelText.js';
 
 afterEach(cleanup);
 function scene() {
-  const s = createGame({ seed: 53, seats: ['Ana', 'Bo', 'Cy'].map(name => ({ name, kind: 'human' })), quadrants: ['gold', 'red', 'purple', 'echo'] });
+  const s = createGame({ seed: 53, seats: ['Ana', 'Bo', 'Cy'].map(name => ({ name, kind: 'human' })), quadrants: ['yellow', 'red', 'purple', 'echo'] });
   const [a, b, c] = s.shop.splice(0, 3);
   s.players[1].members.push(a);
   s.players[2].members.push(b);

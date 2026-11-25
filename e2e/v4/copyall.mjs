@@ -1,9 +1,9 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: Replay All at 1270×700. Since Nov 11 11:20pm it reads "Choose a color other than green. Copy every action with
 // your minion on its spaces. +1 green." (Cory: "Let's put it on your own"; every minion from Nov 10, rivals only at 9:32pm).
-// Round III, P1 took Let It Grow, P2 Grease a Palm, P1 Bargain Down (all Gold), and P1 places their last minion:
+// Round III, P1 took Let It Grow, P2 Grease a Palm, P1 Bargain Down (all Yellow), and P1 places their last minion:
 //  (c1) the space's hover card opens;
-//  (c2) after you take it and pick Gold, P1's two Gold actions are copied and named in the log, and P2's Grease a Palm is not;
+//  (c2) after you take it and pick Yellow, P1's two Yellow actions are copied and named in the log, and P2's Grease a Palm is not;
 //  (c3) the Chronicle carries those lines.
 // Server: $V4_URL (a built preview). Shots: $V4_SHOTS/copyall (or $GH_SHOTS).
 import { chromium } from 'playwright';
@@ -16,13 +16,13 @@ import { answerChoice } from './lib/answer.mjs';
 const SHOTS = process.env.GH_SHOTS || `${process.env.V4_SHOTS || '/tmp/patrons-shots/v4'}/copyall`;
 mkdirSync(SHOTS, { recursive: true });
 const base = (process.env.V4_URL || 'http://localhost:5532/').replace(/\/$/, '');
-const QUADS = ['gold', 'red', 'purple', 'echo'];
+const QUADS = ['yellow', 'red', 'purple', 'echo'];
 const key = (q, k) => `${QUADS.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.key === k)}`;
 const GH = key('echo', 'eternity');
 const COPIED = ['Let It Grow', 'Bargain Down'];
 const NOT_COPIED = 'Grease a Palm';
 
-/** Round III, P1 (the only person) to place their last minion, after P1 took two Gold spaces and P2 one. */
+/** Round III, P1 (the only person) to place their last minion, after P1 took two Yellow spaces and P2 one. */
 function copyAllSave(stamp) {
   const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }];
   let s = createGame({ seats, seed: 7, quadrants: QUADS });
@@ -36,7 +36,7 @@ function copyAllSave(stamp) {
     s = applyMove(s, { player: pid, option: `slot:${slot}` });
     while (s.pending?.player === pid && !s.pending.options.some(o => o.id.startsWith('slot:'))) s = applyMove(s, { player: pid, option: s.pending.options.find(o => o.id === 'pass')?.id || s.pending.options[0].id });
   };
-  go(0, key('gold', 'rush')); go(1, key('gold', 'jv')); go(0, key('gold', 'discount'));
+  go(0, key('yellow', 'rush')); go(1, key('yellow', 'jv')); go(0, key('yellow', 'discount'));
   if (!(s.pending?.player === 0 && s.pending.options.some(o => o.id === `slot:${GH}`))) throw new Error('copyall: setup never offered Replay All');
   return { config: { seats: seats.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal' }, state: s, undo: null, savedAt: Date.now() };
 }
@@ -87,7 +87,7 @@ try {
   const after = at < 0 ? [] : log.slice(at);
   if (at < 0) fail('the game log never says P1 took Replay All', 'c2');
   else {
-    if (!after.includes("P1's Replay All copies every action on Gold's spaces.")) fail(`no "P1's Replay All copies every action on Gold's spaces.": ${JSON.stringify(after.slice(0, 12))}`, 'c2');
+    if (!after.includes("P1's Replay All copies every action on Yellow's spaces.")) fail(`no "P1's Replay All copies every action on Yellow's spaces.": ${JSON.stringify(after.slice(0, 12))}`, 'c2');
     for (const n of COPIED) if (!after.some(l => l.startsWith(`P1 copied ${n}:`))) fail(`no "P1 copied ${n}:": ${JSON.stringify(after.slice(0, 12))}`, 'c2');
     if (after.some(l => l.startsWith(`P1 copied ${NOT_COPIED}`))) fail(`P1 copied P2's ${NOT_COPIED}: ${JSON.stringify(after.slice(0, 12))}`, 'c2');
   }

@@ -3,7 +3,7 @@
 import { Follower } from '../art/Follower.jsx';
 import { ResourceGlyph, MemberGlyph } from './Glyphs.jsx';
 
-const COLORS = ['gold', 'red', 'blue', 'green', 'magenta', 'silver', 'yellow', 'purple', 'white'];
+const COLORS = ['red', 'blue', 'green', 'magenta', 'silver', 'yellow', 'purple', 'white'];
 // "follower(s)" after a number is the follower mark too (Cory: followers aren't a star); other uses stay words.
 // Two symbols only (Cory, 2026-10-15: "just simplify visual language everywhere"): the dot and the follower. The old
 // marks print as plain words: @m member, @r rival, @n minion, @t extra turn (@f is the follower mark), → becomes,

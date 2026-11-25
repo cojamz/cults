@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Yellow: every action and every member with exact numbers, plus 200 seeded bot games on a Yellow table.
+import '../fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createGame, applyMove, resume, followers } from '../../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../../engine/v4/bots.js';

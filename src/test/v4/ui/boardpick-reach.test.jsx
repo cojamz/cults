@@ -15,7 +15,7 @@ import CultSeat from '../../../v4/game/CultSeat.jsx';
 afterEach(cleanup);
 
 // the e2e tables between them seat every newer sphere, and the pairs (red's swaps, yellow, silver)
-const TABLES = [['gold', 'red', 'market', 'echo'], ['gold', 'thieves', 'purple', 'silver'], ['red', 'trading', 'yellow', 'echo'], ['yellow', 'market', 'thieves', 'trading']];
+const TABLES = [['yellow', 'red', 'market', 'echo'], ['yellow', 'thieves', 'purple', 'silver'], ['red', 'trading', 'yellow', 'echo'], ['yellow', 'market', 'thieves', 'trading']];
 const seats = n => Array.from({ length: n }, (_, k) => ({ name: `P${k + 1}`, kind: 'human' }));
 
 /** What's wrong with the picker for this choice (strings), [] when every answer has a click. */
@@ -92,10 +92,10 @@ describe('the board picker leaves no answer without a click', () => {
 
 describe('CultSeat: a lit member is never folded into "+N"', () => {
   it('two copies of one space (a taker and a Squatter) stay on the board: the better lit, the other a button (w4 skeptic #3)', () => {
-    const s = createGame({ seats: seats(4), seed: 2, quadrants: ['gold', 'echo', 'red', 'trading'] });
+    const s = createGame({ seats: seats(4), seed: 2, quadrants: ['yellow', 'echo', 'red', 'trading'] });
     const pend = { kind: 'choose', player: 0, prompt: 'Sample: copy which space?', options: [
-      { id: 'space:e:a', kind: 'space', value: '0-1', hint: 3, label: 'Rush (P2): +2 gold', target: { space: '0-1' } },
-      { id: 'space:e:b', kind: 'space', value: '0-1#2', hint: 5, label: 'Rush (P3): +2 gold', target: { space: '0-1' } },
+      { id: 'space:e:a', kind: 'space', value: '0-1', hint: 3, label: 'Rush (P2): +2 yellow', target: { space: '0-1' } },
+      { id: 'space:e:b', kind: 'space', value: '0-1#2', hint: 5, label: 'Rush (P3): +2 yellow', target: { space: '0-1' } },
       { id: 'space:e:c', kind: 'space', value: '2-0', hint: 1, label: 'Turnout (P4): +1 red', target: { space: '2-0' } },
     ] };
     const pk = boardPicker(s, pend, null);

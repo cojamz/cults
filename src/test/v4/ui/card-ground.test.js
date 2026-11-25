@@ -10,7 +10,7 @@ describe('card grounds', () => {
   it('names silver, white (Trading) and colorless, and nothing else', () => {
     expect(cardGround(state, { quadrant: 'silver' })).toBe('silver');
     expect(cardGround(state, { quadrant: 'trading' })).toBe('white');
-    expect(cardGround(state, { quadrant: 'gold' })).toBe('colorless'); // not on this table
+    expect(cardGround(state, { quadrant: 'yellow' })).toBe('colorless'); // not on this table
     expect(cardGround(state, { quadrant: 'guest' })).toBe('colorless');
     expect(cardGround(state, { quadrant: 'red' })).toBeUndefined();
     expect(cardGround(state, { quadrant: 'thieves' })).toBeUndefined();

@@ -397,9 +397,8 @@ const trading = {
       },
     }]),
     swap11({
-      key: 'splurge', copyDoesIt: true, ring: 1, name: 'Spend Freely', text: '+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).', // +2 white (Cory, Nov 6: "just buff those by +1 white"); members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
-      byRound: { lines: ['+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay.', '+2 white. If you recruit a member this turn: +1 follower for every 1 resource you pay.', '+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay.'] },
-      estimate: (ctx, p) => 2 + Math.floor(Math.min(totalRes(p) + 1, 7) / (ctx.state.round === 2 ? 1 : 2)) * fv(ctx) * 0.8,
+      key: 'splurge', copyDoesIt: true, ring: 1, name: 'Spend Freely', text: '+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay.', // +2 white (Cory, Nov 6: "just buff those by +1 white"); members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 2 in every round (Cory, Nov 24 8:17pm: "it should be 1 per 2"; the round II exception is gone)
+      estimate: (ctx, p) => 2 + Math.floor(Math.min(totalRes(p) + 1, 7) / 2) * fv(ctx) * 0.8,
       resolve(ctx, p) {
         ctx.gain(p, W, 2, { fromAction: true });
         p.perSpend = true;
@@ -1300,7 +1299,7 @@ function buyLowStep(ctx, p, data) {
   const opts = held.map(r => ({
     id: `color:${r}`, label: `1 ${r} → 1 follower`, kind: 'color', value: r, spend: { [r]: 1 },
     // bots pay from the biggest pile, white last (it scores here); they keep a little to recruit with until late
-    hint: (v - 1) + 0.01 * (p.res[r] - (r === W ? 3 : 0) - (r === 'gold' ? 1 : 0)),
+    hint: (v - 1) + 0.01 * (p.res[r] - (r === W ? 3 : 0)),
   }));
   opts.push({ id: 'done', label: data.done ? 'Done' : 'Trade nothing', kind: 'done', value: 'done', hint: totalRes(p) <= 3 && !lastTurn(ctx, p) ? 0.5 : 0.1 });
   ctx.choose(p, `Cheap Seats: pay which resource for 1 follower? (${data.left} left)`, opts, 'trading.buyLow', data);

@@ -1,6 +1,7 @@
 // One pay rule everywhere (decisions.md 2026-10-15 17:55; panel tester C): a payment with one way pays at once unless
 // it gives up a contest lead or tie you hold; then it asks, saying so. More than one way, the player picks. This covers
 // the recruits outside the buy step (Talent Scout) and follower purchases. Cheap Seats grants followers for held white and no longer spends coins.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach } from 'vitest';
 import { sceneQ } from './cards-helpers.js';
 import { take, pinCosts } from './helpers.js';

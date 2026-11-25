@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Tall-Tale Teller: "Whenever you copy an action, double the resources it gives you." Every way of copying an action
 // (Cory, Nov 3: "copying Melt Down didnt double with Tall-Tale Teller. gotta audit what wallflower works with").
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { take, move, play, actionName } from './helpers.js';
 import { table } from './cards-helpers-b.js';

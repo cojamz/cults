@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Real move sequences for Green's re-choosing copies, serialized continuations and anti-copy members.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { contextFor, followers, memberCount, roundWorkers } from '../../../engine/v4/core.js';
 import { quadrant } from '../../../engine/v4/content/index.js';

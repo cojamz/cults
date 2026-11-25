@@ -12,7 +12,7 @@ import { TouchTips } from '../game/Info.jsx';
 
 function labState(seed, phase) {
   const rand = seededRandom(seed);
-  let s = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Wren', kind: 'bot' }, { name: 'Ossian', kind: 'bot' }, { name: 'Ilse', kind: 'bot' }], seed, quadrants: ['gold', 'thieves', 'market', 'silver'] });
+  let s = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Wren', kind: 'bot' }, { name: 'Ossian', kind: 'bot' }, { name: 'Ilse', kind: 'bot' }], seed, quadrants: ['yellow', 'thieves', 'market', 'silver'] });
   // play bots (seat 0 too) into round II, then stop on seat 0's chosen step
   for (let k = 0; k < 4000 && !s.over; k++) {
     if (s.round >= 2 && s.pending && s.pending.player === 0 && s.pending.kind === phase && s.players[0].members.length >= 2) break;
@@ -29,7 +29,7 @@ export default function LabB() {
   const base = useMemo(() => { const s = labState(seed, phase); return deck == null ? s : { ...s, pile: s.pile.slice(0, Number(deck)) }; }, [seed, phase, deck]);
   const [state, setState] = useState(base);
   useEffect(() => { setState(base); }, [base]);
-  // ?react=1: a moment after load, the log gains a trace line for a member someone holds ("Wren's Banker: +3 gold."),
+  // ?react=1: a moment after load, the log gains a trace line for a member someone holds ("Wren's Tinker: +1 yellow."),
   // exactly as the engine writes it, so its figure should hop (e2e/v4/info.mjs watches for it)
   useEffect(() => {
     if (q.get('react') !== '1') return undefined;
@@ -38,7 +38,7 @@ export default function LabB() {
       if (!p) return s;
       const d = cardDef(s, p.members[0]);
       document.documentElement.dataset.reactMember = `${p.id}:${d.id}`;
-      return { ...s, log: [...s.log, `${p.name}'s ${d.name}: +1 gold.`] };
+      return { ...s, log: [...s.log, `${p.name}'s ${d.name}: +1 yellow.`] };
     }), 700);
     return () => clearTimeout(t);
   }, [base]); // eslint-disable-line react-hooks/exhaustive-deps

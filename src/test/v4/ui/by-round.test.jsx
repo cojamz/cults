@@ -1,6 +1,7 @@
 // A rule that grows by round reads as "I: … / II: … / III: …" lines, this round lit and the others dimmed (Cory,
 // 2026-10-18), in the space's hover, the member card and the seat's member list. The lines come from the def's byRound;
 // its text stays the rule.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
 import { createGame, allQuadrantIds, quadrant, defById } from '../../../engine/v4/index.js';

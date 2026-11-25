@@ -1,4 +1,5 @@
 // Display helpers that read the engine's state and log.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, chooseBotMove, followers, quadrant, defById } from '../../../engine/v4/index.js';
 import { turnStory, foldRepeats, effectStory, turnGroups, membersWhy, membersParts, roundGains, firstPickWhy, logSections, parseRoundEnd, newLogLines, winSentence, breakdown, costParts, explainLine, promptFor, traceLine, currentTurn, plainLine, RING_NOTE } from '../../../v4/format.js';
@@ -214,11 +215,10 @@ describe('v4 format helpers', () => {
   });
 
   it('the log names a space by the words the board shows on it too (panel r1: "Sample", now Draw a Crowd; wave-2 B#3: "which is Plunder?")', () => {
-    const log = ['Round II begins. Bo picks first.', 'P1 took Draw a Crowd (Green).', "Cy copied Throw Coins (Di's): +7 followers.", 'P1 took Grease a Palm (Gold).', 'P1 took Nowhere (Gold).'];
+    const log = ['Round II begins. Bo picks first.', 'P1 took Draw a Crowd (Green).', "Cy copied Throw Coins (Di's): +7 followers.", 'P1 took Nowhere (Gold).'];
     expect(plainLine(log, 1)).toBe('P1 took Draw a Crowd (+3 green, +1 follower per minion on Green this one included).');
     expect(plainLine(log, 2)).toBe('Cy copied Di\'s Throw Coins (Give rivals 10 silver: +7 followers): +7 followers.');
-    expect(plainLine(log, 3)).toBe('P1 took Grease a Palm (+3 gold, +1 gold to a rival).');
-    expect(plainLine(log, 4)).toBe('P1 took Nowhere (Gold).'); // no such space: the line as the engine wrote it
+    expect(plainLine(log, 3)).toBe('P1 took Nowhere (Gold).'); // no such space: the line as the engine wrote it
   });
 
   it('finds new log lines even when lines repeat', () => {

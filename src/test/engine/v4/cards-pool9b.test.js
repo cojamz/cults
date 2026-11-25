@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Idea pipeline pool 9, Encore Crowd (Headliners' variation): its own file, since both take Green's one round III spot.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { take, move } from './helpers.js';
 import { sceneQ, passBuys } from './cards-helpers.js';

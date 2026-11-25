@@ -10,6 +10,7 @@ process.env.REPLACE3 = '1';
 process.env.MEMBER_UP = '2';
 const { applyMove, contextFor, followers, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
+await import('./fixtures/gold-on.js'); // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
 const { useRetired } = await import('./helpers.js');

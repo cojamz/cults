@@ -12,7 +12,7 @@ const seats = [{ name: 'Ana', kind: 'human' }, { name: 'Bo', kind: 'bot' }, { na
 
 function restockScene() {
   for (let seed = 1; seed < 40; seed++) {
-    let s = createGame({ seats, seed, quadrants: ['gold', 'red', 'market', 'echo'] });
+    let s = createGame({ seats, seed, quadrants: ['yellow', 'red', 'market', 'echo'] });
     for (let k = 0; k < 400 && !(s.pending && s.pending.kind === 'place' && s.pending.player === 0 && s.round >= 1); k++) s = applyMove(s, chooseBotMove(s, () => 0.3));
     const q = s.quadrants.indexOf('market');
     const i = quadrant('market').actions.findIndex(a => a.key === 'restock');
@@ -40,7 +40,7 @@ describe('Clear Out names what it sweeps', () => {
     expect(container.textContent).not.toContain('Sweeps away');
     void cardDef;
     cleanup();
-    const g = s.quadrants.indexOf('gold');
+    const g = s.quadrants.indexOf('yellow');
     const plain = s.pending.options.find(o => o.q === g);
     expect(previewSpace(s, 0, plain.q, plain.i).swept).toEqual([]);
   });

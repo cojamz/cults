@@ -122,7 +122,7 @@ describe('Tall Poppies (Magenta, round II)', () => {
 
 describe('Pocket Change (Yellow, round I)', () => {
   it("+1 yellow. Swap 1 of your resources with a rival's, colors your choice. They +1 follower.", () => {
-    let s = sceneQ({ quadrants: ['yellow', 'red', 'market', 'gold'], res: [{ red: 2 }, { blue: 2 }] });
+    let s = sceneQ({ quadrants: ['yellow', 'red', 'market', 'purple'], res: [{ red: 2 }, { blue: 2 }] });
     s = take(s, 'yellow.pocketchange');
     expect(s.players[0].res.yellow).toBe(1);
     s = move(s, 'player:1');
@@ -135,14 +135,14 @@ describe('Pocket Change (Yellow, round I)', () => {
 
 describe('Bazaar (Yellow, round III)', () => {
   it("+2 yellow. Swap up to 2 of your resources with each rival's, one for one, colors your choice. Each +1 follower per resource swapped.", () => {
-    let s = sceneQ({ quadrants: ['yellow', 'red', 'market', 'gold'], n: 3, round: 3, res: [{ red: 5 }, { blue: 3 }, { gold: 3 }] });
+    let s = sceneQ({ quadrants: ['yellow', 'red', 'market', 'purple'], n: 3, round: 3, res: [{ red: 5 }, { blue: 3 }, { purple: 3 }] });
     s = take(s, 'yellow.bazaar');
     expect(s.players[0].res.yellow).toBe(2);
     expect(s.pending.prompt).toMatch(/Bazaar: swap which resources with P2/);
     s = move(s, 'swap:red:blue'); s = move(s, 'swap:red:blue');
     expect(s.pending.prompt).toMatch(/with P3/);
-    s = move(s, 'swap:red:gold'); s = move(s, 'done');
-    expect(s.players[0].res).toMatchObject({ red: 2, blue: 2, gold: 1 });
+    s = move(s, 'swap:red:purple'); s = move(s, 'done');
+    expect(s.players[0].res).toMatchObject({ red: 2, blue: 2, purple: 1 });
     expect(s.players[1].bonus).toBe(2);
     expect(s.players[2].bonus).toBe(1);
     passBuys(s);

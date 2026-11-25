@@ -60,7 +60,7 @@ describe('the header when your turn ends', () => {
   it('a copy with one space to copy answers itself (w4 skeptic #30)', async () => {
     let state = null;
     for (let seed = 1; seed < 80 && !state; seed++) {
-      let s = createGame({ seats: SEATS, seed, quadrants: ['gold', 'echo', 'red', 'trading'] });
+      let s = createGame({ seats: SEATS, seed, quadrants: ['yellow', 'echo', 'red', 'trading'] });
       for (let k = 0; k < 1500 && !s.over; k++) {
         const p = s.pending;
         if (p && p.player === 0 && p.kind === 'choose' && p.options.length === 1 && p.options[0].kind === 'space' && p.options[0].target && p.options[0].target.space) { state = s; break; }

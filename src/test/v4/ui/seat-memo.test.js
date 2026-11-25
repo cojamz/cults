@@ -5,7 +5,7 @@ import { sameSeat } from '../../../v4/game/seatMemo.js';
 import { sceneQ } from '../../engine/v4/cards-helpers.js';
 
 it('redraws the old holder when the Goes Last token moves', () => {
-  const a = sceneQ({ quadrants: ['gold', 'silver'] });
+  const a = sceneQ({ quadrants: ['yellow', 'silver'] });
   const was = { ...a, goesLast: { pid: 1, round: a.round } };
   const now = { ...a, goesLast: { pid: 0, round: a.round }, moves: a.moves + 1 };
   expect(sameSeat({ state: was, pid: 1, me: 0 }, { state: now, pid: 1, me: 0 })).toBe(false);

@@ -7,7 +7,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //       seat and two on the card take them, the counter runs 2 → 1 → 0, a resource flies for each pick, and the right
 //       resources move (they keep their colors, plus the space's +1 magenta: Cory, Nov 10). It steals 1 per minion you've
 //       placed this round: P1 has two out, so 3.
-//  (s2) Call In Debts: only gold, on the seats and the card; "Take all 3" previews its picks on the card's stacks while
+//  (s2) Call In Debts: only yellow, on the seats and the card; "Take all 3" previews its picks on the card's stacks while
 //       pointed at, and one click takes all 3, biggest pile first (the engine's options, recorded one by one).
 //  ((s3) Redistribute went in the round I rework, Cory Oct 27.)
 //  (e1) Escape on Grease a Palm's card takes the placement back (the card closes, the minion comes home).
@@ -15,9 +15,9 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //       a click takes one.
 //  (t1) Straggler (v0.8.9): nothing over the wheel; its spaces the engine's, lit and answering on the wheel, Stay put in
 //       the docked caption; a lit space moves the minion; Escape says Stay put.
-//  (s4) Grease a Palm ("give 1 gold to…"): a gift, so it's the gift card beside the space (Cory, 2026-10-16): one face per
+//  (s4) Grease a Palm ("give 1 yellow to…"): a gift, so it's the gift card beside the space (Cory, 2026-10-16): one face per
 //       rival the engine offers, and the same rivals' seats light (Cory, 2026-10-15: as Good Deed's), each the engine's
-//       answer, its gold stack lit, never your own; a click on a lit seat gives that player 1 gold.
+//       answer, its yellow stack lit, never your own; a click on a lit seat gives that player 1 yellow.
 //  (s5) Imitate (Sample copies a member's On Recruit since Cory's Oct 28 call, so it asks no pick on the wheel):
 //       exactly the copyable spaces light on the wheel, the caption covers none of them, a lit space's hover says
 //       what the copy gives, and clicking it copies (your resources match the engine's).
@@ -147,16 +147,16 @@ try {
     await page.screenshot({ path: `${SHOTS}/s1-one-picked.png` });
     // the other picks on the card itself, coin by coin
     // (all from P2: Pilfer takes from one rival since Nov 5)
-    await click(page, '.gift-card .gc-stack[data-pid="1"][data-res="gold"]');
+    await click(page, '.gift-card .gc-stack[data-pid="1"][data-res="yellow"]');
     await page.waitForSelector('.pick-left[data-left="1"]', { timeout: 8000 }).catch(() => errors.push('(s1) the counter never showed 1 left'));
     await click(page, '.gift-card .gc-stack[data-pid="1"][data-res="blue"]');
     await page.waitForFunction(() => !document.querySelector('.gift-card'), null, { timeout: 8000 }).catch(() => errors.push('(s1) the steal never closed'));
     // stolen resources keep their colors; the space's own +1 magenta comes on top (Cory, 2026-10-19): what the engine
     // makes of the same three picks (a member P1's bots recruited may add its own)
-    const PICKS = ['take:1:green', 'take:1:gold', 'take:1:blue'];
+    const PICKS = ['take:1:green', 'take:1:yellow', 'take:1:blue'];
     const after = PICKS.reduce((st, option) => applyMove(st, { player: 0, option }), save.state);
-    const counts = { '1:green': 3, '1:gold': 2, '1:blue': 1 };
-    for (const r of ['green', 'gold', 'blue', 'magenta']) counts[`0:${r}`] = after.players[0].res[r];
+    const counts = { '1:green': 3, '1:yellow': 2, '1:blue': 1 };
+    for (const r of ['green', 'yellow', 'blue', 'magenta']) counts[`0:${r}`] = after.players[0].res[r];
     // Pilfer gives its +1 magenta again (Cory, Nov 10: "Steal 1 resource per minion you've placed this round, this
     // one included. +1 magenta."; the Magenta Cloak, when P1 holds it, adds its own +1 on a steal)
     if (!after.log.includes("P1's Pilfer: +1 magenta.") || counts['0:magenta'] < PILES[0].magenta + 1 || counts['0:green'] < PILES[0].green + 1) errors.push(`(s1) the engine's own steal is off: ${JSON.stringify(counts)}`);
@@ -172,15 +172,15 @@ try {
     await page.screenshot({ path: `${SHOTS}/s1-done.png` });
     await ctx.close();
   }
-  // (s2) Call In Debts: take 3 gold
+  // (s2) Call In Debts: take 3 yellow
   {
     const { ctx, page, save } = await open('debts');
     const got = await lit(page), want = expectedLit(save);
     if (JSON.stringify(got) !== JSON.stringify(want)) errors.push(`(s2) lit stacks ${got.join(' ')} ≠ ${want.join(' ')}`);
     const why = await page.$eval(stack(1, 'green'), e => e.dataset.why || '').catch(() => '');
-    if (!/only gold/.test(why)) errors.push(`(s2) P2's green says "${why}", not that Call In Debts takes only gold`);
+    if (!/only yellow/.test(why)) errors.push(`(s2) P2's green says "${why}", not that Call In Debts takes only yellow`);
     const cardRes = await page.$$eval('.gift-card .gc-stack', els => [...new Set(els.map(e => e.dataset.res))]);
-    if (cardRes.join() !== 'gold') errors.push(`(s2) the card offers ${cardRes.join(' ')}, not gold only`);
+    if (cardRes.join() !== 'yellow') errors.push(`(s2) the card offers ${cardRes.join(' ')}, not yellow only`);
     // "Take all 3": pointing at it marks what each stack gives up; one click takes them all, biggest pile first
     const all = await page.$('.gift-card .gc-all[data-take-all="3"]');
     if (!all) errors.push('(s2) no "Take all 3" on the card');
@@ -193,15 +193,15 @@ try {
       await page.evaluate(() => { window.__clicks = 0; addEventListener('click', () => { window.__clicks++; }, true); });
       await click(page, '.gift-card .gc-all');
       await page.waitForFunction(() => !document.querySelector('.gift-card'), null, { timeout: 10000 }).catch(() => errors.push('(s2) "Take all" never finished the steal'));
-      // P1's gold: 3 stolen, plus what the engine adds for the same picks (a member P1's bots recruited, like Gold Panner)
+      // P1's yellow: 3 stolen, plus what the engine adds for the same picks (a member P1's bots recruited, like Yellow Panner)
       const after = ['player:2', 'player:2', 'player:1'].reduce((st, option) => applyMove(st, { player: 0, option }), save.state);
-      if (after.players[0].res.gold < save.state.players[0].res.gold + 3) errors.push('(s2) the engine stole less than 3 gold');
-      await expectCounts(page, 's2', { '1:gold': 2, '2:gold': 3, '0:gold': after.players[0].res.gold });
+      if (after.players[0].res.gold < save.state.players[0].res.gold + 3) errors.push('(s2) the engine stole less than 3 yellow');
+      await expectCounts(page, 's2', { '1:yellow': 2, '2:yellow': 3, '0:yellow': after.players[0].res.gold });
       if (await page.evaluate(() => window.__clicks) !== 1) errors.push('(s2) "Take all" took more than one click');
       const moves = await page.evaluate(() => { try { return (JSON.parse(window.patronsRecord()).moves || []).slice(-3).map(m => m[1]); } catch { return []; } });
       if (moves.length && JSON.stringify(moves) !== JSON.stringify(['player:2', 'player:2', 'player:1'])) errors.push(`(s2) "Take all" recorded ${JSON.stringify(moves)}`);
       const flights = await page.evaluate(() => window.__picks);
-      if (flights < 3) errors.push(`(s2) ${flights} gold flights for 3 picks`);
+      if (flights < 3) errors.push(`(s2) ${flights} yellow flights for 3 picks`);
     }
     await ctx.close();
   }
@@ -224,14 +224,14 @@ try {
     for (const x of seats) {
       const id = offered.get(x.pid) || null;
       if (x.seat !== id) errors.push(`(s4) P${x.pid + 1}'s seat answers ${x.seat}, the engine offers ${id}`);
-      if (id && x.stack !== `gold:${id}`) errors.push(`(s4) P${x.pid + 1}'s gold stack is not lit where the gift lands (${x.stack})`);
+      if (id && x.stack !== `yellow:${id}`) errors.push(`(s4) P${x.pid + 1}'s yellow stack is not lit where the gift lands (${x.stack})`);
       if (id && x.inset < 1.5) errors.push(`(s4) P${x.pid + 1}'s seat wears no lit ring (${x.inset}px)`);
     }
     // a click on the lit seat (its middle, away from the stacks) gives, the same answer as the face
     const sb = await (await page.$('.lt-seat[data-pid="3"]')).boundingBox();
     await page.mouse.click(sb.x + sb.width * 0.35, sb.y + sb.height * 0.7);
     await page.waitForFunction(() => !document.querySelector('.gift-card'), null, { timeout: 8000 }).catch(() => errors.push('(s4) the choice never closed'));
-    await expectCounts(page, 's4', { '3:gold': save.state.players[3].res.gold + 1 });
+    await expectCounts(page, 's4', { '3:yellow': save.state.players[3].res.gold + 1 });
     await ctx.close();
   }
   // (s5) Imitate: copy a space on the wheel (was Sample, which copies a member's On Recruit since Cory's Oct 28 call)
@@ -276,7 +276,7 @@ try {
   {
     // (placed by a click, so Undo is on offer as in a real turn)
     const { ctx, page, save } = await open('kickback', '.app.game[data-phase="place"]', { placed: false });
-    const q = save.state.quadrants.indexOf('gold'), key = `${q}-0`;
+    const q = save.state.quadrants.indexOf('yellow'), key = `${q}-0`;
     await click(page, `.lt-wheel .slot.lit[data-slot="${key}"]`);
     await page.waitForSelector('.lt-wheel .gift-card[data-gift="gift"]', { timeout: 8000 }).catch(() => errors.push('(e1) placing on Grease a Palm opened no card'));
     await page.waitForTimeout(300);

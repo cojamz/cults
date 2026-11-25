@@ -35,7 +35,7 @@ if (!base) {
 // Between them: Blue (market), Green (echo), Magenta, Purple, Silver, White, Yellow.
 const TABLES = [
   { tag: 'market-echo', ids: ['market', 'red', 'thieves', 'echo'], how: 'click' },
-  { tag: 'thieves-purple-silver', ids: ['gold', 'thieves', 'purple', 'silver'], how: 'url' },
+  { tag: 'thieves-purple-silver', ids: ['red', 'thieves', 'purple', 'silver'], how: 'url' },
   { tag: 'trading-yellow-echo', ids: ['red', 'trading', 'yellow', 'echo'], how: 'url' },
   { tag: 'yellow-market-thieves-trading', ids: ['yellow', 'market', 'thieves', 'trading'], how: 'url', url: 'yellow,market,magenta,white' },
   // one sphere per player (Cory, 2026-10-15): two seats play Classic's first two; three seats play a 3-sphere table
@@ -81,7 +81,7 @@ async function play(t) {
       if (r1 === r2 || r1.split(',').length !== 4 || r2.split(',').length !== 4) err(`random/reroll gave ${r1} then ${r2}`);
       await page.click('.table-pick [role="radio"]:has-text("Custom")');
       sizes.push(await box());
-      if (await page.$('[data-sphere="gold"]')) err('Gold is still offered on the picker (it went to the backlog, Cory 2026-10-31)');
+      if (await page.$('[data-sphere="gold"]')) err('Gold is offered on the picker (it is deleted, Cory 2026-11-24)');
       if (new Set(sizes.map(z => `${z.w}|${z.left}`)).size > 1) err(`the setup page changes width with the table mode: ${JSON.stringify(sizes)}`);
       if (new Set(sizes.map(z => z.start.join())).size > 1) err(`Start moves with the table mode: ${JSON.stringify(sizes.map(z => z.start))}`);
       // four picked: a fifth swaps in for the last one picked, in its place, and says so quietly by the count (live panel

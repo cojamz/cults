@@ -7,7 +7,7 @@ import { ruleWords } from '../../../v4/shorts.js';
 const seats = ['Ana', 'Bo', 'Cy', 'Di'].map(name => ({ name, kind: 'bot' }));
 const arcs = ['blue', 'green'];
 function table(qid) {
-  const s = createGame({ seats, seed: 5, quadrants: [qid, 'gold', 'silver', 'yellow'] });
+  const s = createGame({ seats, seed: 5, quadrants: [qid, qid === 'echo' ? 'blue' : 'green', 'silver', 'yellow'] });
   s.players.forEach(p => { p.members = []; for (const r of s.resources) p.res[r] = 0; });
   return s;
 }
@@ -33,7 +33,7 @@ describe('own-color arc contests', () => {
   it('Magenta follows held resources through ties, spending and empty piles', () => {
     const s = table('thieves');
     s.players[0].members = Object.keys(s.cards).map(Number).filter(u => defById(s.cards[u].def).quadrant === 'thieves');
-    s.players[0].res.gold = 99;
+    s.players[0].res.silver = 99;
     const winners = () => contestTable(s).find(c => c.qid === 'thieves').winners;
     expect(winners()).toEqual([]);
     s.players[1].res.magenta = 8;
@@ -64,11 +64,11 @@ describe('own-color arc contests', () => {
     expect(bannerText(qid, 1)).toContain('MEMBERS');
     expect(ruleWords(qid, row.label)).toBe(row.label);
   });
-  it('retains Gold, Silver and Yellow resource/set rules', () => {
+  it('retains Silver and Yellow resource/set rules', () => {
     const s = table('red'), ctx = contextFor(s);
     for (const r of s.resources) s.players[0].res[r] = 9;
     s.players[1].members = Object.keys(s.cards).map(Number).slice(0, 8);
-    for (const qid of ['gold', 'silver', 'yellow']) {
+    for (const qid of ['silver', 'yellow']) {
       expect(quadrant(qid).scoring.score(ctx, s.players[0])).toBe(9);
       expect(quadrant(qid).scoring.score(ctx, s.players[1])).toBe(0);
       expect(contestTable(s).find(c => c.qid === qid).winners).toEqual([0]);

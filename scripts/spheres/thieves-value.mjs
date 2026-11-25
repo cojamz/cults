@@ -7,7 +7,7 @@ import { seededRandom } from '../../src/engine/v4/rng.js';
 
 install();
 const N = Number(process.argv[2] || 120), SEATS = 4, MODE = process.argv[3] || 'black';
-const QUADS = ['gold', 'red', 'blue', 'thieves'];
+const QUADS = ['yellow', 'red', 'blue', 'thieves'];
 function play(seed, giveDef, seat) {
   const rand = seededRandom(seed * 7919 + 13);
   let s = createGame({ seats: Array.from({ length: SEATS }, () => ({ kind: 'bot' })), seed, quadrants: QUADS });

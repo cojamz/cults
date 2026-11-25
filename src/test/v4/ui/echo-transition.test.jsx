@@ -11,7 +11,7 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 const wait = ms => act(() => new Promise(resolve => setTimeout(resolve, ms)));
 it('automatically copies after placing on Follow Suit, through the step input lock', async () => {
   vi.stubGlobal('matchMedia', vi.fn(q => ({ matches: q.includes('min-width: 861px'), addEventListener() {}, removeEventListener() {} })));
-  let current = table(['gold', 'red', 'market', 'echo'], {
+  let current = table(['yellow', 'red', 'market', 'echo'], {
     shop: ['red.volunteer'], queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }],
   });
   current = move(take(current, 'echo.chant'), 'pass');

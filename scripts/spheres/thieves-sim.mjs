@@ -1,4 +1,4 @@
-// Magenta (thieves) balance sim: greedy bots, 4 seats, gold/red/blue + Magenta, one run per scoring mode.
+// Magenta (thieves) balance sim: greedy bots, 4 seats, yellow/red/blue + Magenta, one run per scoring mode.
 // Usage: node scripts/spheres/thieves-sim.mjs [games=400] [label=members] [policy=rich|leader|random]
 import { install } from '../../src/engine/v4/content/thieves.js';
 import { createGame, applyMove, chooseBotMove, followers, memberCount, actionAt } from '../../src/engine/v4/index.js';
@@ -8,7 +8,7 @@ install();
 const N = Number(process.argv[2] || 400);
 const MODES = (process.argv[3] || 'black').split(',');
 const POLICY = process.argv[4] || 'rich';
-const QUADS = ['gold', 'red', 'blue', 'thieves'];
+const QUADS = ['yellow', 'red', 'blue', 'thieves'];
 const avg = a => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0);
 const pct = (a, b) => (b ? (100 * a / b).toFixed(0) + '%' : '-');
 
@@ -38,7 +38,7 @@ function run(mode, control = false) {
   };
   for (let g = 1; g <= N; g++) {
     const rand = seededRandom(g * 9973 + 1);
-    const quads = control ? ['gold', 'red', 'blue', 'green'] : QUADS;
+    const quads = control ? ['yellow', 'red', 'blue', 'green'] : QUADS;
     let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: g, quadrants: quads });
     let r1 = null, lastRound = 0, prevContest = null, lastBlackWinners = null;
     try {

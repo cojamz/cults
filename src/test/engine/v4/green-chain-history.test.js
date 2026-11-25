@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Repeated Green copies retain fresh target choices and branch history through a save.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { table } from './cards-helpers-b.js';
 import { take, move } from './helpers.js';

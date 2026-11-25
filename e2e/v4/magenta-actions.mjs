@@ -12,7 +12,7 @@ const base = (process.env.V4_URL || 'http://localhost:5338').replace(/\/$/, '');
 const out = `${process.env.V4_SHOTS || '/tmp/patrons-shots/v4'}/magenta-actions`;
 mkdirSync(out, { recursive: true });
 const seats = ['You', 'Bo', 'Cy', 'Di'].map(name => ({ name, kind: 'human' }));
-const quads = ['thieves', 'red', 'gold', 'echo'];
+const quads = ['thieves', 'red', 'yellow', 'echo'];
 const key = k => `0-${quadrant('thieves').actions.findIndex(a => a.key === k)}`;
 const cmp = s => ({ players: s.players.map(p => ({ res: p.res, members: p.members, bonus: p.bonus, hideout: p.hideout })), cards: s.cards, shop: s.shop, pending: s.pending });
 const assert = (ok, message) => { if (!ok) throw Error(message); };
@@ -39,7 +39,7 @@ function fixture(name) {
   if (name === 'scaling-resume') {
     // Pilfer (Cory, Nov 10): "Steal 1 resource per minion you’ve placed this round, this one included. +1 magenta."
     // You have 4 minions out already, so this fifth steals 5, split as you choose; Cy lay low this round
-    action = 'pickpocket'; picks = ['take:1:gold', 'take:1:red', 'take:1:gold', 'take:1:gold', 'take:1:red'];
+    action = 'pickpocket'; picks = ['take:1:yellow', 'take:1:red', 'take:1:yellow', 'take:1:yellow', 'take:1:red'];
     s.players[2].hideout = round;
     for (const k of ['1-0', '1-1', '1-2', '2-0']) s.slots[k] = 0;
     s.players[0].left = 1;
@@ -47,7 +47,7 @@ function fixture(name) {
     // Plunder (Cory, Nov 10): "Steal 4 followers and 4 resources. +1 magenta." Bo has 5 followers to take, Cy none, Di has
     // Bodyguards, which no longer stops a steal ("Whenever a rival steals from you, steal 1 back from them.", Cory, Nov 11 9:17pm
     // rework); one follower at a time, then the resources, each split as you choose
-    action = 'rob'; picks = ['player:1', 'player:1', 'player:1', 'player:1', 'take:1:gold', 'take:1:gold', 'take:1:red', 'take:2:red'];
+    action = 'rob'; picks = ['player:1', 'player:1', 'player:1', 'player:1', 'take:1:yellow', 'take:1:yellow', 'take:1:red', 'take:2:red'];
     s.players.forEach((p, i) => { p.bonus = [0, 5, 0, 6][i]; });
     deal('thieves.watchdog', 3);
   } else if (name === 'ransom') {
@@ -166,8 +166,8 @@ try {
       const flights = await page.evaluate(() => window.__magentaFlights);
       assert(flights.length > 0, `${tag}: no visible motion`);
       assert(!flights.some(f => f.colorTurn), `${tag}: theft still changes color in flight`);
-      if (name === 'scaling-resume' || name === 'followers') { // Pilfer and Plunder both take Bo's gold
-        const color = 'gold';
+      if (name === 'scaling-resume' || name === 'followers') { // Pilfer and Plunder both take Bo's yellow
+        const color = 'yellow';
         assert(flights.some(f => /piece-res|pick-flight/.test(f.className) && f.sources.includes(`1:${color}`)), `${tag}: resource motion never starts at the chosen rival pile`);
       }
       assert(!await page.evaluate(() => document.body.scrollWidth > innerWidth + 1), `${tag}: horizontal overflow`);

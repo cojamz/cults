@@ -12,7 +12,7 @@ const TABLE = '#101817';
 export const NEUTRALS = { k: '#0a0f0e', d: '#3c4946', m: '#8e9b96', l: '#ece6d6' };
 // Sphere base colors by resource (the rules-text pips use the same names).
 export const SPHERES = {
-  gold: '#e2962c', red: '#e0645a', magenta: '#d4508f', green: '#5fb37c', silver: '#a3b3c2',
+  red: '#e0645a', magenta: '#d4508f', green: '#5fb37c', silver: '#a3b3c2',
   white: '#eef3f8', purple: '#9a62e6', yellow: '#d3dd48', blue: '#6aa6dc', colorless: '#8d9693',
 };
 const mix = (a, b, t) => {
@@ -80,7 +80,7 @@ const TOKEN = (() => {
 })();
 const TEMPLATES = { member: { id: '_member', name: 'Member', kind: 'member', px: HOOD }, action: { id: '_action', name: 'Action', kind: 'action', px: TOKEN }, artifact: { id: '_artifact', name: 'Artifact', kind: 'artifact', px: TOKEN } };
 
-// ids: engine ids for the batches ("gold.banker", "gold.rush"), kebab names for the calibration set ("banker")
+// ids: engine ids for the batches ("red.host", "red.hireup"), kebab names for the calibration set
 const BY_ID = new Map(SETS.filter(i => i.kind === 'member' || i.kind === 'action' || i.kind === 'artifact').map(i => [i.id, i]));
 // Green's new members use distinct retired Green drawings while their final names/art settle.
 // New IDs preserve each member's own palette and cache entry; no live Green card shares these silhouettes.

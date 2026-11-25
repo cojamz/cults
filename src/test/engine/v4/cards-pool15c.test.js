@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Idea pipeline pool 15 (round 2), the third file: Mashup takes Green's only live round III space.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { take, move } from './helpers.js';
 import { linesNaming, passBuys } from './cards-helpers.js';

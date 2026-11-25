@@ -1,6 +1,7 @@
 // A card in the pile or the shop belongs to nobody and carries nothing (fuzz: "in the pile/shop still has …").
 // Tryout (round I rework, 2026-10-27) runs a shop member's On Recruit in place, and the member stays in the shop:
 // whatever that effect writes on the card must not stay on it.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { it, expect } from 'vitest';
 import { sceneQ } from './cards-helpers.js';
 import { take, move } from './helpers.js';

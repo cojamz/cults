@@ -144,7 +144,7 @@ describe('bot levels', () => {
   // Blind tester, 2026-10-15: "P4 swapped Guest for Busker, then swapped back" (two turns, no change). Seeds below
   // took a member back 6 times in 100 games before the fix (Do It Again copying Even Swap among them).
   it('bots never swap back a member they swapped away', () => {
-    const tables = [['red', 'gold', 'blue', 'green'], ['red', 'market', 'echo', 'gold'], ['red', 'thieves', 'trading', 'blue']];
+    const tables = [['red', 'yellow', 'blue', 'green'], ['red', 'market', 'echo', 'yellow'], ['red', 'thieves', 'trading', 'blue']];
     let swaps = 0;
     for (const level of ['easy', 'normal']) for (const quadrants of tables) for (const seed of [1, 4, 5, 18, 19]) {
       const rand = seededRandom(seed);

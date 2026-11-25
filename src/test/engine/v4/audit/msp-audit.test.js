@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Audit (market / purple / silver): cards whose effect may not match their text. Each test pins what the engine does.
+import '../fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { take, move, pinCosts } from '../helpers.js';
 import { sceneQ } from '../cards-helpers.js';

@@ -6,9 +6,9 @@ it('retires Basic arcs from all new table entry paths while retaining replay def
   expect(spheres()).not.toContain('blue');
   expect(spheres()).not.toContain('green');
   expect(spheres()).toEqual(expect.arrayContaining(['market', 'echo']));
-  expect(tableProblem(['gold', 'red', 'blue', 'green'])).toContain('retired');
-  expect(parseTable('gold,red,blue,green')).toEqual(['gold', 'red', 'market', 'echo']);
-  expect(fitTable({ mode: 'custom', quadrants: ['gold', 'red', 'blue', 'green'] }, 4).quadrants).toEqual(['gold', 'red', 'market', 'echo']);
+  expect(tableProblem(['yellow', 'red', 'blue', 'green'])).toContain('retired');
+  expect(parseTable('yellow,red,blue,green')).toEqual(['yellow', 'red', 'market', 'echo']);
+  expect(fitTable({ mode: 'custom', quadrants: ['yellow', 'red', 'blue', 'green'] }, 4).quadrants).toEqual(['yellow', 'red', 'market', 'echo']);
   expect(randomTable(() => 0.3, 4).every(id => !quadrant(id).standIn)).toBe(true);
   expect(quadrant('blue').standIn).toBe(true);
   expect(quadrant('green').standIn).toBe(true);

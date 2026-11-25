@@ -61,7 +61,7 @@ const HARD_MAX_MS = 200; // plus ~10–40ms of setup before the clock starts: un
 // Very Hard: Hard looking 3x as far (300 moves, 4 options). It beat Hard 25 seats to 17 of 76 (20 tables played twice,
 // seats swapped; design/eval/hard-value/README.md, Cory Oct 31: "a new category of Hard"). About 3x Hard's time a move.
 const VERY_HARD = { budget: 300, candidates: 4, maxMs: 600 };
-const SETUP_WEIGHTS = { gold: 3, red: 3, blue: 1, green: 1 };
+const SETUP_WEIGHTS = { yellow: 3, red: 3, blue: 1, green: 1 };
 
 /** For a setup screen: the levels in order, with a name and a one-line blurb. */
 export const BOT_LEVEL_INFO = [
@@ -149,8 +149,7 @@ export function chooseGreedyMove(state, rand = Math.random, { noise = 1.6 } = {}
       return move(best(pend.options.filter(o => o.kind === 'slot'), o => {
         const a = actionAt(state, o.q, o.i);
         const qid = state.quadrants[o.q];
-        const hustle = p.members.filter(u => state.cards[u].def === 'gold.hustler' && state.cards[u].color === qid).length;
-        return a.estimate(ctx, p) + hustle + rand() * 1.2 * noise;
+        return a.estimate(ctx, p) + rand() * 1.2 * noise;
       }));
     case 'buy': {
       const use = useOption(state, pend, ctx, p);

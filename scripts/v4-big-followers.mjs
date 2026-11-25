@@ -20,7 +20,7 @@ import { seededRandom } from '../src/engine/v4/rng.js';
 
 const sum = o => Object.values(o).reduce((a, b) => a + b, 0);
 
-const TABLES = { classic: ['gold', 'red', 'market', 'echo'], default: undefined };
+const TABLES = { classic: ['yellow', 'red', 'market', 'echo'], default: undefined };
 
 // Tied leaders split the prize (rounded down): take back what each was paid over its share.
 function splitTies(prev, next) {

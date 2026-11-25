@@ -1,6 +1,7 @@
 // Paying (dialogs pod, 2026-10-15): the cost as sockets at the engine's price, the default way already in (one tap
 // pays), a stack click or a coin click swaps to the nearest other legal way (the payment never goes short), every
 // rule-changer named in a line, Cancel goes back, and a single way to pay skips the dialog.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
 import { createGame, applyMove, chooseBotMove, memberPrice, TIERS } from '../../../engine/v4/index.js';
@@ -161,20 +162,15 @@ describe('v4 payment picker', () => {
   });
 
   it('names every rule-changer in one quiet line each, and the default pays exactly the price they make', () => {
-    // a member with a colored part, paid by someone holding Skinflint and a −4 discount
+    // a member with a colored part, paid by someone holding a −4 discount (Skinflint's double gold left with Gold, Nov 24)
     let state = structuredClone(findPayState());
     const me = state.pending.player;
     const p = state.players[me];
-    const free = def => Object.values(state.cards).find(c => c.def === def && !state.players.some(x => x.members.includes(c.uid)));
-    const pp = free('gold.thrift');
-    state.pile = state.pile.filter(u => u !== pp.uid); state.shop = state.shop.filter(u => u !== pp.uid);
-    p.members.push(pp.uid);
     p.discount = 4;
-    p.res = { ...p.res, gold: 6, red: 6, blue: 6, green: 6 };
-    // a gold member face up (its colored part is gold, so the discount and the double gold both bend it)
-    const target = state.pile.find(u => state.cards[u].def.startsWith('gold.') && state.cards[u].def !== 'gold.thrift' && memberPrice(state, p, u).total >= 3); // 3 (was 2) since every member +1 (Nov 5): a 2 left one way to pay, so no picker
-    state.pile = state.pile.filter(u => u !== target); state.shop = [target, ...state.shop];
+    p.res = { ...p.res, red: 6, blue: 6, green: 6, yellow: 6, purple: 6 };
+    const target = state.pile.find(u => memberPrice(state, p, u).total >= 3); // 3 (was 2) since every member +1 (Nov 5): a 2 left one way to pay, so no picker
     expect(target).toBeDefined();
+    state.pile = state.pile.filter(u => u !== target); state.shop = [target, ...state.shop];
     state.queue[0] = { t: 'pay', p: me, uid: target };
     state = resume(state);
     expect(state.pending.kind).toBe('pay');
@@ -187,15 +183,13 @@ describe('v4 payment picker', () => {
     expect(dlg.querySelector('.pay-id').contains(rulesEl)).toBe(true);
     expect(dlg.querySelector('[data-pay-ability]').compareDocumentPosition(rulesEl) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(rulesEl.compareDocumentPosition(dlg.querySelector('.pay-rows')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(rules.some(t => /gold counts double/.test(t))).toBe(true);
     expect(rules.some(t => /−4/.test(t))).toBe(true);
-    // the default way pays the engine's price (each gold pays 2 here), no coin wasted beyond half a gold
+    // the default way pays the engine's price exactly
     const v = vec(state, dlg.querySelector('.pay-go').getAttribute('data-option'));
-    const paid = Object.entries(v).reduce((t, [c, n]) => t + n * (c === 'gold' ? 2 : 1), 0);
+    const paid = Object.values(v).reduce((t, n) => t + n, 0);
     const price = memberPrice(state, state.players[me], target).total;
-    expect(paid).toBeGreaterThanOrEqual(price);
-    expect(paid - price).toBeLessThan(2);
-    expect(dlg.textContent).not.toMatch(/×2/); // the double gold is the one line, never a "×2" token
+    expect(paid).toBe(price);
+    expect(dlg.textContent).not.toMatch(/×2/);
   });
 
   it('only one way to pay: no dialog, it pays at once', async () => {
@@ -238,7 +232,7 @@ describe('how to play', () => {
 it('payment selector keeps the selected member ability visible without the payment legend', () => {
   const s = createGame({ seats: [{ name: 'Ana' }, { name: 'Bo' }], seed: 7 });
   for (const r of s.resources) s.players[0].res[r] = 12;
-  const uid = s.shop.find(u => s.cards[u].def.startsWith('gold.')) || s.shop[0];
+  const uid = s.shop[0];
   s.queue = [{ t: 'pay', p: 0, uid }];
   resume(s);
   const { container } = render(<PayPicker state={s} onPick={() => {}} busy={false} />);

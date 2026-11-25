@@ -4,6 +4,7 @@
 // marked redo, when the copier does the action itself. So every space that does anything a chip can't carry (moves
 // turns, skips one, gives followers, sets a rule for the round) must be redo. This takes every space on a fresh table
 // and checks.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { allQuadrantIds, quadrant } from '../../../engine/v4/content/index.js';
 import { take, move } from './helpers.js';

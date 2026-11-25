@@ -14,7 +14,7 @@ const { sceneQ, linesNaming } = await import('./cards-helpers.js');
 delete process.env.REPLACE16;
 delete process.env.MEMBER_UP;
 
-const sc = o => sceneQ({ quadrants: ['gold', 'red', 'silver', 'green'], ...o });
+const sc = o => sceneQ({ quadrants: ['yellow', 'red', 'silver', 'green'], ...o });
 const pass = s => move(s, s.pending.options.find(o => o.kind === 'pass').id);
 const buy = (s, re) => {
   s = move(s, s.pending.options.find(o => re.test(o.label || '')).id);

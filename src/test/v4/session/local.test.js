@@ -1,3 +1,4 @@
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createLocalSession } from '../../../v4/session/index.js';
 import { chooseBotMove } from '../../../engine/v4/index.js';

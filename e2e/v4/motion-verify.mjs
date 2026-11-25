@@ -24,14 +24,14 @@ function saveOf(state) {
 const SCENE = { roundDecks: 0, cull: false, artifacts: false };
 // Pilfer (Cory, Nov 10): "Steal 1 resource per minion you’ve placed this round, this one included. +1 magenta."
 // P1 has two minions out already, so this third steals 3; stolen resources keep their colors
-let steal = sceneQ({ quadrants: ['gold', 'silver', 'thieves'], round: 1, res: [{}, { gold: 1, silver: 2 }], rules: SCENE, slots: { '0-0': 0, '1-0': 0 }, left: 1 });
+let steal = sceneQ({ quadrants: ['yellow', 'silver', 'thieves'], round: 1, res: [{}, { yellow: 1, silver: 2 }], rules: SCENE, slots: { '0-0': 0, '1-0': 0 }, left: 1 });
 steal = take(steal, 'Pilfer');
-steal = move(steal, 'take:1:gold');
+steal = move(steal, 'take:1:yellow');
 steal = move(steal, 'take:1:silver');
 const stolen = move(steal, 'take:1:silver');
-assert.deepEqual(stolen.players[0].res, { gold: 1, silver: 2, magenta: 1 });
+assert.deepEqual(stolen.players[0].res, { yellow: 1, silver: 2, magenta: 1 });
 const takes = stolen.effects.filter(e => e.type === 'transfer' && e.from.pid === 1 && e.to.pid === 0);
-assert.deepEqual(takes.map(e => `${e.what.n} ${e.what.r}`).sort(), ['1 gold', '2 silver']);
+assert.deepEqual(takes.map(e => `${e.what.n} ${e.what.r}`).sort(), ['1 yellow', '2 silver']);
 const scenarios = [{ name: 'magenta', state: steal, option: 'take:1:silver', expected: stolen.players.map(p => p.res) }];
 if (process.env.V4_PREP_ONLY) { console.log('Prepared real-engine fixtures:', scenarios.map(s => ({ name: s.name, option: s.option }))); process.exit(0); }
 assert(process.env.V4_URL, 'V4_URL required for immutable built game');

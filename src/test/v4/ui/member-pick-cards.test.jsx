@@ -152,7 +152,7 @@ describe('shop reading controls', () => {
     expect([...two.container.querySelectorAll('[data-round-line]')].map(l => l.getAttribute('aria-current'))).toEqual([null, 'true', null, null, 'true', null]);
     two.unmount();
     // words that differ past a number: a line per round
-    const { container } = render(<RuleText def={{ text: 'x', byRound: { lines: ['Steal 1 gold.', 'Steal 2 red.', 'Steal 3 blue.'] } }} round={1} plain compact />);
+    const { container } = render(<RuleText def={{ text: 'x', byRound: { lines: ['Steal 1 purple.', 'Steal 2 red.', 'Steal 3 blue.'] } }} round={1} plain compact />);
     expect(container.querySelector('.by-round.runs')).toBeNull();
     expect(container.querySelectorAll('[data-round-line]')).toHaveLength(3);
   });

@@ -15,7 +15,7 @@ import { seedSave } from './lib/seed.mjs';
 
 const SHOTS = (process.env.V4_SHOTS || '/tmp/patrons-shots/v4') + '/silver-share';
 mkdirSync(SHOTS, { recursive: true });
-const TABLE = ['gold', 'red', 'blue', 'silver'];
+const TABLE = ['yellow', 'red', 'blue', 'silver'];
 
 function save() {
   const q = TABLE.indexOf('silver'), i = quadrant('silver').actions.findIndex(a => a.key === 'partygifts');

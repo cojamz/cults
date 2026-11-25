@@ -3,6 +3,7 @@
 // carries no effect stream, so the director falls back to the state diff (gains.js). Before f27be278 that diff saw
 // every contest prize and flew it from the follower rates to each winner, ahead of the Reckoning. The chain must only
 // fly what the closing move itself gave; the prizes belong to the Reckoning alone.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { expect, it } from 'vitest';
 import { createGame, applyMove, chooseBotMove, followers } from '../../../engine/v4/index.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
@@ -42,7 +43,9 @@ it('flies only the closing move\'s own followers, from their own sources, before
   // seed 13 for 9 since Call to Arms took Trending's place (Nov 11): seed 9's round I now closes on a Borrow discard, as seed 5's did
   // seed 15 for 10 since Guild Master and Bannermen (Nov 11): seed 10's round II closing has no round-end line now
   // seed 16 for 13 since Gleaner, Tax Men and Jester (Nov 24): seed 13's round II now closes on a Borrow discard, as seed 5's did
-  for (const seed of [1, 16, 3, 4, 11, 6, 14, 15]) {
+  // seed 17 for 4 since Gold left the game (Nov 24): seed 4's round I closing flies a follower this check doesn't model
+  // seed 19 for 15 since Gold left the game (Nov 24): seed 15's round II now closes on a Borrow discard, as seed 5's did
+  for (const seed of [1, 16, 3, 17, 11, 6, 14, 19]) {
     for (const { prev, next } of closings(seed)) {
       const line = newLogLines(prev, next).filter(isRoundEnd).pop();
       expect(line, `seed ${seed} round ${prev.round}`).toBeTruthy();

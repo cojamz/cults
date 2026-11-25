@@ -26,7 +26,7 @@ beforeEach(() => { vi.useFakeTimers(); control.settles=[]; control.motion=true;
 afterEach(() => { skipChain();landAll();stageClear();off?.();vi.restoreAllMocks();vi.useRealTimers();document.body.innerHTML=''; });
 function start(){
  const root=document.createElement('div');root.innerHTML='<div class="lt-cult-seat" data-seat="0"><div class="cs-crowd"><div class="cs-member" data-uids="102"></div></div></div><div class="lt-cult-seat" data-seat="1"><div class="cs-crowd"><div class="cs-member" data-uids="101"></div></div></div>';document.body.append(root);
- const before=sceneQ({quadrants:['gold','silver']});const cause={kind:'move',pid:0};
+ const before=sceneQ({quadrants:['yellow','silver']});const cause={kind:'move',pid:0};
  const move=(uid,from,to)=>({type:'member-move',cause,from:{kind:'crowd',pid:from},to:{kind:'crowd',pid:to},what:{uid,worth:1}});
  const after={...before,moves:before.moves+1,effects:[move(101,0,1),move(102,1,0)]};playChain(root,before,after);return root;
 }
@@ -77,10 +77,10 @@ it('a motion a skip lands is marked as landed early, so its landing sound stays 
 // Undo (H24): the state is already restored; the move's motion plays backwards, never landing (counting, sounding) again
 function placement(){
  const root=document.createElement('div');
- root.innerHTML='<div class="lt-wheel"><div data-slot="0-0"><div class="base"></div></div><b class="rim" data-rim-res="gold"></b></div><div class="lt-cult-seat" data-seat="0"><div class="cs-minions"><i data-minion="1"></i></div><div class="cs-stack" data-res="gold"><b class="num">4</b></div></div>';
+ root.innerHTML='<div class="lt-wheel"><div data-slot="0-0"><div class="base"></div></div><b class="rim" data-rim-res="yellow"></b></div><div class="lt-cult-seat" data-seat="0"><div class="cs-minions"><i data-minion="1"></i></div><div class="cs-stack" data-res="yellow"><b class="num">4</b></div></div>';
  document.body.append(root);
- const restored=sceneQ({quadrants:['gold','silver'],res:[{gold:2}]});
- const undone={...restored,moves:restored.moves+1,slots:{...restored.slots,'0-0':0},effects:[{type:'gain',cause:{kind:'space',pid:0,key:'0-0'},from:{kind:'space',key:'0-0'},to:{kind:'stack',pid:0,r:'gold'},what:{r:'gold',n:2}}]};
+ const restored=sceneQ({quadrants:['yellow','silver'],res:[{yellow:2}]});
+ const undone={...restored,moves:restored.moves+1,slots:{...restored.slots,'0-0':0},effects:[{type:'gain',cause:{kind:'space',pid:0,key:'0-0'},from:{kind:'space',key:'0-0'},to:{kind:'stack',pid:0,r:'yellow'},what:{r:'yellow',n:2}}]};
  return {root,restored,undone};
 }
 for (const when of ['during','after']) it(`undo ${when} the move's motion plays it backwards without landing anything again (H24)`,async()=>{

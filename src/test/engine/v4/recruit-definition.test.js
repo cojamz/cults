@@ -3,6 +3,7 @@
 // doing. "Whenever you recruit" fires on a member you take (shop, free, a steal), a member your own red swap brings in,
 // and each follower purchase; never on a member a rival's action moves into your cult. A member's own "When recruited"
 // fires when it joins by your doing, not when a rival forces it on you.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, expect, it } from 'vitest';
 import { contextFor, resume } from '../../../engine/v4/core.js';
 import { table, uidIn } from './cards-helpers-b.js';

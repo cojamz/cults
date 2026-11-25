@@ -14,9 +14,9 @@ const word = name => new RegExp(`(^|[^\\p{L}\\p{N}])${name}(?![\\p{L}\\p{N}])`, 
 
 describe('asYou', () => {
   it('rewrites your name, your possessive and the verb after it; leaves others alone', () => {
-    expect(asYou('Ana took Rush (Gold).', 'Ana')).toBe('You took Rush (Gold).');
-    expect(asYou("Ana's Banker: +1 gold.", 'Ana')).toBe('Your Banker: +1 gold.');
-    expect(asYou('Bo stole 2 gold from Ana.', 'Ana')).toBe('Bo stole 2 gold from you.');
+    expect(asYou('Ana took Rush (Yellow).', 'Ana')).toBe('You took Rush (Yellow).');
+    expect(asYou("Ana's Banker: +1 yellow.", 'Ana')).toBe('Your Banker: +1 yellow.');
+    expect(asYou('Bo stole 2 yellow from Ana.', 'Ana')).toBe('Bo stole 2 yellow from you.');
     expect(asYou('Ana has no minions left.', 'Ana')).toBe('You have no minions left.');
     expect(asYou('Bo gives 1 red to Ana; Ana gets 2.', 'Ana')).toBe('Bo gives 1 red to you; you get 2.');
     expect(asYou('Anabel took Rush.', 'Ana')).toBe('Anabel took Rush.');

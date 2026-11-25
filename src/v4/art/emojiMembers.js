@@ -145,7 +145,6 @@ const M = {
   trespasser: ['🚷', '☝️ Your next minion can share a taken space'],
   weeders: ['🌿', '🔁 Discard any shop members, then refill'],
   squanderer: ['💸', '☝️ Recruit twice this turn'],
-  alchemists: ['🧪', '♾️ An action gains you another color: +1 gold'], // Gold's (the grey one is Conjurer now)
   conjurer: ['🪄', '♾️ Your resources count as any when you recruit'],
   seer: ['🔮', '♾️ You may also recruit from the top 3 of the pile'],
   'extra-hand': ['✋', '☝️ +1 minion this round'],
@@ -163,14 +162,6 @@ const M = {
   straggler: ['🐢', '🔁 After the last minion: move yours to an open space'],
   // members dealt since the first pass, so the emoji look never mixes in a picture (picky bot, Nov 8: Downsizers,
   // Patron Saints, Ballroom Dancers and Kingmakers showed their scenes beside Ghost's emoji; Claude's picks)
-  banker: ['🤵', '✨🌅 +3 gold'],
-  pardoner: ['🙏', '♾️ A rival buys followers: +1 gold'],
-  'gold-merchant': ['⚱️', '♾️ Anyone recruits a gold member: +1 gold'],
-  skinflint: ['🐷', '♾️ Gold you spend on members counts double'],
-  'poor-relation': ['🥺', '♾️ A rival has more gold: double your gold gains'],
-  gambler: ['🎲', '☝️ Double your gold'],
-  baron: ['🤑', '🏁 +1 follower per 2 gold'],
-  treasurer: ['🗝️', '✨ +1 gold per member you have'],
   journeyman: ['🧳', '🌅 May give this to the shop: free member costing up to 3 more'],
   hurriers: ['🏃‍♀️', '♾️ You take a turn in a row: +2 followers'],
   sleepyheads: ['🛌', '♾️ You take the Goes Last token: +3 followers'],

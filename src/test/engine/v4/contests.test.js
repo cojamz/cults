@@ -28,9 +28,9 @@ function checkTable(s, table, where) {
 describe('v4 contests: one function decides and describes them', () => {
   it('Red and Yellow resource ties each earn half the prize, regardless of member quantities', () => {
     const s = sceneQ({
-      quadrants: ['gold', 'red', 'yellow'], n: 3,
+      quadrants: ['purple', 'red', 'yellow'], n: 3,
       members: [['red.volunteer'], ['red.twins', 'red.bigfamily'], []],
-      res: [{ gold: 1, red: 9, yellow: 7 }, { gold: 1, red: 9, yellow: 7 }, {}],
+      res: [{ purple: 1, red: 9, yellow: 7 }, { purple: 1, red: 9, yellow: 7 }, {}],
       queue: [{ t: 'endRound' }],
     });
     const scored = s.contests.at(-1).results;
@@ -40,18 +40,18 @@ describe('v4 contests: one function decides and describes them', () => {
       expect(contest.tiebreak).toBeNull();
       expect(contest.rows.every(r => r.tiebreak === undefined)).toBe(true);
     }
-    // Gold, Red and Yellow all tie; each winner gets three half prizes of 2 followers each (half of 4).
+    // Purple, Red and Yellow all tie; each winner gets three half prizes of 2 followers each (half of 4).
     expect(s.players.map(p => p.contest)).toEqual([6, 6, 0]);
   });
   it('a three-way tie pays half the prize to each winner, never one third', () => {
-    const s = sceneQ({ quadrants: ['gold', 'red', 'yellow'], n: 3, round: 3,
+    const s = sceneQ({ quadrants: ['purple', 'red', 'yellow'], n: 3, round: 3,
       members: [['red.volunteer'], ['red.intern'], ['red.crowd']],
-      res: Array.from({ length: 3 }, () => ({ gold: 1, red: 1, yellow: 1 })), queue: [{ t: 'endRound' }] });
+      res: Array.from({ length: 3 }, () => ({ purple: 1, red: 1, yellow: 1 })), queue: [{ t: 'endRound' }] });
     expect(s.contests.at(-1).results.every(c => c.winners.length === 3 && c.prize === 5)).toBe(true);
     expect(s.players.map(p => p.contest)).toEqual([15, 15, 15]);
   });
   it('Red and Yellow still award no prize when nobody holds any of the color', () => {
-    const s = sceneQ({ quadrants: ['gold', 'red', 'yellow'], n: 3, res: [{ gold: 9 }, {}, {}] });
+    const s = sceneQ({ quadrants: ['purple', 'red', 'yellow'], n: 3, res: [{ purple: 9 }, {}, {}] });
     for (const c of contestTable(s).filter(c => ['red', 'yellow'].includes(c.qid))) expect(c.winners).toEqual([]);
   });
   it('awards, records and describes every round of 24 mixed-table games the same way', () => {

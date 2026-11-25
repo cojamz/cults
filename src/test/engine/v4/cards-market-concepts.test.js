@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Blue concept cards on claude/members-blue-v2 (Cory's Oct 21 calls plus Claude's fill-in counters), not shipped.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { quadrant } from '../../../engine/v4/content/index.js';
 import { take, move } from './helpers.js';

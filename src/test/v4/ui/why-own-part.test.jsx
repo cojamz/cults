@@ -9,7 +9,7 @@ import { sceneQ, spaceOf } from '../../engine/v4/cards-helpers.js';
 afterEach(cleanup);
 
 it('Keep Going on your second turn in a row with Purple Cloak: Why shows the 2 turns (+4) and the cloak (+2)', () => {
-  const s = sceneQ({ quadrants: ['gold', 'red', 'purple', 'echo'] });
+  const s = sceneQ({ quadrants: ['yellow', 'red', 'purple', 'echo'] });
   const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
   s.cards[art] = { uid: art, def: 'purple.pocketwatch' }; s.players[0].artifact = art;
   s.turns = [1, 0, 0]; s.current = 0;

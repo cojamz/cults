@@ -5,6 +5,7 @@
 // has a space to spare), queued right after the turn of your last minion. Through real moves: only after the last
 // minion, one more minion with its own buy, before the next player; once per round; nothing when no space is spare.
 // Price: design/eval/purple-members.md (member-value sim, 8+2).
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { defById, EXTRA_WILD, COLOR_PART } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf } from './helpers.js';

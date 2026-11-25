@@ -6,14 +6,14 @@ import { describe, it, expect } from 'vitest';
 import { take, move } from './helpers.js';
 import { sceneQ, settle, passBuys } from './cards-helpers.js';
 
-const rich = { purple: 9, green: 9, gold: 9, red: 9 };
+const rich = { purple: 9, green: 9, yellow: 9, red: 9 };
 const uidOf = (s, def, i) => s.players[i].members.find(u => s.cards[u].def === def);
 const plain = s => {
-  const o = s.pending.options.find(x => x.kind === 'slot' && ['gold', 'red'].includes(s.quadrants[x.q]))
+  const o = s.pending.options.find(x => x.kind === 'slot' && ['yellow', 'red'].includes(s.quadrants[x.q]))
     || s.pending.options.find(x => x.kind === 'slot');
   return passBuys(settle(move(s, o.id)));
 };
-const scene = () => sceneQ({ quadrants: ['purple', 'echo', 'gold', 'red'], n: 3, round: 2, res: [rich, rich, rich], members: [['echo.dejavu']],
+const scene = () => sceneQ({ quadrants: ['purple', 'echo', 'yellow', 'red'], n: 3, round: 2, res: [rich, rich, rich], members: [['echo.dejavu']],
   queue: [1, 0, 2, 2, 0, 1, 1, 0, 2].map(p => ({ t: 'turn', p })).concat({ t: 'allPlaced' }) });
 
 describe('a turn moved up beats a skip you already have', () => {

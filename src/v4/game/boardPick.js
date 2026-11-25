@@ -413,8 +413,8 @@ function stealPicked(state, pend) {
 }
 function stealModel(state, pend, title, question, base, takes) {
   const picked = stealPicked(state, pend);
-  // Collect Debts keeps { pid: n } of gold, a Magenta steal { pid: { color: n } }
-  const pickedOf = (pid, r) => { const x = picked[pid]; return x == null ? 0 : typeof x === 'number' ? (r === 'gold' ? x : 0) : x[r] || 0; };
+  // a Magenta steal keeps { pid: { color: n } }
+  const pickedOf = (pid, r) => { const x = picked[pid]; return x == null || typeof x === 'number' ? 0 : x[r] || 0; };
   const asked = (question.match(/^take \d+ (\w+)/i) || [])[1];
   const color = state.resources.includes(asked) ? asked : null;
   const offer = new Map(takes.map(o => [`${o.target.pid}:${o.target.res}`, o]));

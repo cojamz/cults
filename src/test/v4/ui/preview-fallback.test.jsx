@@ -7,12 +7,12 @@ import { usePreviewWarmup } from '../../../v4/game/HoverCards.jsx';
 beforeEach(() => { vi.useFakeTimers(); _setPreviewWorker(false); });
 afterEach(() => { cleanup(); _setPreviewWorker(null); vi.unstubAllGlobals(); vi.useRealTimers(); });
 const fresh = () => {
- const state = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Other', kind: 'bot' }], seed: 7, quadrants: ['gold', 'red'] });
+ const state = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Other', kind: 'bot' }], seed: 7, quadrants: ['yellow', 'red'] });
  state.round = 1;
  state.pending = { kind: 'place', player: 0, options: [] };
  return state;
 };
-const keys = () => quadrant('gold').actions.map((a,i) => a.ring === 1 ? `0-${i}` : null).filter(Boolean);
+const keys = () => quadrant('yellow').actions.map((a,i) => a.ring === 1 ? `0-${i}` : null).filter(Boolean);
 const peek = (s,k) => peekPreview(s,0,...k.split('-').map(Number));
 
 // Cache results are the observable effect: an obsolete simulation must never run at all.

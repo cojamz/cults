@@ -13,7 +13,7 @@ registerQuadrant(silver);
 afterEach(cleanup);
 
 function scene(round = 1) {
-  const s = createGame({ seats: Array.from({ length: 3 }, (_, i) => ({ name: `P${i + 1}`, kind: 'human' })), seed: 7, quadrants: ['gold', 'red', 'blue', 'silver'] });
+  const s = createGame({ seats: Array.from({ length: 3 }, (_, i) => ({ name: `P${i + 1}`, kind: 'human' })), seed: 7, quadrants: ['yellow', 'red', 'blue', 'silver'] });
   s.queue = []; s.pending = null; s.round = round; s.slots = {}; s.order = []; s.log = [];
   s.players.forEach(p => { for (const r of s.resources) p.res[r] = 0; p.left = 3; });
   s.queue = [{ t: 'turn', p: 0 }];

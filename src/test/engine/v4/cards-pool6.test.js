@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Idea pipeline pool 6 (Nov 7; scripts/ideas/README.md): bot-only candidates, never dealt in a real game. One test per
 // sentence of each card's text, through real moves, with the log naming the card.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { defById } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf } from './helpers.js';

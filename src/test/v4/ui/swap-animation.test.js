@@ -23,7 +23,7 @@ it('finishes both staged swap flights and leaves no running animation chain', as
   const root = document.createElement('div');
   root.innerHTML = '<div class="lt-cult-seat" data-seat="0"><div class="cs-crowd"><div class="cs-member" data-uids="102"></div></div></div><div class="lt-cult-seat" data-seat="1"><div class="cs-crowd"><div class="cs-member" data-uids="101"></div></div></div>';
   document.body.appendChild(root);
-  const before = sceneQ({ quadrants: ['gold', 'silver'] });
+  const before = sceneQ({ quadrants: ['yellow', 'silver'] });
   const cause = { kind: 'move', pid: 0 };
   const move = (uid, from, to) => ({ type: 'member-move', cause,
     from: { kind: 'crowd', pid: from }, to: { kind: 'crowd', pid: to }, what: { uid, worth: 1 } });
@@ -44,7 +44,7 @@ it('finishes both staged swap flights and leaves no running animation chain', as
 // flies as its portrait, never a blank square
 it('a swap with the shop crosses both members at once, the incoming one as its portrait', async () => {
   const { planChain } = await import('../../../v4/game/director.js');
-  const before = sceneQ({ quadrants: ['gold', 'red'] });
+  const before = sceneQ({ quadrants: ['yellow', 'red'] });
   const cause = { kind: 'move', pid: 0 };
   const after = { ...before, moves: before.moves + 1, effects: [
     { type: 'recruit', cause, from: { kind: 'shop', index: 2, uid: 7 }, to: { kind: 'crowd', pid: 0 }, what: { uid: 7, worth: 1 } },

@@ -1,4 +1,5 @@
 // The information layer: card names, keywords, colorless members and picker details (Info.jsx, glossary.js).
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, fireEvent, cleanup, within } from '@testing-library/react';
 import { createGame, cardDef, defById, allQuadrantIds, quadrant } from '../../../engine/v4/index.js';
@@ -151,7 +152,7 @@ describe('keyword glossary: one source, every keyword in the cards defined', () 
     for (const t of texts) for (const part of splitTerms(t)) if (part.key) found.add(part.key);
     // 'face-up' left the card texts with Blue's Oct 20 rework (its spaces say "shop member"); the pile is Blue's word now
     // 'in play' left with Patron Saint's rewording (Cory's wording pass, 2026-10-21: "per 2 silver members, anyone’s")
-    for (const k of ['full set', 'plant', 'worth', '+1 minion', 'copy', 'set aside', 'once per round', 'pile']) expect(found.has(k), k).toBe(true);
+    for (const k of ['full set', 'plant', 'worth', '+1 minion', 'copy', 'once per round', 'pile']) expect(found.has(k), k).toBe(true);
     for (const k of found) expect(term(k)?.def?.length, k).toBeGreaterThan(20);
     // Keys are unique; legacy card text can still explain Release without teaching it as normal play.
     expect(new Set(GLOSSARY.map(t => t.key)).size).toBe(GLOSSARY.length);
@@ -183,9 +184,8 @@ describe('"You\'d get" on a space (the engine\'s dry run)', () => {
     const gold = s.quadrants.indexOf('gold'), jv = quadrant('gold').actions.findIndex(a => a.key === 'jv');
     const two = render(<YoudGet state={s} pid={pid} q={gold} i={jv} />);
     await waitFor(() => expect(two.container.querySelector('[data-youd-get]').dataset.youdGet).toBe('+3 gold'));
-    // the rival's +1 gold (Grease a Palm's gift) shows too, as a gold pip
+    // the rival's +1 gold (Grease a Palm's gift) shows too (Gold is a test-only fixture now, so no pip of its own)
     expect(two.container.querySelector('.youd-others').textContent).toMatch(/rivals \+1/);
-    expect(two.container.querySelector('.youd-others .pip').getAttribute('aria-label')).toBe('gold');
     // who gets the gift doesn't change what you get: no "you choose how" note (the rule above says it; design pod)
     expect(two.container.textContent).not.toMatch(/you choose how|your pick/);
   });
@@ -199,22 +199,6 @@ describe('"You\'d get" on a space (the engine\'s dry run)', () => {
     expect(figs.map(f => f.dataset.seat).sort()).toEqual(['0', '1', '2']);
     const emojis = new Set(figs.map(f => f.querySelector('[data-emoji]')?.dataset.emoji));
     expect(emojis.size).toBe(3); // three seats, three different emojis
-  });
-});
-
-describe('How to play lists the glossary', () => {
-  it('every glossary term is defined on the How to play page', async () => {
-    const { default: HowToPlay } = await import('../../../v4/HowToPlay.jsx');
-    const { container } = render(<HowToPlay onClose={() => {}} />);
-    const dts = [...container.querySelectorAll('[data-glossary] dt')].map(e => e.textContent);
-    // only words today's deck uses (Cory, Nov 5: the discount word stayed after its card was cut)
-    expect(dts).toEqual(glossaryEntries().map(t => t.word));
-    expect(dts).not.toContain('Next member costs less');
-    // Full set shows only while a card in today's deck says it (no card in the Nov 11 decks does)
-    if (glossaryEntries().some(t => t.key === 'full set')) expect(container.querySelector('[data-glossary]').textContent).toMatch(/Full set/);
-    else expect(dts).not.toContain('Full set');
-    expect(dts).not.toContain('Release');
-    expect(container.textContent).not.toContain('Released members');
   });
 });
 

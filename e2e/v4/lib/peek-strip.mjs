@@ -11,7 +11,7 @@ mkdirSync(out, { recursive: true });
 const browser = await launchBrowser({ executablePath: browserPath });
 for (const size of sizes.length ? sizes : ['1270x700']) {
   const [width, height] = size.split('x').map(Number);
-  const full = stripSave({ quadrants: ['gold', 'red', 'blue', 'green'] });
+  const full = stripSave({ quadrants: ['yellow', 'red', 'blue', 'green'] });
   const page = await browser.newPage({ viewport: { width, height } });
   page.on('pageerror', e => console.log('pageerror', e.message));
   await seedSave(page, full.save, { roundStart: full.roundStart });

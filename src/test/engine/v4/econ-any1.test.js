@@ -7,7 +7,7 @@ import { cardDef, memberPrice } from '../../../engine/v4/core.js';
 import { richUp } from '../../../engine/v4/content/price.js';
 
 const seats = Array.from({ length: 4 }, () => ({ kind: 'bot' }));
-const Q = ['red', 'gold', 'purple', 'echo'];
+const Q = ['red', 'yellow', 'purple', 'echo'];
 const game = rules => createGame({ seats, seed: 7, quadrants: Q, rules: { deck: 10, contests: 'byColor', ...rules } });
 function firstPlace(s) {
   for (let k = 0; k < 50 && s.pending.kind !== 'place'; k++) s = applyMove(s, { player: s.pending.player, option: s.pending.options[0].id });

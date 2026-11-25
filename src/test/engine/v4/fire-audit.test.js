@@ -2,6 +2,7 @@
 // Fire audit gate (Cory: every number on the table traces to a log line). Seeded mixed tables, normal bots: every
 // member with an effect that gets recruited must leave a log line naming it as acting at least once.
 // scripts/v4-fire-audit.mjs is the long report; this is the fast gate. Each block covers a group of spheres.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove } from '../../../engine/v4/core.js';
 import { quadrant } from '../../../engine/v4/content/index.js';
@@ -254,6 +255,9 @@ const ALLOW = {
   'red.panel': 'pays only when used, and Normal bots rarely take it (red-recruit-chain: Fairy Godmother)',
   // Guild Master and Bannermen (Nov 11) moved the seeded games: recruited once, never used before the game ended
   'gold.speculator': 'pays only when used; recruited once in the sample (interactions: Gambler)',
+  // Gold's deletion (Nov 24) moved the seeded games: Usher fires only at a round start after it joins and only with
+  // more than one place to pick, and its two recruits in the sample never met one
+  'purple.placekeepers': 'fires at a round start after it joins; unnamed in the sample since Gold left (Usher)',
 };
 
 describe('namesCard: what counts as a line naming a card', () => {

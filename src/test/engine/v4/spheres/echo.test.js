@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Green table regressions: exact action yields, free recruits, discounts, legacy ledger and complete seeded games.
+import '../fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, resume, followers, contextFor, memberCount } from '../../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../../engine/v4/bots.js';

@@ -15,7 +15,7 @@ const total = r => Object.values(r).reduce((a, b) => a + b, 0);
 
 describe('Safecrackers (Magenta)', () => {
   it("Your steals can't be stopped (Lie Low doesn't stop them)", () => {
-    let s = sceneQ({ quadrants: ['thieves', 'gold', 'red', 'market'], members: [['thieves.safecrackers']], res: [{}, { gold: 6 }],
+    let s = sceneQ({ quadrants: ['thieves', 'yellow', 'red', 'market'], members: [['thieves.safecrackers']], res: [{}, { yellow: 6 }],
       queue: [1, 0].map(p => ({ t: 'turn', p })) });
     s = passBuys(take(s, 'thieves.hideout')); // P2 lies low (steals 1 from P1, who has nothing)
     if (s.pending?.kind === 'choose' && !s.pending.prompt.startsWith('P1')) s = move(s, s.pending.options[0].id);
@@ -33,7 +33,7 @@ describe('Bailiffs and Repossessors (Blue)', () => {
   for (const [id, name, cap, every, toPile] of [['market.bailiffs', 'Bailiffs', 5, 'round', false], ['market.repossessors', 'Repossessors', 8, 'game', true]]) {
     // Repossessors discards (Cory, Nov 11 3:41pm: "it should go into the discard, actually")
     it(`On Use, once per ${every}: ${toPile ? 'discard' : 'put'} a rival's member costing up to ${cap}${toPile ? '' : ' into the shop'}`, () => {
-      let s = sceneQ({ quadrants: ['market', 'gold', 'red', 'thieves'], members: [[id]], res: [{ gold: 30, blue: 30, red: 30, magenta: 30 }] });
+      let s = sceneQ({ quadrants: ['market', 'yellow', 'red', 'thieves'], members: [[id]], res: [{ yellow: 30, blue: 30, red: 30, magenta: 30 }] });
       const cheap = s.pile.find(u => price(s, u) <= cap), dear = s.pile.find(u => price(s, u) > cap);
       for (const u of [cheap, dear]) { s.pile.splice(s.pile.indexOf(u), 1); s.players[1].members.push(u); }
       const use = `use:${uidOf(s, id, 0)}`;
@@ -52,7 +52,7 @@ describe('Bailiffs and Repossessors (Blue)', () => {
 describe('Mercenaries and Hired Guns (grey)', () => {
   for (const [id, name, n, every] of [['benders.mercenaries', 'Mercenaries', 3, 'round'], ['benders.hiredguns', 'Hired Guns', 5, 'game']]) {
     it(`On Use, once per ${every}: steal ${n} resources from a rival, then give them this member`, () => {
-      let s = sceneQ({ quadrants: ['market', 'gold', 'red', 'thieves'], n: 3, members: [[id]], res: [{}, { gold: 9 }, { red: 9 }] });
+      let s = sceneQ({ quadrants: ['market', 'yellow', 'red', 'thieves'], n: 3, members: [[id]], res: [{}, { yellow: 9 }, { red: 9 }] });
       const u = uidOf(s, id, 0);
       s = move(s, `use:${u}`);
       expect(s.pending.prompt).toMatch(new RegExp(`^${name}: steal ${n} resources from which rival`));
@@ -68,7 +68,7 @@ describe('Mercenaries and Hired Guns (grey)', () => {
 });
 
 describe('Switch Places (Purple, round II) and Seat Swappers (Purple)', () => {
-  const Q = ['purple', 'gold', 'red', 'market'];
+  const Q = ['purple', 'yellow', 'red', 'market'];
   it("+3 purple. Swap your next turn with a rival's next turn.", () => {
     let s = sceneQ({ quadrants: Q, round: 2, n: 3, queue: [0, 1, 2, 2, 1, 0].map(p => ({ t: 'turn', p })) });
     s = take(s, 'purple.switchplaces');

@@ -1,5 +1,6 @@
 // roundStartIncome (preview.js): what each player's members hand them at a round's start, read by running the
 // engine's own round start on a copy. A seat's "each round" line (CultSeat) shows it.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, chooseBotMove, roundStartIncome } from '../../../engine/v4/index.js';
 import { seededRandom } from '../../../engine/v4/rng.js';

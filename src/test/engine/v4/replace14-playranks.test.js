@@ -10,6 +10,7 @@ const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table, uidIn } = await import('./cards-helpers-b.js');
 const { useRetired } = await import('./helpers.js');
+await import('./fixtures/gold-on.js'); // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 useRetired(['red.turnout', 'thieves.hideout']);
 delete process.env.REPLACE14;
 delete process.env.MEMBER_UP;

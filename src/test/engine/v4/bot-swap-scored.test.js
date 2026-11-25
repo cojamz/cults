@@ -10,7 +10,7 @@ describe('bot swap scoring', () => {
     let swaps = 0;
     for (const seed of [1, 4, 5]) {
       const rand = seededRandom(seed);
-      let s = createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed, quadrants: ['red', 'gold', 'blue', 'green'] });
+      let s = createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed, quadrants: ['red', 'yellow', 'blue', 'green'] });
       while (!s.over) {
         const pend = s.pending;
         if (pend.kind === 'choose' && pend.options.length > 1 && pend.options.every(o => o.kind === 'trade' || o.kind === 'pass')) swaps++;

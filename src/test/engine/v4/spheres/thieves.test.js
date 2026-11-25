@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Magenta (thieves): every action and every member, with exact numbers. Plus 200 seeded bot games.
 // Stolen resources keep their colors; every Magenta action gives +1 magenta; the ring goes to most magenta held.
+import '../fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { STRAYS, stray } from '../stray.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createGame, applyMove, resume, followers, contextFor } from '../../../../engine/v4/core.js';

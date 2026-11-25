@@ -61,9 +61,9 @@ describe('v4 game screen', () => {
     const ids = new Set(clickable(container));
     expect(ids).toEqual(new Set(state.pending.options.map(o => o.id)));
     // the pick stands in your own chair (Cory, 2026-10-15); the wheel's panel stays for phones
-    expect(container.querySelector('.lt-cult-seat.mine .cs-setup [data-option="color:gold"]')).not.toBeNull();
-    fireEvent.click(within(container.querySelector('.lt-cult-seat.mine .cs-setup')).getByRole('button', { name: 'Take 1 gold' }));
-    expect(session.submit).toHaveBeenCalledWith({ player: me, option: 'color:gold' });
+    expect(container.querySelector('.lt-cult-seat.mine .cs-setup [data-option="color:yellow"]')).not.toBeNull();
+    fireEvent.click(within(container.querySelector('.lt-cult-seat.mine .cs-setup')).getByRole('button', { name: 'Take 1 yellow' }));
+    expect(session.submit).toHaveBeenCalledWith({ player: me, option: 'color:yellow' });
     expect(screen.getByText(/Draft 1 resource/i, { selector: '[data-prompt] *' })).toBeTruthy();
   });
 

@@ -14,12 +14,12 @@ vi.mock('../../../v4/game/director.js', () => ({
 vi.mock('../../../v4/game/flight.js', async importOriginal => ({ ...(await importOriginal()), motionOK: () => true }));
 vi.mock('../../../v4/format.js', async importOriginal => ({
   ...(await importOriginal()),
-  scoredStandings: vi.fn(() => [{ qid: 'gold', rule: 'Most gold', prize: 2,
+  scoredStandings: vi.fn(() => [{ qid: 'yellow', rule: 'Most yellow', prize: 2,
     rows: [{ id: 0, shown: 1 }, { id: 1, shown: 0 }], leaders: [0] }]),
 }));
 function info() {
   const s = createGame({ seats: [{ name: 'Ana' }, { name: 'Bo' }], seed: 4 });
-  return { after: s, board: s, result: { round: 'I', rows: [{ qid: 'gold', winners: [0], v: 2 }] } };
+  return { after: s, board: s, result: { round: 'I', rows: [{ qid: 'yellow', winners: [0], v: 2 }] } };
 }
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.clearAllMocks(); chain.running = false; chain.end = null; });
 describe('scoring enters directly', () => {
@@ -27,7 +27,7 @@ describe('scoring enters directly', () => {
     vi.useFakeTimers();
     const { container } = render(<Reckoning info={info()} root={null} onDone={() => {}} />);
     expect(container.textContent).toContain('Round I contests');
-    expect(container.textContent).toContain('Most gold');
+    expect(container.textContent).toContain('Most yellow');
     expect(container.textContent).not.toMatch(/Round I ends/);
     expect(container.querySelector('.waiting')).toBe(null);
   });
@@ -35,24 +35,24 @@ describe('scoring enters directly', () => {
     vi.useFakeTimers(); chain.running = true;
     const { container } = render(<Reckoning info={info()} root={null} onDone={() => {}} />);
     expect(container.querySelector('.waiting')).not.toBe(null);
-    expect(container.textContent).not.toContain('Most gold');
+    expect(container.textContent).not.toContain('Most yellow');
     // A long Relaxed sequence remains authoritative; elapsed time never bypasses it.
     act(() => { vi.advanceTimersByTime(12000); });
     expect(container.querySelector('.waiting')).not.toBe(null);
-    expect(container.textContent).not.toContain('Most gold');
+    expect(container.textContent).not.toContain('Most yellow');
     act(() => { chain.running = false; chain.end(); });
     expect(container.querySelector('.waiting')).toBe(null);
-    expect(container.textContent).toContain('Most gold');
+    expect(container.textContent).toContain('Most yellow');
   });
   it('starts at the last landing, and on a table gone quiet when a later show took over the end (v0.9.807 hang)', () => {
     vi.useFakeTimers(); chain.running = true;
     const a = render(<Reckoning info={info()} root={null} onDone={() => {}} />);
     act(() => { chain.running = false; chain.landed(); });
-    expect(a.container.textContent).toContain('Most gold');
+    expect(a.container.textContent).toContain('Most yellow');
     cleanup(); chain.running = true;
     const b = render(<Reckoning info={info()} root={null} onDone={() => {}} />);
     act(() => { chain.running = false; vi.advanceTimersByTime(600); }); // no end, no landing: the old show was adopted
-    expect(b.container.textContent).toContain('Most gold');
+    expect(b.container.textContent).toContain('Most yellow');
   });
   it('finishes when the final count roll completes and the result is read, without a trailing 400ms hold or recounts', () => {
     vi.useFakeTimers(); const onDone = vi.fn();

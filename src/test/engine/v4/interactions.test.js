@@ -3,6 +3,7 @@
 // workers (Purple), steals (Magenta and Gold), gifts (Silver), follower sales (White), shop bending (Blue),
 // Doppelganger copies, Midas/Poor Relation gain changes and discounts.
 // Tests named "DESIGN QUESTION" pin today's behavior on a rule Cory hasn't decided yet.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createGame, resume, followers } from '../../../engine/v4/core.js';
 import { quadrant } from '../../../engine/v4/content/index.js';

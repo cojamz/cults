@@ -40,7 +40,7 @@ export const rowStep = n => (n <= 5 ? 20 : Math.max(4, Math.round((ROW / (n - 1)
 
 /**
  * What the sockets are: one per unit owed, the colored part first ({ c: color }), then the any part ({ c: 'any' }),
- * and what one coin of each color pays (a Penny Pincher gold pays 2 toward a member). From the engine's price rule.
+ * and what one coin of each color pays. From the engine's price rule.
  */
 function costShape(state, p, pend, uid, how) {
   if (pend.swap) { // the swap card's price: 2 in any colors (Cory, Nov 1 8:25pm), read off its ways to pay
@@ -52,9 +52,8 @@ function costShape(state, p, pend, uid, how) {
     return { units: Array.from({ length: tier.cost }, () => 'any'), worth: () => 1 };
   }
   const pr = memberPrice(state, p, uid, how);
-  const pp = p.members.some(u => defsOf(state.cards[u]).some(d => d.goldPaysDouble));
   const units = [...Array.from({ length: pr.colored }, () => pr.color), ...Array.from({ length: Math.max(0, pr.total - pr.colored) }, () => 'any')];
-  return { units, worth: c => (c === 'gold' && pp ? 2 : 1) };
+  return { units, worth: () => 1 };
 }
 
 /**

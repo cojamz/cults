@@ -2,6 +2,7 @@
 // and "I still don't know how to activate a member / the UI for it". Every use-once member in content (a def with
 // `activate`) goes through one flow: lit with "ready to use" and a "Use: …" button on your turn, the engine's own dry
 // run saying what it gives, then "used" after. A rival's members show their state, never a button.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import { allQuadrantIds, quadrant, applyMove } from '../../../engine/v4/index.js';

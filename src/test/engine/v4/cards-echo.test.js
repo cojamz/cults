@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Green's six actions and twelve current members, with legacy removed-card replay coverage retained.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { applyMove, contextFor, memberCount, resume } from '../../../engine/v4/core.js';

@@ -30,7 +30,7 @@ const card = await page.waitForSelector('[data-gift="convert"]', { timeout: 8000
 if (!card) { await page.screenshot({ path: `${out}/no-card.png` }); console.log('no convert card', errs); await browser.close(); process.exit(1); }
 await page.waitForTimeout(1200);
 await page.screenshot({ path: `${out}/a-card.png` });
-for (const c of ['gold', 'gold', 'red', 'white']) { const b = await page.$(`[data-convert-add="${c}"]`); if (b) { await b.click(); await page.waitForTimeout(150); } }
+for (const c of ['yellow', 'yellow', 'red', 'white']) { const b = await page.$(`[data-convert-add="${c}"]`); if (b) { await b.click(); await page.waitForTimeout(150); } }
 await page.screenshot({ path: `${out}/b-set.png` });
 await page.click('.convert-card .pay-go');
 const t0 = Date.now(); let n = 0;

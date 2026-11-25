@@ -10,7 +10,7 @@ import { applyMove } from '../../../engine/v4/core.js';
 import { take } from './helpers.js';
 import { sceneQ } from './cards-helpers.js';
 
-const Q = ['gold', 'red', 'purple', 'echo'];
+const Q = ['yellow', 'red', 'purple', 'echo'];
 const turns = (...ps) => ps.map(p => ({ t: 'turn', p }));
 const pass = s => applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.id === 'pass')?.id ?? s.pending.options[0].id });
 const toPlace = s => { while (s.pending && s.pending.kind !== 'place') s = pass(s); return s; };

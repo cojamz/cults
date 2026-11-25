@@ -1,6 +1,7 @@
 // Helpers for the card-by-card tests (cards-*.test.js) and the fire-audit gate: a scene on any table, buying by
 // card name through real moves, and "does a log line name this card as acting" (Cory: every number on the table
 // traces to a log line).
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { createGame, resume, actionAt } from '../../../engine/v4/core.js';
 import { move, actionName } from './helpers.js';
 import { STRAYS, stray } from './stray.js';

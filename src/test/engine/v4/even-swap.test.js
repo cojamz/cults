@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Tryout (Red's round I space, key 'evenswap'; it replaced Even Swap, Cory 2026-10-27): use a shop member's On Recruit;
 // it stays in the shop. +2 red.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { quadrant } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf, ids } from './helpers.js';

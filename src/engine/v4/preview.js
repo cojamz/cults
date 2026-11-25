@@ -186,7 +186,7 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
     const added = (me.recruitFollowers || []).slice(had).filter(x => x.n > 0 && !x.color && !x.patron);
     const followersIf = added.reduce((t, x) => t + x.n, 0);
     const gatherPer = (me.spendFollowers || []).length > (me0.spendFollowers || []).length ? me.spendFollowers[me.spendFollowers.length - 1].per : 0;
-    const per = me.perSpend && !me0.perSpend ? (state.round === 2 ? 1 : 2) : gatherPer;
+    const per = me.perSpend && !me0.perSpend ? 2 : gatherPer;
     // Gather (Nov 10) pays only for a member of a color you already have: the words say so
     const same = added.some(x => x.sameColor);
     return followersIf || per ? { followers: followersIf, per, ...(same ? { sameColor: true } : {}) } : null;

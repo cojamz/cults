@@ -12,6 +12,7 @@ const { table, uidIn } = await import('./cards-helpers-b.js');
 const { move } = await import('./helpers.js');
 const { sceneQ, settle, passBuys } = await import('./cards-helpers.js');
 const { useRetired } = await import('./helpers.js');
+await import('./fixtures/gold-on.js'); // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 useRetired(['red.turnout']);
 delete process.env.REPLACE14;
 delete process.env.MEMBER_UP;

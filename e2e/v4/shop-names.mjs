@@ -13,7 +13,7 @@ import { resume, shopSize } from '../../src/engine/v4/core.js';
 const base = process.env.V4_URL || 'http://localhost:5331';
 const out = process.env.V4_SHOTS || '/tmp/cults-shop-names'; mkdirSync(out, { recursive: true });
 const seats = ['You', 'Bo', 'Cy', 'Di'].map(name => ({ name, kind: 'human' }));
-const GROUPS = [['gold', 'red', 'purple', 'echo'], ['market', 'thieves', 'silver', 'yellow'], ['gold', 'red', 'blue', 'green']];
+const GROUPS = [['yellow', 'red', 'purple', 'echo'], ['market', 'thieves', 'silver', 'yellow'], ['yellow', 'red', 'blue', 'green']];
 
 // every distinct member of a table, longest names first, then dealt into shops of `size`
 function shops(quadrants, round) {

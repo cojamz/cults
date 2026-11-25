@@ -13,7 +13,7 @@ const roundOne = log => log.slice(log.findIndex(l => /^Round I begins/.test(l)),
 describe('a full board', () => {
   it('Errand Boy before placing at a full round I gives no extra turn, and every minion lands', () => {
     const rand = seededRandom(5);
-    let s = createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed: 3, quadrants: ['purple', 'red', 'gold', 'yellow'] });
+    let s = createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed: 3, quadrants: ['purple', 'red', 'silver', 'yellow'] });
     const uid = Object.values(s.cards).find(c => c.def === 'purple.secondwind').uid;
     s.pile = s.pile.filter(u => u !== uid); s.shop = s.shop.filter(u => u !== uid);
     s.players[0].members.push(uid);

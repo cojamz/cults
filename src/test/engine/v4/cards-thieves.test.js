@@ -2,6 +2,7 @@
 // Card-by-card verifier, Magenta (thieves): every action and member against its printed text at the doubled
 // member costs, through real legal moves, plus one cross-sphere case each. Every number a card changes must
 // show up in a log line that names the card.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { followers, memberWeight } from '../../../engine/v4/core.js';
 import { take, move, play, ids } from './helpers.js';

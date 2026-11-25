@@ -21,7 +21,7 @@ const MIN_PAIRS = HEAVY ? 2 : 1;
 
 describe('cross-sphere tables', () => {
   it('cover every quadrant and every compatible pair of quadrants', () => {
-    expect(ALL.length).toBeGreaterThanOrEqual(11);
+    expect(ALL.length).toBeGreaterThanOrEqual(10); // 10 since Gold was deleted (Cory, Nov 24)
     for (const q of ALL) expect(tables.some(t => t.includes(q)), q).toBe(true);
     for (const [k, v] of pairs) expect(v, k).toBeGreaterThanOrEqual(MIN_PAIRS);
     for (const t of tables) expect(new Set(t.map(resOf)).size).toBe(4);
@@ -66,7 +66,8 @@ describe('cross-sphere tables', () => {
     // two random games per table: a rare decision (a Translator's toggle) hung on one game's path, and any engine
     // change that shifts the random walk lost it (aminus r1 f1: the one-pay-rule's extra question did)
     // a third since the Oct 24 member structure shifted the walk off the last 'amount' choice
-    for (const seed0 of [77, 377, 977]) tables.forEach((quadrants, ti) => {
+    // a fourth since Gold's deletion (Nov 24) shifted the tables off Translator's toggle
+    for (const seed0 of [77, 377, 977, 1377]) tables.forEach((quadrants, ti) => {
       const { stats } = runTable({ quadrants, n: 3, seed: seed0 + ti, kind: 'random' });
       stats.kinds.forEach(k => kinds.add(k));
       stats.optionKinds.forEach(k => optionKinds.add(k));

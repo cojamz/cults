@@ -5,6 +5,7 @@
 //     panel S#6 / game-skeptic w4 #6: "You took Salvage · +3 gold · 3 gold from P2", the gold from Tribute Band's copy);
 //  3. a steal is told once: each rival's loss on one line, in the colors taken (stolen resources keep their colors
 //     since the Magenta redesign, 2026-10-19), never repeated.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, expect, it } from 'vitest';
 import { applyMove, actionAt } from '../../../engine/v4/index.js';
 import { sceneQ } from '../../engine/v4/cards-helpers.js';

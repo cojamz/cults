@@ -129,7 +129,7 @@ describe('REPLACE10: the pitched turns', () => {
   });
 
   it('Racketeer: round I ends; three rivals each win a contest, you steal 2 from each: 6 resources', () => {
-    let s = table(['red', 'thieves', 'trading', 'gold'], { n: 4, round: 1, res: [{ red: 4 }, { gold: 4 }, { white: 3, red: 1 }, {}], members: [[], [], [], ['thieves.racketeer']], queue: [{ t: 'endRound' }] });
+    let s = table(['red', 'thieves', 'trading', 'purple'], { n: 4, round: 1, res: [{ red: 4 }, { purple: 4 }, { white: 3, red: 1 }, {}], members: [[], [], [], ['thieves.racketeer']], queue: [{ t: 'endRound' }] });
     const total = p => Object.values(p.res).reduce((a, b) => a + b, 0);
     expect(total(s.players[3])).toBe(6);
     expect(named(s, 'Racketeer')).toEqual(["P4's Racketeer: took 2 from P1.", "P4's Racketeer: took 2 from P3.", "P4's Racketeer: took 2 from P2."]);

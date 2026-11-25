@@ -9,7 +9,7 @@ import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { quadrant } from '../../../engine/v4/index.js';
 
-const Q = ['gold', 'red', 'purple', 'echo'];
+const Q = ['yellow', 'red', 'purple', 'echo'];
 const MOVES = ['skip', 'holdup', 'again'];
 /** A bot move that takes a space moving turns only when nothing else is open, so the rest is the plain snake. */
 function plain(s, rand) {

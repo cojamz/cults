@@ -13,7 +13,7 @@ import { sceneQ, settle } from './cards-helpers.js';
 import { take } from './helpers.js';
 
 // every color on some table, and every color the Test cards change
-const TABLES = [['gold', 'red', 'market', 'echo'], ['purple', 'silver', 'yellow', 'thieves'], ['trading', 'red', 'echo', 'purple']];
+const TABLES = [['yellow', 'red', 'market', 'echo'], ['purple', 'silver', 'yellow', 'thieves'], ['trading', 'red', 'echo', 'purple']];
 const ECON = [{}, { econ: 'rich' }, { econ: 'any1' }]; // + '+1 any' (Cory, Nov 12)
 const CARDS = [{}, { testSet: true }];
 const SWAP = [{}, { swapCard: true }];
@@ -69,7 +69,7 @@ describe('Richer and +1 any move every named member cost', () => {
   it('Induct offers exactly the shop members its words allow, at both prices', () => {
     for (const econ of [undefined, 'rich', 'any1']) {
       // members around the cap: Induct's cap is 9 + MORE as printed, 2 more under Richer, 1 more under +1 any
-      const s0 = sceneQ({ round: 3, rules: { ...base, econ }, quadrants: ['gold', 'red', 'market', 'echo'] });
+      const s0 = sceneQ({ round: 3, rules: { ...base, econ }, quadrants: ['yellow', 'red', 'market', 'echo'] });
       const cap = Number(/costing (\d+) or less/.exec(spacesOf(s0, 'red').find(a => a.key === 'take').text)[1]);
       expect(cap).toBe(9 + MORE + (econ ? ECON_SETS[econ].up : 0));
       const s = take(s0, 'red.take');

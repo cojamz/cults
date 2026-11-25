@@ -372,9 +372,9 @@ const members = [
     botActivate: (ctx, p) => ctx.state.round >= 2 && !p.crashNext,
   }),
   // Big Spender as it printed until Oct 28, never dealt: the fixture for the engine's once-per-round second buy
-  m('bigspender1', 'Squanderer', 'gold', 1, 1, 'Once per round: recruit twice in one turn.', { extraBuy: true, retired: true }),
+  m('bigspender1', 'Squanderer', 'market', 1, 1, 'Once per round: recruit twice in one turn.', { extraBuy: true, retired: true }),
   // Cory, 2026-10-28: back in the deck (it stands in for Blue's recruits), One Time Use, 3
-  m('bigspender', 'Squanderer', 'gold', 1, 1, 'On Use, once per game: recruit twice this turn.', {
+  m('bigspender', 'Squanderer', 'market', 1, 1, 'On Use, once per game: recruit twice this turn.', {
     activate: 'game',
     onActivate(ctx, owner, card) {
       if (owner.buyTwiceNow) { card.used = false; return; }

@@ -17,15 +17,12 @@ export function ruleWords(qid, rule) {
 // exact "you'd get" stay in the hover card. A value that grows by round is shown for the current round.
 // Keys are "<sphere id>.<action key>". A space with no entry here falls back to its first clause (shortEffect).
 const S = {
-  gold: {
-    jv: '+3 gold · 1 gold to a rival', rush: r => `+${2 * r} gold`, discount: '−4 cost', steal: 'steal 3 gold', windfall: '+1 gold per member', strike: 'double gold',
-  },
   red: {
     borrow: 'recruit the cheapest, free; back to the shop at round end; +1 red', trending: '+1 of the shop’s most common color per member of it; +1 red', lateshift: 'free shop member costing up to 2 per minion you placed this round; +1 red', gather: '+3 red; +4 followers if you recruit a color you have; +1 red',
     evenswap: 'use a shop member’s On Recruit; +2 red', turnout: r => `+${r + 1} red; +1 follower per 3 paid for a member this turn`, hire: 'recruit the top of the deck; each rival +1 red; +1 red', opendoor: 'recruit the cheapest in the shop, free; +1 red', hireup: 'promote: one costing up to 3 more; +3 red', trade: 'demote: one costing up to 3 less; +3 red', take: `recruit one costing ${9 + MORE} or less, free; +1 red`,
   },
-  blue: { a1: '+3 blue', a2: '+2 blue +1 red', a3: '+2 blue +1 green', a4: '+5 blue', a5: '+4 blue +1 gold', a6: '+8 blue' },
-  green: { a1: '+3 green', a2: '+2 green +1 gold', a3: '+2 green +1 blue', a4: '+5 green', a5: '+4 green +1 red', a6: '+8 green' },
+  blue: { a1: '+3 blue', a2: '+2 blue +1 red', a3: '+2 blue +1 green', a4: '+5 blue', a5: '+4 blue +1 yellow', a6: '+8 blue' },
+  green: { a1: '+3 green', a2: '+2 green +1 yellow', a3: '+2 green +1 blue', a4: '+5 green', a5: '+4 green +1 red', a6: '+8 green' },
   purple: {
     hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+1 follower and +1 purple per minion left to place; take the Goes Last token with the rest on it; +1 purple', skip: '+5 purple; take the Goes Last token with your other minions on it', onaroll: '+2 purple per turn of yours in a row; take the Goes Last token', holdup: r => `+${r + 1} purple, whoever is next skips, even you`, crowdin: '+4 purple, +1 minion this round; take the Goes Last token', rally: '+2 purple, then go twice more right away', again: '+3 purple, then go again right away',
   },
@@ -43,7 +40,7 @@ const S = {
     pickpocket: 'steal 1 per minion you placed this round; +1 magenta', catchup: '+2 magenta per rival with more resources; +1 magenta', swindle: `steal a member costing up to ${6 + MORE}, give them a shop member; +1 magenta`, tipoff: '+3 magenta', hideout: 'steal 1; rivals can’t steal from you this round; +1 magenta', rob: 'steal 3 followers and 3 resources; +1 magenta', ransom: `a rival picks a member costing ${6 + MORE} or less, then pays its cost or loses it; +1 magenta`, heist: 'recruit a rival’s member; +1 magenta',
   },
   trading: {
-    nestegg: '+3 white', modestmeans: '+2 white; +1 per rival with more members', stipend: r => `+${r + 2} white; +${r} followers if you recruit a member this turn`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid for a member this turn; +2 white`, exchange: r => `turn up to ${r} into 2 followers each; +2 white`, farewell: 'discard a member for its cost in followers; +1 white', estatesale: 'discard a member for its cost in white; +1 white', writeoff: 'give a member to a rival for its cost in white; +1 white', cashin: 'all your white into followers; +1 white',
+    nestegg: '+3 white', modestmeans: '+2 white; +1 per rival with more members', stipend: r => `+${r + 2} white; +${r} followers if you recruit a member this turn`, splurge: '+1 follower per 2 paid for a member this turn; +2 white', exchange: r => `turn up to ${r} into 2 followers each; +2 white`, farewell: 'discard a member for its cost in followers; +1 white', estatesale: 'discard a member for its cost in white; +1 white', writeoff: 'give a member to a rival for its cost in white; +1 white', cashin: 'all your white into followers; +1 white',
     haggle: '+2 white, +1 per leader', buylow: '+1 follower per 3 white', pawn: r => `${r} follower · may take 2 white each instead`, sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower bought or won', boom: 'all for followers',
   },
   echo: { hum: 'copy an action with a rival’s minion; +1 green', chant: '+1 green per minion on Green; +1 green', echo: 'copy previous; +1 green', encore: 'copy a rival member’s On Recruit; +1 green', crowd2: '+1 follower per minion on Green; +3 green', refrain: 'copy your action; +1 green', eternity: 'copy every action of yours on one color (not green); +1 green' },
@@ -53,7 +50,6 @@ const S = {
 // the panel's words, gain first, "; " between parts; never the trailing "+1 <color>", which only the first taker gets
 // (the hover's badge says so); "each rival", "steal", "for free", "discard pile" every time. These win over S above.
 const LIVE_WORDS = {
-  gold: { jv: '+3 gold; +1 gold to a rival you choose', steal: 'steal up to 3 gold from rivals' },
   red: {
     borrow: 'recruit the cheapest for free until round end, then it goes back to the shop', lateshift: 'recruit for free, costing up to 2 per minion you placed this round',
     gather: '+3 red; +4 followers if you recruit a color you have', hireup: '+3 red; swap a member for one costing up to 3 more',
@@ -85,14 +81,13 @@ for (const [q, m] of Object.entries(LIVE_WORDS)) S[q] = { ...(S[q] || {}), ...m 
 // The shortest form, for the inner rings. Two symbols only (Cory, 2026-10-15: "just simplify visual language
 // everywhere"): resource words become dots and "N followers" the follower mark; everything else is a plain word.
 const PIPS = {
-  gold: { steal: 'steal 3 gold', windfall: '+1 gold per member', strike: 'double gold' },
   red: { hireup: '+3 red; promote a member', trade: '+3 red; demote a member', take: `recruit for free, costing ${9 + MORE} or less` },
   purple: { lastcall: '+1 follower, +1 purple per minion left; take the Goes Last token' },
   silver: { partygifts: 'give rivals up to 3 silver, +2 followers each', largesse: 'give rivals 10 silver, +7 followers' },
   yellow: { gather: '+1 per member' },
   market: { clearance: '+3 blue; recruit from the discard pile', pricecheck: 'bury for half its cost', spree: '+7 blue; recruit 2 from the discard pile', wordofmouth: '+1 follower per 2 members' },
   thieves: { rob: 'steal 3 followers and 3 resources', swindle: 'steal a member, give a shop member', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member for free' },
-  trading: { nestegg: '+3 white', modestmeans: '+2, +1 per bigger rival', stipend: r => `+${r + 2} white; +${r} if you recruit a member`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid`, exchange: r => `up to ${r} into 2 followers each`, farewell: 'discard one for followers', estatesale: 'discard one for white', writeoff: 'give one away for white', cashin: 'all white for followers', sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower', boom: 'all for followers' },
+  trading: { nestegg: '+3 white', modestmeans: '+2, +1 per bigger rival', stipend: r => `+${r + 2} white; +${r} if you recruit a member`, splurge: '+1 follower per 2 paid', exchange: r => `up to ${r} into 2 followers each`, farewell: 'discard one for followers', estatesale: 'discard one for white', writeoff: 'give one away for white', cashin: 'all white for followers', sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower', boom: 'all for followers' },
   echo: { refrain: 'copy yours', eternity: 'copy your actions on a color' },
 };
 /** The pips-first form of a space's yield (falls back to the few words). */

@@ -3,6 +3,7 @@
 // ("Round End: +1 follower per minion you have on Green spaces."), Druids ("Game End: if you have the most green
 // members, +6 followers."), played against the members that choose, steal, swap and count, and Green's copy spaces.
 // Each scene checks the outcome against the printed text. Harness: combos-silver-nov12.test.js's scene/drive/go.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { createGame, resume, followers, applyMove } from '../../../engine/v4/core.js';
 import { stray } from './stray.js';

@@ -2,6 +2,7 @@
 // The members a space acts on (previewSpace's `targets`), which the screen lights while the space's hover is up
 // (Cory, 2026-10-16: "hovering over Free Recruit should highlight the cheapest recruit(s) in the shop").
 // Read off the engine's own options, so the light always matches what the space really does.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { previewSpace } from '../../../engine/v4/preview.js';
 import { quadrant } from '../../../engine/v4/content/index.js';

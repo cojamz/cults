@@ -7,11 +7,11 @@ import { take, move } from './helpers.js';
 import { quadrant } from '../../../engine/v4/content/index.js';
 import { sceneQ, settle, passBuys } from './cards-helpers.js';
 
-const rich = { purple: 9, green: 9, gold: 9, red: 9 };
-const scene = (queue, round = 2) => sceneQ({ quadrants: ['purple', 'echo', 'gold', 'red'], n: 3, round, res: [rich, rich, rich], members: [['purple.courier']],
+const rich = { purple: 9, green: 9, yellow: 9, red: 9 };
+const scene = (queue, round = 2) => sceneQ({ quadrants: ['purple', 'echo', 'yellow', 'red'], n: 3, round, res: [rich, rich, rich], members: [['purple.courier']],
   queue: queue.map(p => ({ t: 'turn', p })).concat({ t: 'allPlaced' }) });
 const plain = s => {
-  const o = s.pending.options.find(x => x.kind === 'slot' && ['gold', 'red'].includes(s.quadrants[x.q])) || s.pending.options.find(x => x.kind === 'slot');
+  const o = s.pending.options.find(x => x.kind === 'slot' && ['yellow', 'red'].includes(s.quadrants[x.q])) || s.pending.options.find(x => x.kind === 'slot');
   return passBuys(settle(move(s, o.id)));
 };
 const paid = s => s.log.filter(l => /^P1's Courier: /.test(l));
@@ -27,8 +27,8 @@ describe('Courier', () => {
     let s = scene([0, 1, 2, 2, 1, 0]);
     s = passBuys(settle(take(s, 'purple.again')));
     expect(s.pending).toMatchObject({ kind: 'place', player: 0 });
-    expect(paid(s)).toEqual(["P1's Courier: +1 green, +1 gold, +1 red."]);
-    expect(s.players[0].res).toMatchObject({ green: 10, gold: 10, red: 10 });
+    expect(paid(s)).toEqual(["P1's Courier: +1 green, +1 yellow, +1 red."]);
+    expect(s.players[0].res).toMatchObject({ green: 10, yellow: 10, red: 10 });
   });
   it('Flurry pays twice: two turns, each one right after your last', () => {
     let s = scene([0, 1, 2, 2, 1, 0, 0, 1, 2]);

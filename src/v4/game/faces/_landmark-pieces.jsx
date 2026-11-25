@@ -25,12 +25,6 @@ const OR = { t: 'or' };
 const card = badge => ({ t: 'card', badge });
 const HOOD = { t: 'hood' };
 const PIECES = {
-  'gold.jv': () => [res('gold', 3), { t: 'give', r: 'gold', n: 1 }],
-  'gold.rush': r => [res('gold', 2 * r)],
-  'gold.discount': () => [card('−4')],
-  'gold.steal': () => [HOOD, TO, res('gold', 3)],
-  'gold.windfall': () => [per('gold', 1, 'card')],
-  'gold.strike': () => [{ t: 'times', r: 'gold', k: '×2' }],
   'red.evenswap': () => [res('red', 1), { t: 'swap', a: 'card', b: 'card' }],
   'red.turnout': r => [res('red', r + 1)],
   'red.hire': () => [card('0')],
@@ -41,10 +35,10 @@ const PIECES = {
   'blue.a2': () => [res('blue', 2), res('red', 1)],
   'blue.a3': () => [res('blue', 2), res('green', 1)],
   'blue.a4': () => [res('blue', 5)],
-  'blue.a5': () => [res('blue', 4), res('gold', 1)],
+  'blue.a5': () => [res('blue', 4), res('yellow', 1)],
   'blue.a6': () => [res('blue', 8)],
   'green.a1': () => [res('green', 3)],
-  'green.a2': () => [res('green', 2), res('gold', 1)],
+  'green.a2': () => [res('green', 2), res('yellow', 1)],
   'green.a3': () => [res('green', 2), res('blue', 1)],
   'green.a4': () => [res('green', 5)],
   'green.a5': () => [res('green', 4), res('red', 1)],
@@ -101,7 +95,7 @@ export function piecesFor(q, action, round) {
 }
 
 // ---------- drawing: every piece is P board units tall; widths come back so the row can be centred ----------
-const RAINBOW = ['gold', 'red', 'blue', 'green'];
+const RAINBOW = ['yellow', 'red', 'blue', 'green'];
 function AnyRing({ s }) {
   // any resource: a ring of four arcs in four inks
   const r = s * 0.36, c = s / 2, sw = s * 0.2;

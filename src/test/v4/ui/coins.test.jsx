@@ -9,7 +9,7 @@ import { Pip, Rich } from '../../../v4/game/Rich.jsx';
 import { ChoicePrompt } from '../../../v4/game/parts.jsx';
 
 afterEach(cleanup);
-const RESOURCES = ['gold', 'red', 'blue', 'green', 'magenta', 'yellow', 'purple', 'silver', 'white'];
+const RESOURCES = ['red', 'blue', 'green', 'magenta', 'yellow', 'purple', 'silver', 'white'];
 const rootOf = file => { const css = readFileSync(`${process.cwd()}/src/v4/${file}`, 'utf8'); return css.slice(css.indexOf(':root{'), css.indexOf('}', css.indexOf(':root{'))); };
 const ROOTS = [rootOf('lamp.css'), rootOf('v4.css')];
 const varOf = name => { for (const root of ROOTS) { const m = root.match(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`)); if (m) return m[1]; } return undefined; };
@@ -46,8 +46,8 @@ describe('a resource is a plain dot, and always says its name', () => {
       cleanup();
     }
     expect(new Set(fills.values()).size).toBe(RESOURCES.length);
-    const { container } = render(<Rich text="+2 gold and +1 yellow" />);
-    expect([...container.querySelectorAll('.pip svg')].map(s => s.dataset.resGlyph)).toEqual(['gold', 'yellow']);
+    const { container } = render(<Rich text="+2 red and +1 yellow" />);
+    expect([...container.querySelectorAll('.pip svg')].map(s => s.dataset.resGlyph)).toEqual(['red', 'yellow']);
   });
 
   it('the setup picker: a plain dot per resource with its name beside it, ink on cream', () => {

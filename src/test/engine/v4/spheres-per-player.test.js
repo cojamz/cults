@@ -30,8 +30,8 @@ const ringOneTaken = s => Object.keys(s.slots).filter(k => { const [q, i] = k.sp
 describe('spheres = players', () => {
   it('the engine deals one sphere per seat by default', () => {
     for (const n of [2, 3, 4]) expect(createGame({ seats: bots(n), seed: 1 }).quadrants).toHaveLength(n);
-    expect(defaultQuadrants(2)).toEqual(['gold', 'red']);
-    expect(defaultQuadrants(3)).toEqual(['gold', 'red', 'market']);
+    expect(defaultQuadrants(2)).toEqual(['yellow', 'red']); // Gold left the game (Cory, Nov 24)
+    expect(defaultQuadrants(3)).toEqual(['yellow', 'red', 'market']);
   });
 
   it('Classic is Blue, Red, Yellow, Purple; 3 players drop Purple, 2 drop Yellow too (Cory, 2026-10-31)', () => {
@@ -63,9 +63,9 @@ describe('spheres = players', () => {
     expect(grown.slice(0, 2)).toEqual(r.slice(0, 2));
     expect(fitTable({ mode: 'random', quadrants: r.slice(0, 2) }, 4).quadrants).toEqual(grown); // the same every time
     expect(tableProblem(grown, 4)).toBe('');
-    expect(fitTable({ mode: 'custom', quadrants: ['gold'] }, 3).quadrants).toEqual(['gold']);
-    expect(tableProblem(['gold'], 3)).toBe('Pick 3 spheres.');
-    expect(tableProblem(['gold', 'red', 'market'], 2)).toBe('Pick 2 spheres.');
+    expect(fitTable({ mode: 'custom', quadrants: ['silver'] }, 3).quadrants).toEqual(['silver']);
+    expect(tableProblem(['silver'], 3)).toBe('Pick 3 spheres.');
+    expect(tableProblem(['silver', 'red', 'market'], 2)).toBe('Pick 2 spheres.');
     expect(sphereCount(1)).toBe(2);
   });
 });

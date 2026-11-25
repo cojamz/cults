@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Card-by-card: the guest members (rule-benders), through real moves, against the printed text, with a log line
 // naming the card whenever it bends a number (a worker, a buy, a cost, the turn order). Plus a cross-sphere case each.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { resume, contextFor } from '../../../engine/v4/core.js';
 import { take, move, uidOf, pinCosts } from './helpers.js';

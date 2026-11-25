@@ -6,7 +6,7 @@ import { createGame, applyMove } from '../../../engine/v4/index.js';
 import { cardDef, memberPrice, DEFAULT_RULES } from '../../../engine/v4/core.js';
 
 const seats = Array.from({ length: 4 }, () => ({ kind: 'bot' }));
-const Q = ['red', 'gold', 'purple', 'echo'];
+const Q = ['red', 'yellow', 'purple', 'echo'];
 const game = rules => createGame({ seats, seed: 7, quadrants: Q, rules: { deck: 10, contests: 'byColor', ...rules } });
 // both tables make the same picks: the first option every time, until the first space is taken
 function firstPlace(s) {

@@ -22,7 +22,7 @@ const same = (a, b) => expect(JSON.stringify(a)).toBe(JSON.stringify(b));
 describe('sessions record every move', () => {
   it('local: history is the move list at every step (bots and humans), and the record replays to the identical state', async () => {
     vi.useFakeTimers();
-    const s = createLocalSession({ seats: [{ name: 'Ana' }, { name: 'Bo', kind: 'bot' }, { name: 'Cy', kind: 'bot' }], seed: 31, botDelayMs: 5, quadrants: ['gold', 'red', 'thieves', 'echo'] });
+    const s = createLocalSession({ seats: [{ name: 'Ana' }, { name: 'Bo', kind: 'bot' }, { name: 'Cy', kind: 'bot' }], seed: 31, botDelayMs: 5, quadrants: ['yellow', 'red', 'thieves', 'echo'] });
     const bad = [];
     s.subscribe(st => { if (st.history.length !== st.moves) bad.push(st.moves); });
     const stop = autoPlay(s, { seed: 2 });
@@ -32,7 +32,7 @@ describe('sessions record every move', () => {
     expect(bad).toEqual([]);
     expect(end.history.length).toBe(end.moves);
     const rec = parseRecord(recordText(gameRecord(end))); // through the clipboard text
-    expect(rec).toMatchObject({ seed: 31, quadrants: ['gold', 'red', 'thieves', 'echo'], build: { content: CONTENT_HASH } });
+    expect(rec).toMatchObject({ seed: 31, quadrants: ['yellow', 'red', 'thieves', 'echo'], build: { content: CONTENT_HASH } });
     const r = replayRecord(rec);
     expect(r.ok).toBe(true);
     same(r.state, end);
@@ -98,7 +98,7 @@ describe('replayRecord', () => {
       actions: [{ key: 'bang', ring: 1, name: 'Bang', text: 'Throws.', estimate: () => 0, resolve() { throw new Error('bang!'); } }],
       handlers: {}, members: [],
     });
-    let st = newGame({ seats: [{ name: 'A', kind: 'bot' }, { name: 'B', kind: 'bot' }], seed: 3, quadrants: ['gold', 'red', 'blue', 'boomtest'] });
+    let st = newGame({ seats: [{ name: 'A', kind: 'bot' }, { name: 'B', kind: 'bot' }], seed: 3, quadrants: ['yellow', 'red', 'blue', 'boomtest'] });
     const rand = seededRandom(3);
     while (!st.pending.options.some(o => o.id === 'slot:3-0')) st = step(st, chooseBotMove(st, rand));
     const rec = gameRecord(st);

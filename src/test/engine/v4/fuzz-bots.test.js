@@ -29,7 +29,7 @@ describe('bot fuzz: five and six players', () => {
       const lengths = [];
       for (let seed = 1; seed <= BIG; seed++) {
         const { state, moves } = runGame({ n, seed, kind: 'bot' });
-        expect(state.quadrants).toEqual(['gold', 'red', 'market', 'echo', 'purple', 'yellow'].slice(0, n));
+        expect(state.quadrants).toEqual(['yellow', 'red', 'market', 'echo', 'purple', 'thieves'].slice(0, n)); // Gold left the game (Cory, Nov 24)
         lengths.push(moves.length);
       }
       expect(Math.max(...lengths)).toBeLessThan(MOVE_CAP.bot);

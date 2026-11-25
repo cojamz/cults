@@ -1,5 +1,5 @@
 // Causal member value for White: hand one member to one seat at the start of round II, compare with the same games without it.
-// Usage: node scripts/spheres/trading-value.mjs [gamesPerMember=120] [only=key1,key2|all] [quadrants=gold,red,blue,trading]
+// Usage: node scripts/spheres/trading-value.mjs [gamesPerMember=120] [only=key1,key2|all] [quadrants=yellow,red,blue,trading]
 import { createGame, applyMove, chooseBotMove, followers } from '../../src/engine/v4/index.js';
 import { seededRandom } from '../../src/engine/v4/rng.js';
 import { defById, quadrant } from '../../src/engine/v4/content/index.js';
@@ -7,7 +7,7 @@ import { install } from '../../src/engine/v4/content/trading.js';
 install();
 
 const N = Number(process.argv[2] || 120), SEATS = 4;
-const quadrants = (process.argv[4] || 'gold,red,blue,trading').split(',');
+const quadrants = (process.argv[4] || 'yellow,red,blue,trading').split(',');
 function play(seed, giveDef, seat) {
   const rand = seededRandom(seed * 7919 + 13);
   let s = createGame({ seats: Array.from({ length: SEATS }, () => ({ kind: 'bot' })), seed, quadrants });
@@ -28,7 +28,7 @@ function play(seed, giveDef, seat) {
   return s;
 }
 const only = process.argv[3] && process.argv[3] !== 'all' ? process.argv[3].split(',') : null;
-const ids0 = [...quadrant('trading').members, ...quadrant('gold').members, ...quadrant('red').members, ...quadrant('blue').members].map(d => d.id);
+const ids0 = [...quadrant('trading').members, ...quadrant('yellow').members, ...quadrant('red').members, ...quadrant('blue').members].map(d => d.id);
 const ids = only ? ids0.filter(i => only.some(o => i === o || i.endsWith('.' + o))) : ids0.filter(i => i.startsWith('trading.'));
 const control = [];
 for (let g = 0; g < N; g++) control.push(play(1000 + g));

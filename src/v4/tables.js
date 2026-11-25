@@ -1,6 +1,6 @@
 // Tables: which spheres sit on the wheel, as many as there are players (Cory, 2026-10-15: "there are only X number of
 // spheres for X number of players"). Classic (Blue, Red, Yellow, Purple since 2026-10-31; fewer players take its first
-// N), random, or a custom pick. Gold is in the backlog: off the picker and random tables, still known to old saves.
+// N), random, or a custom pick.
 import { allQuadrantIds, quadrant, CLASSIC, MAX_PLAYERS, classicFor } from '../engine/v4/index.js';
 import { seededRandom } from '../engine/v4/rng.js';
 import { scoringOf } from '../engine/v4/core.js';
@@ -8,14 +8,12 @@ import { scoringOf } from '../engine/v4/core.js';
 export { CLASSIC, classicFor };
 /** How many spheres a table of `players` plays: one each, 2 to 6. */
 export const sphereCount = players => Math.max(2, Math.min(MAX_PLAYERS, Number(players) || 4));
-// colors parked in the backlog (Cory, 2026-10-31: Gold): not offered, still playable from an old save or link
-const BACKLOG = new Set(['gold']);
 const ALIAS = { magenta: 'thieves', white: 'trading', blue: 'market', green: 'echo' };
 
 /** Current playable arcs. Legacy Basic definitions remain only for replay compatibility. */
 export const spheres = () => {
   const ids = allQuadrantIds();
-  return ids.filter(id => !quadrant(id).standIn && !BACKLOG.has(id));
+  return ids.filter(id => !quadrant(id).standIn);
 };
 /** What the picker calls a sphere: its color name, "(basic)" for a stand-in (w2b #32: "(plain)" read as developer phrasing). */
 export const sphereName = id => `${quadrant(id).name}${quadrant(id).standIn ? ' (basic)' : ''}`;
@@ -24,7 +22,6 @@ export const sphereName = id => `${quadrant(id).name}${quadrant(id).standIn ? ' 
  * steals). From each sphere's own design note (src/engine/v4/content/*.js).
  */
 const LINES = {
-  gold: 'Pile up gold and save on your next member.',
   // plain verb-first lines (Cory, Nov 8: "update these descriptions for easier reading/intuitive understanding"; Nov 21: "all the descriptions could be shorter")
   red: 'Recruit, borrow and swap members.',
   purple: 'Go again, skip the next turn, place last.',
@@ -85,7 +82,7 @@ export function tableProblem(ids, n = null, shop = 'deck') {
   return '';
 }
 
-/** Parse "gold,red,thieves,echo" (ids, or magenta/white). Returns the 2 to 4 ids, or null if it isn't a playable table. */
+/** Parse "yellow,red,thieves,echo" (ids, or magenta/white). Returns the 2 to 4 ids, or null if it isn't a playable table. */
 export function parseTable(str) {
   if (!str) return null;
   const ids = String(str).toLowerCase().split(/[\s,]+/).filter(Boolean).map(s => ALIAS[s] || s);

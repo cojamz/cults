@@ -72,7 +72,7 @@ describe('round summary and results (live panel r1)', () => {
   });
 
   it('the results count members one way: the rule\'s (a card that counts as 3 counts 3)', () => {
-    const over = structuredClone(play(13, ['silver', 'red', 'gold', 'trading']).over);
+    const over = structuredClone(play(13, ['silver', 'red', 'yellow', 'trading']).over);
     // Revelers ("Counts as 3 members") in a cult: 3 members on one card
     const rev = Object.values(over.cards).find(c => cardDef(over, c.uid).key === 'revelers');
     expect(rev).toBeTruthy();
@@ -128,7 +128,7 @@ describe('round summary and results (live panel r1)', () => {
     const at = info.board || info.after;
     const p = at.players.find(x => x.bought - info.start.players[x.id].bought > 0) || at.players[0];
     const eb = at.players[p.id].bought - info.start.players[p.id].bought;
-    at.log.push(`${p.name} bought 1 follower (2 gold).`); // a line the engine's count doesn't hold
+    at.log.push(`${p.name} bought 1 follower (2 red).`); // a line the engine's count doesn't hold
     const { container } = render(<RoundEnd info={info} onNext={() => {}} autoMs={0} />);
     const cell = container.querySelector(`[data-this-round="${p.id}"]`).textContent;
     if (eb) expect(cell).toMatch(new RegExp(`\\+${eb} recruited followers`));

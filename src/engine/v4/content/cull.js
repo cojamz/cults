@@ -2,7 +2,6 @@
 // principles and balance tests"; the list and why each went: design/spheres/cull-10.md). The cards stay
 // defined, so old records and the card tests still read them; a table with rules.cull off deals them again.
 export const CUT = new Set([
-  'gold.midas', 'gold.investor', 'gold.hustler', 'gold.jackpot', 'gold.coinpurse',
   'red.intern', 'red.reserve', 'red.drive', 'red.crowd', 'red.bigfamily', 'red.sponsor',
   'echo.afterimage', 'echo.translator', 'echo.groupie', 'echo.choir',
   'echo.connector', // Cory, 2026-10-28: "I think connector can go" (Green at 15)

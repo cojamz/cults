@@ -1,4 +1,5 @@
 // Players choose how to pay: which colors cover "any", and which part a discount comes off.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { scene, move, uidOf, play, useTestCosts } from './helpers.js';
 

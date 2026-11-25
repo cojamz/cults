@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Idea pipeline pool 15 (round 2), the second file: Second Billing and Part Exchange each take their color's only live
 // round III space, so they can't share a file with Top Billing and Seat Shuffle (cards-pool15.test.js).
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming, passBuys } from './cards-helpers.js';

@@ -48,14 +48,14 @@ describe('online session over the memory transport', () => {
 
   it('table: the host picks the spheres; the guest sees it in the lobby and every client plays on it, one sphere per player', async () => {
     const store = createMemoryStore();
-    const host = await createRoom({ name: 'Host', transport: createMemoryTransport(store), seed: 5, botDelayMs: DELAY, table: { mode: 'custom', quadrants: ['gold', 'red', 'thieves', 'echo'] } });
+    const host = await createRoom({ name: 'Host', transport: createMemoryTransport(store), seed: 5, botDelayMs: DELAY, table: { mode: 'custom', quadrants: ['purple', 'red', 'thieves', 'echo'] } });
     const guest = await joinRoom({ code: host.code, name: 'G1', transport: createMemoryTransport(store), botDelayMs: DELAY });
     await until(() => guest.lobby.getView().table, { label: 'guest sees table' });
-    expect(guest.lobby.getView().table.quadrants).toEqual(['gold', 'red', 'thieves', 'echo']);
+    expect(guest.lobby.getView().table.quadrants).toEqual(['purple', 'red', 'thieves', 'echo']);
     await host.lobby.setTable({ mode: 'random', quadrants: ['yellow', 'market', 'thieves', 'trading'] });
     await until(() => guest.lobby.getView().table?.quadrants[0] === 'yellow', { label: 'guest sees new table' });
-    await expect(guest.lobby.setTable({ mode: 'custom', quadrants: ['gold', 'red', 'blue', 'green'] })).rejects.toThrow(/host/);
-    await expect(host.lobby.setTable({ mode: 'custom', quadrants: ['gold', 'red', 'blue', 'market'] })).rejects.toThrow();
+    await expect(guest.lobby.setTable({ mode: 'custom', quadrants: ['purple', 'red', 'blue', 'green'] })).rejects.toThrow(/host/);
+    await expect(host.lobby.setTable({ mode: 'custom', quadrants: ['purple', 'red', 'blue', 'market'] })).rejects.toThrow();
     const [hs, gs] = await Promise.all([started(host.lobby), started(guest.lobby), host.lobby.start()]);
     await until(() => hs.getState() && gs.getState(), { label: 'first state' });
     // one sphere per player (Cory, 2026-10-15): two players play the table's first two
@@ -119,10 +119,10 @@ describe('online session over the memory transport', () => {
     const inactiveSeat = 1 - activeSeat;
     const inactive = inactiveSeat === 0 ? hs : gs;
     // Local checks: neither impersonation nor acting from the inactive seat is allowed.
-    await expect(inactive.submit({ player: activeSeat, option: 'color:gold' })).rejects.toThrow(/isn't yours/);
-    await expect(inactive.submit({ player: inactiveSeat, option: 'color:gold' })).rejects.toThrow(/Not your turn/);
+    await expect(inactive.submit({ player: activeSeat, option: 'color:purple' })).rejects.toThrow(/isn't yours/);
+    await expect(inactive.submit({ player: inactiveSeat, option: 'color:purple' })).rejects.toThrow(/Not your turn/);
     // Repeat the same attacks at the host, bypassing only local validation.
-    await expect(inactive.submit({ player: inactiveSeat, option: 'color:gold' }, { skipLocalCheck: true })).rejects.toThrow(/Not your turn/);
+    await expect(inactive.submit({ player: inactiveSeat, option: 'color:purple' }, { skipLocalCheck: true })).rejects.toThrow(/Not your turn/);
     await expect(active.submit({ player: activeSeat, option: 'bogus' }, { skipLocalCheck: true })).rejects.toThrow(/Illegal move/);
     await expect(inactive.submit({ player: activeSeat, option: hs.getState().pending.options[0].id }, { skipLocalCheck: true })).rejects.toThrow(/isn't yours/);
     expect(hs.info.version).toBe(1);

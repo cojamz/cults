@@ -21,7 +21,7 @@ const withCloak = (s, def, i = 0) => {
 describe('cloaks on copied actions', () => {
   it('Magenta Cloak: Follow Suit copying Pilfer is your steal, +2 magenta', () => {
     const run = cloak => {
-      let s = table(['gold', 'thieves', 'market', 'echo'], { queue: turns(1, 0, 1, 0), res: [{ gold: 5 }, { gold: 5 }] });
+      let s = table(['yellow', 'thieves', 'market', 'echo'], { queue: turns(1, 0, 1, 0), res: [{ yellow: 5 }, { yellow: 5 }] });
       if (cloak) s = withCloak(s, 'thieves.fence', 0);
       s = auto(take(s, 'thieves.pickpocket'));
       s = auto(play(take(s, 'echo.echo'), sp('thieves.pickpocket')));
@@ -32,7 +32,7 @@ describe('cloaks on copied actions', () => {
   });
   it('Silver Cloak: Follow Suit copying Raise a Glass gifts each rival again, +2 silver', () => {
     const run = cloak => {
-      let s = table(['gold', 'silver', 'market', 'echo'], { queue: turns(1, 0, 1, 0) });
+      let s = table(['yellow', 'silver', 'market', 'echo'], { queue: turns(1, 0, 1, 0) });
       if (cloak) s = withCloak(s, 'silver.caterer', 0);
       s = auto(take(s, 'silver.toast'));
       s = auto(play(take(s, 'echo.echo'), sp('silver.toast')));

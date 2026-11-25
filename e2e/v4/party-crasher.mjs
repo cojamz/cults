@@ -10,9 +10,9 @@ import { takeCard } from './lib/take.mjs';
 const base = (process.env.V4_URL || 'http://localhost:5325').replace(/\/$/, '');
 const out = `${process.env.V4_SHOTS || '/tmp/cults-crasher'}/party-crasher`; mkdirSync(out, { recursive: true });
 const seats = ['You', 'Bo', 'Cy', 'Di'].map(name => ({ name, kind: 'human' }));
-let s = createGame({ seats, seed: 67, quadrants: ['red', 'gold', 'trading', 'purple'] });
+let s = createGame({ seats, seed: 67, quadrants: ['red', 'yellow', 'trading', 'purple'] });
 Object.assign(s, { round: 2, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }], pending: null, squats: {}, order: [0, 1], log: [] }); delete s.echo;
-s.slots = { '1-0': 1 }; // Bo stands on a gold space
+s.slots = { '1-0': 1 }; // Bo stands on a yellow space
 s.players.forEach(p => { p.res = Object.fromEntries(s.resources.map(r => [r, 2])); p.left = 3; });
 const uid = takeCard(s, 'benders.squatter'); s.players[0].members.push(uid); s.cards[uid].recruitedRound = 1;
 s = resume(s); s.build = buildStamp();

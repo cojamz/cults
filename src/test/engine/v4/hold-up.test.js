@@ -2,6 +2,7 @@
 // Hold Up (Purple, round I; Cory, 2026-10-22): in Beg's spot, "1 purple per round", and "it has to be the next
 // TURN not even the next player": whoever's turn is next (you too, at a snake end) is passed over once and the snake
 // carries on; they still place every minion, their last one after everyone.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, actionAt } from '../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';

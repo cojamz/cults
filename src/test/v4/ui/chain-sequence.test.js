@@ -1,3 +1,4 @@
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { afterEach, expect, it } from 'vitest';
 import { planChain, rewindPlan, isUndo } from '../../../v4/game/director.js';
 import { motionSpeed, setMotionSpeed } from '../../../v4/motion.js';

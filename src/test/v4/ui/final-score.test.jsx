@@ -24,7 +24,7 @@ const games = [3, 5, 8, 13, 21, 34].map(seed => finish(seed, seed % 2 ? 4 : 3));
 
 describe('end-game scoring pops', () => {
   it('keeps signed follower losses visible, with a zero floor and nonnegative scoring totals', () => {
-    const s = createGame({ seats: [{ kind: 'bot' }, { kind: 'bot' }], quadrants: ['gold', 'echo'] });
+    const s = createGame({ seats: [{ kind: 'bot' }, { kind: 'bot' }], quadrants: ['yellow', 'echo'] });
     const p = s.players[0], agents = Object.values(s.cards).find(c => c.def === 'echo.agents');
     // Secret-Keepers, rebased to worth 1 (Cory, Nov 12): leader 1 + Secret-Keepers 1 - 3 from Trapper = -1, floored at 0
     p.members = [agents.uid]; p.bonus = -3; p.bought = 0; p.contest = 0; p.final = null;

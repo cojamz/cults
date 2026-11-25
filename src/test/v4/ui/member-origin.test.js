@@ -9,7 +9,7 @@ dockOn(() => { if (globalThis.history) { dockHref = location.href; history.repla
 dockOff(() => { if (globalThis.history) history.replaceState(null, '', dockHref); });
 
 it('keeps the producing member as the source when its resources fly from the stage', () => {
-  const before = sceneQ({ quadrants: ['silver', 'gold'], members: [['silver.majordomo']] });
+  const before = sceneQ({ quadrants: ['silver', 'yellow'], members: [['silver.majordomo']] });
   const uid = before.players[0].members[0];
   const after = applyMove(before, { player: 0, option: `slot:${spaceOf(before, 'Raise a Glass')}` }, { effects: true });
   const plan = planChain(before, after, { mine: [0] });

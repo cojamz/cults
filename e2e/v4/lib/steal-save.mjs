@@ -1,6 +1,6 @@
 // Saved hot-seat games stopped on a board-picker choice for P1, the only person.
-//  Steals and gifts (Gold, Magenta, Blue, Green): Pilfer, Redistribute, Lie Low, Call In Debts (round II),
-//  Grease a Palm ("give 1 gold to…"); the rivals hold known piles so a test can say which stacks light up.
+//  Steals and gifts (Yellow, Magenta, Blue, Green): Pilfer, Redistribute, Lie Low, Call In Debts (round II),
+//  Grease a Palm ("give 1 yellow to…"); the rivals hold known piles so a test can say which stacks light up.
 //  Copies and members (Green, Red, Blue, Magenta): Follow Suit, Imitate (round II), Try Out, Plunder (round II; Bury and Shake
 //  Down left the wheel Nov 10), Hand-pick (round III).
 // Used by the board-picker gate (e2e/v4/steal.mjs) and the before/after shots.
@@ -9,12 +9,12 @@ import { contextFor } from '../../../src/engine/v4/core.js';
 import { seededRandom } from '../../../src/engine/v4/rng.js';
 import { buildStamp } from './stamp.mjs';
 
-export const STEAL_TABLE = ['gold', 'thieves', 'blue', 'green'];
+export const STEAL_TABLE = ['yellow', 'thieves', 'blue', 'green'];
 export const BOARD_TABLE = ['echo', 'red', 'market', 'thieves'];
 // [table, quadrant id, action key] of each space
 export const SPACES = {
   help: [STEAL_TABLE, 'thieves', 'pickpocket'], redistribute: [STEAL_TABLE, 'thieves', 'tipoff'], lielow: [STEAL_TABLE, 'thieves', 'hideout'],
-  debts: [STEAL_TABLE, 'gold', 'steal'], kickback: [STEAL_TABLE, 'gold', 'jv'],
+  debts: [STEAL_TABLE, 'yellow', 'steal'], kickback: [STEAL_TABLE, 'yellow', 'jv'],
   echo: [BOARD_TABLE, 'echo', 'echo'], encore: [BOARD_TABLE, 'echo', 'encore'], cover: [BOARD_TABLE, 'echo', 'hum'], testdrive: [BOARD_TABLE, 'market', 'testdrive'],
   heist: [BOARD_TABLE, 'thieves', 'rob'], handpick: [BOARD_TABLE, 'red', 'take'],
   // Sleight of Hand (Nov 10, Shake Down's slot): "Steal a rival's member. Give them a shop member of your choice."
@@ -23,10 +23,10 @@ export const SPACES = {
 // what everyone holds when P1 takes a steal space (P4 holds less than P1: Redistribute still takes from P4, one from
 // each rival with no conditions since Cory's 2026-10-17 feedback #18)
 export const PILES = [
-  { gold: 1, magenta: 0, blue: 1, green: 1 },
-  { gold: 3, magenta: 0, blue: 2, green: 4 },
-  { gold: 5, magenta: 2, blue: 0, green: 1 },
-  { gold: 0, magenta: 1, blue: 0, green: 0 },
+  { yellow: 1, magenta: 0, blue: 1, green: 1 },
+  { yellow: 3, magenta: 0, blue: 2, green: 4 },
+  { yellow: 5, magenta: 2, blue: 0, green: 1 },
+  { yellow: 0, magenta: 1, blue: 0, green: 0 },
 ];
 
 // placed: false stops a step earlier, with P1 about to place on the space (a test then places it by clicking)

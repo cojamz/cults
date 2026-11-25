@@ -1,3 +1,4 @@
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { defById } from '../../../engine/v4/content/index.js';
 // Action-based recruits fire the same bonuses as shop recruits.
 import { it, expect } from 'vitest';

@@ -26,8 +26,8 @@ const wrap = s => { s.build = buildStamp(); return { config: { seats: SEATS.map(
 
 export function peekSave(o = {}) { return withPeek(() => takePeek(o)); }
 
-function takePeek({ stage = 'order', res = { blue: 0, red: 1, gold: 0, green: 0 }, seed = 3 } = {}) {
-  let s = createGame({ seats: SEATS, seed, quadrants: ['market', 'gold', 'red', 'echo'] });
+function takePeek({ stage = 'order', res = { blue: 0, red: 1, yellow: 0, green: 0 }, seed = 3 } = {}) {
+  let s = createGame({ seats: SEATS, seed, quadrants: ['market', 'yellow', 'red', 'echo'] });
   const rand = seededRandom(seed);
   const ready = st => st.round >= 1 && st.pending && st.pending.player === 0 && st.pending.kind === 'place';
   for (let n = 0; n < 2000 && !ready(s) && !s.over; n++) s = applyMove(s, chooseBotMove(s, rand));

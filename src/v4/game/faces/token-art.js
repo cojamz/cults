@@ -139,14 +139,6 @@ export const isMark = name => !!MARK[name];
 // joiner ('→' to, '/' per, '|' or), a resource ('gold'), 'f' (followers), 'tag:<text>' (a price tag: 'tag:0' free,
 // 'tag:−4' a discount, 'tag:½'), or a mark above. A function gets the round.
 const S = {
-  gold: {
-    jv: [['3', 'gold'], ['1', 'gold', '→', 'r']],
-    rush: r => [[`${2 * r}`, 'gold']],
-    discount: [['m', 'tag:−4']],
-    steal: [['rr', '→', '3', 'gold']],
-    windfall: [['1', 'gold', '/', 'm']],
-    strike: [['×2', 'gold']],
-  },
   red: {
     evenswap: [['m', 'swap', 'm'], ['tag:=']],
     turnout: r => [[`${r + 1}`, 'red']],
@@ -213,7 +205,7 @@ const S = {
   },
 };
 
-export const RES = new Set(['gold', 'red', 'blue', 'green', 'magenta', 'silver', 'yellow', 'purple', 'white']);
+export const RES = new Set(['red', 'blue', 'green', 'magenta', 'silver', 'yellow', 'purple', 'white']);
 /** The pips-first effect text ('+2 blue · @m free') read into a strip, for spaces without a drawn strip. */
 export function parseEffect(text) {
   return String(text || '').split(/\s*·\s*|,\s*/).filter(Boolean).slice(0, 3).map(part => {

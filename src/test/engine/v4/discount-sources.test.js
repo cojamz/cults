@@ -1,4 +1,5 @@
 // @vitest-environment node
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { discountSources, grantDiscount } from '../../../engine/v4/discount.js';
 import { sceneQ, buy } from './cards-helpers.js';

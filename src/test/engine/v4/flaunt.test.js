@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Flaunt, Sweet Nothings' place in Silver round II (Cory, Nov 11: "i like 1.", then "lets remove the 'if you hold the most'").
 // Its own file: cards-silver puts Sweet Nothings back in this slot for its older tests.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { take } from './helpers.js';
 import { sceneQ, linesNaming } from './cards-helpers.js';

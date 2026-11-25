@@ -37,17 +37,11 @@ describe('panel words (w3)', () => {
     }
   });
 
-  it('Flock Together counts minions on Green, the same every round; Let It Grow shows this round\'s number, like its rule', () => {
+  it('Flock Together counts minions on Green, the same every round', () => {
     for (const r of [1, 2, 3]) {
       // Cory, Nov 10: "+1 green per minion on green (including this). +1 green." (was +3/+4/+5); the +1 is the hover's badge
       expect(panelText('echo', { key: 'chant' }, r).main).toBeNull();
       expect(panelText('echo', { key: 'chant' }, r).verb).toBe('+1 green per minion on Green');
-      const gold = panelText('gold', { key: 'rush' }, r);
-      // "+2 gold × round" made a round III player do the math (text review, 2026-10-23)
-      expect(gold.main).toBe(`+${2 * r} gold`);
-      // the schedule in line 3, as every growing space has it; line 2 repeated line 1's number (picky bot, Nov 4)
-      expect(gold.note).toBe('I\u00a0+2\u00a0· II\u00a0+4\u00a0· III\u00a0+6');
-      expect(gold.second).toBeNull();
       expect(panelText('echo', { key: 'chant' }, r).second).toBe('this one included'); // runs on from line 1 (picky bot, Nov 11)
       expect(panelText('echo', { key: 'chant' }, r).note).toBeNull();
     }
@@ -121,8 +115,6 @@ describe('panel words (w3)', () => {
 
   it('says 1 of what, what a space costs, and whose cost (live panel r1)', () => {
     // "Others get 1" / "+1 to a rival": 1 of what
-    expect(lines(panelText('gold', { key: 'jv' }, 1))).toContain('+1 gold to a rival');
-    expect(lines(panelText('gold', { key: 'jv' }, 1)).join(' ')).not.toMatch(/you pick who/);
     expect(lines(panelText('silver', { key: 'toast' }, 2))).toContain('each rival +2 silver');
     for (const [qid, key, t] of panelEntries()) for (const l of lines(t)) expect(l, `${qid}.${key}`).not.toMatch(/\bget 1$/);
     // Cheap Seats grants followers for held white; it never describes a purchase or payment.
@@ -135,23 +127,20 @@ describe('panel words (w3)', () => {
     expect(bury.verb).toBe('Bury a shop member for half its cost in blue'); // whole in line 1: line 2 dropped on ring II and III (text audit Nov 1)
   });
 
-  it('Gather the Kin prints its red and when it pays followers, while Pass the Plate counts the viewer’s members', () => {
-    const s = createGame({ seats: [{ name: 'A', kind: 'human' }, { name: 'B', kind: 'bot' }], seed: 5, quadrants: ['market', 'red', 'gold', 'purple'] });
+  it('Gather the Kin prints its red and when it pays followers', () => {
+    const s = createGame({ seats: [{ name: 'A', kind: 'human' }, { name: 'B', kind: 'bot' }], seed: 5, quadrants: ['market', 'red', 'yellow', 'purple'] });
     s.recruits = 5;
     // Gather the Kin (Nov 10, Walk-In's slot): "+3 red. If you recruit a member this turn of a color you already have: +4 followers."
     const t = panelText('red', quadrant('red').actions.find(x => x.key === 'gather'), 1, s, 0);
     expect(t.main).toBe('+3 red');
     expect(t.second).toBe('+4 @f if you recruit a color you have');
-    // Pass the Plate: +1 gold per member you have, for the viewer
-    const w = panelText('gold', quadrant('gold').actions.find(x => x.key === 'windfall'), 2, s, 0);
-    expect(w.main).toBe(`+${s.players[0].members.length} gold`);
     // without a table: the printed rule
     expect(panelText('red', { key: 'gather' }, 3).main).toBe('+3 red');
   });
 
   // Flock Together (Nov 10): +1 green per minion on Green, the same words on a table as off it, every round
   it('Flock Together prints its rule, not a round gain', () => {
-    const s = createGame({ seats: [{ name: 'A', kind: 'human' }, { name: 'B', kind: 'bot' }], seed: 5, quadrants: ['gold', 'echo'] });
+    const s = createGame({ seats: [{ name: 'A', kind: 'human' }, { name: 'B', kind: 'bot' }], seed: 5, quadrants: ['yellow', 'echo'] });
     const a = quadrant('echo').actions.find(x => x.key === 'chant');
     expect(lines(panelText('echo', a, 1, s, 0))).toEqual(['+1 green per minion on Green', 'this one included']);
     for (const r of [1, 2, 3]) expect(lines(panelText('echo', a, r))).toEqual(['+1 green per minion on Green', 'this one included']);

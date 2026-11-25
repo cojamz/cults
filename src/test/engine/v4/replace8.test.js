@@ -16,7 +16,7 @@ const { uidIn, table, named } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE8;
 delete process.env.MEMBER_UP;
 
-const sc = o => sceneQ({ quadrants: ['gold', 'red', 'silver', 'green'], ...o });
+const sc = o => sceneQ({ quadrants: ['yellow', 'red', 'silver', 'green'], ...o });
 const pass = s => move(s, s.pending.options.find(o => o.kind === 'pass').id);
 const opt = (s, re) => s.pending.options.find(o => re.test(o.id) || re.test(o.label || ''));
 
@@ -63,7 +63,7 @@ describe('Well-Wishers: "Whenever one of your members goes to a rival\'s cult, +
 
 describe('Usher: "On Recruit: give a rival 2 silver from the bank. +3 followers."', () => {
   it('on recruit you choose a rival; they gain 2 silver from the bank and you +3 followers (the pitched turn, round I)', () => {
-    let s = sc({ n: 4, res: [{ silver: 2, gold: 2 }], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
+    let s = sc({ n: 4, res: [{ silver: 2, yellow: 2 }], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
     const before = s.players[0].res.silver;
     s = move(s, s.pending.options.find(o => /Usher/.test(o.label || '')).id);
     if (s.pending?.prompt?.startsWith('Pay')) s = move(s, s.pending.options[0].id);
@@ -129,7 +129,7 @@ describe('Socialites (+1 by default, Nov 4): "Whenever a rival recruits paying s
 
 describe('Charity Ball: "Whenever a rival recruits a member, give them 1 silver from the bank. +1 follower."', () => {
   it('a rival buys a shop member: they +1 silver, you +1; a follower buy or your own recruit: nothing', () => {
-    let s = sc({ n: 3, res: [{}, { silver: 2, gold: 2 }], members: [['silver.charityball']], shop: ['silver.usher'], queue: [{ t: 'buy', p: 1 }] });
+    let s = sc({ n: 3, res: [{}, { silver: 2, yellow: 2 }], members: [['silver.charityball']], shop: ['silver.usher'], queue: [{ t: 'buy', p: 1 }] });
     s = move(s, s.pending.options.find(o => /Usher/.test(o.label || '')).id);
     if (s.pending?.prompt?.startsWith('Pay')) s = move(s, s.pending.options[0].id);
     if (s.pending?.player === 1 && /Usher/.test(s.pending.prompt || '')) s = move(s, 'player:2');
@@ -139,7 +139,7 @@ describe('Charity Ball: "Whenever a rival recruits a member, give them 1 silver 
     let f = sc({ n: 3, res: [{}, { red: 5 }], members: [['silver.charityball']], queue: [{ t: 'buy', p: 1 }] });
     f = move(f, f.pending.options.find(o => o.kind === 'tier' && /1/.test(o.label || o.id)).id);
     expect(f.players[0].bonus).toBe(0);
-    let m = sc({ n: 3, res: [{ silver: 2, gold: 2 }], members: [['silver.charityball']], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
+    let m = sc({ n: 3, res: [{ silver: 2, yellow: 2 }], members: [['silver.charityball']], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
     m = move(m, m.pending.options.find(o => /Usher/.test(o.label || '')).id);
     expect(linesNaming(m.log, 'Charity Ball')).toEqual([]);
   });

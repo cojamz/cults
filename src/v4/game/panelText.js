@@ -37,19 +37,6 @@ const run = (f, unit = '') => `${unit}${[1, 2, 3].map(n => `${['I', 'II', 'III']
 // in line 1 (w2b #2/#24: "Gain each color" gave nothing without its "per full set"; "Take a member" hid that it's a
 // rival's; w3: "Pay all your purple" without its "for 2 extra turns").
 const P = {
-  gold: {
-    // "+1 to anyone" (w3): the gift goes to a rival only, never to you. "1 of what?" says gold; "you pick who" read
-    // awkwardly (live panel r1): the note runs on from line 2 ("…to a rival / of your choice")
-    jv: { main: '+3 gold', second: '+1 gold to a rival', note: 'of your choice' },
-    rush: r => ({ main: `+${2 * r} gold`, note: run(n => `+${2 * n}`) }),
-    // "Save 4" read as keeping 4 resources (blind testers, 2026-10-15): it's money off, said as a shop says it
-    discount: { verb: '4 off', second: 'your next member' },
-    steal: { verb: 'Steal up to 3 gold', second: 'from rivals' }, // the steal and its "up to" said (wording pass, Nov 12)
-    // live (round 3 skeptic: "+1●" in big type paid +5): line 1 is this turn's gain, the rate small under it
-    // live: "1 per member" ("you have" made a third line that lifted the minion off its panel, spaces gate Nov 1)
-    windfall: (r, now) => (now == null ? { main: '+1 gold', second: 'per member' } : { main: `+${now} gold`, second: '1 per member' }),
-    strike: { verb: 'Double your gold' },
-  },
   red: {
     // Nov 10 round I (Cory): Borrow, Trending and Gather
     // the catch in line 1 (picky bot, Nov 11: a tight ring or a taken space shows line 1 alone, and it read as a member to
@@ -193,7 +180,7 @@ const P = {
     stipend: r => ({ main: `+${r + 2} white`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 2}`, 'white: ') }), // 3/4/5 since Nov 6 // Gather's shape (Cory, Oct 31)
     // White's three round I spaces lead with their white, then the follower part (Cory, Nov 4: "the white actions are hard
     // to understand what they do at a glance"): Splurge's +1 white sat on line 3, which most rings drop
-    splurge: r => ({ main: '+2 white', second: r === 2 ? '+1 @f per resource spent on a member' : '+1 @f per 2 spent on a member' }), // per 1 in round II (Cory, Nov 1)
+    splurge: { main: '+2 white', second: '+1 @f per 2 spent on a member' }, // per 2 in every round (Cory, Nov 24: "it should be 1 per 2")
     // rounds II and III: "then turn up to 2 resources into 2 @f each" was too long for line 2, which dropped whole and
     // left a bare "+1 white" (picky bot, Nov 4): the same rule in fewer words
     exchange: r => ({ main: '+2 white', second: r === 1 ? 'then turn 1 resource into 2 @f' : `turn up to ${r} into 2 @f each` }),
@@ -225,7 +212,7 @@ const P = {
 // own estimate is the payout for these (Name Drop: 1 + the blue members in the shop), so it never drifts from the rule.
 // A space that pays per something shows this turn's gain big and its rate small (round 3 skeptic: Bandwagon's "+1●"
 // paid +5, Roll Call's +3), for `pid` (the viewer; else whoever's turn it is).
-const LIVE = new Set(['gold.windfall', 'purple.windup', 'trading.haggle', 'trading.dividend']);
+const LIVE = new Set(['purple.windup', 'trading.haggle', 'trading.dividend']);
 function liveYield(qid, action, state, pid) {
   if (!state || !LIVE.has(`${qid}.${action.key}`) || typeof action.estimate !== 'function') return null;
   const p = state.players && state.players[pid ?? state.current ?? 0];

@@ -9,7 +9,7 @@ let bad = 0, moves = 0;
 for (let g = 1; g <= N; g++) {
   try {
     const rand = seededRandom(g * 31 + 5);
-    let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: g, quadrants: ['gold', 'red', 'market', 'green'] });
+    let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: g, quadrants: ['yellow', 'red', 'market', 'green'] });
     let k = 0;
     while (!s.over) { s = applyMove(s, chooseBotMove(s, rand)); if (++k > 3000) throw new Error('stuck'); }
     moves += k;

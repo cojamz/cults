@@ -1,4 +1,5 @@
 // Live panel round 1 (cf23306), lane G1: a space's hover says what the space will really do, and why.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { previewSpace } from '../../../engine/v4/preview.js';
 import { youdWords, cachedPreview } from '../../../v4/game/Info.jsx';

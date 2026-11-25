@@ -10,7 +10,7 @@ const base=(process.env.V4_URL||'http://localhost:5323').replace(/\/$/,'');
 const out=`${process.env.V4_SHOTS||'/tmp/cults-resource-contests'}/resource-contests`;
 mkdirSync(out,{recursive:true});
 const seats=['You','Bo','Cy','Di'].map(name=>({name,kind:'human'}));
-let s=createGame({seats,seed:53,quadrants:['gold','red','purple','echo']});
+let s=createGame({seats,seed:53,quadrants:['yellow','red','purple','echo']});
 Object.assign(s,{round:1,queue:[{t:'turn',p:0},{t:'endRound'},{t:'afterRound'}],pending:null,slots:{},squats:{},order:[0],log:[]});
 delete s.echo;
 s.players.forEach((p,i)=>{p.left=i===0?1:0;p.res=Object.fromEntries(s.resources.map(r=>[r,0]));});

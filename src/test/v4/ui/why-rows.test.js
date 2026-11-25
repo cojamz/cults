@@ -2,6 +2,7 @@
 // - Grand Host's doubling is named, the biggest part of a Silver space's payout (Raise a Glass, Good Deed);
 // - a member that fires more than once in one branch says its sum (a copy chain: Forger +1 per copy);
 // - a space whose gain is your pick (Clear Out: one color) says its best case as your pick.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { previewSpace } from '../../../engine/v4/index.js';
 import { sceneQ, spaceOf } from '../../engine/v4/cards-helpers.js';

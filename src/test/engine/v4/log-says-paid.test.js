@@ -14,7 +14,7 @@ const at = (s, qid, key) => `${s.quadrants.indexOf(qid)}-${spacesOf(s, qid).find
 describe('Give Away log', () => {
   for (const first of [true, false]) {
     it(`${first ? 'the first taker' : 'a later taker'}: the line matches the white gained`, () => {
-      let s = table(['trading', 'red', 'gold', 'purple'], { round: 2, rules: { plus1: 'game' }, members: [['red.bigfamily']] });
+      let s = table(['trading', 'red', 'yellow', 'purple'], { round: 2, rules: { plus1: 'game' }, members: [['red.bigfamily']] });
       if (!first) s.plus1Seen = { [at(s, 'trading', 'writeoff')]: true };
       const w0 = s.players[0].res.white;
       s = take(s, 'trading.writeoff');
@@ -32,7 +32,7 @@ describe('Give Away log', () => {
 
 describe('a copy’s log line', () => {
   it('Do It Again copying Flock Together says the 2 green it paid, not the 3 its taker got', () => {
-    let s = table(['echo', 'red', 'gold', 'purple'], { rules: { plus1: 'game' }, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }] });
+    let s = table(['echo', 'red', 'yellow', 'purple'], { rules: { plus1: 'game' }, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }] });
     s = take(s, 'echo.chant');
     while (s.pending?.kind !== 'place') s = move(s, s.pending.options.find(o => o.kind === 'pass')?.id || s.pending.options[0].id);
     s = take(s, 'echo.refrain');

@@ -13,7 +13,7 @@ if(!base)throw new Error('Set V4_URL to an immutable production candidate');
 const dir=process.env.V4_PERF_SHOTS||'/tmp/patrons-wheel-contention';mkdirSync(dir,{recursive:true});
 function chainSave(){
  const seats=Array.from({length:4},(_,i)=>({name:`P${i+1}`,kind:i?'bot':'human'}));
- let state=createGame({seats,seed:7,quadrants:['silver','gold','red','green']});
+ let state=createGame({seats,seed:7,quadrants:['silver','yellow','red','green']});
  state.queue=[];state.pending=null;state.round=1;state.slots={};state.squats={};state.order=[];state.log=[];
  for(const p of state.players){for(const r of state.resources)p.res[r]=6;p.left=3;}
  for(const def of ['silver.majordomo','silver.toastmaster']){

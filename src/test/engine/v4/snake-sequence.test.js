@@ -14,7 +14,7 @@ import { registerQuadrant } from '../../../engine/v4/content/index.js';
 import purple, { extraTurns } from '../../../engine/v4/content/purple.js';
 
 registerQuadrant(purple);
-const Q = ['gold', 'red', 'purple', 'green'];
+const Q = ['yellow', 'red', 'purple', 'green'];
 const L = 'ABC'; // A, B, C: the round's first pass (A picks first)
 
 function toRound(r, seed = 11) {

@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Red and the stand-ins: every action and every member hook, with exact numbers.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { memberCount, resume } from '../../../engine/v4/core.js';
 import { scene as baseScene, take, move, uidOf, ids, hasOpt, fol, useTestCosts } from './helpers.js';
@@ -51,10 +52,11 @@ describe('Red action progression', () => {
 });
 
 describe('Stand-in actions are plain gains', () => {
+  // Harbor and Graft name yellow since Gold left (Nov 24); this table has no yellow, so that 1 comes as the space's own color
   const cases = [
     ['Tide', 1, { blue: 3 }], ['Current', 1, { blue: 2, red: 1 }], ['Shoal', 1, { blue: 2, green: 1 }],
-    ['Swell', 2, { blue: 5 }], ['Harbor', 2, { blue: 4, gold: 1 }], ['Flood', 3, { blue: 8 }],
-    ['Sprout', 1, { green: 3 }], ['Graft', 1, { green: 2, gold: 1 }], ['Root', 1, { green: 2, blue: 1 }],
+    ['Swell', 2, { blue: 5 }], ['Harbor', 2, { blue: 5 }], ['Flood', 3, { blue: 8 }],
+    ['Sprout', 1, { green: 3 }], ['Graft', 1, { green: 3 }], ['Root', 1, { green: 2, blue: 1 }],
     ['Grove', 2, { green: 5 }], ['Orchard', 2, { green: 4, red: 1 }], ['Bloom', 3, { green: 8 }],
   ];
   for (const [name, round, want] of cases) it(name, () => {

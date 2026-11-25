@@ -1,6 +1,7 @@
 // Saves never crash-loop: an older-version or unreadable save is never resumed (not even by a reload mid-game), the
 // player is told to start fresh with the game record still copyable, and a crash anywhere shows a recovery screen
 // instead of a blank page.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, cleanup, act, waitFor } from '@testing-library/react';
 import App from '../../../v4/App.jsx';

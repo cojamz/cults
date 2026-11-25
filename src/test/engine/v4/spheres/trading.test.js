@@ -1,5 +1,6 @@
 // @vitest-environment node
 // White (trading): every action and every member with exact numbers, plus 200 seeded bot games on a White table.
+import '../fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createGame, applyMove, resume, followers, contextFor, shopSize } from '../../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../../engine/v4/bots.js';
@@ -89,12 +90,12 @@ describe('White actions', () => {
     expect(s.log.join('\n')).toContain("P1's Spend Freely: +2 followers for spending.");
   });
 
-  it('Spend Freely in round II: +1 follower per resource paid (Cory, Nov 1 1:39pm)', () => {
+  it('Spend Freely in round II pays per 2 resources too, as in every round (Cory, Nov 24: "it should be 1 per 2")', () => {
     let s = take(scene({ round: 2, res: [{ gold: 4 }], shop: ['gold.midas'] }), 'trading.splurge');
     const b0 = B(s);
     s = move(s, pick(s, 'gold.midas', 'shop')); // Midas 3+2: pays 5
-    expect(B(s) - b0).toBe(5);
-    expect(s.log.join('\n')).toContain("P1's Spend Freely: +5 followers for spending.");
+    expect(B(s) - b0).toBe(2); // floor(5 / 2)
+    expect(s.log.join('\n')).toContain("P1's Spend Freely: +2 followers for spending.");
   });
 
   it('Spend Freely pays on members only: buying followers gets nothing extra', () => {

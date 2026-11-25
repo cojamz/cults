@@ -1,6 +1,5 @@
 // Content registry. Every quadrant is a self-contained module; the engine looks them up by id.
 import { isRich, shiftCosts, richUp } from './price.js';
-import gold from './gold.js';
 import red from './red.js';
 import { blue, green } from './standins.js';
 import purple from './purple.js';
@@ -14,7 +13,7 @@ import { testSpaces, noteTable } from './testset.js';
 import { install as installBenders } from './benders.js';
 import { POOL_SPACES } from './pool.js';
 
-const QUADRANTS = { gold, red, blue, green };
+const QUADRANTS = { red, blue, green }; // Gold is deleted (Cory, 2026-11-24: "delete all the gold shit")
 
 // Member defs get a global id "<quadrant>.<key>" and know their quadrant.
 // Every member costs this many wild more than its card file says (Cory, Oct 27: "+1 wild cost to every member"),
@@ -108,11 +107,11 @@ function richSpaces(acts, up) {
   return r;
 }
 
-export const DEFAULT_QUADRANTS = ['gold', 'red', 'blue', 'green'];
+export const DEFAULT_QUADRANTS = ['yellow', 'red', 'blue', 'green'];
 // A game has as many spheres as players (Cory, 2026-10-15: "there are only X number of spheres for X number of
 // players"), so every round-I space still fills (3 per sphere, 3 minions each). Classic (Cory, 2026-10-31, decisions
-// ae4897bd): four seats play Blue (market), Red, Yellow and Purple; three drop Purple; two drop Yellow too. Gold goes to
-// the backlog (kept registered for old saves and replays, off the picker); Silver takes Purple's place once it has
+// ae4897bd): four seats play Blue (market), Red, Yellow and Purple; three drop Purple; two drop Yellow too. Gold is
+// deleted (Cory, 2026-11-24); Silver takes Purple's place once it has
 // members. Five and six seats add Green (echo), then Magenta (thieves) (Claude, under Cory's go-with-your-gut: the
 // next real 2.0 colors, until he names the big-table colors).
 export const CLASSIC = ['market', 'red', 'yellow', 'purple', 'echo', 'thieves'];
@@ -122,7 +121,7 @@ export const classicFor = n => CLASSIC.slice(0, Math.max(2, Math.min(MAX_PLAYERS
  *  play (the plain Blue and Green hand out each other's colors, so they don't split). */
 // (the engine's own default stays the long-tested table the tests and sims are written against; players get Classic
 // from the setup page)
-const TEST_TABLE = ['gold', 'red', 'market', 'echo', 'purple', 'yellow'];
+export const TEST_TABLE = ['yellow', 'red', 'market', 'echo', 'purple', 'thieves']; // exported for the tests' Gold fixture only
 export const defaultQuadrants = n => (n === 4 ? [...DEFAULT_QUADRANTS] : TEST_TABLE.slice(0, Math.max(2, Math.min(MAX_PLAYERS, n))));
 // Guest members' stand-in sphere: colorless, never on a table, so no color counts them and no sphere scores them.
 const GUEST_QUADRANT = Object.freeze({ id: 'guest', name: 'Grey', resource: 'colorless', members: [], actions: [] });

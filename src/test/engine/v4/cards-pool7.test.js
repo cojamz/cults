@@ -1,3 +1,4 @@
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { deniedText } from '../../../v4/game/Wheel.jsx';
 // @vitest-environment node
 // Idea pipeline pool 7 (Nov 7; scripts/ideas/README.md): bot-only candidates, never dealt in a real game. One test per

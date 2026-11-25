@@ -786,9 +786,6 @@ export function explainLine(log, i) {
     const extra = Number(b2) - Number(a);
     return { text: line, gift: { to: who, n: Number(b2), color, text: `+${a} ${why || color}, ${extra >= 0 ? '+' : '−'}${Math.abs(extra)} ${card}` } };
   }
-  m = line.match(/^(.+?)'s Hustler works the (\w+) spaces\.$/);
-  // in the card's own words (w3b #49: "+1 each time" vs the card's "per round number")
-  if (m) return { text: `${m[1]}'s Hustler picks ${m[2]}: ${m[2]} actions give ${m[1]} +1 gold per round number.` };
   return { text: line };
 }
 /** A log line said plainly, its spaces in the words the board shows them by. */

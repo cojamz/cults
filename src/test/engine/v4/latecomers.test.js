@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Latecomers (Cory, Nov 7: "Yes"): Bouncers' place. "On Recruit: take the Goes Last token: your next minion is placed
 // after everyone else's." Same price as Bouncers; Bouncers retired. Weeders back in Trespasser's place.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { defById } from '../../../engine/v4/content/index.js';
 import { CUT } from '../../../engine/v4/content/cull.js';

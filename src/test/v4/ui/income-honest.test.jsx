@@ -1,6 +1,7 @@
 // The seat's "each round" line is a dry run of next round's start, so conditional income read as guaranteed (f8):
 // Late Bloomers showed +1 every round, and Clockmakers' +2 fell to +1 after a steal with no word why. A part that
 // hangs on a condition now says it ("if fewest", "per 2 purple"), and the hover gives each member's rule.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
 import { createGame, applyMove, chooseBotMove, memberCount } from '../../../engine/v4/index.js';

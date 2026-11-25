@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Table rules: setup, turn order, workers, rings, shop, follower buys, contests, payment, followers, endgame.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { guestMembers, quadrant } from '../../../engine/v4/content/index.js';
 import { describe, it, expect } from 'vitest';
 import {
@@ -224,8 +225,6 @@ describe('follower buys', () => {
       p.res.red--;
       expect(followerPlan(s, p, t)).toBe(null);
     }
-    const p = { res: { gold: 5, red: 4, blue: 1, green: 0 } };
-    expect(followerPlan(s, p, tier('mid'))).toEqual({ gold: 0, red: 4, blue: 1, green: 0 });
   });
 
   // Cory, 2026-10-14: "the turns are the end game clock. there should basically be unlimited number of the 10 follower
@@ -278,17 +277,10 @@ describe('payment', () => {
     return [s, s.players[0]];
   };
 
-  it('pays the color part in its own color, the wild part from non-gold you hold most of', () => {
-    const [s, p] = setup({ gold: 5, red: 1, blue: 3 });
+  it('pays the color part in its own color, the wild part from what you hold most of', () => {
+    const [s, p] = setup({ gold: 5, red: 1, blue: 4 }); // (Gold paid last until Gold left the game, Nov 24)
     expect(paymentPlan(s, p, uidOf(s, 'gold.midas', 'shop'))).toEqual({ gold: 3, red: 0, blue: 2, green: 0 });
     expect(paymentPlan(s, p, uidOf(s, 'red.mentor', 'shop'))).toBe(null); // needs 3 red
-  });
-
-  it('wild falls back to gold only when nothing else is left', () => {
-    const [s, p] = setup({ gold: 5, red: 1 });
-    expect(paymentPlan(s, p, uidOf(s, 'gold.midas', 'shop'))).toEqual({ gold: 4, red: 1, blue: 0, green: 0 });
-    const [t, q] = setup({ gold: 3, red: 1 });
-    expect(paymentPlan(t, q, uidOf(t, 'gold.midas', 'shop'))).toBe(null);
   });
 
   it('the color part cannot be paid with other colors', () => {
@@ -304,17 +296,6 @@ describe('payment', () => {
     expect(paymentPlan(s, p, uidOf(s, 'gold.banker', 'shop'))).toEqual({ gold: 0, red: 0, blue: 0, green: 0 });
     [s, p] = setup({}, ['red.sponsor']);
     expect(paymentPlan(s, p, uidOf(s, 'red.intern', 'shop'))).toEqual({ gold: 0, red: 0, blue: 0, green: 0 });
-  });
-
-  it('Skinflint halves the gold color part (rounded up) and gold pays 2 wild', () => {
-    const [s, p] = setup({ gold: 3 }, ['gold.thrift']);
-    // Midas 3 gold + 2 wild: 2 gold for the color part, 1 gold for 2 wild
-    expect(paymentPlan(s, p, uidOf(s, 'gold.midas', 'shop'))).toEqual({ gold: 3, red: 0, blue: 0, green: 0 });
-    const [t, q] = setup({ gold: 1, red: 3 }, ['gold.thrift']);
-    // Governess: red part is full price; 1 gold covers the 2 wild
-    expect(paymentPlan(t, q, uidOf(t, 'red.mentor', 'shop'))).toEqual({ gold: 1, red: 3, blue: 0, green: 0 });
-    q.res.red = 4;
-    expect(paymentPlan(t, q, uidOf(t, 'red.mentor', 'shop'))).toEqual({ gold: 1, red: 4, blue: 0, green: 0 });
   });
 
   it('only affordable members are offered at the buy', () => {

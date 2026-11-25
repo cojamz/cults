@@ -1,5 +1,6 @@
 // Saves and rooms outlive the code that made them: every deploy can change cards. A save or room from other rules
 // content is never resumed, joined or hosted by this build; it's set aside (record kept) or refused with a message.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createLocalSession, createRoom, joinRoom, rejoinRoom, createMemoryStore, createMemoryTransport, ROOM_ROOT } from '../../../v4/session/index.js';
 import { VERSION_MISMATCH } from '../../../v4/session/online.js';

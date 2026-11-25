@@ -11,7 +11,7 @@ import { MemberCard } from '../../../v4/game/Info.jsx';
 afterEach(cleanup);
 
 describe('a Doppelganger that has copied shows only the copy', () => {
-  const s = table(['gold', 'echo', 'trading', 'silver'], { members: [['echo.doppel', 'trading.broker']], res: [{}, {}] });
+  const s = table(['yellow', 'echo', 'trading', 'silver'], { members: [['echo.doppel', 'trading.broker']], res: [{}, {}] });
   const uid = uidIn(s, 'echo.doppel', 0);
   s.cards[uid].copy = 'trading.broker';
   const broker = defById('trading.broker');
@@ -33,7 +33,7 @@ describe('a Doppelganger that has copied shows only the copy', () => {
   });
 
   it('before it copies, it still reads its own rule', () => {
-    const t = table(['gold', 'echo', 'trading', 'silver'], { members: [['echo.doppel']], res: [{}, {}] });
+    const t = table(['yellow', 'echo', 'trading', 'silver'], { members: [['echo.doppel']], res: [{}, {}] });
     const u = uidIn(t, 'echo.doppel', 0);
     expect(memberRows(t, 0, 0).find(r => r.uids.includes(u)).text).toBe(memberTimingWords(own));
   });

@@ -8,7 +8,7 @@ import { sceneQ } from '../../engine/v4/cards-helpers.js';
 vi.mock('../../../v4/game/flight.js', async o => ({ ...(await o()), motionOK: () => false }));
 afterEach(() => { cleanup(); vi.useRealTimers(); });
 it('Blue Bloods with three blue members rebased to worth 1 (Cory, Nov 12): the card shows the prize paid, and "you have." ends once', () => {
-  let s = sceneQ({ quadrants: ['gold', 'red', 'market', 'green'], round: 3, left: 0, queue: [{ t: 'finish' }],
+  let s = sceneQ({ quadrants: ['yellow', 'red', 'market', 'green'], round: 3, left: 0, queue: [{ t: 'finish' }],
     members: [['market.snob', 'market.shopaholic', 'market.windowdresser'], []] });
   s = resume(s);
   const paid = s.players[0].final.cards.find(c => c.name === 'Blue Bloods').n;

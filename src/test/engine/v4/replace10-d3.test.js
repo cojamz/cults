@@ -45,7 +45,7 @@ describe('REPLACE10: lane D requalified cards', () => {
   });
 
   it("Highwayman: steals half of a rival's biggest pile, rounded down, once a game (5 red: takes 2)", () => {
-    let s = table(Q, { n: 2, round: 2, left: 4, members: [['thieves.hoardbreaker']], res: [{}, { red: 5, gold: 2 }] });
+    let s = table(Q, { n: 2, round: 2, left: 4, members: [['thieves.hoardbreaker']], res: [{}, { red: 5, yellow: 2 }] });
     const u = uidOf(s, 'thieves.hoardbreaker', 0);
     s = move(s, `use:${u}`);
     expect(s.pending.prompt).toBe('Highwayman: steal half of which pile?');

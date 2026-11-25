@@ -9,7 +9,7 @@ afterEach(() => { cleanup(); localStorage.clear(); });
 // shop while the buy step still offers an older one's pile cards: a pile card dealt into the shop since then was drawn
 // twice, under one key, and React kept the copy after the step moved on.
 it('a pile card the buy step still offers, now dealt into the shop, shows once', () => {
-  let s = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Bo', kind: 'human' }], quadrants: ['gold', 'red', 'purple', 'echo'], seed: 51 });
+  let s = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Bo', kind: 'human' }], quadrants: ['yellow', 'red', 'purple', 'echo'], seed: 51 });
   s.pending = null; s.queue = [{ t: 'buy', p: 0 }];
   s.players[0].res = Object.fromEntries(s.resources.map(r => [r, 6]));
   s = resume(s);

@@ -7,7 +7,7 @@ import { seededRandom } from '../../src/engine/v4/rng.js';
 
 install();
 const N = Number(process.argv[2] || 120), MODE = process.argv[3] || 'black';
-const QUADS = ['gold', 'red', 'blue', 'thieves'];
+const QUADS = ['yellow', 'red', 'blue', 'thieves'];
 const LIST = [
   ['Kickback', 1], ['Golden Years', 1], ['Open Door', 1], ['Help Yourself', 1], ['Redistribute', 1], ['Lie Low', 1],
   ['Collect Debts', 2], ['Tithe', 2], ['Open House', 2], ['Swap Sides', 2], ['Heist', 2], ['Shake Down', 2],

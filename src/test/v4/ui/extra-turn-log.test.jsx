@@ -10,7 +10,7 @@ useRetiredRollCall(); // Roll Call, a plain purple space, kept for these tests (
 
 afterEach(cleanup);
 it('keeps Night Owls named in the visible log through its granted extra placement', () => {
-  let state = sceneQ({ quadrants: ['gold', 'red', 'purple', 'green'], round: 2, left: 1,
+  let state = sceneQ({ quadrants: ['yellow', 'red', 'purple', 'green'], round: 2, left: 1,
     members: [['purple.nightowl']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
   // The scene starts with P1's last planned turn followed by P2's. Extra turns
   // are inserted between them; the view must distinguish that from a snake end.

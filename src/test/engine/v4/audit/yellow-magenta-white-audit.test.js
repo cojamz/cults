@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Card-vs-text audit (2026-10-15): Yellow, Magenta, White, the guest members and the shared base rules.
+import '../fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { followers, followerChoices, TIERS } from '../../../../engine/v4/core.js';
 import { take, move, play, ids } from '../helpers.js';

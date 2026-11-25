@@ -59,7 +59,7 @@ describe('member deck', () => {
   });
 
   it('its hover card counts each color on the table and colorless, adding up to the pile', () => {
-    const s = createGame({ seats, seed: 34, quadrants: ['gold', 'red', 'market', 'echo'] });
+    const s = createGame({ seats, seed: 34, quadrants: ['yellow', 'red', 'market', 'echo'] });
     const rows = deckColors(s);
     expect(rows.map(r => r.key)).toEqual([...s.quadrants, 'colorless']);
     expect(rows.reduce((t, r) => t + r.n, 0)).toBe(s.pile.length);

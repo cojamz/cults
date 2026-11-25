@@ -25,7 +25,7 @@ function standIn(id, name, other1, other2) {
       plain('a2', 1, name === 'Blue' ? 'Current' : 'Graft', { [id]: 2, [other1]: 1 }),
       plain('a3', 1, name === 'Blue' ? 'Shoal' : 'Root', { [id]: 2, [other2]: 1 }),
       plain('a4', 2, name === 'Blue' ? 'Swell' : 'Grove', { [id]: 5 }),
-      plain('a5', 2, name === 'Blue' ? 'Harbor' : 'Orchard', { [id]: 4, [other1 === 'red' ? 'gold' : 'red']: 1 }),
+      plain('a5', 2, name === 'Blue' ? 'Harbor' : 'Orchard', { [id]: 4, [other1 === 'red' ? 'yellow' : 'red']: 1 }),
       plain('a6', 3, name === 'Blue' ? 'Flood' : 'Bloom', { [id]: 8 }),
     ],
     handlers: {},
@@ -37,4 +37,4 @@ function standIn(id, name, other1, other2) {
 }
 
 export const blue = standIn('blue', 'Blue', 'red', 'green');
-export const green = standIn('green', 'Green', 'gold', 'blue');
+export const green = standIn('green', 'Green', 'yellow', 'blue');

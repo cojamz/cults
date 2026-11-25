@@ -1,6 +1,7 @@
 // Previews on screen never stall: the cards a hovered space would unlock brighten when the space's dry run lands (the shop
 // subscribes to the preview store), and a preview worker that fails or goes silent hands its work to the main thread
 // (never an endless "You'd get: …").
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import { render, cleanup, act } from '@testing-library/react';
 import ShopCards from '../../../v4/game/ShopCards.jsx';

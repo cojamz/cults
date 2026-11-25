@@ -1,6 +1,7 @@
 // @vitest-environment node
 // A rival's answer on your turn is told honestly (blind testers, aminus r1 #3, #4): Shake Down says whose call it was,
 // what they gave and why that much (the member's cost, as the card says); Poach names the transferred member. The log says it, and so does the turn card (format.js turnStory).
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { take, move } from './helpers.js';
 import { table, useCosts, uidIn } from './cards-helpers-b.js';

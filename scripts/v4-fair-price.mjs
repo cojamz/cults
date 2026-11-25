@@ -432,7 +432,7 @@ if (!isMainThread) {
     if (fixes.length) console.log('also worth ~nothing even free:', fixes.map(c => `${c.id} (printed ${c.printed}, fair ${f1(c.fair)}, n=${c.owners})`).join('; '));
     console.log('low sample (<40 owners):', A.cards.filter(c => c.low).map(c => `${c.id} n=${c.owners}`).join(', '));
     console.log('');
-    for (const q of ['gold', 'red']) console.log(`most bought ${q}:`, A.cards.filter(c => c.id.startsWith(q + '.')).sort((a, b) => b.buys - a.buys).slice(0, 5).map(c => `${c.name} ${c.buys}`).join(', '));
+    for (const q of ['yellow', 'red']) console.log(`most bought ${q}:`, A.cards.filter(c => c.id.startsWith(q + '.')).sort((a, b) => b.buys - a.buys).slice(0, 5).map(c => `${c.name} ${c.buys}`).join(', '));
     console.log('card'.padEnd(22), 'print', ' fair', '  90% CI     ', 'owners', 'offers', 'buy%', 'demand', ' net@printed');
     for (const c of ranked) console.log(c.id.slice(0, 22).padEnd(22), String(c.printed).padStart(5), f1(c.fair).padStart(5), `${f1(c.lo)}–${f1(c.hi)}`.padEnd(13), String(c.owners).padStart(6), String(c.offers).padStart(6), (c.buyRate * 100).toFixed(0).padStart(4), f1(c.demandSlope).padStart(6), `${c.value.toFixed(2)}±${c.vSE.toFixed(2)}`.padStart(11), c.low ? 'LOW SAMPLE' : '');
   } else if (mode === 'sweep') {

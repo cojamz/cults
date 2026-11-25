@@ -15,7 +15,7 @@ delete process.env.REPLACE9;
 delete process.env.MEMBER_UP;
 
 const turns = (...ps) => ps.map(p => ({ t: 'turn', p }));
-const Q = ['gold', 'red', 'purple', 'echo'];
+const Q = ['yellow', 'red', 'purple', 'echo'];
 
 describe('REPLACE9: Lamplighters', () => {
   it('same price as Night Watch, which is retired under the switch', () => {

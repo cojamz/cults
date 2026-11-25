@@ -1,6 +1,7 @@
 // @vitest-environment node
 // The swap card, a table setting (Cory, Nov 1 3:01pm: "add it as a setting, let's try it!"), off by default: "As your
 // recruit: swap one of your members with a shop or rival member costing up to 2 more or less." It costs 2 resources in any colors (Cory, Nov 1 8:25pm: "cost 2 wild").
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { DEFAULT_RULES } from '../../../engine/v4/core.js';
 import { move } from './helpers.js';

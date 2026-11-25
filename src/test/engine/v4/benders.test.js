@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Rule-benders (guest members) and the Release base rule: each one alone, then with Purple extra turns,
 // Follow Suit copies, Doppelganger and Magenta theft.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, resume, followers, contextFor, cardDef, releaseRefund } from '../../../engine/v4/core.js';
 import { defById, EXTRA_WILD } from '../../../engine/v4/content/index.js';

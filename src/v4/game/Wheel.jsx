@@ -272,7 +272,7 @@ export function fitHalfWidth(cx, cy, h, r0, r1, a0, a1, pad, side = pad) {
   return lo;
 }
 
-const PANEL_RES = new Set(['gold', 'red', 'blue', 'green', 'magenta', 'silver', 'yellow', 'purple', 'white', 'any']);
+const PANEL_RES = new Set(['red', 'blue', 'green', 'magenta', 'silver', 'yellow', 'purple', 'white', 'any']);
 // a round and its value ("II\u00a0+3", panelText's schedule) is one token that never splits across a line
 const PANEL_TOK = /I{1,3}\u00a0[+−-]?\d+(?:\u00a0·)?|@f|[+−-]?\d+|×\d+|½|[A-Za-z’'-]+|[?;,.!]|\s+|./g; // punctuation alone: "+4 yellow, then…" keeps its dot (picky bot, Nov 11)
 const isNum = t => /^(?:[+−-]?\d+|×\d+|½)$/.test(t);

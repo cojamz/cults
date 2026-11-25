@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Cory's Purple members (2026-10-22), through real moves: Early Birds, Bouncers, Gossip, Day Laborer, Gate-Shutter, Juggler.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { followers } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';

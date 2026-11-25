@@ -2,6 +2,7 @@
 // Salvage's three recruits survive a recruit that brings a usable member (Gambler): the "use a member, or finish your
 // turn" step waits until the last recruit, since its Done ends every recruit left (release QA, Oct 28: the UI critic
 // got one recruit of three). Since Nov 10 Salvage's first two come from the discard pile, then the turn's own.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { take, move } from './helpers.js';
 import { table } from './cards-helpers-b.js';

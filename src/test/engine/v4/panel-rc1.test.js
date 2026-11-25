@@ -2,6 +2,7 @@
 // RC1 panel (design/eval/panel-rc1-triage.md items 11–14, 19): each finding reproduced on a seeded scene first,
 // then pinned. Who asked names every choice; one price rule for every recruit; the "you'd get" preview gives the
 // real number and says why; a counted pick keeps its count through a save and load.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import * as core from '../../../engine/v4/core.js';
 import { previewSpace } from '../../../engine/v4/preview.js';
@@ -53,21 +54,7 @@ describe('11 · every choice names the card or space that asked', () => {
 });
 
 describe('12 · one price rule for every recruit', () => {
-  it('Talent Scout offers Poor Relation when Skinflint makes it affordable (2 gold count as 4, plus 2 blue)', () => {
-    const restore = pinCosts({ 'gold.underdog': [4, 2] }); // the price this case was written at (Poor Relation is 8 since 2026-10-15)
-    try {
-    let s = sceneQ({ quadrants: CLASSIC, res: [{ gold: 2, blue: 2 }], members: [['gold.thrift', 'market.blackmarket']] });
-    row(s, ['red.patriarch', 'red.mob'], ['gold.underdog']);
-    s = move(s, `use:${uidOf(s, 'market.blackmarket', 0)}`);
-    const ud = uidOf(s, 'gold.underdog', 'pile');
-    expect(paymentPlan(s, s.players[0], ud)).not.toBeNull();
-    expect(s.pending.options.map(o => o.value)).toContain(ud);
-    s = move(s, `card:${ud}`);
-    while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
-    expect(s.players[0].members).toContain(ud);
-    expect(s.players[0].res).toMatchObject({ gold: 0, blue: 0 });
-    } finally { restore(); }
-  });
+  // Talent Scout with Skinflint's double gold: deleted with Gold's thrift rule (Cory, Nov 24: "delete all the gold shit")
   it('Talent Scout uses (and spends) an Bargain Down discount', () => {
     const restore = pinCosts({ 'gold.underdog': [4, 2] }); // the price this case was written at (Poor Relation is 8 since 2026-10-15)
     try {
@@ -107,9 +94,8 @@ describe('12 · one price rule for every recruit', () => {
   });
   it('the buy step, the pay choices and memberPrice agree on every face-up card, with every rule-changer', () => {
     const tries = [
-      { members: [['gold.thrift']], res: [{ gold: 3, red: 1 }] },
       { members: [['red.sponsor']], res: [{ gold: 2, blue: 3 }] },
-      { members: [['gold.thrift', 'red.sponsor']], res: [{ gold: 2, green: 1 }], discount: [4] },
+      { members: [['red.sponsor']], res: [{ gold: 2, green: 1 }], discount: [4] },
       { members: [[]], res: [{ red: 4, blue: 2 }], discount: [4] },
     ];
     for (const t of tries) {
@@ -123,16 +109,6 @@ describe('12 · one price rule for every recruit', () => {
         expect(s.pending.options.some(o => o.uid === u), s.cards[u].def).toBe(pr.afford);
       }
     }
-  });
-  it('Skinflint: 2 gold pay a 3-gold-plus-1 member (the spare half counts toward the rest)', () => {
-    const restore = pinCosts({ 'gold.underdog': [3, 1] });
-    try {
-      const s = sceneQ({ quadrants: CLASSIC, res: [{ gold: 2 }], members: [['gold.thrift']] });
-      row(s, ['gold.underdog']);
-      const p = s.players[0];
-      expect(memberPrice(s, p, s.shop[0]).afford).toBe(true);
-      expect(paymentPlan(s, p, s.shop[0])).toMatchObject({ gold: 2 });
-    } finally { restore(); }
   });
 });
 
@@ -236,7 +212,8 @@ describe('Talent Scout → pay always finishes', () => {
     expect(members.length).toBeGreaterThan(1);
     for (const save of [x => x, json]) for (const mo of members) {
       const s1 = save(applyMove(save(s0), { player: 0, option: mo.id }));
-      const pays = s1.pending?.kind === 'choose' && s1.pending.player === 0 ? s1.pending.options : [null];
+      // 'back' returns to the member list (a one-way price offers it beside the pay, since Skinflint's double gold left with Gold, Nov 24)
+      const pays = s1.pending?.kind === 'choose' && s1.pending.player === 0 ? s1.pending.options.filter(o => o.kind !== 'back') : [null];
       for (const po of pays) {
         const s2 = po ? save(applyMove(s1, { player: 0, option: po.id })) : s1;
         expect(s2.players[0].members).toContain(mo.value);

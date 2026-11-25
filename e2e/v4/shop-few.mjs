@@ -10,7 +10,7 @@ const base=process.env.V4_URL||'http://localhost:5331';
 const out=process.env.V4_SHOTS||'/tmp/cults-shop-few';mkdirSync(out,{recursive:true});
 const seats=['You','Bo','Cy','Di'].map(name=>({name,kind:'human'}));
 function fixture(n){
- let s=createGame({seats,quadrants:['gold','red','purple','echo'],seed:53});s.pending=null;s.queue=[{t:'buy',p:0}];s.current=0;
+ let s=createGame({seats,quadrants:['yellow','red','purple','echo'],seed:53});s.pending=null;s.queue=[{t:'buy',p:0}];s.current=0;
  s.players[0].res=Object.fromEntries(s.resources.map(r=>[r,6]));
  const pool=[...s.shop,...s.pile];s.shop=pool.slice(0,n);s.pile=pool.slice(n);s=resume(s);s.build=buildStamp();
  return {config:{seats,speed:'quick'},state:s,undo:null,savedAt:Date.now()};

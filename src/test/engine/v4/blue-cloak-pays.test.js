@@ -8,7 +8,7 @@ import { move, take } from './helpers.js';
 import { table, uidIn } from './cards-helpers-b.js';
 import { defById } from '../../../engine/v4/index.js';
 
-const Q = ['market', 'red', 'gold', 'purple'];
+const Q = ['market', 'red', 'yellow', 'purple'];
 const cloakPays = s => s.log.filter(l => /^P1's (Blue Cloak|Rag-and-Bone Man): \+1 /.test(l)).length;
 function wearCloak(s) {
   const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
@@ -32,7 +32,7 @@ describe('Blue Cloak', () => {
   });
 
   it('pays at Round Start for Culler’s discards, before anyone’s turn', () => {
-    let s = wearCloak(table(['gold', 'red', 'market', 'thieves'], { round: 1, members: [['market.windowshopper']], queue: [{ t: 'round', r: 2 }] }));
+    let s = wearCloak(table(['yellow', 'red', 'market', 'thieves'], { round: 1, members: [['market.windowshopper']], queue: [{ t: 'round', r: 2 }] }));
     expect(s.current == null).toBe(true);
     for (let k = 0; k < 2; k++) {
       const pick = s.pending.options.find(o => { const d = s.cards[Number(o.id.split(':')[1])]?.def; return d && !d.startsWith('benders.') && !defById(d).everyColor; });

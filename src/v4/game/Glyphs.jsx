@@ -9,7 +9,7 @@ import { playerColor, seatSigil, seatEmoji } from '../format.js';
 import { Leader, Minion } from '../art/Leader.jsx';
 import Tick from './Tick.jsx';
 
-const NAMES = { gold: 'gold', red: 'red', blue: 'blue', green: 'green', magenta: 'magenta', silver: 'silver', yellow: 'yellow', purple: 'purple', white: 'white' };
+const NAMES = { red: 'red', blue: 'blue', green: 'green', magenta: 'magenta', silver: 'silver', yellow: 'yellow', purple: 'purple', white: 'white' };
 
 // ---------- the resource dot: a flat disc in its color with a quiet darker edge; the cream dot (white) a firm hairline ----------
 const DISC = 'M8 1.75a6.25 6.25 0 1 1 0 12.5a6.25 6.25 0 1 1 0-12.5Z';
@@ -181,7 +181,7 @@ export function Who({ state, id, name = null, size = 16, meId = null }) {
   if (name == null && id === meId) name = 'You';
   return (
     <span className="who-tag" data-who={id}>
-      <Minion color={playerColor(id)} emoji={seatEmoji(state, id)} size={size} title={`${p.name}'s emoji`} />
+      <Minion color={playerColor(id)} emoji={seatEmoji(state, id)} size={size} title={id === meId ? 'Your emoji' : `${p.name}'s emoji`} />
       <span className="who-name">{name ?? p.name}</span>
     </span>
   );

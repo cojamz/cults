@@ -1,5 +1,6 @@
 // Moneychangers (Cory, 2026-10-29: "should let me rearrange colors as i please, not all to one color"): the card sets any
 // mix with − and +, keeps the total, and Done answers the engine's steps for that mix, one after another.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup, act } from '@testing-library/react';
 import { applyMove } from '../../../engine/v4/index.js';

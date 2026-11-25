@@ -11,7 +11,7 @@ install();
 afterEach(cleanup);
 
 function scene() {
-  const s = createGame({ seats: Array.from({ length: 3 }, (_, i) => ({ name: `P${i + 1}`, kind: 'human' })), seed: 7, quadrants: ['gold', 'red', 'market', 'green'] });
+  const s = createGame({ seats: Array.from({ length: 3 }, (_, i) => ({ name: `P${i + 1}`, kind: 'human' })), seed: 7, quadrants: ['yellow', 'red', 'market', 'green'] });
   s.queue = []; s.pending = null; s.round = 1; s.slots = {}; s.order = []; s.log = [];
   s.players.forEach(p => { for (const r of s.resources) p.res[r] = 0; p.left = 3; });
   s.queue = [{ t: 'turn', p: 0 }];

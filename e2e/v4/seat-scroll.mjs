@@ -10,7 +10,7 @@ import { seededRandom } from '../../src/engine/v4/rng.js';
 import { resume } from '../../src/engine/v4/core.js';
 const base = process.env.V4_URL || 'http://localhost:5331';
 const SEATS = [{ name: 'You', kind: 'human' }, ...['Bo', 'Cy', 'Di'].map(name => ({ name, kind: 'bot' }))];
-let s = createGame({ seats: SEATS, seed: 3, quadrants: ['market', 'gold', 'red', 'echo'] });
+let s = createGame({ seats: SEATS, seed: 3, quadrants: ['market', 'yellow', 'red', 'echo'] });
 const rand = seededRandom(3);
 for (let n = 0; n < 4000 && !(s.pending && s.pending.player === 0 && s.pending.kind === 'place'); n++) s = applyMove(s, chooseBotMove(s, rand));
 // 20, not 14: which members the pile gives moves with every bot or card change, and a 14-card list of short ones

@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Blue (market): every action and every member with exact numbers, plus 200 seeded bot games on a Blue table.
+import '../fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { STRAYS, stray } from '../stray.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createGame, applyMove, resume, followers } from '../../../../engine/v4/core.js';
@@ -180,8 +181,9 @@ describe('Blue members', () => {
   it('Connoisseurs: whenever you recruit a blue member, +1 blue', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9, blue: 1 }], members: [['market.connoisseur']], shop: ['market.recluse', ...SHOP.slice(0, 5)] }), 'market.clearance');
     s = move(s, card(s, 'market.recluse'));
-    expect(R(s).gold).toBe(9); // the 1 blue held and Bring Back's 3 (Nov 24) pay Recluse in blue, no gold
-    expect(R(s).blue).toBe(4 - 3 + 1);
+    // payments draw on what you hold most of since Gold left (Nov 24): 2 blue and 1 of the 9 gold pay Recluse
+    expect(R(s).gold).toBe(8);
+    expect(R(s).blue).toBe(4 - 2 + 1);
     let t = take(scene({ round: 2, res: [{ red: 9 }], members: [['market.connoisseur']], shop: CHEAP }), 'market.clearance');
     t = move(t, card(t, 'red.twins'));
     // Bring Back's 3 blue (Nov 24) are kept (Blue scores held blue since Oct 20, like Red's held red), Twins is all red,
@@ -191,8 +193,9 @@ describe('Blue members', () => {
   it('Reseller: whenever you recruit, +1 of that member’s color', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9 }], members: [['market.reseller']], shop: SHOP }), 'market.clearance');
     s = move(s, card(s, 'gold.tycoon'));
-    // Bring Back's 3 blue (Nov 24): 1 blue and 3 gold pay Baron's 4, Reseller's +1 gold back.
-    expect(R(s)).toEqual({ gold: 7, red: 0, blue: 2, green: 0 });
+    // Bring Back's 3 blue (Nov 24) are kept: 4 of the 9 gold pay Baron's 4 (payments draw on what you hold most of since
+    // Gold left, Nov 24), Reseller's +1 gold back.
+    expect(R(s)).toEqual({ gold: 6, red: 0, blue: 3, green: 0 });
   });
   it('Curator: round start, +1 blue per other blue member', () => {
     expect(R(start([['market.curator', 'market.stylist', 'market.planner', 'gold.midas']])).blue).toBe(2); // Stylist, Planner
@@ -258,11 +261,11 @@ describe('Blue members', () => {
     expect(s.pending.options.filter(o => o.kind === 'pay').length).toBeGreaterThan(1);
     const pay = s.pending.options[0]; // the suggested way comes first
     expect(pay.breaks).toBeUndefined();
-    expect(pay.value).toMatchObject({ gold: 4, red: 2 });
+    expect(pay.value).toMatchObject({ gold: 6, red: 0 }); // what you hold most of pays first since Gold left (Nov 24)
     expect(s.pending.options.find(o => o.id === 'pay:3-3-0-0').breaks).toEqual(['red']);
     s = move(s, pay.id);
     expect(has(s, 'gold.jackpot')).toBe(true);
-    expect(R(s)).toMatchObject({ gold: 5, red: 1 });
+    expect(R(s)).toMatchObject({ gold: 3, red: 3 });
     expect(s.shop).toHaveLength(CHEAP.length); // a pile recruit leaves the row as it was
     expect(s.pile.includes(j)).toBe(false);
     expect(s.pending.kind).toBe('buy'); // then the buy step, fresh: used, so no second use

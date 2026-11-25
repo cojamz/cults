@@ -1,5 +1,6 @@
 // A cult at the table (CultSeat): its leader, minions to place, members, follower total and resources; and the
 // living cult: a member reacts when its own trace line appears, the leader when a minion is placed / a prize is won.
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup, act } from '@testing-library/react';
 import { createGame, applyMove, chooseBotMove, followers, cardDef, quadrant } from '../../../engine/v4/index.js';
@@ -79,7 +80,7 @@ describe('every member reads as its sphere', () => {
     const { iconFor, spriteId } = await import('../../../v4/art/index.js');
     const { allQuadrantIds } = await import('../../../engine/v4/index.js');
     const { guestMembers } = await import('../../../engine/v4/content/index.js');
-    const defs = [...allQuadrantIds().filter(id => !quadrant(id).standIn).flatMap(id => quadrant(id).members), ...guestMembers()];
+    const defs = [...allQuadrantIds().filter(id => !quadrant(id).standIn && id !== 'gold').flatMap(id => quadrant(id).members), ...guestMembers()]; // Gold: a test-only fixture, no art (deleted Nov 24)
     expect(defs.length).toBeGreaterThan(100);
     // idea-pipeline candidates (d.pool, content/pool.js) are bot-only and never dealt, so they have no art yet
     expect(defs.filter(d => !d.artifact && !d.pool && !iconFor([d.id, spriteId(d.name)], 'member').drawn).map(d => d.id)).toEqual([]);

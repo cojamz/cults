@@ -2,6 +2,7 @@
 // Doormen (Cory, Nov 1 3:21pm, picked 1): "On Use, once per round: send a rival's member to the bottom of the pile.
 // Give them a shop member costing up to 2 more." Range since Nov 2: "costing at most 2 less" (a 6 → 4 and anything
 // above; Cory: "at least 2 less. so a demote at worst", "4 and anything above"). The owner picks; given, not recruited, so no On Recruit fires.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { move } from './helpers.js';
 import { table, uidIn, owns } from './cards-helpers-b.js';

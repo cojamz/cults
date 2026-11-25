@@ -3,6 +3,7 @@
 // waited behind everyone: "this is not how an extra minion works", "it just inserts into the normal", "only goes last
 // effects"). It takes its owner's next place in the round's order that no minion of theirs is waiting for, such as a
 // turn Make Haste or Flurry already moved up; with none, it comes after the round's order.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { applyMove } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';

@@ -10,7 +10,7 @@ import { RivalCard } from '../../../v4/game/RivalCard.jsx';
 afterEach(cleanup);
 
 it('no empty columns, filed by timing word, counts that add up', () => {
-  const s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], members: [['red.mob', 'red.intern', 'yellow.bigtent']] });
+  const s = sceneQ({ quadrants: ['purple', 'red', 'yellow', 'green'], members: [['red.mob', 'red.intern', 'yellow.bigtent']] });
   const { container } = render(<RivalCard state={s} pid={0} who="You" />);
   // no empty column: every heading stands over at least one member
   for (const col of container.querySelectorAll('.rc-col')) expect(col.querySelector('[data-member-row]')).not.toBeNull();

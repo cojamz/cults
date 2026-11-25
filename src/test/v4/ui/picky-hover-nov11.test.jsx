@@ -16,7 +16,7 @@ const card = (s, name) => { const [q, i] = at(s, name); cachedPreview(s, 0, q, i
 const youd = (s, name) => { const [q, i] = at(s, name); return renderToStaticMarkup(<YoudGet state={s} pid={0} q={q} i={i} now />).replace(/<[^>]+>/g, ''); };
 // three cults: P1 holds three red members, P2 an Bandit ("On Recruit: steal 3 resources") and a Governess, P3 a Journeyman
 const table = () => sceneQ({ quadrants: ['red', 'market', 'trading', 'thieves'], round: 2, n: 3,
-  res: [{ red: 3, blue: 4, white: 2 }, { gold: 5, red: 4 }, { blue: 3, red: 2 }], bonus: [0, 6, 3],
+  res: [{ red: 3, blue: 4, white: 2 }, { purple: 5, red: 4 }, { blue: 3, red: 2 }], bonus: [0, 6, 3],
   members: [['red.twins', 'red.bigfamily', 'red.intern'], ['thieves.banditold', 'red.mentor'], ['red.seatfiller']] });
 
 describe('the space badge (B4, B6)', () => {
@@ -42,7 +42,7 @@ describe('the space badge (B4, B6)', () => {
 
 describe("You'd get (B5, W5, W18)", () => {
   it('a steal of followers says yours beside the rival’s loss', () => {
-    const s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'market'], round: 2, n: 3, res: [{}, { gold: 5, red: 4 }, { blue: 3 }], bonus: [0, 6, 3] });
+    const s = sceneQ({ quadrants: ['purple', 'red', 'thieves', 'market'], round: 2, n: 3, res: [{}, { purple: 5, red: 4 }, { blue: 3 }], bonus: [0, 6, 3] });
     expect(words(s, 'Plunder').text).toBe('+1 magenta, +3 followers; steal 3 in colors you pick');
   });
 

@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Call to Arms, Trending's place in Red round I (Cory, Nov 11 2:04pm): "Recruit a shop member costing up to 2 per minion
 // you've placed this round, for free. +1 red." The count includes the minion on Call to Arms (Pilfer's reading).
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ } from './cards-helpers.js';

@@ -14,7 +14,7 @@ import { takeCard } from './lib/take.mjs';
 const base = (process.env.V4_URL || 'http://localhost:5317').replace(/\/$/, '');
 const out = `${process.env.V4_SHOTS || '/tmp/patrons-shots/v4'}/green-chain`;
 mkdirSync(out, { recursive: true });
-const quads = ['gold', 'red', 'purple', 'echo'];
+const quads = ['yellow', 'red', 'purple', 'echo'];
 const stamp = buildStamp();
 const slot = (q, k) => `${quads.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.key === k)}`;
 const move = (s, id) => applyMove(s, { player: s.pending.player, option: id });
@@ -38,8 +38,8 @@ function fixture() {
   s.queue = [1, 0, 0, 1, 0].map(p => ({ t: 'turn', p }));
   s = resume(s);
   s = pass(move(s, `slot:${slot('echo', 'chant')}`));
-  s = pass(move(s, `slot:${slot('gold', 'rush')}`));
-  s = pass(move(s, `slot:${slot('gold', 'discount')}`));
+  s = pass(move(s, `slot:${slot('yellow', 'rush')}`));
+  s = pass(move(s, `slot:${slot('yellow', 'discount')}`));
   // the rival's Do It Again copies their own Flock Together, then they pass the buy
   s = move(s, `slot:${slot('echo', 'refrain')}`);
   while (s.pending?.player === 1) s = s.pending.kind === 'buy' ? move(s, 'pass') : move(s, s.pending.options[0].id);
@@ -62,7 +62,7 @@ try {
     let expected = move(save.state, `slot:${slot('echo', 'hum')}`);
     const first = expected.pending.options.find(o => o.value === slot('echo', 'refrain')).id;
     expected = move(expected, first);
-    const second = expected.pending.options.find(o => o.value === slot('gold', 'rush')).id;
+    const second = expected.pending.options.find(o => o.value === slot('yellow', 'rush')).id;
     expected = move(expected, second);
     if (expected.pending?.kind !== 'buy') throw new Error('Engine failed to return to buying');
     await seedSave(page, save);

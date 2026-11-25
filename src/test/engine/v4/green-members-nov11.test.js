@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Green's new members from Cory's Nov 11 member pass: Mimics (replaces Impersonator), Gardeners (Tribute Band's slot),
 // Druids (the 10th). Each fires once in a small hand-built position.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { contextFor } from '../../../engine/v4/core.js';
 import { defById } from '../../../engine/v4/content/index.js';
@@ -21,7 +22,7 @@ describe('Green members, Nov 11', () => {
   });
 
   it("Mimics uses a rival's member's On Recruit (Banker: +3 gold)", () => {
-    let s = table(Q, { shop: ['echo.mimics', ...ROW], res: [{ green: 2, red: 2 }], members: [[], ['gold.banker']] });
+    let s = table(Q, { shop: ['echo.mimics', ...ROW], res: [{ green: 2, red: 9 }], members: [[], ['gold.banker']] }); // red 9 so Mimics is paid in red, not the gold being counted (payments draw on what you hold most of since Gold left, Nov 24)
     s = take(s, 'gold.rush');
     const g = s.players[0].res.gold;
     s = move(s, 'card:' + uidIn(s, 'echo.mimics', 'shop'));

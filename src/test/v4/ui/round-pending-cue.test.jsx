@@ -4,7 +4,7 @@ import CultSeat from '../../../v4/game/CultSeat.jsx';
 import { sceneQ } from '../../engine/v4/cards-helpers.js';
 afterEach(cleanup);
 it('keeps Straggler pending until its move is spent in this round, then resets next round', () => {
-  const state = sceneQ({ quadrants: ['purple', 'gold'], members: [['benders.straggler']] });
+  const state = sceneQ({ quadrants: ['purple', 'yellow'], members: [['benders.straggler']] });
   const uid = state.players[0].members[0];
   const view = render(<CultSeat state={state} pid={0} me={0} mine />);
   const mark = () => view.container.querySelector('[data-member="benders.straggler"] .round-pending-mark');

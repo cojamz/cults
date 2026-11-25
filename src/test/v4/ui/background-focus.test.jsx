@@ -10,7 +10,7 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 it('does not focus an incoming action prompt or dialog while the game is in the background', () => {
   vi.spyOn(document, 'hasFocus').mockReturnValue(false);
   const focus = vi.spyOn(HTMLElement.prototype, 'focus');
-  const state = { pending: { kind: 'choose', prompt: 'Call In Debts', options: [{ id: 'skip', label: 'Skip' }] }, players: [], resources: ['gold'], quadrants: ['gold'], cards: {} };
+  const state = { pending: { kind: 'choose', prompt: 'Call In Debts', options: [{ id: 'skip', label: 'Skip' }] }, players: [], resources: ['yellow'], quadrants: ['yellow'], cards: {} };
   const { rerender, unmount } = render(<ChoicePrompt state={state} onPick={() => {}} />);
   rerender(<ChoicePrompt state={{ ...state, pending: { ...state.pending } }} onPick={() => {}} />);
   expect(focus).not.toHaveBeenCalled();

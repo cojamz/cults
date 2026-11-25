@@ -2,6 +2,7 @@
 // Card-by-card verifier, White (trading): every action and member against its printed text at the doubled
 // member costs, through real legal moves, plus cross-sphere cases. Every number a card changes must
 // show up in a log line that names the card.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { followers } from '../../../engine/v4/core.js';
 import { quadrant } from '../../../engine/v4/content/index.js';
@@ -33,7 +34,7 @@ describe('White: the printed cards', () => {
     ]);
     expect(text('modestmeans')).toBe('+2 white. +1 white per rival with more members than you.');
     expect(text('nestegg')).toBe('+3 white.');
-    expect(text('splurge')).toBe('+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).');
+    expect(text('splurge')).toBe('+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay.'); // every round (Cory, Nov 24: "it should be 1 per 2")
     expect(text('farewell')).toBe('Discard a member for its cost in followers. +1 white.');
     expect(text('writeoff')).toBe('Give a member to a rival for its cost in white. +1 white.');
     expect(text('cashin')).toBe('Turn all your white into followers, 1 for 1. +1 white.');

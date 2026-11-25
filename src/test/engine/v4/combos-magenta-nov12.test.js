@@ -4,6 +4,7 @@
 // a rival you choose gives you one of their members.") and Changeling ("On Recruit: swap this member for a rival's
 // member costing up to 8."), played against the steal sources, the swaps, the Round End members and each other. Each
 // scene checks the outcome against the printed text. Harness: combos-green-nov12.test.js's scene/drive/go.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { createGame, resume, followers, applyMove, contextFor } from '../../../engine/v4/core.js';
 import { stray } from './stray.js';

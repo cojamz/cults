@@ -1,6 +1,7 @@
 // @vitest-environment node
 // The seats' and the header's turn words agree with the engine's real next placer, for every viewer's seat (online,
 // each guest computes its own words for its own seat from the same state).
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, turnRail, actionAt } from '../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';

@@ -1,6 +1,10 @@
+// TEST FIXTURE ONLY, never loaded by the game. Gold is deleted from Cults (Cory, 2026-11-24: "delete all the gold shit").
+// Older tests used Gold's cards as plain examples of engine rules (a space to copy, a member of some cost); this copy of
+// the old module lets them run until each moves onto a live card (design/todo.md). A test opts in with
+// `import './fixtures/gold-on.js'` (or '../fixtures/gold-on.js'); no other test sees Gold.
 // Gold: hoard it. Most gold at round end takes the ring's followers.
-import { MORE, richUp } from './price.js';
-import { give } from './silver.js';
+import { MORE, richUp } from '../../../../engine/v4/content/price.js';
+import { give } from '../../../../engine/v4/content/silver.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 export default {

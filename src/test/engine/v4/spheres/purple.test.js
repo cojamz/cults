@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Purple (extra turns): every action and every member with exact numbers, plus 200 seeded bot games on a Purple table.
+import '../fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { STRAYS, stray } from '../stray.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createGame, applyMove, resume, followers, memberCount, contextFor, roundOrder, turnRail, actionAt } from '../../../../engine/v4/core.js';

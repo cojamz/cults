@@ -1,5 +1,6 @@
 // "On recruit and at round start" members (Cory, 2026-10-14): the round-start effect also fires once when recruited,
 // is named in the log, and still fires at the next round start.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { sceneQ, buy, linesNaming } from './cards-helpers.js';
 import { move } from './helpers.js';

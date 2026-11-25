@@ -1,4 +1,5 @@
 // @vitest-environment node
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { defById, quadrant } from '../../../engine/v4/index.js';
 import { table } from '../../engine/v4/cards-helpers-b.js';

@@ -2,6 +2,7 @@
 // Idea pipeline pool 12 (Nov 7; scripts/ideas/README.md): bot-only candidates, never dealt in a real game. One test per
 // sentence of each card's text, through real moves, with the log naming the card. Candidates are un-retired (members)
 // or set into their color's wheel (spaces) for this file only, as scripts/lib/pool-rotate.mjs does in bot games.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { quadrant, defById } from '../../../engine/v4/content/index.js';
 import { POOL_SPACES } from '../../../engine/v4/content/pool.js';

@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Cory's playtest, Nov 9 11:13pm Eastern: "why cant i use hot streak after i do my last recruit of the round? it goes
 // right to spoils". A follower recruit (like a member recruit) leaves a window to use your members before the turn ends.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ } from './cards-helpers.js';

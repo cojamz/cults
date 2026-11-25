@@ -1,6 +1,6 @@
 // What bends a member's price: short lines for the pay dialog. Read off the engine, never off card names: the price is
 // core.js memberPrice (the one price rule), and the rule-changers are the same member flags the price rule reads
-// (costReduction, goldPaysDouble, anyColorPart), named by the cards that carry them.
+// (costReduction, anyColorPart), named by the cards that carry them.
 import { cardDef, defById, quadrant, memberPrice } from '../../engine/v4/index.js';
 
 const defsOf = card => [defById(card.def), ...[card.copy, card.ability].filter(Boolean).map(id => defById(id))];
@@ -21,7 +21,6 @@ export function priceNotes(state, p, uid) {
   for (const u of p.members) {
     for (const d of defsOf(state.cards[u])) {
       if (d.costReduction) out.push({ key: `cut:${u}`, text: `${d.name}: −${d.costReduction === true ? 1 : d.costReduction} off every member` });
-      if (d.goldPaysDouble) out.push({ key: `gold:${u}`, text: `${d.name}: your gold counts double` });
       if (d.anyColorPart && def.s) out.push({ key: `any:${u}`, text: `${d.name}: its colored part can be paid in any colors` });
     }
   }
@@ -30,6 +29,6 @@ export function priceNotes(state, p, uid) {
   if (def.s && !state.resources.includes(c)) out.push({ key: 'colorless', text: 'Paid in any colors here' });
   let total = null;
   try { total = memberPrice(state, p, uid).total; } catch { /* an older engine */ }
-  if (out.length && total != null && total !== printed) out.push({ key: 'total', text: `Comes to ${total} instead of ${printed}${p.members.some(u => defsOf(state.cards[u]).some(d => d.goldPaysDouble)) ? ' (each gold pays 2)' : ''}` });
+  if (out.length && total != null && total !== printed) out.push({ key: 'total', text: `Comes to ${total} instead of ${printed}` });
   return out;
 }

@@ -13,10 +13,10 @@ const stack = (pid, r) => ({ kind: 'stack', pid, r });
 
 it('notes when each cause starts, in order, inside the chain', () => {
   setMotionSpeed('relaxed');
-  const before = sceneQ({ quadrants: ['gold', 'silver'] });
+  const before = sceneQ({ quadrants: ['purple', 'silver'] });
   const action = { kind: 'space', pid: 0, key: '0-0' }, m = { kind: 'member', pid: 0, uid: 101, def: 'silver.majordomo' };
   const plan = planChain(before, { ...before, moves: before.moves + 1, effects: [
-    { type: 'gain', cause: action, from: action, to: stack(0, 'gold'), what: { r: 'gold', n: 2 } },
+    { type: 'gain', cause: action, from: action, to: stack(0, 'purple'), what: { r: 'purple', n: 2 } },
     { type: 'gain', cause: m, from: m, to: stack(0, 'silver'), what: { r: 'silver', n: 1 } },
   ] }, { mine: [1] });
   expect(plan.beats).toHaveLength(2);
@@ -37,7 +37,7 @@ it('tells what a later step adds to a line that is up as a line of its own', () 
   expect(grewBy('Blue Cloak: +1 blue', 'Blue Cloak: +1 blue')).toBe('');
   // not more of the same (a loss, a re-wording): re-worded in place
   expect(grewBy('P2 +2 red', 'P2 +1 red')).toBe(null);
-  expect(grewBy('+3 gold from P2', '+5 gold from P2 and P3')).toBe(null);
+  expect(grewBy('+3 purple from P2', '+5 purple from P2 and P3')).toBe(null);
 });
 
 it("the space's own gain counts up on one row as its picks land (Cory, Nov 9: Clear Out on grey)", async () => {

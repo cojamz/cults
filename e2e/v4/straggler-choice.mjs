@@ -9,7 +9,7 @@ import { resume } from '../../src/engine/v4/core.js';
 const base=(process.env.V4_URL||'http://localhost:5339').replace(/\/$/,'');
 const out=`${process.env.V4_SHOTS||'/tmp/cults-straggler'}/straggler`;mkdirSync(out,{recursive:true});
 const seats=['You','Bo','Cy','Di'].map(name=>({name,kind:'human'}));
-let s=createGame({seats,seed:53,quadrants:['gold','red','thieves','echo']});
+let s=createGame({seats,seed:53,quadrants:['yellow','red','thieves','echo']});
 const uid=freeCard(s,'benders.straggler');s.shop=s.shop.filter(u=>u!==uid);s.pile=s.pile.filter(u=>u!==uid);
 s.players.forEach(p=>{p.members=[];p.res=Object.fromEntries(s.resources.map(r=>[r,0]));p.left=0;});s.players[0].members=[uid];
 Object.assign(s,{round:2,slots:{'0-0':0},squats:{},pending:null,queue:[{t:'allPlaced'},{t:'turn',p:0}],log:[]});

@@ -3,6 +3,7 @@
 // any point on your own turn: before you place (beside the spaces) and in the buy step. Its whole effect resolves at
 // once, choices included, then the turn resumes with fresh options. Never on a rival's turn. A used member offers no
 // use and can't be released (canRelease).
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { quadrant } from '../../../engine/v4/content/index.js';
 import { take, move, ids } from './helpers.js';

@@ -1,4 +1,5 @@
 // Default payment never spends a color whose contest you lead or tie, when another way exists (tester Q's scene).
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { it, expect } from 'vitest';
 import { createGame, paymentChoices, followerChoices, TIERS } from '../../../engine/v4/index.js';
 import { resume } from '../../../engine/v4/core.js';

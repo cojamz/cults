@@ -9,7 +9,7 @@ const rootOf = file => { try { const css = readFileSync(`${process.cwd()}/src/v4
 const ROOTS = [rootOf('lamp.css'), rootOf('v4.css')];
 const varOf = name => { for (const root of ROOTS) { const m = root.match(new RegExp(`--${name}:(#[0-9a-fA-F]{6})`)); if (m) return m[1]; } return undefined; };
 const WALNUT = '#1d1611'; // the Lamplit Table's wood (design/prototypes/vision/vision.css)
-const RESOURCES = ['gold', 'red', 'blue', 'green', 'magenta', 'yellow', 'purple', 'silver', 'white'];
+const RESOURCES = ['red', 'blue', 'green', 'magenta', 'yellow', 'purple', 'silver', 'white'];
 
 const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255);
 const lin = c => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);

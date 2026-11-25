@@ -19,7 +19,7 @@ function fixture(quadrants){
 const browser=await launchBrowser({executablePath:browserPath});
 // the phone pass runs only with V4_PHONE=1 (phone is out of scope, Cory 2026-10-20)
 try{for(const[tag,opts]of[['laptop',{viewport:{width:1270,height:700}}],['desktop',{viewport:{width:1600,height:900}}],['tablet',{viewport:{width:1100,height:700}}],...(process.env.V4_PHONE?[['phone',devices['iPhone 13']]]:[])]){
- for(const[group,quads]of[['core',['gold','red','purple','echo']],['others',['market','thieves','silver','yellow']]]){
+ for(const[group,quads]of[['core',['yellow','red','purple','echo']],['others',['market','thieves','silver','yellow']]]){
  const ctx=await browser.newContext(opts),p=await ctx.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
  await seedSave(p,fixture(quads));await p.goto(`${base}/?intro=0`);await p.locator('[data-home="resume"]').click();
  const hand=p.locator('[data-handoff]');if(await hand.isVisible())await hand.click();

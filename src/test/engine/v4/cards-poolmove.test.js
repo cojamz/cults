@@ -16,7 +16,7 @@ const give = (s, p, n, test = () => true) => {
 
 describe('Gift Swappers (grey)', () => {
   it('On Use, once per game: every player, you too, gives one member they choose to the player on their left', () => {
-    let s = sceneQ({ quadrants: ['market', 'gold', 'red'], n: 3, round: 2, members: [['benders.giftswappers']] });
+    let s = sceneQ({ quadrants: ['market', 'yellow', 'red'], n: 3, round: 2, members: [['benders.giftswappers']] });
     const gs = uidOf(s, 'benders.giftswappers', 0);
     const [a] = give(s, 1, 1), [b1, b2] = give(s, 2, 2);
     s = move(s, `use:${gs}`);
@@ -39,7 +39,7 @@ describe('Gift Swappers (grey)', () => {
     expect(s.cards[gs].used).toBe(true);
   });
   it('a player with no members gives nothing', () => {
-    let s = sceneQ({ quadrants: ['market', 'gold', 'red'], n: 3, round: 2, members: [['benders.giftswappers']] });
+    let s = sceneQ({ quadrants: ['market', 'yellow', 'red'], n: 3, round: 2, members: [['benders.giftswappers']] });
     const gs = uidOf(s, 'benders.giftswappers', 0);
     s = move(s, `use:${gs}`); // only P1 has a member, so only P1 gives (to P2)
     expect(s.pending.prompt).toBe('Gift Swappers: give which of your members to P2?');
@@ -51,7 +51,7 @@ describe('Gift Swappers (grey)', () => {
 
 describe('Purifiers (grey)', () => {
   it('On Use, once per game: discard one of your members. Each rival with more members than you discards one too.', () => {
-    let s = sceneQ({ quadrants: ['market', 'gold', 'red'], n: 3, round: 2, members: [['benders.purifiers']] });
+    let s = sceneQ({ quadrants: ['market', 'yellow', 'red'], n: 3, round: 2, members: [['benders.purifiers']] });
     const pu = uidOf(s, 'benders.purifiers', 0);
     const [mine] = give(s, 0, 1), two = give(s, 1, 2), [one] = give(s, 2, 1);
     s = move(s, `use:${pu}`);
@@ -70,7 +70,7 @@ describe('Purifiers (grey)', () => {
 
 describe('Foreclose (Blue, round II)', () => {
   it('+2 blue. Put a member of a rival with more members than you into the shop.', () => {
-    let s = sceneQ({ quadrants: ['market', 'gold', 'red'], n: 3, round: 2 });
+    let s = sceneQ({ quadrants: ['market', 'yellow', 'red'], n: 3, round: 2 });
     give(s, 0, 1); const big = give(s, 1, 3), [small] = give(s, 2, 1);
     s = take(s, 'market.foreclose');
     expect(s.players[0].res.blue).toBe(2);
@@ -83,7 +83,7 @@ describe('Foreclose (Blue, round II)', () => {
     expect(named(s, 'Foreclose').at(-1)).toMatch(/^P1's Foreclose: P2's .* goes into the shop\.$/);
   });
   it('no rival with more members: just the blue', () => {
-    let s = sceneQ({ quadrants: ['market', 'gold', 'red'], n: 3, round: 2 });
+    let s = sceneQ({ quadrants: ['market', 'yellow', 'red'], n: 3, round: 2 });
     s = take(s, 'market.foreclose');
     expect(s.players[0].res.blue).toBe(2);
     expect(named(s, 'Foreclose').at(-1)).toBe("P1's Foreclose: no rival has more members.");

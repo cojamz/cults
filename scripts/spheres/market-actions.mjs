@@ -6,7 +6,7 @@ import { createGame, applyMove, chooseBotMove, followers, actionAt } from '../..
 import { seededRandom } from '../../src/engine/v4/rng.js';
 install();
 const N = Number(process.argv[2] || 160);
-const QUADS = ['gold', 'red', 'market', 'green'];
+const QUADS = ['yellow', 'red', 'market', 'green'];
 const LIST = [
   ['Kickback', 1], ['Golden Years', 1], ['Intro Offer', 1], ['Open Door', 1], ['Even Swap', 1], ['Snap Up', 1], ['New Faces', 1], ['Name Drop', 1],
   ['Collect Debts', 2], ['Tithe', 2], ['Open House', 2], ['Half Price', 2], ['Show Off', 2],

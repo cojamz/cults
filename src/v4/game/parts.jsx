@@ -61,7 +61,7 @@ function optionDetail(state, o) {
 }
 
 /** "P4 (34)" from an engine label reads as "P4 · 34 gold" when the question is about gold. */
-function withUnits(label, prompt, colors = ['gold', 'red', 'blue', 'green']) {
+function withUnits(label, prompt, colors = ['yellow', 'red', 'blue', 'green']) {
   const m = label.match(/^(.*) \((\d+)\)$/);
   if (!m) return label;
   const unit = (prompt.match(new RegExp(`\\b(${colors.join('|')})\\b`, 'i')) || [])[1];

@@ -22,8 +22,6 @@ export const GLOSSARY = [
     def: 'One resource of each color on the table. Holding 2 of every color is 2 full sets; your fewest color sets how many you have.' },
   { key: 'plant', word: 'Plant', card: true, legacy: true, match: /\bplants?\b/,
     def: 'Sower: at round start you put some of your yellow on the card (it leaves your supply). At round end you gain that many of each other color.' },
-  { key: 'set aside', word: 'Set aside', card: true, legacy: true, match: /\bset aside\b/,
-    def: 'Investor: at round start you put some of your gold on the card (it leaves your supply, so it doesn’t count for Most gold). At round end it comes back doubled.' },
   { key: 'in play', word: 'In play', match: /\bin play\b/,
     def: 'Held by any player. Members in the shop or the pile are not in play.' },
   { key: 'release', word: 'Release', legacy: true, match: /\breleas(e|ed|es)\b/,

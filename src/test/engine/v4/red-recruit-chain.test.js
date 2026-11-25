@@ -7,7 +7,7 @@ import { move, take } from './helpers.js';
 const reload = s => resume(JSON.parse(JSON.stringify(s)));
 
 it.each(['echo.impostor', 'echo.doppel'])('%s copies Fairy Godmother, whose ability is On Use, so nothing fires on recruit (Cory, Nov 5)', id => {
-  let s = table(['red', 'echo', 'gold', 'thieves'], { members: id.endsWith('doppel') ? [['red.panel']] : [[], ['red.panel']], shop: [id, 'red.mentor'] });
+  let s = table(['red', 'echo', 'yellow', 'thieves'], { members: id.endsWith('doppel') ? [['red.panel']] : [[], ['red.panel']], shop: [id, 'red.mentor'] });
   s.queue = []; s.pending = null; s.pile = [];
   const copier = uidIn(s, id, 'shop'), panel = uidIn(s, 'red.panel', id.endsWith('doppel') ? 0 : 1);
   contextFor(s).recruit(s.players[0], copier, { free: true });
@@ -19,7 +19,7 @@ it.each(['echo.impostor', 'echo.doppel'])('%s copies Fairy Godmother, whose abil
 });
 
 it('Fairy Godmother cannot promote itself into Shadow and restart the current Promote', () => {
-  let s = table(['red', 'echo', 'gold', 'thieves'], { round: 2, members: [['echo.hourglass']], shop: ['red.panel'] });
+  let s = table(['red', 'echo', 'yellow', 'thieves'], { round: 2, members: [['echo.hourglass']], shop: ['red.panel'] });
   s.pile = [];
   const stunt = uidIn(s, 'echo.hourglass', 0), panel = uidIn(s, 'red.panel', 'shop');
   s = reload(take(s, 'red.hireup'));

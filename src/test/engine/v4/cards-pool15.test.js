@@ -3,6 +3,7 @@
 // dealt in a real game. One test per sentence of each card's text, through real moves, with the log naming the card.
 // Second Billing, Part Exchange (cards-pool15b) and Mashup (cards-pool15c) need their own files: each takes the only
 // live round III space of its color.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { defById } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf } from './helpers.js';

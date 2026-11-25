@@ -5,6 +5,7 @@
 // those cards and picking it threw "Card 30 is not in the shop" (found by the remote bots session). Core now pins
 // where each named card was (option.at) and shows only the options whose cards are still there; none left, the
 // choice resolves to nothing with a log line (no rescue gain).
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { applyMove, isLegal, resume, createGame } from '../../../engine/v4/core.js';

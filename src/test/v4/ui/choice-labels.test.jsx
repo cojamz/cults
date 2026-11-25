@@ -1,5 +1,6 @@
 // RC1 saboteur panel (triage item 19): a choice's buttons say what a click really does. "Take all 3 from P3" when P3
 // holds 1 took 1; the Call In Debts tally reset on a reload; Social Climber read "Gold", "Red", "+2 blue", "+2 green".
+import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
 import { ChoicePrompt } from '../../../v4/game/parts.jsx';
