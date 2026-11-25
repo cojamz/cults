@@ -1223,7 +1223,7 @@ const market = {
     // REPLACE2 bot test (Nov 3, replacement batch 2): Shopaholics' place. 5 blue + 3 any as a player sees it. Core runs it
     // (flag roundStartBuy): at each round start after the fresh row is dealt, one buy step (a member or followers) per
     // holder, in that round's turn order, before the first placement.
-    m('doorbusters', 'Doorbusters', 4, 3, 'Round Start: recruit once, before anyone places.', { f: 2, roundStartBuy: true }), // dealt since Cory, Nov 24 10:04pm
+    m('doorbusters', 'Doorbusters', 4, 3, 'Round Start: recruit once, before anyone places.', { f: 3, n: 3, keepCount: true, /* worth 3 (Cory, Nov 26: "that's fine" to scoring 3 instead of 1; member and follower counts stay equal, Nov 12) */ roundStartBuy: true }), // dealt since Cory, Nov 24 10:04pm
     // REPLACE4 bot test (Nov 3, replacement batch 4): Window Dressers' place. 3 blue + 1 any as a player sees it. Core asks
     // it in the recruit step (askOutbid, core.js): a rival's shop member chosen and paid for there.
     ...add4(m('outbidders', 'Outbidders', 2, 1, 'Whenever a rival recruits a shop member, you may pay its cost plus 2 to recruit it instead. They get back what they paid and recruit again.', { outbids: true })),
@@ -1352,7 +1352,7 @@ const market = {
     }),
     // From the discard pile since Nov 24 (Cory, 7:53pm Eastern, yes to "Round End: +3 blue, then you may recruit from the
     // discard pile."; his Nov 11 "We maybe even want to make it out of the discard pile"): a member only, paying its cost
-    m('lastminute', 'Dusk Buyer', 2, 0, /* +3 (Cory, Nov 6: "Give last minute shopper an extra blue") */ 'Round End: +3 blue, then you may recruit from the discard pile.', { round: 1,
+    m('lastminute', 'Dusk Buyer', 2, 1, /* 6 as a player sees it (Cory, Nov 26: increment by one; was 5) */ /* +3 (Cory, Nov 6: "Give last minute shopper an extra blue") */ 'Round End: +3 blue, then you may recruit from the discard pile.', { round: 1,
       ...see(i => endsAhead(i).length * 2), // BOTSEE: 3 blue and a paid discard-pile recruit each round end still ahead
       onAllPlaced(ctx, owner) { const got = ctx.gain(owner, B, 3); if (got) ctx.log(`${owner.name}'s Dusk Buyer: +${got.n} ${got.color}.`); discardOffer(ctx, owner, { why: 'Dusk Buyer', how: {}, left: 1 }); },
     }),

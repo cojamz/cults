@@ -912,7 +912,7 @@ const thieves = {
     m('banditold', 'Bandit', 1, 1, 'On Recruit: steal 3 resources.', { retired: true,
       onRecruited(ctx, owner) { startSteal(ctx, owner, 'Bandit', 3 + stickyMore(ctx, owner), { fromAction: false }); },
     }),
-    m('accomplice', 'Tax Men', 1, 1, 'Whenever a rival recruits a member costing 7 or more, they give you 2 resources of their choice.', { ...old14('partners'),
+    m('accomplice', 'Tax Men', 1, 3, /* 7 as a player sees it (Cory, Nov 26: "Tax Men can go to 7"; was 5); stays in round I's deck */ 'Whenever a rival recruits a member costing 7 or more, they give you 2 resources of their choice.', { round: 1, ...old14('partners'),
       onAnyRecruit(ctx, owner, card, by, member) {
         if (!by || by === owner || !member) return;
         const d = defById(member.def?.id || member.def);
@@ -979,7 +979,7 @@ const thieves = {
     // "what a weird name" on Second-Story Man). Same key and price. After the round's last placement, before contests
     // (core's allPlaced step), 3 picks from any rivals through the shared steal (Bodyguards answers, Lie Low and Hush
     // Money apply; Desperado and The Boss add). Stolen resources keep their color.
-    m('secondstory', 'Night Thieves', 3, 2, 'Round End, before scoring: steal 3 resources.', { // a round I member as Sticky Fingers was
+    m('secondstory', 'Night Thieves', 3, 3, /* 9 as a player sees it (Cory, Nov 26: "just make it 9"; was 8) */ 'Round End, before scoring: steal 3 resources.', { // a round I member as Sticky Fingers was
       // BOTSEE: each round end still ahead, 3 resources taken, plus a quarter chance it swings a contest
       ...see(i => (i.rivals.some(o => Object.values(o.res).some(v => v > 0)) ? endsAhead(i).reduce((a, r) => a + 3 * resAt(r) * (1 + SEE_SPITE) + 0.25 * SEE_RING[r - 1], 0) : 0)),
       // queued, so each owner's Round End waits for the ones before it in turn order (Cory, Nov 4) and reads the table then
@@ -1190,7 +1190,7 @@ const thieves = {
       },
     }),
     // Cory's #26 "Steal when you buy a member - should be essential to magenta" (Cory's yes, Oct 21)
-    m('shoplifter', 'Cutpurse', 3, 3, // 7 (Cory, Oct 30: balance run)
+    m('shoplifter', 'Cutpurse', 3, 4, // 10 as a player sees it (Cory, Nov 26: "where you think things should cost more, just increment by one"; was 9)
       'Whenever you recruit, steal 1 resource.', { ...old5, ...old14('shopcolor'), ...old14('shoptwo'),
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner && what.member?.uid !== card.uid) startSteal(ctx, owner, 'Cutpurse', 1 + stickyMore(ctx, owner), { fromAction: false });

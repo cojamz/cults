@@ -26,7 +26,7 @@ describe('REPLACE6: the switch', () => {
     expect(price('trading.successors')).toEqual([4, 2, 1]);
     expect(price('trading.inquisitors')).toEqual([4, 2, 1]);
     expect(price('trading.pallbearers')).toEqual([4, 2, 1]);
-    expect(price('benders.sorelosers')).toEqual([0, 6, 1]);
+    expect(price('benders.sorelosers')).toEqual([0, 7, 1]); // +1 (Cory, Nov 26: "comforter can go to 8")
     expect(price('benders.peddlers')).toEqual([0, 6, 1]);
     for (const id of ['silver.gala', 'silver.guest', 'trading.cashier', 'trading.raider', 'trading.oldmoney', 'benders.hr', 'benders.freelancer'])
       expect(defById(id).retired).toBe(true);

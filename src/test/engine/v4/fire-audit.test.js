@@ -159,6 +159,8 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 // Members that may stay unnamed on bot tables, with why (see design/eval/card-ledger-a.md).
 // Conditional cards that can go a whole bot game without their condition; each has a named test of its own.
 const ALLOW = {
+  // Nov 26 price changes (Night Thieves, Comforter, Cutpurse, Dusk Buyer, Tax Men) moved the seeded games: recruited in 1, no rival took a Silver space after
+  'silver.highsociety': 'pays only when a rival takes a Silver space after it is recruited (cards-silver covers it)',
   // Paupers and Pawnbrokers joining Silver (Nov 11) moved the seeded games: recruited in 1, holding fewer than 3 of every color at game end
   // Wastrels and Camp Followers joining Silver (Nov 11) moved the seeded games: recruited in 1, no gold member recruited after
   // Matchmaker and Dowry-Givers moving to White (Nov 11) moved the seeded games: bots hold Weeders for 3+ shop members they

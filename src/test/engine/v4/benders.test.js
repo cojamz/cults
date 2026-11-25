@@ -65,7 +65,7 @@ describe('guest members join the deck', () => {
     expect(R(t).red).toBe(20 - cost('benders.frontrunner'));
     expect(R(t).purple).toBe(0);
     const v = scene({ quadrants: Q, members: [['benders.frontrunner']] });
-    for (const q of [...Q, 'guest']) expect(contextFor(v).countMembersOfColor(v.players[0], q), q).toBe(q === 'guest' ? 1 : 0); // Lord of the Manor rebased to worth 1 and 1 member (Cory, Nov 12)
+    for (const q of [...Q, 'guest']) expect(contextFor(v).countMembersOfColor(v.players[0], q), q).toBe(q === 'guest' ? 3 : 0); // Lord of the Manor worth 3 and counts as 3 members again (Cory, Nov 26)
   });
 });
 
