@@ -95,7 +95,7 @@ describe('Red members', () => {
     expect(R(s, 1).red).toBe(0);
     expect(named(s, 'Ferryman')).toHaveLength(0);
     // Promote (round II) swaps your member with a shop member: a member you recruit
-    let t = sceneQ({ round: 2, members: [['red.recruiter', 'red.intern']], shop: ['red.volunteer'] });
+    let t = sceneQ({ round: 2, members: [['red.recruiter', 'red.intern']], shop: ['red.volunteer', 'benders.frontrunner'] });
     t = take(t, 'red.hireup');
     // a grey shop member (Lord of the Manor): no color of its own to pay, since the Nov 11 Red deck put Tavern Keeper first in this shop
     const swap = t.pending.options.find(o => o.id.startsWith(`trade:${uidOf(t, 'red.intern', 0)}:`) && o.id.endsWith(`:${uidOf(t, 'benders.frontrunner', 'shop')}`));

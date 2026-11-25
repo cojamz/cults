@@ -43,6 +43,14 @@ function give(s, i, q, k = 1, max = 99) {
   return out;
 }
 
+/** P1 gets the dearest plain red member in the pile, so a shop member costs the same or less (Nov 25: the Red deck grew, and the first plain one was the cheapest) */
+function giveDear(s) {
+  const us = s.pile.filter(x => plain(s, x, 'red'));
+  const u = us.reduce((a, b) => (cost(s, b) > cost(s, a) ? b : a));
+  s.pile.splice(s.pile.indexOf(u), 1); s.players[0].members.push(u);
+  return [u];
+}
+
 describe('Red candidates', () => {
   it('Kinfolk: whenever a member joins your cult, +1 follower per other member of its color you have', () => {
     const s = still({ members: [['red.kinfolk']] });
@@ -69,7 +77,7 @@ describe('Red candidates', () => {
   });
   it('Talent Agents: at Round End, you may swap one of your members with a shop member costing the same or less', () => {
     let s = still({ members: [['red.talentagents']] });
-    const [big] = give(s, 0, 'red');
+    const [big] = giveDear(s);
     const bigName = defById(s.cards[big].def).name;
     s = go(s, [{ t: 'allPlaced' }]);
     expect(s.pending.prompt).toMatch(/^Talent Agents: swap one of your members/);
@@ -85,7 +93,7 @@ describe('Red candidates', () => {
   });
   it('Talent Agents: "you may": keeping them changes nothing', () => {
     let s = still({ members: [['red.talentagents']] });
-    give(s, 0, 'red');
+    giveDear(s);
     const before = [...s.players[0].members];
     s = go(s, [{ t: 'allPlaced' }]);
     s = move(s, 'no');

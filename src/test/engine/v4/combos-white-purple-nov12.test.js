@@ -345,7 +345,7 @@ describe('a loaned member given away stays on loan', () => {
     cleanLog(s);
   });
   it('a loaned member swapped into the shop is no longer on loan; the member taken for it is kept', () => {
-    const { s, trail } = go('loan-to-shop', { quads: R, round: 2, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }, ...END], shop: ['trading.recluse'], members: [[], []] },
+    const { s, trail } = go('loan-to-shop', { quads: R, round: 2, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }, ...END], shop: ['trading.recluse'], prep: s => { const k = s.pile.findIndex(u => s.cards[u].def === 'red.intern'); s.pile.unshift(...s.pile.splice(k, 1)); } /* Intern comes up when Borrow empties the row (Nov 25: the deal changed) */, members: [[], []] },
       [/Borrow/, /^pass$/, /Demote/, /Hermit.*Intern/, /^pass$/]);
     expect(trail.join('\n')).not.toMatch(/STOP/);
     expect(names(s, 0)).toEqual(['Intern']);

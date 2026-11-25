@@ -11,8 +11,8 @@ import { quadrant } from '../../../engine/v4/index.js';
 // seed 3 (was 2) since Lie Abed grew to +4 / +5 / +6 (Oct 28): other seeds' bots pile skips onto A
 describe('Lie Abed', () => {
   it("Cory's round I example, Nov 10 rule: A takes Lie Abed, A's other two minions are placed after everyone else's", () => {
-    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 8, quadrants: ['yellow', 'red', 'purple', 'echo'] }); // reseeded when the deck changes (Oct 28; seed 3 since every member cost 1 more, Nov 5; 4 since the Nov 5 replacements; 6 since Night Watch left, 7 since Sleepyheads and Hurriers joined, 8 since Victors left, Nov 6)
-    const rand = seededRandom(8);
+    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 9, quadrants: ['yellow', 'red', 'purple', 'echo'] }); // reseeded when the deck changes (Oct 28; seed 3 since every member cost 1 more, Nov 5; 4 since the Nov 5 replacements; 6 since Night Watch left, 7 since Sleepyheads and Hurriers joined, 8 since Victors left, Nov 6; 9 since Innkeeper, Wet Nurse and Chapman joined, Nov 25)
+    const rand = seededRandom(9);
     while (!(s.round === 1 && s.pending?.kind === 'place')) s = applyMove(s, chooseBotMove(s, rand));
     const base = s.order.slice(0, 4);
     const A = s.pending.player, q = s.quadrants.indexOf('purple');
