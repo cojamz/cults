@@ -529,3 +529,96 @@ Verdict: send
 8. Color interactions: none: Green's own spaces.
 9. Biggest case: rounds II and III: +6 in all, against a winner's 70 to 110 and a contest's 10.
 Verdict: send
+
+# Batch 4: reworks from Cory's notes, and new ideas with them applied (no contest win-more, simple words, colored)
+
+## Idea: Genealogist v2
+
+1. Printed text: "Round End: if all your other members are one color, +7 followers." Red, 3 red + 4 any (Claude's fill-in; Cory: "reward more because I think it's hard to go one color").
+2. Played turn: round II end, you hold 3 red members and the Genealogist: +7. One off-color recruit costs the +7.
+3. Both sides: no choices; every recruit chooses between a better card and staying one color.
+4. Who feels it: rivals can break it by giving or swapping you an off-color member.
+5. Not refused: his own call to raise it.
+6. Judged: Intuitive: keeps the bloodline pure. Fun: a hard goal that pays. Interacts: rivals can spoil it. Powerful: +7. Engine: Red's one-color group. Its color: Red.
+7. Public and certain: members are public; nothing hidden or random.
+8. Color interactions: none: a single-color card.
+9. Biggest case: rounds II and III: +14 in all, never 10+ at once, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Messenger v2
+
+1. Printed text: "Whenever you take two turns in a row, +2 purple." Purple, 3 purple + 3 any (Claude's fill-in; Cory: "Or maybe it should just give like 2 purple").
+2. Played turn: round II: Flurry gives three turns in a row: two pairs, +4 purple; Make Haste +2. The best other round II space pays about +3.
+3. Both sides: no choices; it pulls you to the chaining spaces.
+4. Who feels it: rivals block Make Haste and Flurry to stop it.
+5. Not refused: resources now, not followers, so not Juggler again.
+6. Judged: Intuitive: runs one errand after another. Fun: chaining pays. Interacts: blocking. Powerful: +2 a chain. Engine: Make Haste, Flurry. Its color: Purple's turns.
+7. Public and certain: turns are public; nothing hidden or random.
+8. Color interactions: none.
+9. Biggest case: round III, about 4 pairs: +8 purple, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Anchoress v2
+
+1. Printed text: "Whenever you end a turn without recruiting, +1 follower." White, 2 white + 3 any (Claude's fill-in; Cory: "Maybe it's like each turn you recruit no member, plus 1 follower").
+2. Played turn: round II, 4 turns, you recruit on 1: +3 followers. Recruiting every turn: +0.
+3. Both sides: no choices; each turn chooses between a recruit and +1.
+4. Who feels it: rivals see you stop recruiting, White's Fewest members race.
+5. Not refused: his own rework.
+6. Judged: Intuitive: takes nobody in. Fun: a steady trade-off. Interacts: White's race. Powerful: +1 a turn. Engine: Redeem. Its color: White's fewer members.
+7. Public and certain: each turn's recruit is seen; nothing hidden or random.
+8. Color interactions: none.
+9. Biggest case: round III, 5 turns, no recruits: +5, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Moneybags
+
+1. Printed text: "Round End: if you have the most silver, +3 followers." Silver, 3 silver + 3 any (Claude's fill-in; Cory's rework of Spendthrift: "if you have the most silver... lets you like hedge the competition... Maybe +3").
+2. Played turn: round II end, you lose Fewest silver (6 followers to someone else) but have the most silver: +3. A hedge for the player who can't win the contest.
+3. Both sides: no choices; holding silver becomes a plan instead of a loss.
+4. Who feels it: rivals who give you silver feel it pay you back.
+5. Not refused: his own rework; it is a hedge against the contest, not win-more (#48).
+6. Judged: Intuitive: rich and proud of it. Fun: an out when the contest is lost. Interacts: Silver's gifts. Powerful: +3. Engine: Assayer. Its color: Silver.
+7. Public and certain: silver is public; ties count as most for each tied player.
+8. Color interactions: none.
+9. Biggest case: rounds II and III: +6 in all, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Footpad
+
+1. Printed text: "Whenever you steal, +1 follower." Magenta, 4 magenta + 4 any (Claude's fill-in). The audit he asked for: live steal-for-followers members are Robin Hood "Whenever you steal from the player with the most followers, +1 follower.", Informer "Whenever a rival steals from you, they lose 1 follower." and Starveling "While you have the fewest followers (ties count), your steals take 2 more resources."; this is the plain version that could replace Robin Hood.
+2. Played turn: round II: Pilfer and Plunder, two steals: +2 followers on top. Best other: the same spaces without it.
+3. Both sides: no choices; it pulls you to every steal space.
+4. Who feels it: every rival you steal from, as now; steals become worth taking even when small.
+5. Not refused: one steal, one follower, nothing about who leads (#30).
+6. Judged: Intuitive: a robber lives by robbing. Fun: every steal counts. Interacts: steals. Powerful: +1 each. Engine: Pilfer, Plunder, Poach. Its color: Magenta's stealing.
+7. Public and certain: steals happen on the table; nothing hidden or random.
+8. Color interactions: none.
+9. Biggest case: round III with Green copying Pilfer: about 5 steals, +5, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Spice Merchant
+
+1. Printed text: "Whenever you pay for a member with 4 or more colors, +3 followers." Yellow, 3 yellow + 4 any (Claude's fill-in).
+2. Played turn: round II, a 7-cost member paid 3 yellow, 2 red, 1 blue, 1 purple: +3. Paid in 2 colors: +0.
+3. Both sides: no choices; each payment chooses between keeping piles and spreading.
+4. Who feels it: rivals see you hold many colors (Paint Over, Demand Tribute aim at that).
+5. Not refused: not a running count of the table (#41); reads only your own payment.
+6. Judged: Intuitive: trades in every spice. Fun: pay in a rainbow. Interacts: Yellow's color attacks. Powerful: +3. Engine: Harvest. Its color: Yellow's many colors.
+7. Public and certain: payments are made in the open; nothing hidden or random.
+8. Color interactions: none.
+9. Biggest case: round III, 3 recruits each in 4 colors: +9, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
+
+## Idea: Scribe
+
+1. Printed text: "Whenever you copy an action, +1 of its color." Green, 2 green + 3 any (Claude's fill-in).
+2. Played turn: round II, Imitate copies a rival's Promote: +3 red, the swap, and +1 red more. Follow Suit copying Stash: +1 magenta.
+3. Both sides: no choices; it pulls you to copy other colors' actions, not Green's.
+4. Who feels it: rivals whose actions you copy see you gain their color.
+5. Not refused: Copyist pays followers per copy ("Whenever you copy an action, +2 followers."); this pays the copied color, a resource that changes what you can buy.
+6. Judged: Intuitive: writes it out again. Fun: copying feeds every color. Interacts: rivals' actions. Powerful: +1. Engine: Imitate, Replay All. Its color: Green's copying.
+7. Public and certain: copies happen in the open; nothing hidden or random.
+8. Color interactions: none.
+9. Biggest case: round III Replay All copying 4 of your actions: +4, against a winner's 70 to 110 and a contest's 10.
+Verdict: send
