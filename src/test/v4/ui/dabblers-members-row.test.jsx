@@ -17,7 +17,7 @@ const row = s => {
 
 describe('Members row with Dabblers', () => {
   it('shows Dabblers once as 2 any, and the colors add up to the total', () => {
-    const s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], members: [['red.intern', 'yellow.bigtent', 'benders.dabblers']] });
+    const s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], members: [['red.intern', 'yellow.bigtent', 'benders.dabblersold']] });
     const { box, parts } = row(s);
     expect(parts).toEqual([['red', 1], ['yellow', 1], ['any', 2]]);
     expect(parts.reduce((t, [, n]) => t + n, 0)).toBe(memberCount(s, s.players[0]));

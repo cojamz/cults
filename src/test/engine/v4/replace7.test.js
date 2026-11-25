@@ -247,7 +247,7 @@ describe('Godfather: "On Use, once per game: recruit a shop member costing up to
   it('the pitched turn: 9 members (Deprogrammers counts as 4, Dabblers 2, Godfather, Fairy Godmother and Intern 1) recruit Proselytizers (9) free, not Mob (13)', () => {
     // Intern added when every member cost 1 more (Nov 5): Proselytizers went to 9. Fairy Godmother rebased to 1 (Cory, Nov 12): Dabblers
     // makes up its 2; Deprogrammers is retired here and keeps its 4
-    let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.godfather', 'red.panel', 'red.movementpenalty', 'red.intern', 'benders.dabblers']], shop: ['red.proselytizer', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.godfather', 'red.panel', 'red.movementpenalty', 'red.intern', 'benders.dabblersold']], shop: ['red.proselytizer', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
     const uid = uidIn(s, 'red.godfather', 0);
     s = move(s, `use:${uid}`);
     expect(s.pending.prompt).toBe('Godfather: recruit which shop member (costing up to 9) for free?');

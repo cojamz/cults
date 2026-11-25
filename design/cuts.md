@@ -35,6 +35,9 @@ How to use it:
 - `echo.songrequest` Buskers · 2026-11-11 3:52pm · "There's no way it won't be crazy strong"
 - `echo.impersonators` Impersonator · 2026-11-11 9:02pm · Mimics replaces it
 
+- `purple.extrashift` Day Laborer ("On Recruit: +1 minion this round.", the same text as Extra Hand) · 2026-11-24 7:53pm · "yes" to cutting it with no replacement (already out of the 10-card deck)
+- Bandit (`thieves.accomplice`, "On Recruit: steal 3 resources.") and Stallholder (`market.mannequin`, "Blue members in the shop count as your members when contests are scored.") · 2026-11-24 7:53pm · "yes": replaced in place by Tax Men and Gleaner (same ids, new cards; the old ones live on only as test fixtures `thieves.banditold`, `market.mannequinold`)
+
 ## Disliked, not cut (ask him; don't cut on these)
 - Mannequin "Blue members in the shop count as your members when contests are scored." · Nov 11 11:35pm: "i dont love mannequins"
 - Accomplice "On Recruit: steal 3 resources." · Nov 11: 4 of 10, "just weak"

@@ -61,6 +61,14 @@ function onMagenta(ctx, o) {
   return n;
 }
 /** Mug the Leader (REPLACE10): the rivals tied for the most followers among p's rivals, if p can steal from them. */
+/** Tax Men: rival o gives host 1 resource of their choice, `left` in all, asked one at a time on o's own turn. */
+function askTax(ctx, host, o, left, what) {
+  const have = ctx.state.resources.filter(c => (o.res[c] || 0) > 0);
+  if (!have.length) { ctx.log(`${o.name} has nothing to give ${host.name}'s Tax Men.`); return; }
+  ctx.choose(o, `Tax Men: you recruited ${what}. Give ${host.name} ${left === 1 ? '1 more resource' : `${left} resources`}: which color?`, have.map(c => ({
+    id: `color:${c}`, label: `Give 1 ${c}`, kind: 'color', value: c, hint: 0.3 * (o.res[c] || 0),
+  })), 'thieves.taxGive', { host: host.id, left, what });
+}
 function mugTargets(ctx, p) {
   const rivals = ctx.rivals(p), top = Math.max(...rivals.map(o => ctx.followers(o)));
   return rivals.filter(o => ctx.followers(o) === top && stealable(ctx, p, o) > 0);
@@ -534,6 +542,13 @@ const thieves = {
   ],
 
   handlers: {
+    taxGive(ctx, o, color, data) {
+      const host = ctx.player(data.host);
+      if (!host || !(o.res[color] > 0)) return;
+      o.res[color] -= 1; ctx.gain(host, color, 1);
+      ctx.log(`${o.name} gave ${host.name} 1 ${color} (${host.name}'s Tax Men).`);
+      if (data.left > 1) askTax(ctx, host, o, data.left - 1, data.what);
+    },
     // Cutthroats (pool 16): the stolen resources go back to the victim and that many of their followers come instead
     // (loose followers, as every follower steal takes; never below 0)
     cutthroats(ctx, p, v, data) {
@@ -886,8 +901,22 @@ const thieves = {
       },
     }),
     // Cory, 2026-10-28: back as "On Recruit: steal 3 resources", "maybe a 2 cost?" (1 magenta + the +1 wild)
-    m('accomplice', 'Bandit', 1, 1, 'On Recruit: steal 3 resources.', { ...old14('partners'),
+    // Tax Men replaces Bandit (Cory, 2026-11-24 7:53pm Eastern, yes; his Nov 7 "I like this one!" read "steal 2 resources
+    // from them", changed so the rival picks on their own turn and nobody acts on another's, Cory Nov 13). The id stays
+    // 'accomplice'. A gift, not a steal: Informer and Thief-Takers don't fire. Price 2 magenta + 3 any (Bandit's, so Magenta's round I deck keeps 2 cheap members) is Claude's fill-in.
+    // the old Bandit, retired Nov 24 (Tax Men): a test fixture for a plain On Recruit steal
+    m('banditold', 'Bandit', 1, 1, 'On Recruit: steal 3 resources.', { retired: true,
       onRecruited(ctx, owner) { startSteal(ctx, owner, 'Bandit', 3 + stickyMore(ctx, owner), { fromAction: false }); },
+    }),
+    m('accomplice', 'Tax Men', 1, 1, 'Whenever a rival recruits a member costing 7 or more, they give you 2 resources of their choice.', { ...old14('partners'),
+      onAnyRecruit(ctx, owner, card, by, member) {
+        if (!by || by === owner || !member) return;
+        const d = defById(member.def?.id || member.def);
+        if ((d.s || 0) + (d.w || 0) < 6 + MORE + richUp(ctx.state)) return;
+        ctx.asMember(owner, 'Tax Men', () => askTax(ctx, owner, by, 2, d.name));
+      },
+      // BOTSEE: a member costing 7+ is recruited by some rival about twice a round from round II
+      ...see(info => endsAhead(info).filter(r => r >= 2).length * 3),
     }),
     // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-misers-accomplice.md, paper 15 vs 12; BOTSMART A/B of an
     // above-bar idea): Accomplice's place, same price. Spread the steal for followers, or focus it on one rival.

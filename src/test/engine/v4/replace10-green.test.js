@@ -2,6 +2,7 @@
 // Quality loop lane D (Nov 4): Copyist (Roadie's place) and Minstrel (Cory's idea for Chronicler's place), under
 // REPLACE10=copyist,encore. The switch is read when the engine loads, so it is set before the import, then cleared.
 import { describe, it, expect } from 'vitest';
+import { stray } from './stray.js';
 
 process.env.REPLACE10 = 'copyist,encore';
 // trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
@@ -31,11 +32,11 @@ describe('REPLACE10: Copyist', () => {
 
 describe('REPLACE10: Minstrel', () => {
   it('On Use, once per game: this turn the recruited member\'s On Recruit happens twice', () => {
-    let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, res: [{ magenta: 9 }, { red: 9 }], members: [['echo.encore']], shop: ['thieves.accomplice'] });
+    let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, res: [{ magenta: 9 }, { red: 9 }], members: [['echo.encore']], shop: ['thieves.banditold'] });
     const u = uidOf(s, 'echo.encore', 0);
     s = move(s, `use:${u}`);
     expect(s.cards[u].used).toBe(true);
-    const acc = s.shop.find(x => s.cards[x].def === 'thieves.accomplice');
+    const acc = s.shop.find(x => s.cards[x].def === 'thieves.banditold');
     contextFor(s).recruit(s.players[0], acc, { spend: payFor(s, 0, acc), how: {}, paid: true });
     s = resume(s);
     while (s.pending?.player === 0 && s.pending.kind === 'choose' && /steal|Bandit/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
@@ -56,9 +57,9 @@ describe('REPLACE10: Minstrel', () => {
 
   it('a free recruit counts: Minstrel, then Walk-In recruits the top of the pile; its On Recruit happens twice', () => {
     let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, res: [{}, { red: 9 }], members: [['echo.encore']] });
-    const top = s.pile.find(u => s.cards[u].def === 'thieves.accomplice');
+    const top = s.pile.find(u => s.cards[u].def === 'thieves.banditold');
     if (top) s.pile = [top, ...s.pile.filter(u => u !== top)];
-    else { const acc = Object.keys(s.cards).map(Number).find(u => s.cards[u].def === 'thieves.accomplice' && !s.shop.includes(u) && !s.players.some(p => p.members.includes(u))); s.pile = [acc, ...s.pile.filter(u => u !== acc)]; }
+    else { const acc = Object.keys(s.cards).map(Number).find(u => s.cards[u].def === 'thieves.banditold' && !s.shop.includes(u) && !s.players.some(p => p.members.includes(u))) ?? stray(s, 'thieves.banditold'); s.pile = [acc, ...s.pile.filter(u => u !== acc)]; }
     const u = uidOf(s, 'echo.encore', 0);
     s = move(s, `use:${u}`);
     s = take(s, 'red.hire');

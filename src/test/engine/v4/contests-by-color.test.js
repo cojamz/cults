@@ -107,7 +107,7 @@ describe('By color: White and Silver contest candidates (bot trials only, contes
 describe('By color: Red Most members of one color, Blue Most members (Cory, Nov 7)', () => {
   it('Red counts your biggest same-color group, grey members as a group too; Blue counts all your members', async () => {
     const { table } = await import('./cards-helpers-b.js');
-    const s = table(['red', 'market', 'trading', 'silver'], { n: 2, rules: { contests: 'byColor' }, members: [['market.stylist', 'red.volunteer', 'red.mob'], ['benders.squatter', 'benders.dabblers']] });
+    const s = table(['red', 'market', 'trading', 'silver'], { n: 2, rules: { contests: 'byColor' }, members: [['market.stylist', 'red.volunteer', 'red.mob'], ['benders.squatter', 'benders.dabblersold']] });
     s.rules = { ...(s.rules || {}), contests: 'byColor' };
     const ctx = contextFor(s);
     const r = scoringOf(s, 'red'), b = scoringOf(s, 'market');
@@ -123,7 +123,7 @@ describe('By color: Red Most members of one color, Blue Most members (Cory, Nov 
 describe('By color: Yellow Most member colors (Cory, Nov 7: "For now we can make it \'most member colors\'")', () => {
   it('counts the colors in play among your members', async () => {
     const { table } = await import('./cards-helpers-b.js');
-    const s = table(['red', 'market', 'yellow', 'silver'], { n: 2, rules: { contests: 'byColor' }, members: [['market.stylist', 'red.volunteer', 'red.mob'], ['red.intern', 'benders.dabblers']] });
+    const s = table(['red', 'market', 'yellow', 'silver'], { n: 2, rules: { contests: 'byColor' }, members: [['market.stylist', 'red.volunteer', 'red.mob'], ['red.intern', 'benders.dabblersold']] });
     s.rules = { ...(s.rules || {}), contests: 'byColor', contestFix: { yellow: 'colors' } }; // held as an option: back to full sets while Cory decides (Nov 7, "the person with the most members most likely wins")
     const y = scoringOf(s, 'yellow');
     expect(y.label).toBe('Most member colors');
@@ -151,7 +151,7 @@ describe('Cory, Nov 13 8:12pm: "Red contest is supposed to be #members not #card
   });
   it('Yellow, Most member colors: grey is one more color; Dabblers still adds just one', async () => {
     const { table } = await import('./cards-helpers-b.js');
-    const s = table(['red', 'market', 'yellow', 'silver'], { n: 2, rules: { contests: 'byColor' }, members: [['red.volunteer', 'benders.squatter'], ['red.intern', 'benders.dabblers']] });
+    const s = table(['red', 'market', 'yellow', 'silver'], { n: 2, rules: { contests: 'byColor' }, members: [['red.volunteer', 'benders.squatter'], ['red.intern', 'benders.dabblersold']] });
     s.rules = { ...(s.rules || {}), contests: 'byColor', contestFix: { yellow: 'colors' } };
     const y = scoringOf(s, 'yellow'), ctx = contextFor(s);
     expect(y.counts).toMatch(/grey is a color/);

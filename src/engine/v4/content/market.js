@@ -1163,7 +1163,10 @@ const market = {
     // player sees it. The shop's blue members count toward the owner's members in every contest that counts them (core
     // contestMembers: Most members, and Fewest members against the owner). Rivals answer by sending blue members to the bottom.
     // Live since Nov 5 in Hawker's place: the one blue card on Cory's short list ("Pretty cool; short list for blue").
-    m('mannequin', 'Stallholder', 2, 2, 'Blue members in the shop count as your members when contests are scored.', {}), // joins by cost (round II), per Cory's round I cost cutoffs
+    // Gleaner replaces Stallholder (Cory, 2026-11-24 7:53pm Eastern, yes; Nov 11: "i dont love mannequins"): the id stays
+    // 'mannequin'. Every recruit may take a discard pile member as if it were in the shop (core.js, flag discardAny)
+    m('mannequin', 'Gleaner', 2, 2, 'You may recruit from the discard pile as you would from the shop.', { discardAny: true }),
+    m('mannequinold', 'Stallholder', 2, 2, 'Blue members in the shop count as your members when contests are scored.', { retired: true }), // retired Nov 24 (Gleaner): a test fixture // joins by cost (round II), per Cory's round I cost cutoffs
     // REPLACE9 bot test (Members C, Nov 4): Hawker's place, second try (Mannequin lost its blind A/B). 4 blue + 1 any as a
     // player sees it. The stall is the Peddlers list (state.stalls[uid], flag stall 'anyone'): core's recruit step offers it to
     // everyone; a rival pays its cost to the owner, the owner pays the bank. After contests an unsold member goes to the
@@ -1338,9 +1341,15 @@ const market = {
     // its own Round End that round (the round's round-end members have already been asked).
     // In the deck for Shopaholics' slot (Cory, Nov 5: "Last minute shopper is good. it should also give one or 2 blue at
     // round end"; +2 is Claude's pick). The blue comes before contests are scored, so it counts for Most blue.
-    m('lastminute', 'Dusk Buyer', 2, 0, /* +3 (Cory, Nov 6: "Give last minute shopper an extra blue") */ 'Round End: +3 blue, then you may recruit.', { round: 1,
-      ...see(i => endsAhead(i).length * 3), // BOTSEE: 2 blue and an extra paid recruit each round end still ahead
+    // the old Dusk Buyer, retired Nov 24: a test fixture for the round-end recruit from the shop
+    m('lastminuteold', 'Dusk Buyer', 2, 0, 'Round End: +3 blue, then you may recruit.', { round: 1, retired: true,
       onAllPlaced(ctx, owner) { const got = ctx.gain(owner, B, 3); if (got) ctx.log(`${owner.name}'s Dusk Buyer: +${got.n} ${got.color}.`); lmOffer(ctx, owner); },
+    }),
+    // From the discard pile since Nov 24 (Cory, 7:53pm Eastern, yes to "Round End: +3 blue, then you may recruit from the
+    // discard pile."; his Nov 11 "We maybe even want to make it out of the discard pile"): a member only, paying its cost
+    m('lastminute', 'Dusk Buyer', 2, 0, /* +3 (Cory, Nov 6: "Give last minute shopper an extra blue") */ 'Round End: +3 blue, then you may recruit from the discard pile.', { round: 1,
+      ...see(i => endsAhead(i).length * 2), // BOTSEE: 3 blue and a paid discard-pile recruit each round end still ahead
+      onAllPlaced(ctx, owner) { const got = ctx.gain(owner, B, 3); if (got) ctx.log(`${owner.name}'s Dusk Buyer: +${got.n} ${got.color}.`); discardOffer(ctx, owner, { why: 'Dusk Buyer', how: {}, left: 1 }); },
     }),
     // Alternate (director, Nov 4: numbers for Cory on both): REPLACE9=lastminute2. The same card, first +2 resources of the
     // owner's choice (one color at a time), so the round-end recruit has something to pay with.

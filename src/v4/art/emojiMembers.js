@@ -47,6 +47,7 @@ const M = {
   'night-thieves': ['🐈‍⬛', '🌙 Before contests: steal 3'],
   fence: ['🚧', '♾️ A rival steals from you: +2 magenta'],
   bandit: ['🦹', '✨ Steal 3'],
+  'tax-men': ['🧮', '♾️ A rival recruits a member costing 7+: they give you 2 resources'], // Nov 24: Bandit's place
   twins: ['👬', ''],
   'robin-hood': ['🏹', '♾️ Steal from the follower leader: +1 follower'],
   informer: ['🐀', '♾️ A rival steals from you: they −1 follower'],
@@ -151,7 +152,7 @@ const M = {
   'lord-of-the-manor': ['🏰', '♾️ You go first every round'],
   moneychangers: ['⚖️', '✨ Rearrange your resources any way'],
   'plague-bearer': ['🦠', '♾️ Worth 0 members. Joins your cult: −5 followers'],
-  dabblers: ['🌈', ''],
+  jester: ['🃏', '♾️ Counts as a member of every color'], // Nov 24: Dabblers' place
   trumpeter: ['📯', '♾️ You win a contest: +1 follower'],
   meddler: ['🫳', '🔁 Swap any 2 members of the same cost'],
   spoilsport: ['🙅', '🌙 Nobody wins a contest you don’t lead'],
@@ -193,7 +194,8 @@ const M = {
   homecomers: ['🏡', '✨ +3 blue, then recruit from the discard pile'],
   'old-clothes-dealers': ['👗', '🔁 Swap one of your members for a discard-pile one, same cost'],
   stallholder: ['⛺', '♾️ Shop blue members count as yours in contests'],
-  'dusk-buyer': ['🌆', '🌙 +3 blue, then you may recruit'],
+  'dusk-buyer': ['🌆', '🌙 +3 blue, then you may recruit from the discard pile'],
+  gleaner: ['🌾', '♾️ Recruit from the discard pile as from the shop'], // Nov 24: Stallholder's place
   highwayman: ['🐎', '☝️ Steal half a rival’s biggest pile'],
   executioner: ['🪓', '🔁 Discard one of your members: +4 white'],
   barker: ['📢', '♾️ You recruit a member: may also recruit followers'],

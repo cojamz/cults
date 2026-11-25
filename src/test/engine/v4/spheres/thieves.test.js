@@ -25,7 +25,7 @@ const BLACK_COSTS = Object.fromEntries(thieves.members.map(d => [d.id, [d.s, d.w
 // the costs these tests are written against (repricing the real cards doesn't break them)
 const PINNED = {
   ...TEST_COSTS, ...BLACK_COSTS,
-  'thieves.cutpurse': [1, 1], 'thieves.mole': [1, 1], 'thieves.accomplice': [1, 0], 'thieves.grifter': [2, 1],
+  'thieves.cutpurse': [1, 1], 'thieves.mole': [1, 1], 'thieves.banditold': [1, 0], 'thieves.grifter': [2, 1],
   'thieves.sticky': [1, 1], 'thieves.desperado': [1, 1], 'thieves.robinhood': [2, 1], 'thieves.lookout': [2, 1],
   'thieves.lightfingers': [1, 1], 'thieves.extortionist': [1, 1], 'thieves.watchdog': [2, 1], 'thieves.crew': [2, 1],
   'thieves.doubleagent': [2, 2], 'thieves.bigscore': [3, 1], 'thieves.kingpin': [3, 2],
@@ -249,9 +249,9 @@ describe('Magenta members', () => {
   });
 
   it('Bandit: when recruited, steal 3 resources', () => {
-    let s = scene({ res: [{ magenta: 2 }, { gold: 2 }, { red: 1 }], shop: ['thieves.accomplice', ...SHOP.slice(1)] });
+    let s = scene({ res: [{ magenta: 2 }, { gold: 2 }, { red: 1 }], shop: ['thieves.banditold', ...SHOP.slice(1)] });
     s = take(s, 'gold.rush');
-    s = move(s, `card:${uidOf(s, 'thieves.accomplice', 'shop')}`);
+    s = move(s, `card:${uidOf(s, 'thieves.banditold', 'shop')}`);
     s = move(move(move(s, 'take:1:gold'), 'take:1:gold'), 'take:2:red');
     expect(R(s).map(r => [r.gold, r.red, r.magenta])).toEqual([[4, 1, 1], [0, 0, 0], [0, 0, 0]]); // paid 1 magenta + 1 any of its 2
   });

@@ -140,7 +140,7 @@ describe('Odds and Ends (Yellow, round I)', () => {
 
 describe('Hermits (White)', () => {
   it('Round End: if you have 3 or fewer members, +3 followers', () => {
-    for (const [extra, want] of [[['market.stylist', 'market.onlooker'], 3], [['market.stylist', 'benders.dabblers'], 0]]) { // Hermits + Stylist + Dabblers (2) = 4 members
+    for (const [extra, want] of [[['market.stylist', 'market.onlooker'], 3], [['market.stylist', 'benders.dabblersold'], 0]]) { // Hermits + Stylist + Dabblers (2) = 4 members
       let s = still({ quadrants: ['trading', 'red', 'market', 'yellow'], members: [['trading.hermits', ...extra]] });
       s = go(s, [{ t: 'allPlaced' }]);
       expect(s.players[0].bonus).toBe(want);

@@ -194,6 +194,7 @@ for (const [id, name, source] of [
   ['echo.mimics', 'Mimics', 'echo.impersonators'], ['echo.regulars', 'Regulars', 'echo.dejavu'], ['echo.diehards', 'Die-Hards', 'echo.choir'], // Nov 11: new Green members, on retired scenes until their own are drawn
   ['yellow.exchangestudents', 'Exchange Students', 'yellow.pilgrim'], ['yellow.headhunters', 'Talent Scouts', 'yellow.explorer'], ['yellow.cosmopolitans', 'Cosmopolitans', 'yellow.weaver'],
   ['market.swapshoppers', 'Swap Shoppers', 'market.critic'], ['market.thrifthunters', 'Thrift Hunters', 'market.trendsetter'], ['market.repeatcustomers', 'Repeat Customers', 'market.windowdresser'], // Nov 11: new Blue member, on a retired scene // Nov 11: new Yellow members, on retired scenes
+  ['market.mannequinold', 'Stallholder', 'market.mannequin'], ['market.lastminuteold', 'Dusk Buyer', 'market.lastminute'], ['thieves.banditold', 'Bandit', 'thieves.accomplice'], // Nov 24: the retired old cards (test fixtures) on the scenes their replacements now wear
   ['trading.guestofhonor', 'Guest of Honor', 'silver.polisher'], ['trading.godparents', 'Patrons', 'silver.godparents'], // Nov 11: moved to White, on their Silver scenes // Nov 11: new Silver members, on retired scenes until their own are drawn
 ]) {
   const art = PORTRAIT.get(source);

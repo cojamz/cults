@@ -25,10 +25,10 @@ describe('REPLACE9: the switch', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
     expect(price('yellow.tollkeeper')).toEqual([3, 4, 1, 1]);
     expect(price('yellow.quilter')).toEqual([5, 3, 1, 1]);
-    expect(price('market.lastminute')).toEqual([3, 1, 1, 1]);
+    expect(price('market.lastminuteold')).toEqual([3, 1, 1, 1]);
     for (const id of ['yellow.customs', 'yellow.dyer', 'market.critic']) expect(defById(id).retired).toBe(true);
     expect(defById('yellow.tollkeeper').round).toBe(1);
-    expect(defById('market.lastminute').round).toBe(1);
+    expect(defById('market.lastminuteold').round).toBe(1);
   });
 });
 
@@ -122,7 +122,7 @@ describe('Dusk Buyer: "Round End: +3 blue, then you may recruit." (Cory, Nov 6: 
   const PROMPT = 'P1: Dusk Buyer: recruit once before contests are scored, or pass';
   const pay = s => { while (s.pending?.kind === 'pay' || s.pending?.kind === 'choose' && /pay/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id); return s; };
   it('Round End, before contests: +3 blue, then one ordinary recruit: shop members it can pay for, the follower cards, or pass (Cory, Nov 5)', () => {
-    const s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer', 'market.snob'], queue: [{ t: 'allPlaced' }] });
+    const s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminuteold']], shop: ['red.volunteer', 'market.snob'], queue: [{ t: 'allPlaced' }] });
     expect(s.players[0].res.blue).toBe(3);
     expect(s.pending.prompt).toBe(PROMPT);
     const ids = s.pending.options.map(o => o.id);
@@ -132,18 +132,18 @@ describe('Dusk Buyer: "Round End: +3 blue, then you may recruit." (Cory, Nov 6: 
     expect(s.pending.options.every(o => ['card', 'tier', 'pass'].includes(o.kind))).toBe(true); // a recruit only: no uses, no swap card
   });
   it('recruiting a member pays its cost; passing keeps the resources', () => {
-    let s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer'], queue: [{ t: 'allPlaced' }] });
+    let s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminuteold']], shop: ['red.volunteer'], queue: [{ t: 'allPlaced' }] });
     s = pay(answer(s, s.pending.options.find(o => o.kind === 'card' && o.label.startsWith('Volunteer')).id));
     expect(owns(s, 0, 'red.volunteer')).toBe(true);
     expect(s.players[0].res.red + s.players[0].res.blue).toBeLessThan(6);
-    let t = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer'], queue: [{ t: 'allPlaced' }] });
+    let t = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminuteold']], shop: ['red.volunteer'], queue: [{ t: 'allPlaced' }] });
     t = answer(t, 'pass');
     expect(owns(t, 0, 'red.volunteer')).toBe(false);
     expect(t.players[0].res).toMatchObject({ red: 4, blue: 3 });
     expect(t.pending).toBeFalsy();
   });
   it('it can buy followers: the 1-follower card for 1 resource', () => {
-    let s = table(Q4, { n: 3, round: 1, res: [{ red: 1 }], members: [['market.lastminute']], shop: ['market.snob'], queue: [{ t: 'allPlaced' }] });
+    let s = table(Q4, { n: 3, round: 1, res: [{ red: 1 }], members: [['market.lastminuteold']], shop: ['market.snob'], queue: [{ t: 'allPlaced' }] });
     const before = s.players[0].bonus;
     s = pay(answer(s, 'tier:small'));
     expect(s.pending).toBeFalsy();
@@ -154,7 +154,7 @@ describe('Dusk Buyer: "Round End: +3 blue, then you may recruit." (Cory, Nov 6: 
   it('pitched turn: round I end, the recruit counts in Blue\'s Most members before it is scored', () => {
     // P1: Dusk Buyer + 2 members (3), P2: 3 members, a tie. P1 buys Window Dressers at round end: 4 to 3
     // (Window Dressers rebased to worth 1 and 1 member: Cory, Nov 12).
-    let s = table(Q4, { n: 3, round: 1, rules: BY, res: [{ blue: 3, red: 1 }], members: [['market.lastminute', 'red.volunteer', 'red.intern'], ['red.bodysnatchers', 'purple.gossip', 'silver.godparents']],
+    let s = table(Q4, { n: 3, round: 1, rules: BY, res: [{ blue: 3, red: 1 }], members: [['market.lastminuteold', 'red.volunteer', 'red.intern'], ['red.bodysnatchers', 'purple.gossip', 'silver.godparents']],
       shop: ['market.windowdresser'], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
     const wd = s.pending.options.find(o => o.kind === 'card' && o.label.startsWith('Window Dressers'));
     expect(wd).toBeTruthy();
@@ -283,7 +283,7 @@ describe('Ambassadors: "On Recruit: +1 of each color you have a member of. Round
 describe('Stallholder: "Blue members in the shop count as your members when contests are scored."', () => {
   const Q4 = ['red', 'market', 'purple', 'silver'];
   it('price and retirement', () => {
-    const d = defById('market.mannequin');
+    const d = defById('market.mannequinold');
     expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 3, 1, 1, undefined]); // joins by cost (round II), live since Nov 4 night
     expect(defById('market.hawkers').retired).toBe(true);
   });
@@ -292,12 +292,12 @@ describe('Stallholder: "Blue members in the shop count as your members when cont
       const s = table(Q4, { n: 2, round: 1, rules: BY, members: [list, ['red.bodysnatchers', 'purple.gossip']], shop: ['market.windowdresser', 'market.curator', 'red.volunteer'], queue: [{ t: 'endRound' }] });
       return (s.contests || []).at(-1).results.find(c => c.qid === 'market').winners;
     };
-    expect(won(['market.mannequin'])).toEqual([0]);
-    expect(won(['market.lastminute'])).toEqual([1]);
+    expect(won(['market.mannequinold'])).toEqual([0]);
+    expect(won(['market.lastminuteold'])).toEqual([1]);
   });
   it('White\'s Fewest members counts only your own members: the shop never counts against Stallholder\'s owner (Cory, Nov 6)', () => {
     const Q = ['red', 'market', 'trading', 'silver'];
-    const s = table(Q, { n: 2, round: 1, rules: BY, members: [['market.mannequin'], ['red.bodysnatchers', 'silver.godparents']], shop: ['market.windowdresser', 'market.curator', 'red.volunteer'], queue: [{ t: 'endRound' }] });
+    const s = table(Q, { n: 2, round: 1, rules: BY, members: [['market.mannequinold'], ['red.bodysnatchers', 'silver.godparents']], shop: ['market.windowdresser', 'market.curator', 'red.volunteer'], queue: [{ t: 'endRound' }] });
     expect((s.contests || []).at(-1).results.find(c => c.qid === 'trading').winners).toEqual([0]);
   });
 });

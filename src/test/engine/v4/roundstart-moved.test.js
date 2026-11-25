@@ -14,7 +14,7 @@ describe('Round Start: a member that changes cults mid-Round Start', () => {
   it.skip('a Kidnapper taking the Cutpurse: it steals once, for the Kidnapper, and the old owner\'s queued steal does nothing', () => {
     // P1 Kidnapper; P2 has two 1-cost members (a choice) and Cutpurse; P3 holds 3 colors (Cutpurse's steal asks which)
     let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 2, res: [{}, {}, { silver: 5, red: 2, blue: 2 }],
-      members: [['thieves.kidnappers'], ['thieves.cutpurse', 'thieves.accomplice'], ['market.snob']], queue: [{ t: 'round', r: 3 }] });
+      members: [['thieves.kidnappers'], ['thieves.cutpurse', 'thieves.banditold'], ['market.snob']], queue: [{ t: 'round', r: 3 }] });
     // answer every choice the Round Start asked, Cutpurse first if P1 is offered it
     let k = 0;
     while (s.pending?.kind === 'choose' && k++ < 20) {

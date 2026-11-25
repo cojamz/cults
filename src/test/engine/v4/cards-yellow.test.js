@@ -93,7 +93,7 @@ describe('Yellow actions', () => {
     expect(s.pending?.prompt || '').not.toMatch(/Hold a Fair/);
   });
   it('Hold a Fair with Dabblers: Dabblers is wild, so +1 of every color (Cory, Nov 5)', () => {
-    const s = take(sc({ round: 2, members: [['benders.dabblers']] }), 'yellow.meltingpot');
+    const s = take(sc({ round: 2, members: [['benders.dabblersold']] }), 'yellow.meltingpot');
     expect(R(s)).toMatchObject({ red: 1, gold: 1, yellow: 1, green: 1 });
     expect(s.players[0].bonus).toBe(4);
   });
@@ -149,9 +149,9 @@ describe('Yellow members', () => {
       s = move(take(s, 'red.take'), `card:${uidOf(s, buyDef, 'shop')}`);
       return { n: named(s, 'Hostess').length, y: R(s).yellow - y0 };
     };
-    expect(run([['benders.dabblers']], 'red.intern')).toEqual({ n: 1, y: 2 }); // red is new: Dabblers doesn't count against it
-    expect(run([['benders.dabblers', 'red.volunteer']], 'red.intern')).toEqual({ n: 0, y: 0 }); // a real red member does
-    expect(run([['red.volunteer']], 'benders.dabblers')).toEqual({ n: 1, y: 2 }); // Dabblers itself: you had no gold, yellow or green
+    expect(run([['benders.dabblersold']], 'red.intern')).toEqual({ n: 1, y: 2 }); // red is new: Dabblers doesn't count against it
+    expect(run([['benders.dabblersold', 'red.volunteer']], 'red.intern')).toEqual({ n: 0, y: 0 }); // a real red member does
+    expect(run([['red.volunteer']], 'benders.dabblersold')).toEqual({ n: 1, y: 2 }); // Dabblers itself: you had no gold, yellow or green
   });
   // Agitator ("On Recruit: change up to 4 of rivals' resources one for one") makes the change since Dilute left (Nov 4)
   const agitate = res1 => {

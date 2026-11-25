@@ -17,7 +17,7 @@ const youd = (s, name) => { const [q, i] = at(s, name); return renderToStaticMar
 // three cults: P1 holds three red members, P2 an Bandit ("On Recruit: steal 3 resources") and a Governess, P3 a Journeyman
 const table = () => sceneQ({ quadrants: ['red', 'market', 'trading', 'thieves'], round: 2, n: 3,
   res: [{ red: 3, blue: 4, white: 2 }, { gold: 5, red: 4 }, { blue: 3, red: 2 }], bonus: [0, 6, 3],
-  members: [['red.twins', 'red.bigfamily', 'red.intern'], ['thieves.accomplice', 'red.mentor'], ['red.seatfiller']] });
+  members: [['red.twins', 'red.bigfamily', 'red.intern'], ['thieves.banditold', 'red.mentor'], ['red.seatfiller']] });
 
 describe('the space badge (B4, B6)', () => {
   it('a once-a-game +1 someone claimed is struck as taken, not offered', () => {

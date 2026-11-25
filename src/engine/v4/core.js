@@ -343,7 +343,7 @@ export const memberCount = (state, p) => counted(state, p).reduce((s, u) => s + 
 /** Mannequin (live since Nov 5, Hawker's place): "Blue members in the shop count as your members when contests are scored." */
 const contestMembers = (state, p) => {
   const n = memberCount(state, p);
-  if (!p.members.some(u => state.cards[u].def === 'market.mannequin' || state.cards[u].copy === 'market.mannequin')) return n;
+  if (!p.members.some(u => state.cards[u].def === 'market.mannequinold' || state.cards[u].copy === 'market.mannequinold')) return n;
   return n + state.shop.filter(u => defById(state.cards[u].def).quadrant === 'market').reduce((s, u) => s + countOf(state.cards[u]), 0);
 };
 // Dabblers (everyColor) counts for every color on the table (Cory, 2026-10-28)
@@ -828,6 +828,10 @@ function inputFor(state, task) {
         if (b != null && memberPrice(state, p, b).afford) opts.push({ id: `card:${b}`, label: `${cardDef(state, b).name} (top of the discard pile)`, kind: 'card', uid: b, fromPile: true }); }
       // any member in the discard pile, once per round on its owner's own turn (Pickers, idea pipeline pool 3: flag discardPick)
       if (state.current === p.id && !task.doorbuster && !task.lateShop && !task.lastMinute && !task.cheap && !barkerOnly && pickerCard(state, p) !== undefined)
+        for (const u of discardOf(state)) if (!opts.some(o => o.uid === u) && memberPrice(state, p, u).afford)
+          opts.push({ id: `card:${u}`, label: `${cardDef(state, u).name} (discard pile)`, kind: 'card', uid: u, fromPile: true });
+      // Gleaner (flag discardAny; Cory, Nov 24): any discard pile member, as from the shop, on every recruit
+      if (!barkerOnly && sumMemberFlag(state, p, 'discardAny') > 0)
         for (const u of discardOf(state)) if (!opts.some(o => o.uid === u) && memberPrice(state, p, u).afford)
           opts.push({ id: `card:${u}`, label: `${cardDef(state, u).name} (discard pile)`, kind: 'card', uid: u, fromPile: true });
       // a rival's Peddlers stall (REPLACE6 bot test)
@@ -1752,7 +1756,9 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   // any discard pile member, once per round on the owner's turn (Pickers' flag discardPick)
   const picker = idx < 0 && fromPile < 0 && !bottom && state.current === p.id && discardOf(state).includes(uid) ? pickerCard(state, p) : undefined;
   if (picker !== undefined) state.cards[picker].pickRound = state.round;
-  if (idx < 0 && !bottom && picker === undefined && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0)))) throw new Error(`Card ${uid} is not in the shop`);
+  // Gleaner (flag discardAny): any discard pile member, as from the shop
+  const gleaned = idx < 0 && fromPile < 0 && !bottom && picker === undefined && discardOf(state).includes(uid) && sumMemberFlag(state, p, 'discardAny') > 0;
+  if (idx < 0 && !bottom && picker === undefined && !gleaned && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0)))) throw new Error(`Card ${uid} is not in the shop`);
   let paid = 'free', spent = null, silverForColor = false;
   if (!free) {
     const spend = chosen || paymentPlan(state, p, uid, how);
@@ -1804,15 +1810,15 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   // Peek's reach is one recruit from the cards it showed; Insider's stays
   const peeked = idx < 0 && fromPile >= 0 && fromPile < (p.peekReach || 0);
   if (peeked) delete p.peekReach;
-  const offPile = bottom || picker !== undefined || state.cards[uid].offPile === offPileKey(state);
+  const offPile = bottom || picker !== undefined || gleaned || state.cards[uid].offPile === offPileKey(state);
   delete state.cards[uid].offPile;
   if (idx >= 0) state.shop.splice(idx, 1);
-  else if (bottom || picker !== undefined) takeFromDiscard(state, uid);
+  else if (bottom || picker !== undefined || gleaned) takeFromDiscard(state, uid);
   else state.pile.splice(fromPile, 1);
   refill(state);
   p.members.push(uid);
   const def = cardDef(state, uid);
-  log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the discard pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : picker !== undefined ? ` from the discard pile with ${p.name}'s ${cardDef(state, picker).name}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
+  log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the discard pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : picker !== undefined ? ` from the discard pile with ${p.name}'s ${cardDef(state, picker).name}` : gleaned ? ` from the discard pile with ${p.name}'s ${flagName(state, p, 'discardAny')}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
   if (state.cards[uid].offPile !== undefined) delete state.cards[uid].offPile; // takeFromDiscard just above marked it
   memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall, silverForColor, fromDiscard: offPile });
   // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code

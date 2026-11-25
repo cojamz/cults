@@ -76,7 +76,7 @@ describe('Hand-Off Artists (White)', () => {
 
 describe('Monks (White; Anchorites until Nov 13)', () => {
   it('Round End: if you have 5 or fewer members, +4 followers.', () => {
-    const four = ['market.stylist', 'market.onlooker', 'trading.cashier', 'market.mannequin'];
+    const four = ['market.stylist', 'market.onlooker', 'trading.cashier', 'market.mannequinold'];
     for (const [extra, want] of [[four, 4], [[...four, 'trading.leavetakers'], 0]]) {
       let s = still({ quadrants: ['trading', 'red', 'market', 'yellow'], members: [['trading.anchorites', ...extra]] });
       s = go(s, [{ t: 'allPlaced' }]);
@@ -109,7 +109,7 @@ describe('Collections (Magenta, round II)', () => {
 
 describe('Tall Poppies (Magenta, round II)', () => {
   it('Choose a rival. Steal 1 resource per member they have more than you. +1 magenta.', () => {
-    let s = sceneQ({ quadrants: ['thieves', 'red', 'market', 'yellow'], n: 3, round: 2, members: [['market.onlooker'], ['red.panel', 'benders.dabblers'], ['market.stylist']], res: [{}, { red: 5, blue: 5 }, { red: 5 }] });
+    let s = sceneQ({ quadrants: ['thieves', 'red', 'market', 'yellow'], n: 3, round: 2, members: [['market.onlooker'], ['red.panel', 'benders.dabblersold'], ['market.stylist']], res: [{}, { red: 5, blue: 5 }, { red: 5 }] });
     s = take(s, 'thieves.tallpoppies');
     s = move(s, 'player:1');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);

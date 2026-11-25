@@ -57,7 +57,7 @@ describe('REPLACE10: each card fires', () => {
 
 describe('REPLACE10: Bootlegger', () => {
   it('On Use, once per round: copies the On Recruit of another of your members; turned until the next round', () => {
-    let s = table(['red', 'echo', 'trading', 'thieves'], { round: 2, members: [['echo.bootlegger', 'thieves.accomplice']], res: [{}, { red: 5 }] });
+    let s = table(['red', 'echo', 'trading', 'thieves'], { round: 2, members: [['echo.bootlegger', 'thieves.banditold']], res: [{}, { red: 5 }] });
     const u = uidOf(s, 'echo.bootlegger', 0);
     s = move(s, `use:${u}`);
     // Bandit is the only other member with an On Recruit: asked anyway, so the choice is seen
@@ -97,7 +97,7 @@ describe('REPLACE10: Inside Job (Stash\'s slot)', () => {
 // The pitched turns (pitches/D-*.md), set up and checked: the Lab's scripted scenarios.
 describe('REPLACE10: the pitched turns', () => {
   it('Bootlegger: you own Roadie and Bandit; each round you fire one again: Roadie\'s +1 green per green member', () => {
-    let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 2, members: [['echo.bootlegger', 'echo.roadie', 'thieves.accomplice']] });
+    let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 2, members: [['echo.bootlegger', 'echo.roadie', 'thieves.banditold']] });
     const u = uidOf(s, 'echo.bootlegger', 0), g = s.players[0].res.green;
     s = move(s, `use:${u}`);
     expect(s.pending.prompt).toBe("Bootlegger: copy which member's On Recruit?");
@@ -170,9 +170,9 @@ describe('REPLACE10: Almoner and Widows', () => {
   });
 
   it('Widows: another of your members cast out or stolen: +2 followers each; Widows itself leaving pays nothing', () => {
-    const s = table(['red', 'echo', 'trading', 'thieves'], { n: 2, round: 2, members: [['trading.widows', 'thieves.accomplice', 'echo.roadie'], []] });
+    const s = table(['red', 'echo', 'trading', 'thieves'], { n: 2, round: 2, members: [['trading.widows', 'thieves.banditold', 'echo.roadie'], []] });
     const ctx = contextFor(s), me = s.players[0], b0 = me.bonus;
-    ctx.buryMember(me, uidOf(s, 'thieves.accomplice', 0));
+    ctx.buryMember(me, uidOf(s, 'thieves.banditold', 0));
     expect(me.bonus).toBe(b0 + 2);
     ctx.moveMember(uidOf(s, 'echo.roadie', 0), me, s.players[1], { recruit: true });
     expect(me.bonus).toBe(b0 + 4);

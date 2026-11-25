@@ -6,7 +6,7 @@ import { table } from './cards-helpers-b.js';
 // use it and swap it out for better stuff." A used once-per-game member cast out and recruited again stays used.
 describe('Once per game is once for the card', () => {
   it('a used Lottery Winner cast out, then given back from the shop, is still used; another member comes back with no use mark', () => {
-    const s = table(['gold', 'thieves', 'market', 'trading'], { n: 2, members: [['gold.jackpot'], ['thieves.accomplice']] });
+    const s = table(['gold', 'thieves', 'market', 'trading'], { n: 2, members: [['gold.jackpot'], ['thieves.banditold']] });
     const ctx = contextFor(s);
     const [a] = s.players[0].members, [b] = s.players[1].members;
     s.cards[a].used = true;

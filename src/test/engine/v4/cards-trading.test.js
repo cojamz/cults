@@ -48,7 +48,7 @@ describe('White actions', () => {
     expect(named(s, 'Live Simply')).toContain("P1's Live Simply: 0 rivals with more members, +2 white.");
     s = take(table(Q, { n: 4, members: [[], ['red.intern'], ['red.bigfamily'], ['red.twins']] }), 'trading.modestmeans');
     expect(R(s).white).toBe(5);
-    s = take(table(Q, { n: 4, members: [['red.intern'], ['red.twins', 'red.volunteer'], ['benders.dabblers'], []] }), 'trading.modestmeans');
+    s = take(table(Q, { n: 4, members: [['red.intern'], ['red.twins', 'red.volunteer'], ['benders.dabblersold'], []] }), 'trading.modestmeans');
     expect(R(s).white).toBe(4); // 2 + 2: P2 (2 cards) and P3 (Dabblers counts 2) have more members than P1's one; P4 has none
   });
 

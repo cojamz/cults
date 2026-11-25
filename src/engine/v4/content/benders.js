@@ -495,7 +495,11 @@ const members = [
     },
   }),
   // Cory, 2026-10-28: Dabblers (Turncoat, then Groupies), 3, "give 2 members, and count as every color"
-  m('dabblers', 'Dabblers', null, 0, 2, 'Counts as 2 members of every color.', { n: 2, ownCount: true, everyColor: true, ...old9('benders.dabblers') }),
+  // Cory, 2026-11-24 7:53pm Eastern: "yeah you can change dabbler. maybe make it a jester or something": counts as 1 (was
+  // "Counts as 2 members of every color."), worth 1, named Jester; the id stays 'dabblers'
+  m('dabblers', 'Jester', null, 0, 2, 'Counts as a member of every color.', { everyColor: true, ...old9('benders.dabblers') }),
+  // the old Dabblers, retired Nov 24 (never dealt): the card tests keep it as a fixture for a member counting 2 of every color
+  m('dabblersold', 'Dabblers', null, 0, 2, 'Counts as 2 members of every color.', { n: 2, ownCount: true, everyColor: true, retired: true }),
   // REPLACE9 bot test (Members C, Nov 4, batch bC2: paper 17 vs Dabblers' 12, the guests' set 12 -> 14): Dabblers' place,
   // the single version. 2 any as a player sees it, worth 1, counts as 1 member of every color on the table.
   ...add9(m('dabbler', 'Dabbler', null, 0, 1, 'Counts as a member of every color.', { everyColor: true })),

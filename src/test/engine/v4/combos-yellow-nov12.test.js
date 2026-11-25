@@ -250,7 +250,7 @@ describe('Benefactor: "On Use, once per game: recruit a member costing up to 7 f
   });
 
   it('Dabblers taken free counts as a yellow member for Herald', () => {
-    const { s } = run('hh-dabblers', { quads: Q, queue: BUY, shop: ['benders.dabblers'], members: [['yellow.headhunters', 'yellow.matchmaker']] },
+    const { s } = run('hh-dabblers', { quads: Q, queue: BUY, shop: ['benders.dabblersold'], members: [['yellow.headhunters', 'yellow.matchmaker']] },
       [/^use:/, /Dabblers/, WILD, WILD]);
     expect(names(s, 0)).toContain('Dabblers');
     expect(s.players[0].bonus).toBe(3);
@@ -290,7 +290,7 @@ describe('Harlequin: "Round End: +1 follower per color among your members."', ()
     expect(s.players[0].bonus).toBe(1);
   });
   it('Dabblers counts as every color: all 4 table colors', () => {
-    const { s } = run('cosmo-dabblers', { quads: Q, queue: END, members: [['yellow.cosmopolitans', 'benders.dabblers']] }, []);
+    const { s } = run('cosmo-dabblers', { quads: Q, queue: END, members: [['yellow.cosmopolitans', 'benders.dabblersold']] }, []);
     expect(s.players[0].bonus).toBe(4);
   });
   it('grey is a color (Cory, Nov 13); Drifters counts as its chosen color', () => {

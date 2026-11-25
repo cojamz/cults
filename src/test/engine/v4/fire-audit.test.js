@@ -95,7 +95,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
     'thieves.fixer', // Briber is On Use once per game; Victors leaving the grey deck (Nov 6) moved the games so its 3 holders never used it. cards-member-structure (Briber) covers it
     'echo.encore', // Minstrel: held in 3 games without its copy coming up once Victors left the grey deck (Nov 6); cards-echo and replace4 cover it
     'trading.reinvestor', // Reinvestor pays only on a sale; its 3 holders never sold once Victors left the grey deck (Nov 6). cards-trading (Reinvestor) covers it
-    'market.mannequin']); // Stallholder only changes contest counts and writes no line of its own; held in 5 games after Nov 5's deck moved them. replace9.test.js covers it
+    'market.mannequinold']); // Stallholder only changes contest counts and writes no line of its own; held in 5 games after Nov 5's deck moved them. replace9.test.js covers it
   const TABLES = [
     ['thieves', 'market', 'trading', 'echo'], ['gold', 'thieves', 'trading', 'echo'], ['red', 'market', 'thieves', 'echo'],
     ['gold', 'market', 'trading', 'echo'], ['red', 'thieves', 'market', 'trading'],
@@ -129,7 +129,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'market.underbidder', 'echo.encore', // under 3 holds when Trumpeters and Victors joined the grey deck (Nov 4) moved the games; cards-market and cards-echo / replace tests cover them
       'market.thrifthunters', // under 3 holds when Normal began reading early contest leads as less sure (Nov 12) moved the games; blue-new-members covers it
       'echo.tuningfork', // under 3 holds when Promote and Demote began giving only your own member (Nov 4 night) moved the games; cards-echo covers it
-      'market.mannequin', // live Nov 5 in Hawker's place (Cory cut Hawker); under 3 holds in these games, and a quiet contest count; replace9.test.js (Stallholder) covers it
+      'market.mannequinold', // live Nov 5 in Hawker's place (Cory cut Hawker); under 3 holds in these games, and a quiet contest count; replace9.test.js (Stallholder) covers it
       'thieves.hoardbreaker', 'thieves.bigscore', 'thieves.fixer', 'echo.songrequest', 'echo.choir', // under 3 holds when Cory's Nov 5 cuts, prices and Big Score moved the games; replace10-d3 (Big Score), cards-thieves and cards-echo cover them
       'thieves.secondstory', 'thieves.desperado', // under 3 holds when Dusk Buyer and Market-Day Shopper (Nov 5) moved the games; cards-thieves covers them
       'trading.tipster', // under 3 holds when the Nov 5 deck moved the games (hidden behind Stallholder's line until it was cleared); cards-skips-b covers it

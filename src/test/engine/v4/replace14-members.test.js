@@ -159,7 +159,7 @@ describe('REPLACE14: Misers (interest), Preachers (cash-out), Bandit (per rival)
     expect(defById('trading.brokerage').name).toBe('Preachers');
     expect(defById('trading.broker').retired).toBe(true);
     expect(defById('thieves.partners').name).toBe('Bandit');
-    expect(defById('thieves.accomplice').retired).toBe(true);
+    expect(defById('thieves.banditold').retired).toBe(true);
   });
   it('Misers, Round Start: 9 white held gives +3; 2 held gives nothing', () => {
     const s = table(['red', 'trading'], { n: 2, queue: [{ t: 'round', r: 2 }], res: [{ white: 9 }, {}], members: [['trading.interest']] });

@@ -22,7 +22,7 @@ describe('A member counts as many members as its followers (Cory, 2026-11-01: "m
     expect(followers(s, s.players[0])).toBe(4); // Leader 1 + three members worth 1
   });
   it('cards whose text gives the number, and the five given back, keep it, members equal to followers', () => {
-    const want = { 'red.bigfamily': 4, 'thieves.crew': 2, 'benders.dabblers': 2, 'silver.revelers': 3, 'silver.retinue': 3,
+    const want = { 'red.bigfamily': 4, 'thieves.crew': 2, 'benders.dabblersold': 2, 'silver.revelers': 3, 'silver.retinue': 3,
       'yellow.bookcooker': 3, 'silver.gala': 2, 'silver.smoothtalker': 2, 'thieves.watchdog': 2, 'thieves.kidnappers': 2 };
     for (const [id, n] of Object.entries(want)) expect([defById(id).f, defById(id).n], id).toEqual([n, n]);
     for (const id of ['yellow.bookcooker', 'silver.gala', 'silver.smoothtalker', 'thieves.watchdog', 'thieves.kidnappers']) expect(defById(id).keepCount, id).toBe(true);
@@ -104,9 +104,9 @@ describe('A member counts as many members as its followers (Cory, 2026-11-01: "m
     expect(s.players[0].res.red).toBe(15);
   });
   it('a recruit counting 2 (Dabblers) crosses Pied Piper’s threshold once; recruit hooks fire once', () => {
-    let s = table(Q, { res: [{ red: 20 }], members: [['red.drive', 'red.recruiter']], shop: ['benders.dabblers'] });
+    let s = table(Q, { res: [{ red: 20 }], members: [['red.drive', 'red.recruiter']], shop: ['benders.dabblersold'] });
     s = take(s, 'gold.rush');
-    s = move(s, `card:${uidIn(s, 'benders.dabblers', 'shop')}`);
+    s = move(s, `card:${uidIn(s, 'benders.dabblersold', 'shop')}`);
     expect(s.players[0].turnRecruits).toBe(2);
     expect(s.recruits).toBe(2);
     expect(s.log.filter(l => l.includes('Pied Piper: +2 red'))).toHaveLength(1);

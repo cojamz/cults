@@ -47,7 +47,7 @@ describe('combo tester (Nov 11 spaces and members)', () => {
   });
 
   it('Demand Tribute with Dabblers: each rival discards 2 of every table color', () => {
-    const { s } = go('offering-dabblers', { quads: ['red', 'echo', 'yellow', 'trading'], n: 3, turns: [0, 1, 2], members: [['benders.dabblers']],
+    const { s } = go('offering-dabblers', { quads: ['red', 'echo', 'yellow', 'trading'], n: 3, turns: [0, 1, 2], members: [['benders.dabblersold']],
       res: [{}, { red: 5, green: 5, yellow: 5, white: 5 }, { red: 1, yellow: 3 }] }, [/Demand Tribute/]);
     expect(s.players[1].res).toMatchObject({ red: 3, green: 3, yellow: 3, white: 3 });
     expect(s.players[2].res).toMatchObject({ red: 0, yellow: 1 });
@@ -99,7 +99,7 @@ describe('combo tester (Nov 11 spaces and members)', () => {
   });
 
   it('Live Simply counts Dabblers as two members (its printed count) and Buskers as one (Cory, Nov 12)', () => {
-    const { s } = go('modest-buskers', { quads: ['red', 'echo', 'yellow', 'trading'], n: 3, turns: [0, 1, 2], members: [['red.clan'], ['echo.songrequest'], ['benders.dabblers']] }, [/Live Simply/]);
+    const { s } = go('modest-buskers', { quads: ['red', 'echo', 'yellow', 'trading'], n: 3, turns: [0, 1, 2], members: [['red.clan'], ['echo.songrequest'], ['benders.dabblersold']] }, [/Live Simply/]);
     expect(s.players[0].res.white).toBeGreaterThanOrEqual(3); // +2, +1 per rival with more members: Dabblers 2 > 1; Buskers 1 is not more
     expect(s.log.join('\n')).toMatch(/Live Simply: 1 rival with more members/);
   });

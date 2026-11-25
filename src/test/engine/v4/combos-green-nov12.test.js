@@ -222,7 +222,7 @@ describe('Druids: "Game End: if you have the most green members, +6 followers."'
   });
 
   it('Dabblers ("Counts as 2 wild members.") counts as 2 green for its owner: beats 1 Druids', () => {
-    const { s } = go('diehards-dabblers', { quads: Q, queue: FIN, members: [['echo.diehards'], ['benders.dabblers']] }, []);
+    const { s } = go('diehards-dabblers', { quads: Q, queue: FIN, members: [['echo.diehards'], ['benders.dabblersold']] }, []);
     expect(part(s, 0)).toEqual([]);
   });
 

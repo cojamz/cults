@@ -12,7 +12,7 @@ const named = (s, name) => linesNaming(s.log, name);
 
 describe('Dabblers and Drifters audit', () => {
   it('Jack-of-All-Trades: Dabblers never pushes a color past 3', () => {
-    const s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], members: [['yellow.bigtent', 'red.intern', 'benders.dabblers']] });
+    const s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], members: [['yellow.bigtent', 'red.intern', 'benders.dabblersold']] });
     // yellow (Jack-of-All-Trades) and red pay; Dabblers is left out of the count
     expect(cardDef(s, uidOf(s, 'yellow.bigtent', 0)).onGameEnd(contextFor(s), s.players[0])).toBe(4);
   });
@@ -22,9 +22,9 @@ describe('Dabblers and Drifters audit', () => {
       s = move(take(s, 'red.take'), `card:${uidOf(s, buyDef, 'shop')}`);
       return named(s, 'Herald').filter(l => /yellow member/.test(l)).length;
     };
-    expect(run([['yellow.matchmaker', 'benders.dabblers']], 'red.intern')).toBe(0);
+    expect(run([['yellow.matchmaker', 'benders.dabblersold']], 'red.intern')).toBe(0);
     expect(run([['yellow.matchmaker']], 'yellow.dyer')).toBe(1);
-    expect(run([['yellow.matchmaker']], 'benders.dabblers')).toBe(1);
+    expect(run([['yellow.matchmaker']], 'benders.dabblersold')).toBe(1);
   });
   it('Herald: Drifters pays once it picks Yellow, only then', () => {
     const run = pick => {
@@ -39,9 +39,9 @@ describe('Dabblers and Drifters audit', () => {
   });
   it('Connoisseurs: recruiting your own Dabblers counts as a blue member; Drifters once it picks Blue', () => {
     const q = ['market', 'red', 'yellow', 'green'];
-    let s = sceneQ({ quadrants: q, round: 3, res: [rich], members: [['market.connoisseur']], shop: ['benders.dabblers'] });
+    let s = sceneQ({ quadrants: q, round: 3, res: [rich], members: [['market.connoisseur']], shop: ['benders.dabblersold'] });
     const b0 = s.players[0].res.blue;
-    s = move(take(s, 'red.take'), `card:${uidOf(s, 'benders.dabblers', 'shop')}`);
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'benders.dabblersold', 'shop')}`);
     expect(s.players[0].res.blue - b0).toBe(1);
     for (const [pick, want] of [['color:market', 1], ['color:red', 0]]) {
       let t = sceneQ({ quadrants: q, round: 3, res: [rich], members: [['market.connoisseur']], shop: ['yellow.drifters'] });

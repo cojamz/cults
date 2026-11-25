@@ -85,7 +85,7 @@ describe('Dabbler: "Counts as a member of every color."', () => {
   it('price, and Dabblers retired', () => {
     const d = defById('benders.dabbler');
     expect([d.s + d.w]).toEqual([3]);
-    expect(defById('benders.dabblers').retired).toBe(true);
+    expect(defById('benders.dabblersold').retired).toBe(true);
   });
   it('one member of each color on the table', () => {
     const s = table(Q4, { n: 2, members: [['benders.dabbler']] });

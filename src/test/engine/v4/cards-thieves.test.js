@@ -14,7 +14,7 @@ const Q = ['gold', 'red', 'thieves', 'market'];
 useCosts({
   'gold.tycoon': [8, 4], 'gold.taxman': [2, 2], 'red.bigfamily': [4, 4], 'red.twins': [2, 2], 'red.intern': [2, 0],
   'red.volunteer': [0, 0], 'echo.doppel': [4, 2], 'red.mentor': [6, 4],
-  'thieves.cutpurse': [2, 2], 'thieves.mole': [2, 2], 'thieves.accomplice': [1, 0], 'thieves.grifter': [4, 2],
+  'thieves.cutpurse': [2, 2], 'thieves.mole': [2, 2], 'thieves.banditold': [1, 0], 'thieves.grifter': [4, 2],
   'thieves.sticky': [4, 4], 'thieves.desperado': [2, 2], 'thieves.robinhood': [2, 2], 'thieves.lookout': [4, 2],
   'thieves.lightfingers': [4, 4], 'thieves.extortionist': [4, 2], 'thieves.watchdog': [4, 2], 'thieves.crew': [2, 2],
   'thieves.doubleagent': [4, 2], 'thieves.bigscore': [2, 2], 'thieves.kingpin': [2, 0],
@@ -212,18 +212,18 @@ describe('Magenta members', () => {
 
   // Cory, 2026-10-28: "On Recruit: steal 3 resources", cost 2
   it('Bandit: when recruited, steal 3 resources from any rivals', () => {
-    let s = table(Q, { n: 3, res: [{ magenta: 8 }, { gold: 1 }, { red: 3 }], shop: ['thieves.accomplice', ...ROW] });
+    let s = table(Q, { n: 3, res: [{ magenta: 8 }, { gold: 1 }, { red: 3 }], shop: ['thieves.banditold', ...ROW] });
     s = take(s, 'thieves.tipoff'); // Stash: +3 magenta
-    s = move(s, cardOpt(s, 'thieves.accomplice', 'shop'));
+    s = move(s, cardOpt(s, 'thieves.banditold', 'shop'));
     s = s.pending?.kind === 'pay' ? move(s, s.pending.options[0].id) : s;
     expect(s.pending.prompt).toMatch(/^Bandit: choose a resource to steal\. \(3 left/);
     s = move(move(move(s, 'take:1:gold'), 'take:2:red'), 'take:2:red');
     expect([R(s).gold, R(s).red, R(s, 1).gold, R(s, 2).red]).toEqual([1, 2, 0, 1]);
   });
   it('× Poach: actively taking Bandit triggers its On Recruit', () => {
-    let s = table(Q, { round: 3, left: 5, res: [{}, { gold: 3 }], members: [[], ['thieves.accomplice']], shop: ROW });
-    s = move(take(s, 'thieves.heist'), cardOpt(s, 'thieves.accomplice', 1));
-    expect(owns(s, 0, 'thieves.accomplice')).toBe(true);
+    let s = table(Q, { round: 3, left: 5, res: [{}, { gold: 3 }], members: [[], ['thieves.banditold']], shop: ROW });
+    s = move(take(s, 'thieves.heist'), cardOpt(s, 'thieves.banditold', 1));
+    expect(owns(s, 0, 'thieves.banditold')).toBe(true);
     for (let k = 0; k < 3 && s.pending?.options?.some(o => o.id === 'take:1:gold'); k++) s = move(s, 'take:1:gold');
     expect(R(s, 1).gold).toBe(0);
     expect(R(s).gold).toBe(3);

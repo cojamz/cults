@@ -111,13 +111,13 @@ describe('Guild Master: "Whenever you recruit a member of a color you already ha
   // it as Gather the Kin does (a wild member is "new" while any color is missing), so no follower. Cory's Nov 1 "Dabblers always
   // works in the owner's favor" would pay +1. Asserts what the code does now.
   it('recruiting Dabblers while holding red: nothing today (open question: "works in the owner\'s favor" would pay +1)', () => {
-    const { s } = go('br-dabblers-in', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['benders.dabblers'], members: [['red.brethren']] }, [/Dabblers/, /pay:/]);
+    const { s } = go('br-dabblers-in', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['benders.dabblersold'], members: [['red.brethren']] }, [/Dabblers/, /pay:/]);
     expect(names(s, 0)).toEqual(['Guild Master', 'Dabblers']);
     expect(has(s, /Guild Master:/)).toBe(false);
   });
 
   it('holding Dabblers, a first magenta member: nothing today (same open question: Dabblers counts as magenta elsewhere)', () => {
-    const { s } = go('br-dabblers-held', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['thieves.snitch'], members: [['red.brethren', 'benders.dabblers']] }, [/Informer/, /pay:/]);
+    const { s } = go('br-dabblers-held', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['thieves.snitch'], members: [['red.brethren', 'benders.dabblersold']] }, [/Informer/, /pay:/]);
     expect(has(s, /Guild Master:/)).toBe(false);
   });
 
@@ -240,7 +240,7 @@ describe('Bannermen: "Round End: if your members have 2 or fewer colors, +3 foll
   });
 
   it('Dabblers never counts against its owner: red, magenta and Dabblers is 2 colors: +3', () => {
-    const { s } = go('pu-dab', { quads: QR, round: 2, queue: END, members: [['red.purists', 'thieves.snitch', 'benders.dabblers']] }, []);
+    const { s } = go('pu-dab', { quads: QR, round: 2, queue: END, members: [['red.purists', 'thieves.snitch', 'benders.dabblersold']] }, []);
     expect(lines(s, /Bannermen/)).toEqual(["P1's Bannermen: members of 2 colors: +3 followers."]);
   });
 
@@ -312,7 +312,7 @@ describe('Bannermen: "Round End: if your members have 2 or fewer colors, +3 foll
 
   it('4 players: each Bannermen owner in turn order, after every Night Thieves (Round End members finish first)', () => {
     const { s } = go('pu-4p', { quads: QR, n: 4, round: 2, queue: END, res: [{}, { red: 3 }, {}, {}],
-      members: [['red.purists'], ['red.purists', 'thieves.snitch', 'market.repeatcustomers'], ['red.purists', 'thieves.secondstory'], ['red.purists', 'benders.dabblers', 'yellow.exchangestudents']] },
+      members: [['red.purists'], ['red.purists', 'thieves.snitch', 'market.repeatcustomers'], ['red.purists', 'thieves.secondstory'], ['red.purists', 'benders.dabblersold', 'yellow.exchangestudents']] },
       [/take:1:red/, /take:1:red/, /take:1:red/]);
     expect(lines(s, /Bannermen/)).toEqual([
       "P1's Bannermen: members of 1 color: +3 followers.",
