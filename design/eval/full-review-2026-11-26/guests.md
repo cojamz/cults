@@ -23,3 +23,6 @@ Contest: none (Guests have no spaces and no contest, only members that cost "any
 - **Weeders** (7 any) "On Use, once per round: discard any shop members and refill." — Weak in both bot levels (1 fewer win in every 100 Normal, 6 fewer Hard), and no one in the table tests praised it. Fix: rework the effect.
 
 (Also dealt now and then, too rarely for any test to read: Squanderer, Moneychangers, Trumpeter, Taskmaster, Crooked Judge. No test showed anything either way.)
+
+## Update, Nov 26 (Cory, on the worth-more pitch: "Gift Swappers and Thief Takers sound weak, reading them in new light")
+- **Gift Swappers** moved to rework: Cory reads it as weak. Not bumped to worth 2.

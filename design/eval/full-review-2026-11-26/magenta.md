@@ -28,3 +28,6 @@ Contest: "Most resources — counts all the resources you hold when the round en
 - **Cutthroats** (4 magenta + 4 any, worth 1) "Whenever you steal resources, you may steal that many followers instead." — Judges called it the most felt new member (an 8-follower swing won a game) but the "instead" is never a choice since followers are always better, and bots lost 3 in every 100 with it. Fix: rework the effect so it always takes followers, with no choice.
 - **Thief-Takers** (6 magenta + 4 any, worth 2, counts as 2) "Whenever a rival steals from you, steal 1 back from them." — Lost 7 more games in every 100 than players with as many members, with ordinary bots. Fix: worth 3 followers printed (not a cheaper price).
 - **Press Gang** (6 magenta + 4 any, worth 2, counts as 2) "Round End: a rival you choose gives you a member of their choice." — Under the paper-judge bar and even with ordinary bots; the rival picks, so it gives away its worst member. Fix: rework the effect.
+
+## Update, Nov 26 (Cory, on the worth-more pitch: "Gift Swappers and Thief Takers sound weak, reading them in new light")
+- **Thief-Takers** moved to rework: Cory reads it as weak. Not bumped to worth 3.
