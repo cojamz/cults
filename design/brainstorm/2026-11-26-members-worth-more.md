@@ -49,7 +49,7 @@ Verdict: send
 
 ## Idea: Gift Swappers worth 2
 
-1. Printed text: Gift Swappers [8 any, worth 2, counts as 2], effect unchanged (guest card; text as printed on the live card). Cards it touches: Most members, Fewest members.
+1. Printed text: "Gift Swappers [8 any, worth 2, counts as 2] On Use, once per game: every player, you too, gives one member they choose to the player on their left." Cards it touches: Most members, Fewest members.
 2. Played turn: round II, 8 resources: today 1 follower plus its swap; worth 2 gives 2 plus the swap. Buying followers: about 4.
 3. Both sides: its swap choice is unchanged by this idea.
 4. Who feels it: as today; White players lose ground if they recruit it.
