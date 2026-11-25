@@ -1753,7 +1753,8 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   const idx = state.shop.indexOf(uid);
   const fromPile = idx < 0 ? state.pile.indexOf(uid) : -1;
   // Wet Nurse: was it the cheapest shop member when taken (ties count)? Read before it leaves the row and the row refills.
-  const cheapest = idx >= 0 && state.shop.every(u => cardDef(state, u).s + cardDef(state, u).w >= cardDef(state, uid).s + cardDef(state, uid).w);
+  // a member brought over from the discard pile or a stall sits in the row for the moment but is not a shop member
+  const cheapest = idx >= 0 && !stallOf && state.cards[uid].offPile !== offPileKey(state) && state.shop.every(u => cardDef(state, u).s + cardDef(state, u).w >= cardDef(state, uid).s + cardDef(state, uid).w);
   // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
   // the discard pile's top card (Ragpicker's flag pileBottom)
   const bottom = idx < 0 && fromPile < 0 && discardOf(state).at(-1) === uid && sumMemberFlag(state, p, 'pileBottom') > 0;

@@ -190,6 +190,13 @@ describe('5. Wet Nurse ("Whenever you recruit the cheapest member in the shop, +
     expect(s.players[0].res.red).toBe(40 - 8 + 1 + 12);
     expect(s.players[0].members).toHaveLength(5);
   });
+  it('Buy Secondhand takes the cheapest card in play from the discard pile: not a shop member, so Wet Nurse pays nothing (judge, Nov 25)', () => {
+    const { s } = go('nurse-secondhand', { quads: Q, auto: true, queue: [{ t: 'turn', p: 0 }], res: [RICH4, {}], shop: ['red.mentor', 'market.bargainer'], members: [['red.wetnurse'], ['red.bigfamily']],
+      prep: st => { const k = st.pile.findIndex(u => st.cards[u].def === 'red.intern'); const u = k >= 0 ? st.pile.splice(k, 1)[0] : stray(st, 'red.intern'); st.discard = [...(st.discard || []), u]; } },
+      [/Buy Secondhand/, /Intern|Benchwarmer/, /pay:/]);
+    expect(names(s, 0).some(n => /Intern|Benchwarmer/.test(n))).toBe(true);
+    expect(nurse(s)).toHaveLength(0);
+  });
   it('Mimics copying Governess\'s On Recruit recruits the cheapest member too: Wet Nurse pays +3 again', () => {
     const { s } = go('nurse-mimics', { quads: Q, auto: true, queue: [{ t: 'buy', p: 0 }], res: [RICH4, {}], shop: ['echo.mimics', 'red.mentor', 'red.intern', 'market.bargainer'], members: [['red.wetnurse', 'red.mentor'], ['red.bigfamily']] },
       [/Mimics/, /pay:/, /Governess/, /Intern|Benchwarmer|Volunteer/]);
