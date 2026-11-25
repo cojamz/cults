@@ -1,14 +1,14 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: a player's members, clearly, and using one, obviously (Cory, 2026-10-15: the seat hover "should cleanly show a list
 // of member ability/passives, if they've been activated … I still don't know how to activate a member / the UI for it").
-// A saved hot-seat game (e2e/v4/lib/members-save.mjs): P1 holds eleven members of every kind on a Gold/Follow Suit/Trading/
-// Purple table and is about to place in round I. Build-failing assertions:
+// A saved hot-seat game (e2e/v4/lib/members-save.mjs): P1 holds members of every kind on a Silver/Follow Suit/Trading/
+// Magenta table (Silver in Gold's place since Gold left, Nov 24) and is about to place in round I. Build-failing assertions:
 //  (m1) your seat card is your members: one row each with its whole ability (every word of the card's text, never cut:
 //       no ellipsis, no clipping), no Followers / Has / Last moves rows, whole on screen (a long list scrolls inside);
-//  (m2) a member you can use now is lit in your seat (Lottery Winner, Heiresses); one already used reads
-//       "used" (Gambler); one the engine would refuse now stays unlit (Pawnbroker, nothing to sell); switches show
-//       their state (Midas on, Translator off) in the seat and in the seat card;
-//  (m3) the lit member's hover has a "Use: +7 ●" button that works: the pointer can move onto it, a click uses it (gold
+//  (m2) a member you can use now is lit in your seat (Bride and Groom, Heiresses); one already used reads
+//       "used" (Ballroom Dancers); one the engine would refuse now stays unlit (Pawnbroker, nothing to sell); a switch shows
+//       its state (Translator off) in the seat and in the seat card;
+//  (m3) the lit member's hover has a "Use: +N ●" button that works: the pointer can move onto it, a click uses it (silver
 //       up by what it said, in the saved game), pieces fly, and it reads "used" in the seat, its hover and the seat card;
 //  (m4) the seat card's own Use button works too (Heiresses: +1 white per member);
 //  (m5) the prompt names what you can use once, quietly, and only what would do something;
@@ -44,7 +44,8 @@ const base = process.env.V4_URL || 'http://localhost:5180';
 const fails = [];
 const fail = (msg, step) => fails.push(`[${step}] ${msg}`);
 
-const { save, roundStart, uids } = membersSave();
+const { save, roundStart, uids, galaGain } = membersSave();
+const GALA = new RegExp(`^Use: \\+${galaGain}\\b`); // Bride and Groom's "Use: +N", N as the engine plays it
 const s0 = save.state;
 const texts = Object.fromEntries(HAND.map(id => [id, cardDef(s0, uids[id]).text]));
 // the words of a sentence, as the screen prints them: resource and follower words become marks, so compare the rest
@@ -109,22 +110,21 @@ try {
     // w2a #44: a warm light and a small lift, not a faint glow (Oct 28: a warm glow behind the figure and a USE tab under it)
     ring: /gradient\(.*rgba?\(/.test(getComputedStyle(m.querySelector('.fig'), '::before').backgroundImage || ''), tab: !!m.querySelector('.cs-use-tab'), lift: getComputedStyle(m.querySelector('.fig')).transform,
   }])));
-  for (const id of ['gold.jackpot', 'trading.heiress']) if (fig[id] && (!fig[id].ring || !fig[id].tab || !/matrix\(1, 0, 0, 1, 0, -\d/.test(fig[id].lift))) fail(`${id} is lit without its warm glow, USE tab and lift: ${JSON.stringify(fig[id])}`, 'm2');
-  for (const id of ['gold.jackpot', 'trading.heiress']) if (!fig[id] || !fig[id].lit || fig[id].state !== 'ready') fail(`${id} isn't lit in your seat though you can use it now: ${JSON.stringify(fig[id])}`, 'm2');
+  for (const id of ['silver.gala', 'trading.heiress']) if (fig[id] && (!fig[id].ring || !fig[id].tab || !/matrix\(1, 0, 0, 1, 0, -\d/.test(fig[id].lift))) fail(`${id} is lit without its warm glow, USE tab and lift: ${JSON.stringify(fig[id])}`, 'm2');
+  for (const id of ['silver.gala', 'trading.heiress']) if (!fig[id] || !fig[id].lit || fig[id].state !== 'ready') fail(`${id} isn't lit in your seat though you can use it now: ${JSON.stringify(fig[id])}`, 'm2');
   // (the row shows as many figures as fit: a used member or a switch may be folded into "+N"; the seat card lists them)
-  if (fig['gold.speculator'] && (fig['gold.speculator'].state !== 'used' || fig['gold.speculator'].lit)) fail(`Gambler (used) doesn't read used in your seat: ${JSON.stringify(fig['gold.speculator'])}`, 'm2');
+  if (fig['silver.ballroom'] && (fig['silver.ballroom'].state !== 'used' || fig['silver.ballroom'].lit)) fail(`Ballroom Dancers (used) doesn't read used in your seat: ${JSON.stringify(fig['silver.ballroom'])}`, 'm2');
   if (fig['trading.pawnbroker'] && fig['trading.pawnbroker'].lit) fail('Pawnbroker is lit, but using it now would do nothing (no loose followers)', 'm2');
   if (fig['thieves.bigscore'] && fig['thieves.bigscore'].lit) fail('Safecracker is lit, but using it now gives 0', 'm8');
   // (m9) a rival's loaded use, subdued; the seat that lies low says so
   const marks = await page.evaluate(() => ({
     stunt: (() => { const m = document.querySelector('[data-cult="1"] .cs-member[data-member="trading.raider"]'); const dot = m && m.querySelector('.cs-loaded-dot'); return m ? { loaded: m.classList.contains('loaded'), ready: m.classList.contains('ready'), dot: !!dot && dot.getBoundingClientRect().width > 0 } : null; })(),
-    pincher: (() => { const m = document.querySelector('[data-cult="1"] .cs-member[data-member="gold.thrift"]'); return m ? m.classList.contains('loaded') : null; })(),
+    pincher: (() => { const m = document.querySelector('[data-cult="1"] .cs-member[data-member="silver.retinue"]'); return m ? m.classList.contains('loaded') : null; })(),
     safe: [0, 1, 2, 3].map(id => !!document.querySelector(`[data-cult="${id}"] [data-safe]`) && /safe this round/i.test(document.querySelector(`[data-cult="${id}"] [data-safe]`).getAttribute('aria-label') + ' ' + document.querySelector(`[data-cult="${id}"] [data-safe]`).title)),
   }));
   if (!marks.stunt || !marks.stunt.loaded || marks.stunt.ready || !marks.stunt.dot) fail(`P2's Raider (a use in hand) isn't marked on P2's seat: ${JSON.stringify(marks.stunt)}`, 'm9');
-  if (marks.pincher) fail('P2\'s Skinflint (no use) is marked as a use in hand', 'm9');
+  if (marks.pincher) fail('P2\'s Retinue (no use) is marked as a use in hand', 'm9');
   if (JSON.stringify(marks.safe) !== JSON.stringify([false, false, true, false])) fail(`"safe this round" on seats ${JSON.stringify(marks.safe)} (want only P3's)`, 'm9');
-  if (fig['gold.midas'] && fig['gold.midas'].sw !== 'on') fail(`Midas's switch in your seat: ${JSON.stringify(fig['gold.midas'])}`, 'm2');
   if (fig['echo.translator'] && fig['echo.translator'].sw !== 'off') fail(`Translator's switch in your seat: ${JSON.stringify(fig['echo.translator'])}`, 'm2'); // it may be folded into "+N"
   // (m15) Cory, Nov 12 ("im not on extra hand im on hot streak but its showing extra hand"): every point of a figure in
   // your row belongs to that figure; a neighbour's hover target never reaches over it (the 44px touch box did, ~10px)
@@ -147,7 +147,7 @@ try {
 
   // (m5) the prompt
   const sub = await page.evaluate(() => document.querySelector('[data-prompt-sub]')?.textContent || '');
-  if (!/\buse\b/.test(sub) || /Pawnbroker|Gambler|Safecracker/.test(sub)) fail(`the prompt's use line: "${sub}"`, 'm5');
+  if (!/\buse\b/.test(sub) || /Pawnbroker|Ballroom Dancers|Safecracker/.test(sub)) fail(`the prompt's use line: "${sub}"`, 'm5');
 
   // (m1) your seat card
   await pointAt('[data-cult="0"] .cs-head', 14);
@@ -166,25 +166,36 @@ try {
       if (r.cut) fail(`${id}'s ability is cut off`, 'm1');
     }
     const row = id => sc.rows.find(x => x.id === id) || {};
-    if (row('gold.speculator').state !== 'used' || row('gold.speculator').tag !== 'used') fail(`Gambler's row: ${JSON.stringify(row('gold.speculator'))}`, 'm1');
-    if (!/^Use: \+7/.test(row('gold.jackpot').use)) fail(`Lottery Winner's row has no "Use: +7" button: ${JSON.stringify(row('gold.jackpot'))}`, 'm1');
+    if (row('silver.ballroom').state !== 'used' || row('silver.ballroom').tag !== 'used') fail(`Ballroom Dancers's row: ${JSON.stringify(row('silver.ballroom'))}`, 'm1');
+    if (!GALA.test(row('silver.gala').use)) fail(`Bride and Groom's row has no "Use: +${galaGain}" button: ${JSON.stringify(row('silver.gala'))}`, 'm1');
     if (row('trading.pawnbroker').use) fail('Pawnbroker offers a Use button that would do nothing', 'm1');
     const zero = row('thieves.bigscore');
     // w4b #20: no button that does nothing. Since v0.99.546 ("steal 2 resources from each rival") the engine refuses
     // a Safecracker with nothing to take and keeps its use, as it does Pawnbroker's: still unused, no button
     if (zero.use || zero.state === 'used') fail(`Safecracker (nothing to take now) in the seat card: ${JSON.stringify(zero)}`, 'm8');
-    if (row('gold.midas').sw !== 'on' || row('echo.translator').sw !== 'off') fail(`switches in the seat card: Midas ${row('gold.midas').sw}, Translator ${row('echo.translator').sw}`, 'm1');
+    if (row('echo.translator').sw !== 'off') fail(`the switch in the seat card: Translator ${row('echo.translator').sw}`, 'm1'); // (Midas's "on" left with Gold, Nov 24: Translator is the one live switch)
     // a game-end scorer carries no tag since faee2109 (the hover lists drop "scores at game end"/"pays at round start":
     // the ability says it); its whole ability names the game end instead
-    if (row('gold.tycoon').tag || !/game end/i.test(row('gold.tycoon').ability || '')) fail(`Baron's row: tag "${row('gold.tycoon').tag}", ability "${row('gold.tycoon').ability}"`, 'm1');
+    if (row('silver.patronsaints').tag || !/game end/i.test(row('silver.patronsaints').ability || '')) fail(`Patron Saints' row: tag "${row('silver.patronsaints').tag}", ability "${row('silver.patronsaints').ability}"`, 'm1');
   }
   await away();
 
+  // (m8) Safecracker's own hover: muted, with the reason (before (m3): Bride and Groom then gives each rival 2 silver,
+  // and Safecracker would have something to take)
+  await pointAt('[data-cult="0"] .cs-member[data-member="thieves.bigscore"] .fig');
+  await page.waitForTimeout(300);
+  // (a wait, not a speed bar: under the full check's load the card took over 1.5s to fill, Nov 1)
+  await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-card]'), null, { timeout: 8000 }).catch(() => {});
+  await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-idle-why], [data-tip-body] [data-use]'), null, { timeout: 1500 }).catch(() => {});
+  const sh = await page.evaluate(() => { const w = document.querySelector('[data-tip-body] [data-idle-why]'); return { card: !!document.querySelector('[data-tip-body] [data-card]'), button: !!document.querySelector('[data-tip-body] [data-use]'), why: w ? w.textContent : '' }; });
+  if (!sh.card || sh.button) fail(`Safecracker's hover (nothing to take now) must offer no button: ${JSON.stringify(sh)}`, 'm8');
+  else await page.screenshot({ path: `${SHOTS}/6-use-worth-nothing.png` });
+  await away();
   // (m3) the lit member's hover: its Use button, reachable and working
   const before = await saved();
   const flown = () => page.evaluate(() => (window.__patronsPieces || 0) + (window.__patronsFlights || 0)); // flight.js, director.js
   const pieces0 = await flown();
-  await pointAt('[data-cult="0"] .cs-member[data-member="gold.jackpot"] .fig');
+  await pointAt('[data-cult="0"] .cs-member[data-member="silver.gala"] .fig');
   await page.waitForTimeout(300);
   const btn = await page.waitForSelector('[data-tip-body] [data-use]', { timeout: 1500 }).catch(() => null);
   if (!btn) fail('the lit member\'s hover has no Use button', 'm3');
@@ -194,14 +205,14 @@ try {
     // level with it, and doesn't cover the member itself
     // w4a #36: and it opens above or below the row, never over the members beside it
     const near = await page.evaluate(() => {
-      const t = document.querySelector('[data-tip-body]').closest('.popover').getBoundingClientRect(), f = document.querySelector('[data-cult="0"] .cs-member[data-member="gold.jackpot"] .fig').getBoundingClientRect();
+      const t = document.querySelector('[data-tip-body]').closest('.popover').getBoundingClientRect(), f = document.querySelector('[data-cult="0"] .cs-member[data-member="silver.gala"] .fig').getBoundingClientRect();
       const ov = (a, b) => Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) * Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
       const others = [...document.querySelectorAll('[data-cult="0"] .cs-member .fig')].map(e => e.getBoundingClientRect()).filter(r => Math.abs(r.left - f.left) > 2);
       return { gap: Math.round(Math.max(t.left - f.right, f.left - t.right, t.top - f.bottom, f.top - t.bottom)), over: ov(t, f), neighbours: others.reduce((s2, r) => s2 + ov(t, r), 0) };
     });
     if (near.gap > 16 || near.over > 0) fail(`the member's card isn't right next to the member: ${JSON.stringify(near)}`, 'm3');
     // (covering the members beside it is fine: Cory, 2026-10-21, "eh delete that one" about moving the card off a second row)
-    if (!/^Use: \+7/.test(label)) fail(`the hover's button reads "${label}" (want "Use: +7 …")`, 'm3');
+    if (!GALA.test(label)) fail(`the hover's button reads "${label}" (want "Use: +${galaGain} …")`, 'm3');
     await page.screenshot({ path: `${SHOTS}/2-member-hover.png` });
     const b = await btn.boundingBox();
     await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 8 }); // across the gap from the figure to the card
@@ -211,25 +222,25 @@ try {
     await page.waitForFunction(m => { try { return JSON.parse(localStorage.getItem('patrons.v4.local')).state.moves > m; } catch { return false; } }, before.moves, { timeout: 4000 }).catch(() => {});
     // w2a #1: the result shows at the member, and the prompt stops naming it at once
     const shown = await page.waitForFunction(() => document.querySelector('[data-cult="0"] [data-use-result]')?.dataset.useResult || null, null, { timeout: 1500 }).then(h => h.jsonValue(), () => null);
-    if (shown !== '+7 gold') fail(`the use's result at the member reads ${JSON.stringify(shown)} (want "+7 gold")`, 'm3');
+    if (shown !== `+${galaGain} silver`) fail(`the use's result at the member reads ${JSON.stringify(shown)} (want "+${galaGain} silver")`, 'm3');
     // the use plays out whole before the view moves on (decisions 2026-10-15 22:40: a chain's view holds until it ends),
     // then the prompt stops naming it
     await page.waitForFunction(() => !document.querySelector('.app.game[data-chain="1"]'), null, { timeout: 8000 }).catch(() => {});
     await page.waitForTimeout(120);
     const sub2 = await page.evaluate(() => document.querySelector('[data-prompt-sub]')?.textContent || '');
-    if (/Lottery Winner/.test(sub2)) fail(`after the use the prompt still names it: "${sub2}"`, 'm3');
+    if (/Bride and Groom/.test(sub2)) fail(`after the use the prompt still names it: "${sub2}"`, 'm3');
     await page.screenshot({ path: `${SHOTS}/3-use-flight.png` });
     const after = await saved();
-    const u = uids['gold.jackpot'];
-    if (!after.cards[u].used) fail('clicking Use didn\'t use Lottery Winner', 'm3');
-    if (after.players[0].res.gold - before.players[0].res.gold !== 7) fail(`Lottery Winner gave ${after.players[0].res.gold - before.players[0].res.gold} gold, its button said +7`, 'm3');
+    const u = uids['silver.gala'];
+    if (!after.cards[u].used) fail('clicking Use didn\'t use Bride and Groom', 'm3');
+    if (after.players[0].res.silver - before.players[0].res.silver !== galaGain) fail(`Bride and Groom gave ${after.players[0].res.silver - before.players[0].res.silver} silver, its button said +${galaGain}`, 'm3');
     await page.waitForFunction(n => (window.__patronsPieces || 0) + (window.__patronsFlights || 0) > n, pieces0, { timeout: 3000 }).catch(() => {});
     const pieces = await flown();
-    if (!(pieces > pieces0)) fail('nothing flew when Lottery Winner was used', 'm3');
+    if (!(pieces > pieces0)) fail('nothing flew when Bride and Groom was used', 'm3');
     await away();
-    const st = await page.evaluate(() => { const m = document.querySelector('[data-cult="0"] .cs-member[data-member="gold.jackpot"]'); return m ? { state: m.dataset.state || '', lit: m.classList.contains('ready') } : null; });
-    if (!st || st.state !== 'used' || st.lit) fail(`after use, Lottery Winner in your seat: ${JSON.stringify(st)}`, 'm3');
-    await pointAt('[data-cult="0"] .cs-member[data-member="gold.jackpot"] .fig');
+    const st = await page.evaluate(() => { const m = document.querySelector('[data-cult="0"] .cs-member[data-member="silver.gala"]'); return m ? { state: m.dataset.state || '', lit: m.classList.contains('ready') } : null; });
+    if (!st || st.state !== 'used' || st.lit) fail(`after use, Bride and Groom in your seat: ${JSON.stringify(st)}`, 'm3');
+    await pointAt('[data-cult="0"] .cs-member[data-member="silver.gala"] .fig');
     await page.waitForTimeout(300);
     await page.waitForFunction(() => (document.querySelector('[data-tip-body]')?.innerText || '').length > 0, null, { timeout: 1500 }).catch(() => {});
     const hov = await page.evaluate(() => document.querySelector('[data-tip-body]')?.innerText || '');
@@ -238,7 +249,7 @@ try {
     await pointAt('[data-cult="0"] .cs-head', 14);
     await page.waitForTimeout(250);
     sc = await seatCard(0);
-    const r = sc && sc.rows.find(x => x.id === 'gold.jackpot');
+    const r = sc && sc.rows.find(x => x.id === 'silver.gala');
     if (!r || r.state !== 'used' || r.tag !== 'used' || r.use) fail(`after use, its seat card row: ${JSON.stringify(r)}`, 'm3');
     await page.screenshot({ path: `${SHOTS}/4-seat-card-after.png` });
 
@@ -261,16 +272,6 @@ try {
   }
   await away();
 
-  // (m8) Safecracker's own hover: muted, with the reason
-  await pointAt('[data-cult="0"] .cs-member[data-member="thieves.bigscore"] .fig');
-  await page.waitForTimeout(300);
-  // (a wait, not a speed bar: under the full check's load the card took over 1.5s to fill, Nov 1)
-  await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-card]'), null, { timeout: 8000 }).catch(() => {});
-  await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-idle-why], [data-tip-body] [data-use]'), null, { timeout: 1500 }).catch(() => {});
-  const sh = await page.evaluate(() => { const w = document.querySelector('[data-tip-body] [data-idle-why]'); return { card: !!document.querySelector('[data-tip-body] [data-card]'), button: !!document.querySelector('[data-tip-body] [data-use]'), why: w ? w.textContent : '' }; });
-  if (!sh.card || sh.button) fail(`Safecracker's hover (nothing to take now) must offer no button: ${JSON.stringify(sh)}`, 'm8');
-  else await page.screenshot({ path: `${SHOTS}/6-use-worth-nothing.png` });
-  await away();
 
   // (m7) every seat's card beside its seat, from its leader and from its name
   for (const pid of [0, 1, 2, 3]) {
@@ -329,7 +330,7 @@ try {
   await page.screenshot({ path: `${SHOTS}/5-rival-seat-card.png` });
   if (!rc) fail('hovering P2\'s seat opened no seat card', 'm6');
   else {
-    for (const id of ['gold.thrift', 'trading.raider']) if (!rc.rows.some(x => x.id === id)) fail(`P2's seat card doesn't list ${id}`, 'm6');
+    for (const id of ['silver.retinue', 'trading.raider']) if (!rc.rows.some(x => x.id === id)) fail(`P2's seat card doesn't list ${id}`, 'm6');
     if (rc.rows.some(x => x.use)) fail('P2\'s seat card offers you a Use button', 'm6');
   }
   // (m11) a click always acts on what's under the pointer, at once, hover card or not: open a card (your seat's, your
@@ -344,7 +345,7 @@ try {
     if (!(await pg.$('.lt-wheel'))) await pg.click('[data-home="resume"]');
     await pg.waitForSelector('.lt-wheel .slot.can');
     await pg.waitForTimeout(600);
-    const from = kind === 'seat' ? '[data-cult="0"] .cs-leader' : '[data-cult="0"] .cs-member[data-member="gold.jackpot"] .fig';
+    const from = kind === 'seat' ? '[data-cult="0"] .cs-leader' : '[data-cult="0"] .cs-member[data-member="silver.gala"] .fig';
     const fb = await (await pg.$(from)).boundingBox();
     await pg.mouse.move(fb.x + fb.width / 2, fb.y + fb.height / 2, { steps: 4 });
     await pg.waitForTimeout(350);
@@ -387,7 +388,7 @@ try {
     if (!(await pg.$('.lt-wheel'))) await pg.click('[data-home="resume"]');
     await pg.waitForSelector('.lt-wheel .slot.can');
     await pg.waitForTimeout(600);
-    const fb = await (await pg.$('[data-cult="0"] .cs-member[data-member="gold.jackpot"] .fig')).boundingBox();
+    const fb = await (await pg.$('[data-cult="0"] .cs-member[data-member="silver.gala"] .fig')).boundingBox();
     // w4a #36: from one member's card, one move along the row opens the next member's card
     await pg.mouse.move(fb.x + fb.width / 2, fb.y + fb.height / 2, { steps: 4 });
     await pg.waitForTimeout(350);
@@ -399,7 +400,7 @@ try {
     if (nb) {
       await pg.mouse.move(nb.x, nb.y);
       const opened = await pg.waitForFunction(id => !!document.querySelector(`[data-tip-body] [data-card="${id}"]`), nb.id, { timeout: 600 }).then(() => true, () => false);
-      if (!opened) fail(`moving from Lottery Winner to the member beside it (${nb.id}) didn't open its card`, 'm12');
+      if (!opened) fail(`moving from Bride and Groom to the member beside it (${nb.id}) didn't open its card`, 'm12');
       await pg.mouse.move(4, 690); await pg.waitForTimeout(400);
     }
     await pg.mouse.move(fb.x + fb.width / 2, fb.y + fb.height / 2, { steps: 4 });
@@ -452,7 +453,8 @@ try {
     else {
       // a rival's card says the resources they hold (Cory, Oct 29: it replaced "Holding N · could recruit about N")
       const res = await page.evaluate(() => document.querySelector('[data-hover-layer][data-open="1"] [data-rival-num="res"] .num')?.textContent || '');
-      const want = s0.resources.reduce((t, r) => t + (s0.players[1].res[r] || 0), 0);
+      const now = await saved(); // what P2 holds now (Bride and Groom gave each rival 2 silver in (m3))
+      const want = now.resources.reduce((t, r) => t + (now.players[1].res[r] || 0), 0);
       if (Number(res) !== want) fail(`P2's card says resources "${res}" (want ${want})`, 'm13');
     }
   }

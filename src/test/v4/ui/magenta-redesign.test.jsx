@@ -1,4 +1,3 @@
-import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { panelText } from '../../../v4/game/panelText.js';
@@ -35,9 +34,9 @@ describe('Magenta action wording and one-stack theft', () => {
   });
 
   it('shows each exact half-stack amount without a Take All or coin-by-coin plan', () => {
-    const s = sceneQ({ quadrants: ['thieves', 'red', 'gold', 'echo'], n: 3, round: 2,
-      res: [{}, { gold: 7, red: 3 }, { gold: 4 }] });
-    const options = [[1, 'gold', 3], [1, 'red', 1], [2, 'gold', 2]].map(([pid, res, n]) => ({
+    const s = sceneQ({ quadrants: ['thieves', 'red', 'yellow', 'echo'], n: 3, round: 2,
+      res: [{}, { yellow: 7, red: 3 }, { yellow: 4 }] });
+    const options = [[1, 'yellow', 3], [1, 'red', 1], [2, 'yellow', 2]].map(([pid, res, n]) => ({
       id: `take:${pid}:${res}`, kind: 'take', value: [pid, res], target: { pid, res }, take: n,
       label: `Take ${n} ${res} from P${pid + 1}`,
     }));
@@ -46,9 +45,9 @@ describe('Magenta action wording and one-stack theft', () => {
     const g = giftPick(s, s.pending);
     expect(g).toMatchObject({ kind: 'steal', halfPile: true, plan: null, left: null, head: 'Steal half a pile' });
     expect(g.seconds.map(x => x.o.id)).toEqual(options.map(o => o.id));
-    expect(boardPicker(s, s.pending).seats[1].res.gold.take).toBe(3);
+    expect(boardPicker(s, s.pending).seats[1].res.yellow.take).toBe(3);
     const html = renderToStaticMarkup(<GiftCard state={s} gift={g} onFirst={() => {}} onAnswer={() => {}} busy={false} />);
-    expect(html).toContain('Take 3 gold from P2 (has 7)');
+    expect(html).toContain('Take 3 yellow from P2 (has 7)');
     expect(html).toContain('Steal half a pile');
     expect(html).toContain('−3');
     expect(html).not.toContain('Take all');
@@ -58,10 +57,10 @@ describe('Magenta action wording and one-stack theft', () => {
 
 
 it('does not describe original-color theft choices as swaps, including stealing Magenta', () => {
-  const state = { resources: ['gold', 'magenta'], players: [{ id: 0 }, { id: 1 }] };
+  const state = { resources: ['yellow', 'magenta'], players: [{ id: 0 }, { id: 1 }] };
   const change = res => ({ res, followers: 1, members: 0, turns: 0, early: 0, discount: 0, swapped: 0 });
-  const a = change({ gold: 1, magenta: 1 }), b = change({ gold: 0, magenta: 2 });
-  const pv = { exact: false, tied: true, asks: ['Pilfer: take 1'], theirAsks: [], you: { res: { gold: [0, 1], magenta: [1, 2] }, followers: [1, 1], members: [0, 0], turns: [0, 0], discount: [0, 0] },
-    others: { res: { gold: [-1, 0], magenta: [-1, 0] }, followers: [0, 0], members: [0, 0] }, mix: [a, b], best: a, likely: a };
+  const a = change({ yellow: 1, magenta: 1 }), b = change({ yellow: 0, magenta: 2 });
+  const pv = { exact: false, tied: true, asks: ['Pilfer: take 1'], theirAsks: [], you: { res: { yellow: [0, 1], magenta: [1, 2] }, followers: [1, 1], members: [0, 0], turns: [0, 0], discount: [0, 0] },
+    others: { res: { yellow: [-1, 0], magenta: [-1, 0] }, followers: [0, 0], members: [0, 0] }, mix: [a, b], best: a, likely: a };
   expect(youdWords(pv, state, 'magenta')).toEqual({ text: '+1 magenta, +1 follower; steal 1 in colors you pick', note: null });
 });

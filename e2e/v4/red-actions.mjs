@@ -12,7 +12,7 @@ import { takeCard } from './lib/take.mjs';
 const base = (process.env.V4_URL || 'http://localhost:5317').replace(/\/$/, '');
 const out = `${process.env.V4_SHOTS || '/tmp/patrons-shots/v4'}/red-actions`;
 mkdirSync(out, { recursive: true });
-const quads = ['gold', 'red', 'purple', 'echo'];
+const quads = ['yellow', 'red', 'purple', 'echo']; // Yellow in Gold's place since Gold left the game (Cory, Nov 24)
 const stamp = buildStamp();
 const seats = [{ name: 'You', kind: 'human' }, { name: 'Bo', kind: 'human' }, { name: 'Cy', kind: 'human' }];
 const slot = (q, k) => `${quads.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.key === k)}`;
@@ -32,7 +32,7 @@ function fixture() {
   const deal = (def, where) => {
     (where === 'shop' ? s.shop : s.players[where].members).push(takeCard(s, def));
   };
-  for (const [who, def] of [[0, 'red.host'], [1, 'gold.prospector'], [2, 'echo.evergreen'], ['shop', 'red.recruiter'], ['shop', 'red.bigfamily'], ['shop', 'red.twins'], ['shop', 'echo.muse'], ['shop', 'gold.banker']]) deal(def, who);
+  for (const [who, def] of [[0, 'red.host'], [1, 'yellow.dutycollector'], [2, 'echo.evergreen'], ['shop', 'red.recruiter'], ['shop', 'red.bigfamily'], ['shop', 'red.twins'], ['shop', 'echo.muse'], ['shop', 'yellow.gobetween']]) deal(def, who);
   return s;
 }
 function scenario(name) {
@@ -44,7 +44,7 @@ function scenario(name) {
     s = move(s, `slot:${slot('red', 'hireup')}`);
     // P2's own Promote first (any pair it's offered that leaves Recruiter in the shop for P1's copy): costs move with
     // the balance calls, so the pair is read off the offer rather than named (Gold Panner to Muse stopped being one, Nov 1)
-    const own = `trade:${uid(s, 'gold.prospector', 1)}:`, keep = `:${uid(s, 'red.recruiter', 'shop')}`;
+    const own = `trade:${uid(s, 'yellow.dutycollector', 1)}:`, keep = `:${uid(s, 'red.recruiter', 'shop')}`;
     const pick = s.pending.options.find(o => o.id.startsWith(own) && !o.id.endsWith(keep) && s.shop.includes(Number(o.id.split(':')[2])));
     if (!pick) throw new Error(`${name}: P2 has no Promote pair; offered ${s.pending.options.map(o => o.id).join(' ')}`);
     s = pass(move(s, pick.id));
@@ -69,20 +69,20 @@ function scenario(name) {
   return { save, action: `slot:${slot(name === 'copy-promote' ? 'echo' : 'red', action)}`, picks, a, b, pair, expected };
 }
 // Borrow (Cory, Nov 10, in Tryout's old slot): "Recruit the cheapest shop member, for free. Discard it at round end,
-// before scoring. +1 red." Triplets and Copyist both cost 5, the cheapest, so you pick one on the board; it joins your
+// before scoring. +1 red." Triplets and Secret-Keepers both cost 5, the cheapest, so you pick one on the board; it joins your
 // cult for free and is noted to go at round end.
 function borrowScenario() {
   let s = fixture();
-  s.shop.push(takeCard(s, 'echo.copyist'));
+  s.shop.push(takeCard(s, 'echo.agents'));
   s.queue = [0, 0].map(p => ({ t: 'turn', p }));
   s = resume(s);
   s.build = stamp;
   const save = { config: { seats, speed: 'fast' }, state: s, undo: null, savedAt: Date.now() };
   const action = `slot:${slot('red', 'borrow')}`;
   let expected = move(s, action);
-  const twins = uid(expected, 'red.twins', 'shop'), copyist = uid(expected, 'echo.copyist', 'shop');
+  const twins = uid(expected, 'red.twins', 'shop'), keepers = uid(expected, 'echo.agents', 'shop');
   const ids = expected.pending?.options.map(o => o.id) || [];
-  if (JSON.stringify([...ids].sort()) !== JSON.stringify([`card:${twins}`, `card:${copyist}`].sort())) throw new Error(`borrow: offered ${ids}, want the two cheapest`);
+  if (JSON.stringify([...ids].sort()) !== JSON.stringify([`card:${twins}`, `card:${keepers}`].sort())) throw new Error(`borrow: offered ${ids}, want the two cheapest`);
   expected = move(expected, `card:${twins}`);
   if (expected.pending?.kind !== 'buy') throw new Error('borrow: did not return to buying');
   const me = expected.players[0], was = s.players[0];
@@ -90,7 +90,7 @@ function borrowScenario() {
   if (JSON.stringify(Object.entries(me.res).filter(([r]) => r !== 'red')) !== JSON.stringify(Object.entries(was.res).filter(([r]) => r !== 'red'))) throw new Error('borrow: paid for a free member');
   if (!me.members.includes(twins) || expected.shop.includes(twins)) throw new Error('borrow: Triplets not recruited');
   if (!(expected.borrowed || []).some(b => b.uid === twins && b.pid === 0)) throw new Error('borrow: not noted to go at round end');
-  return { save, action, twins, copyist, was, expected };
+  return { save, action, twins, keepers, was, expected };
 }
 const comparable = s => ({ players: s.players.map(p => ({ members: p.members, res: p.res, bonus: p.bonus })), shop: s.shop, cards: s.cards });
 if (process.argv.includes('--fixtures-only')) {
@@ -159,7 +159,7 @@ try {
       if (await place.isVisible()) await place.click();
       const pick = live(`card:${test.twins}`).first();
       await pick.waitFor();
-      if (!(await live(`card:${test.copyist}`).count())) throw new Error(`${tag}: Borrow doesn't offer Copyist (tied cheapest)`);
+      if (!(await live(`card:${test.keepers}`).count())) throw new Error(`${tag}: Borrow doesn't offer Secret-Keepers (tied cheapest)`);
       await page.screenshot({ path: `${out}/${tag}-borrow-choice.png` });
       await tapOrClick(pick);
       // on touch the tap pins the card's sheet; its button makes the pick

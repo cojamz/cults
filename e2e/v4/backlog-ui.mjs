@@ -10,11 +10,12 @@ import { takeCard } from './lib/take.mjs';
 const base=process.env.V4_URL||'http://localhost:5334',out=process.env.V4_SHOTS||'/tmp/cults-backlog-ui';mkdirSync(out,{recursive:true});
 const seats=['You','Bo','Cy','Di'].map(name=>({name,kind:'human'}));
 function fixture(kind){
- let s=createGame({seats,seed:53,quadrants:['gold','red','market','echo']});
+ let s=createGame({seats,seed:53,quadrants:['yellow','red','market','echo']});
  s.pending=null;s.round=3;s.slots={};s.squats={};s.queue=[{t:kind==='choice'?'turn':'buy',p:0},{t:'turn',p:0}];s.players.forEach(p=>{p.left=3;p.res=Object.fromEntries(s.resources.map(r=>[r,6]));});
  const deal=(def,to)=>{const u=takeCard(s,def);(to==='shop'?s.shop:s.players[to].members).push(u);return u;};
- deal('gold.thrift',0);deal('gold.prospector',0);deal('red.host',0);deal('red.recruiter',0);
- const target=deal('gold.taxman','shop');while(s.shop.length>8)s.pile.push(s.shop.shift());
+ deal('red.sponsor',0);deal('yellow.dutycollector',0); // Sponsor's "cost 2 less" puts notes on the pay sheet
+ deal('red.host',0);deal('red.recruiter',0);
+ const target=deal('yellow.tinker','shop');while(s.shop.length>8)s.pile.push(s.shop.shift());
  s=resume(s);
  if(kind==='pay'){s=applyMove(s,{player:0,option:`card:${target}`});if(s.pending.kind!=='pay')throw Error('missing payment choice');}
  if(kind==='choice'){const i=quadrant('red').actions.findIndex(a=>a.key==='take');s=applyMove(s,{player:0,option:`slot:1-${i}`});if(s.pending.kind!=='choose')throw Error('missing recruit choice');}

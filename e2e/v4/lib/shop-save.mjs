@@ -29,7 +29,7 @@ export function faceUp(s, defId) {
 
 /** P1's buy step (round I or later): res, members (def ids), discount, rivals' resources, and `def` face up.
  *  Returns { save, uid } (uid: that member's). */
-export function buySave({ def = 'gold.prospector', res = { gold: 3, red: 2, blue: 2, green: 3 }, members = [], discount = 0, seed = 3, rivals = null } = {}) {
+export function buySave({ def = 'yellow.dutycollector', res = { yellow: 3, red: 2, blue: 2, green: 3 }, members = [], discount = 0, seed = 3, rivals = null } = {}) {
   let s = createGame({ seats: SEATS, seed, quadrants: DIALOG_TABLE });
   const rand = seededRandom(seed);
   const ready = st => st.round >= 1 && st.pending && st.pending.player === 0 && st.pending.kind === 'buy';

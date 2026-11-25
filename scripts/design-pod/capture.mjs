@@ -168,7 +168,7 @@ for (const st of want) {
     } else if (st === 'gift') {
       await load(stealSave('kickback')); await settle(400); await shot('gift');
     } else if (st === 'pay') {
-      await load(paySave({ def: 'gold.prospector', res: { gold: 3, red: 2, blue: 2, green: 3 } }));
+      await load(paySave({ def: 'yellow.dutycollector', res: { yellow: 3, red: 2, blue: 2, green: 3 } }));
       await page.waitForSelector('.dialog.pay, .pay', { timeout: 6000 }).catch(() => {}); await settle(400); await shot('pay');
     } else if (st === 'reckon' || st === 'summary') {
       await load(SAVES.last2()); await placeAndAnswer(); await passBuy();

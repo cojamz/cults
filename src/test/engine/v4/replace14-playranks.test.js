@@ -10,7 +10,6 @@ const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table, uidIn } = await import('./cards-helpers-b.js');
 const { useRetired } = await import('./helpers.js');
-await import('./fixtures/gold-on.js'); // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 useRetired(['red.turnout', 'thieves.hideout']);
 delete process.env.REPLACE14;
 delete process.env.MEMBER_UP;
@@ -26,7 +25,7 @@ describe('REPLACE14: Ragpicker ("You may recruit the top member of the discard p
     expect(defById('market.patroness').retired).toBe(true);
   });
   it("offers the discard pile's top card beside the shop, and recruits it at its price", () => {
-    let s = table(['red', 'market'], { n: 2, round: 2, res: [{ red: 9, blue: 9, gold: 9 }], members: [['market.ragpicker']] });
+    let s = table(['red', 'market'], { n: 2, round: 2, res: [{ red: 9, blue: 9, silver: 9 }], members: [['market.ragpicker']] });
     const b = s.pile.pop(); s.discard.push(b); // the discard pile's top card (Nov 6: the pile's bottom became the discard pile)
     s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     const o = s.pending.options.find(x => x.id === `card:${b}`);
@@ -50,11 +49,11 @@ describe('REPLACE14: Cutpurse, its color', () => {
 
 describe('REPLACE14: Cutpurse, steal 2', () => {
   it('recruiting a member starts a steal of 2', () => {
-    let s = table(['red', 'thieves'], { n: 2, round: 2, res: [{ red: 9, magenta: 9 }, { gold: 5 }], members: [['thieves.shoptwo']], shop: ['thieves.crew'] });
+    let s = table(['red', 'thieves'], { n: 2, round: 2, res: [{ red: 9, magenta: 9 }, { silver: 5 }], members: [['thieves.shoptwo']], shop: ['thieves.crew'] });
     s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = payAll(answer(s, `card:${uidIn(s, 'thieves.crew', 'shop')}`));
     while (s.pending?.player === 0 && s.pending.prompt?.includes('Cutpurse')) s = answer(s, s.pending.options[0].id);
-    expect(s.players[1].res.gold).toBe(3);
+    expect(s.players[1].res.silver).toBe(3);
   });
 });
 

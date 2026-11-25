@@ -148,7 +148,7 @@ button.mu-switch:focus-visible{outline:2px solid var(--pl-ink-2,#6e5c49);outline
 .seat-card .seat-spend .pip.glyph,.seat-card .seat-spend .pip.wild,.seat-card .seat-spend .rich-f{width:.8em;height:.8em;vertical-align:-.1em}
 /* where a seat's followers came from: the total, then one row per source adding up to it */
 .fol-card h4{display:flex;align-items:baseline;gap:6px}
-.fol-card h4 .num{margin-left:auto;font-size:16px;font-weight:800}
+.fol-card h4 .num{margin-left:auto;font-size:18px;font-weight:800}
 .fol-card .fol-rows{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:1px solid var(--hair-ink,rgba(43,32,24,.12));display:flex;flex-direction:column;gap:4px}
 .fol-card .fol-rows li{display:flex;justify-content:space-between;gap:12px;font-family:var(--sans);font-size:15px;line-height:19px;color:var(--pl-ink,#2b2018)}
 .fol-card .fol-rows li span{color:var(--pl-ink-2,#6e5c49)}

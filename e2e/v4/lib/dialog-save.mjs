@@ -9,7 +9,7 @@ import { seededRandom } from '../../../src/engine/v4/rng.js';
 import { buildStamp } from './stamp.mjs';
 import { freeCard } from './deal.mjs';
 
-export const DIALOG_TABLE = ['gold', 'red', 'market', 'echo'];
+export const DIALOG_TABLE = ['yellow', 'red', 'market', 'echo']; // Yellow in Gold's place since Gold left the game (Cory, Nov 24)
 const SEATS = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
 const wrap = s => { s.build = buildStamp(); return { config: { seats: SEATS.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal' }, state: s, undo: null, savedAt: Date.now() }; };
 
@@ -43,7 +43,7 @@ function playTo(seed, ready) {
  * P1 in the pay step. what: { def } a member (made face up) or { tier } a follower buy ('small' | 'mid' | 'big' | 'top').
  * res: P1's resources; members: P1's member def ids; discount: P1's discount.
  */
-export function paySave({ def = 'gold.prospector', tier = null, res = { gold: 3, red: 2, blue: 2, green: 3 }, members = [], discount = 0, seed = 3, rivals = null } = {}) {
+export function paySave({ def = 'yellow.dutycollector', tier = null, res = { yellow: 3, red: 2, blue: 2, green: 3 }, members = [], discount = 0, seed = 3, rivals = null } = {}) {
   const s = playTo(seed, st => st.round >= 1 && st.pending && st.pending.player === 0 && st.pending.kind === 'buy');
   if (!s) throw new Error('dialog-save: never reached P1’s buy step');
   s.players[0].res = { ...res };
@@ -68,7 +68,7 @@ export function paySave({ def = 'gold.prospector', tier = null, res = { gold: 3,
 export function swapSave(space = 'hireup') {
   const q = DIALOG_TABLE.indexOf('red'), i = quadrant('red').actions.findIndex(a => a.key === space), ring = quadrant('red').actions[i].ring;
   // members everywhere: two of yours with equal-cost twins on two rivals (Even Swap), plus a dearer one (Swap Sides)
-  const MINE = ['gold.prospector', 'red.volunteer'], THEIRS = [['gold.taxman', 'red.host'], ['red.twins', 'red.bigfamily'], ['gold.merchant']]; // (the cull took red.drive and gold.coinpurse out of the deck)
+  const MINE = ['yellow.dutycollector', 'red.volunteer'], THEIRS = [['yellow.tinker', 'red.host'], ['red.twins', 'red.bigfamily'], ['yellow.gobetween']]; // Yellow's in Gold's place since Gold left (Nov 24)
   for (let seed = 1; seed < 300; seed++) {
     const s = playTo(seed, st => st.round === ring && st.pending && st.pending.player === 0 && st.pending.kind === 'place' && st.pending.options.some(o => o.id === `slot:${q}-${i}`));
     if (!s) continue;
@@ -122,7 +122,7 @@ export function comboSave(space = 'seeds') {
 
 // A color of yours asked by a space (Goody Bags, Cheap Seats): answered on the card at the space (Cory, 2026-10-15:
 // choices come to where you act). P1 holds some of every color, so Cheap Seats offers all four.
-export const COLOR_TABLE = ['silver', 'gold', 'trading', 'red'];
+export const COLOR_TABLE = ['silver', 'yellow', 'trading', 'red']; // Yellow in Gold's place since Gold left the game (Nov 24)
 const COLOR_SPACES = { polish: ['silver', 'polish'], harvest: ['yellow', 'harvest'] }; // Goody Bags and Cheap Seats left the wheel
 /** before: the save one step earlier, P1 about to place there ({ save, slot }), for a probe that places itself. */
 export function colorSave(space = 'polish', table = space === 'harvest' ? COMBO_TABLE : COLOR_TABLE, before = false) {
@@ -131,7 +131,7 @@ export function colorSave(space = 'polish', table = space === 'harvest' ? COMBO_
   for (let seed = 1; seed < 300; seed++) {
     const s = playToOn(table, seed, st => st.round >= 1 && st.pending && st.pending.player === 0 && st.pending.kind === 'place' && st.pending.options.some(o => o.id === slot));
     if (!s) continue;
-    s.players[0].res = { silver: 2, gold: 3, white: 1, red: 2 };
+    s.players[0].res = { silver: 2, yellow: 3, white: 1, red: 2 };
     const t = applyMove(s, { player: 0, option: slot });
     if (t.pending && t.pending.player === 0 && t.pending.kind === 'choose' && t.pending.options.filter(o => o.target).length >= 3) return before ? { save: wrap(s), slot } : wrap(t);
   }
@@ -144,7 +144,7 @@ export function cheapSeatsSave(white = 7) {
   for (let seed = 1; seed < 300; seed++) {
     const s = playToOn(COLOR_TABLE, seed, st => st.round >= 1 && st.pending && st.pending.player === 0 && st.pending.kind === 'place' && st.pending.options.some(o => o.id === slot));
     if (!s) continue;
-    s.players[0].res = { silver: 2, gold: 3, white, red: 2 };
+    s.players[0].res = { silver: 2, yellow: 3, white, red: 2 };
     return { save: wrap(s), slot };
   }
   throw new Error('dialog-save: never reached P1 on Cheap Seats');
@@ -152,7 +152,7 @@ export function cheapSeatsSave(white = 7) {
 
 // Wave-2 tester B's moments (#8–#12): an off-buy payment (Talent Scout's, Snap Up's before), Talent Scout's top 5, Your Call, Release, Double Agent.
 export const BOARD_TABLE = ['echo', 'red', 'market', 'thieves'];
-export const CALL_TABLE = ['gold', 'red', 'trading', 'echo'];
+export const CALL_TABLE = ['yellow', 'red', 'trading', 'echo']; // Yellow in Gold's place since Gold left the game (Nov 24)
 /** Bots play until P1 is asked `kind` (in round `round` or later), then P1's resources and members are set. */
 function at(table, kind, { round = 1, res = null, members = [], seed = 3, need = () => true, fresh = true } = {}) {
   for (let sd = seed; sd < seed + 200; sd++) {
@@ -197,7 +197,7 @@ export function momentSave(name) {
     // round III's Your Call has four answers (w4b #4: they opened as a wide strip mid-wheel)
     const round = name === 'yourcall3' ? 3 : 2;
     const slot = slotOf(CALL_TABLE, 'trading', 'pawn');
-    const s = at(CALL_TABLE, 'place', { round, res: { gold: 1, red: 1, white: 1, green: 1 }, need: st => st.round === round && st.pending.options.some(o => o.id === slot) });
+    const s = at(CALL_TABLE, 'place', { round, res: { yellow: 1, red: 1, white: 1, green: 1 }, need: st => st.round === round && st.pending.options.some(o => o.id === slot) });
     return wrap(applyMove(s, { player: 0, option: slot }));
   }
   if (name === 'release') {

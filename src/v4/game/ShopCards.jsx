@@ -27,7 +27,8 @@ import './card-header.css'; // the trading-card face (Cory, Oct 29)
 import './piles.css'; // piles (rules.shop grey or all): the stack under a pile's top card, piles still to open
 
 // a name on the card's bar: one line, a size down when it's long, two lines only past that (never broken mid-word)
-export const nameFit = name => (name.length > 15 && name.includes(' ') ? { 'data-wide': '' } : name.length > 10 || name.split(' ').some(w => w.length >= 10) ? { 'data-long': '' } : {});
+// (a word of 13 letters or more, Moneychangers, Counterfeiters, a size further down: it ran past the bar at 900 wide, Nov 24)
+export const nameFit = name => (name.length > 15 && name.includes(' ') ? { 'data-wide': '' } : name.split(/[ -]/).some(w => w.length >= 13) && !name.includes(' ') ? { 'data-long': '', 'data-xlong': '' } : name.length > 10 || name.split(' ').some(w => w.length >= 10) ? { 'data-long': '' } : {});
 // a member that counts as more than one: the count and the member bust on its picture (the worth stays followers)
 // a member counts as its printed member count only; being worth more followers never adds members (core.js printedMembers; Cory, Oct 29)
 export const membersOf = d => d.n ?? 1;

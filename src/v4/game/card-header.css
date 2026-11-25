@@ -17,6 +17,7 @@
 .lt-card.card .lt-hd .nm{grid-area:name;display:block;height:auto;min-height:0;margin:0;padding:0;white-space:nowrap;overflow:hidden;text-align:center;
   font:700 13px/15px var(--serif);letter-spacing:0;text-transform:none;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.2);overflow-wrap:normal;hyphens:manual}
 .lt-card.card .lt-hd .nm[data-long]{font-size:12px;letter-spacing:-.02em}
+.lt-card.card .lt-hd .nm[data-xlong]{font-size:11px;letter-spacing:-.03em}
 .lt-card.card .lt-hd .nm[data-wide]{white-space:normal;font-size:12px;line-height:13px;letter-spacing:-.01em}
 /* the pale colors: dark words on the bar (yellow too: Drifters' white name on lemon was hard to read, picky bot, Nov 4) */
 .lt-card.card:is([data-ground="white"],[data-ground="silver"],[data-ground="yellow"]) .lt-hd .nm{color:#2a1f17;text-shadow:none}

@@ -1,4 +1,3 @@
-import '../../engine/v4/fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import GameScreen from '../../../v4/game/GameScreen.jsx';
@@ -7,9 +6,9 @@ import { sceneQ } from '../../engine/v4/cards-helpers.js';
 const test = vi.hoisted(() => ({ running: false, ends: new Set(), board: null, reckoning: null, animation: null }));
 vi.mock('../../../v4/format.js', async original => ({ ...await original(),
   isRoundEnd: line => line === 'ROUND SCORED',
-  parseRoundEnd: () => ({ round: 'I', rows: [{ qid: 'gold', winners: [0], v: 2 }] }),
+  parseRoundEnd: () => ({ round: 'I', rows: [{ qid: 'yellow', winners: [0], v: 2 }] }),
   scoringSnapshot: () => test.board,
-  scoredStandings: () => [{ qid: 'gold', rule: 'Most gold', prize: 2, rows: [{ id: 0, shown: 1 }, { id: 1, shown: 0 }], leaders: [0] }],
+  scoredStandings: () => [{ qid: 'yellow', rule: 'Most yellow', prize: 2, rows: [{ id: 0, shown: 1 }, { id: 1, shown: 0 }], leaders: [0] }],
 }));
 vi.mock('../../../v4/game/flight.js', async original => ({ ...await original(), motionOK: () => true }));
 vi.mock('../../../v4/game/director.js', async original => { const real = await original(); return {
@@ -24,7 +23,7 @@ afterEach(() => { cleanup(); test.ends.clear(); test.running = false; test.board
 it('withholds contest followers and +tags before scoring is visible, then credits only on prize landing', async () => {
   vi.useFakeTimers();
   vi.stubGlobal('matchMedia', q => ({ matches: q.includes('min-width: 861px'), addEventListener() {}, removeEventListener() {} }));
-  const before = sceneQ({ quadrants: ['gold', 'red'] });
+  const before = sceneQ({ quadrants: ['yellow', 'red'] });
   before.players[0].kind = 'human';
   let current = before;
   const listeners = new Set();
@@ -36,7 +35,7 @@ it('withholds contest followers and +tags before scoring is visible, then credit
   const scored = { ...before, moves: before.moves + 1,
     players: before.players.map(p => ({ ...p, res: { ...p.res } })),
     log: [...before.log, 'ROUND SCORED'], pending: null, queue: [] };
-  scored.players[0].res.gold += 1; // ordinary closing action, still in flight
+  scored.players[0].res.yellow += 1; // ordinary closing action, still in flight
   scored.players[0].bonus += 2; scored.players[0].contest += 2;
   test.board = scored;
   const after = { ...scored, round: 2 };
@@ -47,7 +46,7 @@ it('withholds contest followers and +tags before scoring is visible, then credit
   expect(view.container.querySelector('.seat-delta')).toBeNull();
   expect(test.reckoning).toBeNull(); // the closing action still owns the screen
   expect(test.animation.atoms.filter(a => a.op === 'piece' && a.fol)).toEqual([]);
-  expect(test.animation.atoms.filter(a => a.op === 'piece' && a.r === 'gold')).toHaveLength(1);
+  expect(test.animation.atoms.filter(a => a.op === 'piece' && a.r === 'yellow')).toHaveLength(1);
   await act(async () => vi.advanceTimersByTimeAsync(60000));
   expect(score().dataset.followers).toBe(String(start));
   await act(async () => { test.running = false; for (const fn of [...test.ends]) fn(); });

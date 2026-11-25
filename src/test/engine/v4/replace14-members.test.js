@@ -12,7 +12,6 @@ const { table, uidIn } = await import('./cards-helpers-b.js');
 const { move } = await import('./helpers.js');
 const { sceneQ, settle, passBuys } = await import('./cards-helpers.js');
 const { useRetired } = await import('./helpers.js');
-await import('./fixtures/gold-on.js'); // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 useRetired(['red.turnout']);
 delete process.env.REPLACE14;
 delete process.env.MEMBER_UP;
@@ -43,11 +42,11 @@ describe('REPLACE14: Big Spenders', () => {
 });
 
 describe('REPLACE14: Early Birds reworked ("If you place the round’s first minion, your next turn comes right after it.")', () => {
-  const rich = { purple: 9, red: 9, gold: 9, green: 9 };
-  const scene = members => sceneQ({ quadrants: ['purple', 'echo', 'gold', 'red'], n: 3, round: 2, res: [rich, rich, rich], members,
+  const rich = { purple: 9, red: 9, yellow: 9, green: 9 };
+  const scene = members => sceneQ({ quadrants: ['purple', 'echo', 'yellow', 'red'], n: 3, round: 2, res: [rich, rich, rich], members,
     queue: [0, 1, 2, 2, 1, 0, 0, 1, 2].map(p => ({ t: 'turn', p })).concat({ t: 'allPlaced' }) });
   const plain = s => {
-    const o = s.pending.options.find(x => x.kind === 'slot' && ['gold', 'red'].includes(s.quadrants[x.q])) || s.pending.options.find(x => x.kind === 'slot');
+    const o = s.pending.options.find(x => x.kind === 'slot' && ['yellow', 'red'].includes(s.quadrants[x.q])) || s.pending.options.find(x => x.kind === 'slot');
     return passBuys(settle(move(s, o.id)));
   };
   it("replaces the live card's rule (Early Birds' new text is on the card)", () => {
@@ -97,24 +96,24 @@ describe('REPLACE14: Charmers ("Whenever you gift silver to rivals, +1 of any co
 });
 
 describe('REPLACE14: Cutpurse replacements', () => {
-  const Q = ['gold', 'red', 'thieves', 'market'];
+  const Q = ['yellow', 'red', 'thieves', 'market'];
   it("Pickpocket and Tax Collector are dealt in Cutpurse's place", () => {
     expect(defById('thieves.filcher').name).toBe('Pickpocket');
     expect(defById('thieves.taxman').name).toBe('Tax Collector');
     expect(defById('thieves.cutpurse').retired).toBe(true);
   });
   it('Pickpocket, Round Start: steal 1 from each rival with more followers than you; none from an equal one (its own worth counts)', () => {
-    const s = table(Q, { n: 4, queue: [{ t: 'round', r: 2 }], res: [{}, { gold: 2 }, { red: 3 }, { blue: 4 }], bonus: [0, 3, 2, 1], members: [['thieves.filcher']] });
-    expect([s.players[1].res.gold, s.players[2].res.red, s.players[3].res.blue]).toEqual([1, 2, 4]);
+    const s = table(Q, { n: 4, queue: [{ t: 'round', r: 2 }], res: [{}, { yellow: 2 }, { red: 3 }, { blue: 4 }], bonus: [0, 3, 2, 1], members: [['thieves.filcher']] });
+    expect([s.players[1].res.yellow, s.players[2].res.red, s.players[3].res.blue]).toEqual([1, 2, 4]);
     expect(log(s)).toContain("P1's Pickpocket: took 1 from P2.");
     expect(log(s)).toContain("P1's Pickpocket: took 1 from P3.");
   });
   it('Pickpocket while leading: nothing', () => {
-    const s = table(Q, { n: 3, queue: [{ t: 'round', r: 2 }], res: [{}, { gold: 2 }, { red: 3 }], bonus: [9, 2, 0], members: [['thieves.filcher']] });
+    const s = table(Q, { n: 3, queue: [{ t: 'round', r: 2 }], res: [{}, { yellow: 2 }, { red: 3 }], bonus: [9, 2, 0], members: [['thieves.filcher']] });
     expect(log(s)).toContain("P1's Pickpocket: no rival has more followers.");
   });
   it('Tax Collector, Round End: after scoring, steal 1 from each rival who won a contest (ties count)', () => {
-    let s = table(Q, { n: 3, round: 1, queue: [{ t: 'endRound' }], res: [{}, { gold: 3, red: 2 }, { red: 2 }], members: [['thieves.taxman']] });
+    let s = table(Q, { n: 3, round: 1, queue: [{ t: 'endRound' }], res: [{}, { yellow: 3, red: 2 }, { red: 2 }], members: [['thieves.taxman']] });
     const won = s.contests.at(-1).results.filter(c => c.winners.length);
     const winners = [1, 2].filter(i => won.some(c => c.winners.includes(i)));
     for (const i of winners) expect(log(s)).toContain(`P1's Tax Collector: took 1 from P${i + 1}.`);
@@ -123,28 +122,28 @@ describe('REPLACE14: Cutpurse replacements', () => {
 });
 
 describe('REPLACE14: Extortionist replacements (lane F paper passers)', () => {
-  const Q = ['gold', 'red', 'thieves', 'market'];
+  const Q = ['yellow', 'red', 'thieves', 'market'];
   it("The Boss and Mob Boss are dealt in Extortionist's place", () => {
     expect(defById('thieves.boss').name).toBe('The Boss');
     expect(defById('thieves.mobboss').name).toBe('Mob Boss');
     expect(defById('thieves.extortionist').retired).toBe(true);
   });
   it('The Boss with 2 other Magenta members: Pilfer as the first minion takes 1 + 2 (Pilfer since Nov 10: 1 per minion placed this round)', () => {
-    let s = table(Q, { n: 2, round: 1, res: [{}, { gold: 9 }], members: [['thieves.boss', 'thieves.fence', 'thieves.secondstory']] });
+    let s = table(Q, { n: 2, round: 1, res: [{}, { yellow: 9 }], members: [['thieves.boss', 'thieves.fence', 'thieves.secondstory']] });
     s = answer(s, `slot:${slot(s, 'thieves', 'Pilfer')}`);
     let k = 0;
-    while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('gold')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('gold')).id); k++; }
-    expect(9 - s.players[1].res.gold).toBe(3);
+    while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('yellow')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('yellow')).id); k++; }
+    expect(9 - s.players[1].res.yellow).toBe(3);
   });
   it('The Boss alone: no other Magenta member, no extra', () => {
-    let s = table(Q, { n: 2, round: 1, res: [{}, { gold: 9 }], members: [['thieves.boss']] });
+    let s = table(Q, { n: 2, round: 1, res: [{}, { yellow: 9 }], members: [['thieves.boss']] });
     s = answer(s, `slot:${slot(s, 'thieves', 'Pilfer')}`);
     let k = 0;
-    while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('gold')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('gold')).id); k++; }
-    expect(9 - s.players[1].res.gold).toBe(1);
+    while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('yellow')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('yellow')).id); k++; }
+    expect(9 - s.players[1].res.yellow).toBe(1);
   });
   it('Mob Boss with 1 other Magenta member: On Recruit steals 2 from each rival', () => {
-    let s = table(Q, { n: 3, round: 2, res: [{ magenta: 9, gold: 9 }, { red: 5 }, { blue: 5 }], members: [['thieves.fence']], shop: ['thieves.mobboss'] });
+    let s = table(Q, { n: 3, round: 2, res: [{ magenta: 9, yellow: 9 }, { red: 5 }, { blue: 5 }], members: [['thieves.fence']], shop: ['thieves.mobboss'] });
     s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = answer(s, `card:${uidIn(s, 'thieves.mobboss', 'shop')}`);
     while (s.pending && s.pending.player === 0 && s.pending.prompt?.includes('pay')) s = answer(s, s.pending.options[0].id);
@@ -179,12 +178,12 @@ describe('REPLACE14: Misers (interest), Preachers (cash-out), Bandit (per rival)
     expect(log(s)).toContain("P1's Preachers: 2 white into 4 followers.");
   });
   it('Bandit: steal 3 split 1-1-1 across 3 rivals gives +3 followers', () => {
-    let s = table(['red', 'thieves'], { n: 4, round: 2, res: [{ magenta: 9, red: 9 }, { red: 3 }, { blue: 3 }, { gold: 3 }], shop: ['thieves.partners'] });
+    let s = table(['red', 'thieves'], { n: 4, round: 2, res: [{ magenta: 9, red: 9 }, { red: 3 }, { blue: 3 }, { yellow: 3 }], shop: ['thieves.partners'] });
     s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = answer(s, `card:${uidIn(s, 'thieves.partners', 'shop')}`);
     while (s.pending && s.pending.player === 0 && s.pending.prompt?.includes('pay')) s = answer(s, s.pending.options[0].id);
     const b = s.players[0].bonus;
-    for (const c of ['red', 'blue', 'gold']) s = answer(s, s.pending.options.find(o => String(o.id).includes(c) && !o.disabled).id);
+    for (const c of ['red', 'blue', 'yellow']) s = answer(s, s.pending.options.find(o => String(o.id).includes(c) && !o.disabled).id);
     expect(s.players[0].bonus).toBe(b + 3);
     expect(log(s)).toContain("P1's Bandit: +3 followers (3 rivals stolen from).");
   });

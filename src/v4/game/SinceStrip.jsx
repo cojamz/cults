@@ -80,7 +80,7 @@ function useCompact() {
  * area when its done" and "always show the full story card", and the separate card under the list "is just awkward"):
  * every line, each name a hover target; it flies in from where the story card stood on the hub.
  */
-function FullRow({ e, state, hover, name }) {
+function FullRow({ e, state, hover, name, brief = false }) {
   const ref = useRef(null);
   useLayoutEffect(() => {
     const el = ref.current, h = takeHubGone();
@@ -116,7 +116,7 @@ function FullRow({ e, state, hover, name }) {
     return done;
   }, [e.n]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <li ref={ref} className="since-row since-full" data-since-full={e.n} data-turn-story={[e.head, ...e.lines].join(' · ')} style={{ '--pc': playerColor(e.actor) }}
+    <li ref={ref} className={`since-row since-full${brief ? ' brief' : ''}`} data-since-full={e.n} data-turn-story={[e.head, ...e.lines].join(' · ')} style={{ '--pc': playerColor(e.actor) }}
       onPointerEnter={e.spaceKey ? () => locate(e.spaceKey, true) : undefined} onPointerLeave={e.spaceKey ? () => locate(e.spaceKey, false) : undefined}>
       <span className="sf-head"><Minion color={playerColor(e.actor)} emoji={seatEmoji(state, e.actor)} size={14} /><b className="who">{name(e.actor)}</b>{' '}
         <HoverNames state={state} hover={hover} text={e.head.replace(new RegExp(`^${name(e.actor).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} `), '')} uids={e.uids} />{/* the space's words from the board, as on the one-line rows: the wheel prints no names (picky bot, Nov 11:
@@ -294,7 +294,9 @@ export default function SinceStrip({ state, entries: rivals, own = null, me, you
   ) : null;
   // one row: the turn whole (yours as it builds, Cory, Nov 6; or the newest finished one, while the room holds it whole),
   // else its one line
-  const row = e => (e === own || (e.n === full && lvl === 0) ? <FullRow key={`f${e.n}`} e={e} state={state} hover={hover} name={name} /> : (
+  // (your own turn as it builds stays whole, but a level down it drops its board words too, as the one-line rows do: a
+  // long space's words, Count Heads', left it taller than the room and cut for seconds, Nov 24)
+  const row = e => (e === own || (e.n === full && lvl === 0) ? <FullRow key={`f${e.n}`} e={e} state={state} hover={hover} name={name} brief={lvl >= 1} /> : (
             // the space the line names lights on the wheel while any of the line is pointed at, not only its name (picky
             // bot, Nov 4: the wheel prints no names, so readers couldn't find the space a rival took)
             <li key={e.n} className={`since-row${e.hit ? ' hit' : ''}${lvl === 1 ? ' brief' : ''}`} hidden={lvl >= 2 || undefined} data-says-same={saysSame(words(state, e.spaceKey), e.short) || undefined} data-clip-ok={compact || undefined} data-short={compact && e.short ? e.short : undefined} style={{ '--pc': playerColor(e.actor) }} onClick={pinLine}

@@ -21,7 +21,7 @@ const readJ = (p, d = null) => { try { return JSON.parse(readFileSync(p, 'utf8')
 const readT = p => { try { return readFileSync(p, 'utf8'); } catch { return ''; } };
 const node = (f, env = {}) => JSON.parse(execFileSync('node', [here + f], { env: { ...process.env, ...env }, maxBuffer: 1 << 27, stdio: ['ignore', 'pipe', 'ignore'] }));
 
-const COLOR = { red: 'Red', purple: 'Purple', silver: 'Silver', yellow: 'Yellow', market: 'Blue', thieves: 'Magenta', trading: 'White', echo: 'Green', guests: 'Grey', gold: 'Gold' };
+const COLOR = { red: 'Red', purple: 'Purple', silver: 'Silver', yellow: 'Yellow', market: 'Blue', thieves: 'Magenta', trading: 'White', echo: 'Green', guests: 'Grey' };
 const LIVE_COLORS = new Set(['red', 'purple', 'silver', 'yellow', 'market', 'thieves', 'trading', 'echo', 'guests']);
 const PROTECTED = new Set(['heiresses', 'dabblers', 'spoilsport', 'spoilsports', 'magpie', 'hoarder']); // Cory, Nov 4
 const norm = s => (s || '').toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, ' ').trim();
@@ -111,16 +111,16 @@ const push = c => {
   });
 };
 for (const m of base.members) {
-  if (!LIVE_COLORS.has(m.color) && m.color !== 'gold') continue; // blue and green are old test stand-ins
-  const status = m.color === 'gold' ? 'archived' : (m.retired || m.cut || m.cut10) ? 'archived' : 'live';
+  if (!LIVE_COLORS.has(m.color)) continue; // blue and green are old test stand-ins (Gold left the game, Nov 24)
+  const status = (m.retired || m.cut || m.cut10) ? 'archived' : 'live';
   if (m.artifact) continue;
   push({ kind: 'member', name: m.name, text: m.text, color: m.color, price: m.price, status,
-    why_left: (cutWhy.get(sing(m.name)) && (m.cut || m.cut10)) ? `Cut: ${cutWhy.get(sing(m.name))}` : (cutWhy.get('id:' + String(m.id).split('.').pop()) && (m.cut || m.cut10)) ? `Cut (${cutWhy.get('id:' + String(m.id).split('.').pop())}).` : m.color === 'gold' ? 'Gold is parked: not one of the colors on the table.' : m.retired ? 'Retired for a replacement.' : m.cut10 ? 'Left out of the 10-card deck.' : m.cut ? 'Cut from the deck.' : null });
+    why_left: (cutWhy.get(sing(m.name)) && (m.cut || m.cut10)) ? `Cut: ${cutWhy.get(sing(m.name))}` : (cutWhy.get('id:' + String(m.id).split('.').pop()) && (m.cut || m.cut10)) ? `Cut (${cutWhy.get('id:' + String(m.id).split('.').pop())}).` : m.retired ? 'Retired for a replacement.' : m.cut10 ? 'Left out of the 10-card deck.' : m.cut ? 'Cut from the deck.' : null });
 }
 for (const s of base.spaces) {
-  if (!LIVE_COLORS.has(s.color) && s.color !== 'gold') continue;
-  const status = s.color === 'gold' ? 'archived' : 'live';
-  push({ kind: 'space', name: s.name, text: s.text, color: s.color, round: ROMAN[s.round] || s.round, status, why_left: s.color === 'gold' ? 'Gold is parked: not one of the colors on the table.' : null });
+  if (!LIVE_COLORS.has(s.color)) continue;
+  const status = 'live';
+  push({ kind: 'space', name: s.name, text: s.text, color: s.color, round: ROMAN[s.round] || s.round, status, why_left: null });
   if (status === 'live') liveSpaceKeys.add(norm(s.name));
 }
 // spaces only in the retired notes or switches' old cards

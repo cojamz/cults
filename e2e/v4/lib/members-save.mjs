@@ -1,8 +1,8 @@
 // A saved hot-seat game for the members gate (e2e/v4/members.mjs): P1 (the only person) is about to place in round I
-// on a table of Gold, Follow Suit, Trading and Magenta, holding a full spread of members: use-once ones ready (Lottery Winner,
-// Heiresses), one worth nothing now (Safecracker: the rivals hold nothing), one already used (Gambler), switches
-// (Midas on, Translator off), reactions (Gold Panner, Forger), a game-end scorer
-// (Baron) and one the engine would refuse now (Pawnbroker: nothing to sell). P2 holds Raider (a use still in hand; Shadow's copy is a recruit trigger now, not a use);
+// on a table of Silver, Follow Suit, Trading and Magenta, holding a full spread of members: use-once ones ready (Bride and
+// Groom, Heiresses), one worth nothing now (Safecracker: the rivals hold nothing), one already used (Ballroom Dancers), a
+// switch (Translator off), reactions (Majordomo, Forger), a game-end scorer
+// (Patron Saints) and one the engine would refuse now (Pawnbroker: nothing to sell). P2 holds Raider (a use still in hand; Shadow's copy is a recruit trigger now, not a use);
 // P3 lies low (safe this round), and only P3; P4 holds 13
 // members (its card scrolls inside the window). The round-start snapshot
 // is saved too. No round-start income, so the seat has room for six figures.
@@ -13,10 +13,10 @@ import { buildStamp } from './stamp.mjs';
 import { freeCard } from './deal.mjs';
 
 const SEATS = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
-export const QUADS = ['gold', 'echo', 'trading', 'thieves'];
-export const HAND = ['gold.jackpot', 'gold.speculator', 'gold.midas', 'gold.prospector', 'gold.tycoon',
+export const QUADS = ['silver', 'echo', 'trading', 'thieves']; // Silver and its members in Gold's place since Gold left the game (Cory, Nov 24)
+export const HAND = ['silver.gala', 'silver.ballroom', 'silver.majordomo', 'silver.patronsaints',
   'echo.translator', 'echo.tuningfork', 'trading.heiress', 'trading.pawnbroker', 'thieves.bigscore'];
-export const RIVAL = ['gold.thrift', 'trading.raider'];
+export const RIVAL = ['silver.retinue', 'trading.raider'];
 const play = (s, move) => { const next = applyMove(s, move); next.history = [...(s.history || []), [move.player, move.option]]; return next; };
 
 export function membersSave(from = 1) {
@@ -28,7 +28,7 @@ export function membersSave(from = 1) {
     for (let n = 0; n < 200 && !(s.round === 1); n++) s = play(s, chooseBotMove(s, rand));
     if (s.round !== 1) continue;
     s = structuredClone(s);
-    // a member the cull leaves out of the deck (Lottery Winner, Midas, Translator, Pawnbroker, Safecracker) is minted
+    // a member the cull leaves out of the deck (Translator, Pawnbroker, Safecracker…) is minted
     const give = (pid, id) => {
       const u = freeCard(s, id);
       s.shop = s.shop.filter(x => x !== u);
@@ -44,9 +44,8 @@ export function membersSave(from = 1) {
     // (no steal guard such as Bodyguards either: it would make P4 "safe this round" too, and only P3 lies low)
     for (const u of s.pile.filter(x => !s.players.some(p => p.members.includes(x)) && memberWeight(s, x) === 1 && !cardDef(s, x).guardSteal).slice(0, 13)) give(3, s.cards[u].def);
     while (s.shop.length < shopSize(s) && s.pile.length) s.shop.push(s.pile.shift());
-    s.cards[uids[HAND.indexOf('gold.midas')]].on = true;
     s.cards[uids[HAND.indexOf('echo.translator')]].on = false;
-    s.cards[uids[HAND.indexOf('gold.speculator')]].used = true;
+    s.cards[uids[HAND.indexOf('silver.ballroom')]].used = true;
     for (const r of s.resources) s.players[0].res[r] = 3;
     // P3 lies low (w2b #21)
     s.players[2].hideout = 1;
@@ -54,19 +53,21 @@ export function membersSave(from = 1) {
     const roundStart = s;
     for (let n = 0; n < 400 && !(s.pending && s.pending.player === 0 && s.pending.kind === 'place'); n++) s = play(s, chooseBotMove(s, rand));
     if (!(s.round === 1 && s.pending && s.pending.player === 0 && s.pending.kind === 'place')) continue;
-    // P2 still holds the 7 gold Lottery Winner wins (the gate's "Use: +7"), and Raider still in hand (m9): a bot
-    // that spent gold or used Raider before P1's turn moves to the next seed
+    // Raider still in hand (m9): a bot that used Raider before P1's turn moves to the next seed
     const raider = s.players[1].members.find(u => s.cards[u].def === 'trading.raider');
     if (raider == null || s.cards[raider].used || s.players[2].hideout !== 1) continue;
     // Safecracker ("steal 2 resources from each rival", v0.99.546) finds nothing to take: the rivals hold nothing now
     // (a use worth nothing now, w2b #19; before the new text it was "no rival holds 2 magenta")
     for (const o of s.players.slice(1)) for (const r of Object.keys(o.res)) o.res[r] = 0;
-    // and P1 holds 3 of each, whatever the bots took on the way (Lottery Winner's "+7": 3 gold, +2, doubled)
+    // and P1 holds 3 of each, whatever the bots took on the way (Bride and Groom doubles the 3 silver)
     for (const r of s.resources) s.players[0].res[r] = 3;
     // only P3 lies low (a bot that took a hideout of its own on the way would light a second "safe this round")
     if ([0, 1, 3].some(k => s.players[k].hideout)) continue;
+    // what Bride and Groom gives P1 now, as the engine plays it (its 3 silver doubled, with whatever P1's cloak adds)
+    const gala = uids[HAND.indexOf('silver.gala')];
+    const galaGain = applyMove(s, { player: 0, option: `use:${gala}` }).players[0].res.silver - s.players[0].res.silver;
     return {
-      seed, uids: Object.fromEntries(HAND.map((id, k) => [id, uids[k]])),
+      seed, galaGain, uids: Object.fromEntries(HAND.map((id, k) => [id, uids[k]])),
       save: { config: { seats: SEATS.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal', quadrants: QUADS }, state: s, undo: null, savedAt: Date.now() },
       roundStart: { seed: s.seed, round: 1, names: s.players.map(p => p.name).join('|'), state: roundStart },
     };

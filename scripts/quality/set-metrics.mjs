@@ -25,7 +25,7 @@ for (const line of board.split('\n')) {
   else if ((m = line.match(/^\s+(I{1,3})\s+([^:]+):\s*(.*)$/))) cards.push({ kind: 'space', color: col, round: m[1], name: m[2].trim(), text: m[3] });
 }
 const COLORS = [...new Set(cards.map(c => c.color))];
-const RES = ['gold', 'red', 'purple', 'silver', 'yellow', 'blue', 'magenta', 'white', 'green'];
+const RES = ['red', 'purple', 'silver', 'yellow', 'blue', 'magenta', 'white', 'green'];
 const names = cards.map(c => c.name);
 
 // ---- shapes: the mechanism families a designer can fall into --------------

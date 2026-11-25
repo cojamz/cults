@@ -105,7 +105,8 @@ for (const size of [{ width: 1270, height: 700 }, { width: 900, height: 700 }, {
     const res = await page.evaluate(() => [...document.querySelectorAll('.lt-seat[data-pid="0"] [data-res]')].map(e => e.getAttribute('title') || e.textContent));
     // a cost is drawn as shapes: its words are in its label
     const costs = await page.$$eval('.lt-shop .card .lt-cost', els => els.map(e => e.getAttribute('aria-label') || e.textContent));
-    for (const c of costs) for (const color of ['magenta', 'purple', 'silver', 'white', 'yellow']) if (c.includes(color)) errors.push(`[${tag}] (l4) a cost names ${color}, which isn't on this table: "${c}" (${res.join(',')})`);
+    for (const c of costs) for (const color of ['magenta', 'purple', 'silver', 'white']) // yellow is on the classic table since Gold left (Nov 24)
+      if (c.includes(color)) errors.push(`[${tag}] (l4) a cost names ${color}, which isn't on this table: "${c}" (${res.join(',')})`);
     // place, answer any question, then the buy step
     const slot = await page.$('.slot.can .base');
     const bb = await slot.boundingBox();

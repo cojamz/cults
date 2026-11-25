@@ -90,16 +90,16 @@ async function receipt(tag, save, sel) {
 try {
   // (f1) 5 for 5 with exactly 5 in two colors, the rivals holding more of both colors (no lead lost). Was 8 for 8 on the
   // retired 'big' tier; the buys are 1 for 1, 5 for 5 and 10 for 10 since 2026-10-16 (decisions.md).
-  await receipt('f1', buySave({ def: null, res: { gold: 3, red: 0, blue: 2, green: 0 }, rivals: { gold: 6, blue: 6 } }).save, '.lt-rates [data-rate="mid"]');
-  // (f2) Gold Panner at exactly its cost (read from the card, so a price change doesn't break the gate)
+  await receipt('f1', buySave({ def: null, res: { yellow: 3, red: 0, blue: 2, green: 0 }, rivals: { yellow: 6, blue: 6 } }).save, '.lt-rates [data-rate="mid"]');
+  // (f2) Tithe Collector at exactly its cost (read from the card, so a price change doesn't break the gate)
   {
-    const pd = defById('gold.prospector'), cost = pd.s + pd.w;
-    const { save, uid } = buySave({ def: 'gold.prospector', res: { gold: cost, red: 0, blue: 0, green: 0 }, rivals: { gold: cost + 1 } });
+    const pd = defById('yellow.dutycollector'), cost = pd.s + pd.w;
+    const { save, uid } = buySave({ def: 'yellow.dutycollector', res: { yellow: cost, red: 0, blue: 0, green: 0 }, rivals: { yellow: cost + 1 } });
     await receipt('f2', save, `.lt-shop .lt-card[data-uid="${uid}"]`);
   }
   // (f3) 1 for 1 with four colors: several ways, the sheet beside the tile
   {
-    const { save } = buySave({ def: null, res: { gold: 2, red: 2, blue: 1, green: 1 } });
+    const { save } = buySave({ def: null, res: { yellow: 2, red: 2, blue: 1, green: 1 } });
     const p = save.state.players[0];
     const { ctx, page } = await open('f3', save);
     const tile = await rectOf(page, '.lt-rates [data-rate="small"]');

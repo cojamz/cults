@@ -1,6 +1,6 @@
 // Imports the pixel art drawn under design/prototypes/pixel-art/ into src/v4/art/icons/ as ES modules:
 //  - icons.js (calibration, globalThis.CultIcons) and icons-<batch>.js (globalThis.CultIconBatches[<batch>]; grids in
-//    `px` or `rows`; ids are engine ids like "gold.banker"); every icon must pass CultIcons.validate;
+//    `px` or `rows`; ids are engine ids like "red.host"); every icon must pass CultIcons.validate;
 //  - emojis.js (globalThis.CultMinions): each player's minion (16×16) and its leader emblem (8×8), with palettes;
 //  - leaders.js (globalThis.CultLeaders), when it lands: 32×32 leader figures.
 // Then writes src/v4/art/icons/index.js. Run after a batch lands: node scripts/v4-art-import.mjs
@@ -31,7 +31,6 @@ const clean = i => ({ id: i.id, name: i.name, kind: i.kind, sphere: i.sphere, px
 // The calibration set is keyed by kebab names. A card renamed since (action names, 2026-10-14) is rekeyed to its
 // engine id and its new name here, so the game keeps its drawing; the design mocks keep using the kebab ids.
 const CAL_KEYS = {
-  'joint-venture': ['gold.jv', 'Kickback'], strike: ['gold.strike', 'Double Down'],
   pickpocket: ['thieves.pickpocket', 'Help Yourself'], heist: ['thieves.heist', 'Poach'],
 };
 const calib = i => (CAL_KEYS[i.id] ? { ...clean(i), id: CAL_KEYS[i.id][0], name: CAL_KEYS[i.id][1] } : clean(i));

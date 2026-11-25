@@ -4,7 +4,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 // default speed (Steady), for each move P1 makes, a piece (or the member itself) must fly from where the rules take it
 // to where they put it, and be in the air before the number it lands on changes:
 //  (t1) a steal in round I and (t2) one in round III: from the rival's stack to yours;
-//  (t3) a gift (Grease a Palm): from the space's resource (its color's rim on the wheel, where a space's resources come
+//  (t3) a gift (Raise a Glass; Grease a Palm until Gold left, Nov 24): from the space's resource (its color's rim on the wheel, where a space's resources come
 //       from since the wheel-slice rework) to the rival's stack;
 //  (t4) a member taken (Poach): the member flies from the rival's seat to its new chip in yours;
 //  (t5) a member given to a rival (Sleight of Hand's shop member; Shake Down's ransom left the wheel Nov 10): from the shop to

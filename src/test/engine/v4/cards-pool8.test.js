@@ -2,7 +2,6 @@
 // Idea pipeline pool 8 (Nov 7; scripts/ideas/README.md): bot-only candidates, never dealt in a real game. One test per
 // sentence of each card's text, through real moves, with the log naming the card. Candidates are un-retired for this
 // file only, as scripts/lib/pool-rotate.mjs does in bot games.
-import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { defById } from '../../../engine/v4/content/index.js';
 import { resume, contextFor } from '../../../engine/v4/core.js';
@@ -17,8 +16,8 @@ const undo = [];
 beforeAll(() => { for (const id of MEMBERS) { const d = defById(id); d.retired = false; undo.push(() => { d.retired = true; }); } });
 afterAll(() => { while (undo.length) undo.pop()(); });
 
-const Q = ['red', 'market', 'yellow', 'gold'];
-const RICH = { red: 20, blue: 20, yellow: 20, gold: 20 };
+const Q = ['red', 'market', 'yellow', 'silver'];
+const RICH = { red: 20, blue: 20, yellow: 20, silver: 20 };
 const named = (s, name) => linesNaming(s.log, name);
 const still = o => sceneQ({ quadrants: Q, ...o, queue: [] });
 const go = (s, queue) => { s.queue = queue; return resume(s); };
@@ -54,14 +53,14 @@ function giveDear(s) {
 describe('Red candidates', () => {
   it('Kinfolk: whenever a member joins your cult, +1 follower per other member of its color you have', () => {
     const s = still({ members: [['red.kinfolk']] });
-    give(s, 0, 'red'); give(s, 0, 'gold');
+    give(s, 0, 'red'); give(s, 0, 'silver');
     const [u] = give(s, 1, 'red'), ctx = contextFor(s);
     ctx.moveMember(u, s.players[1], s.players[0]);
     expect(s.players[0].bonus).toBe(2); // Kinfolk and the other red
     const t = still({ members: [['red.kinfolk']] });
-    const [g] = give(t, 1, 'gold');
+    const [g] = give(t, 1, 'silver');
     contextFor(t).moveMember(g, t.players[1], t.players[0]);
-    expect(t.players[0].bonus).toBe(0); // no other gold member
+    expect(t.players[0].bonus).toBe(0); // no other silver member
     expect(named(s, 'Kinfolk')[0]).toMatch(/joins, \+2 followers/);
   });
   it('Kindred: +1 follower per 2 other members of its color you have', () => {
@@ -111,8 +110,8 @@ describe('Red candidates', () => {
     const from = s.players.findIndex(p => p.members.includes(u));
     s = move(s, o.id);
     expect(s.pending.prompt).toMatch(/^Nosy Neighbors: \+1 of which color \(1 of 2\)/); // the owner picks each
-    s = move(s, 'color:red'); s = move(s, 'color:gold');
-    expect(s.players[0].res.red).toBe(1); expect(s.players[0].res.gold).toBe(1);
+    s = move(s, 'color:red'); s = move(s, 'color:silver');
+    expect(s.players[0].res.red).toBe(1); expect(s.players[0].res.silver).toBe(1);
     expect(s.players[to].members).toContain(u);
     expect(s.players[from].members).not.toContain(u);
     expect(Object.values(s.players[0].res).reduce((a, b) => a + b, 0)).toBe(2);
@@ -121,7 +120,7 @@ describe('Red candidates', () => {
   });
   it('Ambulance Chasers: whenever a member leaves a rival\'s cult, +1 follower (not your own)', () => {
     const s = still({ n: 3, members: [['red.ambulancechasers']] });
-    const [mine] = give(s, 0, 'red'), [theirs] = give(s, 1, 'gold');
+    const [mine] = give(s, 0, 'red'), [theirs] = give(s, 1, 'silver');
     const ctx = contextFor(s);
     ctx.moveMember(theirs, s.players[1], s.players[2]);
     expect(s.players[0].bonus).toBe(1);
@@ -134,7 +133,7 @@ describe('Red candidates', () => {
 describe('Blue candidate', () => {
   it('Impulse Buyers: whenever you send shop members to the discard pile, recruit an extra time this turn', () => {
     let s = still({ round: 2, members: [['market.impulsebuyers']], res: [RICH] });
-    const g = faceUp(s, 'gold');
+    const g = faceUp(s, 'silver');
     s = go(s, turn(0, 1));
     s = take(s, 'market.pricecheck');
     s = move(s, s.pending.options.find(o => o.kind === 'card' && o.value !== g).id); // Bury one
@@ -146,7 +145,7 @@ describe('Blue candidate', () => {
   });
   it('Impulse Buyers: without it, Bury leaves one recruit', () => {
     let s = still({ round: 2, res: [RICH] });
-    const g = faceUp(s, 'gold');
+    const g = faceUp(s, 'silver');
     s = go(s, turn(0, 1));
     s = take(s, 'market.pricecheck');
     s = move(s, s.pending.options.find(o => o.kind === 'card' && o.value !== g).id);
@@ -159,7 +158,7 @@ describe('Yellow candidates', () => {
   it('Sightseers: recruiting a member of a color none of your members have gives an extra recruit this turn', () => {
     let s = still({ members: [['yellow.sightseers']], res: [RICH] });
     give(s, 0, 'red');
-    const g = faceUp(s, 'gold');
+    const g = faceUp(s, 'silver');
     s = take(go(s, turn(0, 1)), 'Gather the Kin');
     s = move(s, `card:${g}`);
     expect(named(s, 'Sightseers').some(l => /new color, recruit an extra time/.test(l))).toBe(true);
@@ -177,13 +176,13 @@ describe('Yellow candidates', () => {
   it('Souvenir Hunters: a new color pays +1 follower per color among your members', () => {
     let s = still({ members: [['yellow.souvenirhunters']], res: [RICH] });
     give(s, 0, 'red');
-    const g = faceUp(s, 'gold');
+    const g = faceUp(s, 'silver');
     s = take(go(s, turn(0, 1)), 'Gather the Kin');
     const sb = s.players[0].bonus;
     s = move(s, `card:${g}`);
     const gath = x => +((x.log.join('\n').match(/Gather the Kin: \+(\d+) follower/) || [0, 0])[1]);
     expect(gath(s)).toBeGreaterThan(0);
-    expect(s.players[0].bonus - sb).toBe(3 + gath(s)); // yellow, red, gold; and Gather the Kin's +1 per 3 paid
+    expect(s.players[0].bonus - sb).toBe(3 + gath(s)); // yellow, red, silver; and Gather the Kin's +1 per 3 paid
     let t = still({ members: [['yellow.souvenirhunters']], res: [RICH] });
     give(t, 0, 'red');
     const r = faceUp(t, 'red');

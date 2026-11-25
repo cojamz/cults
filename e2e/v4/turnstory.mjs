@@ -1,6 +1,6 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: "what just happened" at 1270×700 (RC1 panel items 1–4). A resumed hot-seat game where P1 (the only person)
-// ends round I's first pass, so the snake turns round on P1, and P1 holds Midas (on).
+// ends round I's first pass, so the snake turns round on P1, and P1 holds Translator (on; Midas's place since Gold left, Nov 24).
 //  (t1) the seats' turn words count the snake's double (Cory, 2026-10-16: the rail is gone, the seats say the turns):
 //       P1's seat reads "two turns in a row" and no other seat reads "next" (the explanation, naming the snake
 //       order, is its hover card's label, not a native title);
@@ -15,7 +15,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //  (t3) after a placement, the turn card names the space actually taken (the engine's log is the truth);
 //  (t4) the snake turnaround reads "Your turn again (snake order)", never "Extra turn";
 //  (t5) the second placement gets its own card: its space, and nothing from the first;
-//  (t6) the Midas switch shows its state (on), and its hover says so and what a click does (its label: since blind
+//  (t6) the Translator switch shows its state (on), and its hover says so and what a click does (its label: since blind
 //       panel 1 the seat's switch opens a hover card instead of a native title, and the label is that card's label);
 //  (t7) the full log opens from the strip in one tap;
 //  (t8) a space or member named in the strip, or in the log, opens its card on the board's hover layer (the space card,
@@ -239,7 +239,7 @@ try {
   if (v.cardBox && (v.cardBox.b > 700 || v.cardBox.y < 0)) fail(`the turn card runs off the screen: ${JSON.stringify(v.cardBox)}`, 't3');
   // (t6) the switch, in the buy step
   const sw = v.sw[0];
-  if (!sw || sw.state !== 'on' || !/\bon$/.test(sw.text) || !/Midas is on/.test(sw.title) || !/switch it off/.test(sw.title)) fail(`the Midas switch: ${JSON.stringify(v.sw)}`, 't6');
+  if (!sw || sw.state !== 'on' || !/\bon$/.test(sw.text) || !/Translator is on/.test(sw.title) || !/switch it off/.test(sw.title)) fail(`the Translator switch: ${JSON.stringify(v.sw)}`, 't6');
   await page.screenshot({ path: `${SHOTS}/3-first-placement.png` });
   // (t9) "Done, no recruit" under the follower buys, in your buy step
   {
