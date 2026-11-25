@@ -1017,8 +1017,10 @@ const echoQ = {
         const pl = ctx.state.placedQ, key = ctx.placement?.key;
         // only the space this minion went on (a copy or a later step on the same turn pays nothing more)
         if (!pl || pl.round !== ctx.state.round || pl.prev !== pl.q || !key || Number(key.split('-')[0]) !== pl.q || ctx.state.lastPlaced?.pid !== owner.id) return;
-        if (pl.paid) return;
-        pl.paid = true;
+        // once per Lackey card per placement: a Doppelganger copying Lackey pays its own +2, like every copied trigger
+        const cards = ctx.membersOf(owner).filter(c => c.def.id === 'echo.lackey' || c.copy === 'echo.lackey').length || 1;
+        if ((pl.paid || 0) >= cards) return;
+        pl.paid = (pl.paid || 0) + 1;
         ctx.gain(owner, 'green', 2); ctx.log(`${owner.name}'s Lackey: same color as the minion before, +2 green.`);
       },
       ...see(info => 2 * endsAhead(info).length),
