@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.810 — 2026-11-25
+
+- Blue Bloods and Patron Saints are worth 2 followers and count as 2 members
+
 ## v0.99.809 — 2026-11-25
 
 - Wet Nurse no longer pays +3 when you recruit it, or another member, from the discard pile
