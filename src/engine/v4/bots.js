@@ -662,6 +662,7 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null, 
   const v = RING_VALUE[s.round - 1];
   let out = 0;
   for (const qid of s.quadrants) {
+    if (qid === 'trading' && WHITE_BLIND >= 0 && DECIDER === WHITE_BLIND) continue;
     let easedHere = null;
     const row = contestScores(s, ctx, table, qid);
     if (!row) continue;
@@ -681,7 +682,10 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null, 
       easedHere = eased; // robust bot: blended with the plain reading below
     }
     let plain = 0;
-    const certain = mine >= other ? 1 : 0;
+    // TIEHALF bot test (Nov 25; Cory: "it's your bots over indexing on that", on White's fewest members): a tie pays
+    // half the prize, rounded up (core.js), but counted as the whole prize, so four empty cults in round I each saw
+    // White's full prize and every recruit as losing it. On, a tie at the round's end is worth half.
+    const certain = mine > other ? 1 : mine === other ? (TIE_HALF ? 0.5 : 1) : 0;
     // BOTLEAD (bot audit, Nov 12; Cory: Normal bots "took Build Up first"): a lead held now counted 75% of this round's
     // prize and of later rounds' even on the round's first turn, when every rival can still pass it, so every Normal bot
     // in 40 of 40 games opened on Green's contest (a 1-minion lead). With the fix, a lead or tie is surer as the round runs out.
@@ -781,6 +785,12 @@ function seeUse(state, s, me, uid) {
 // in 93% of the rounds it was open and its takers won 20% (7 points under players as wide). With the fix on, the
 // forecast drops members still on loan this round (core endRound discards them before scoring).
 let LEAD_FIX = false;
+const TIE_HALF = globalThis.process?.env?.TIEHALF === '1';
+// WHITEBLIND bot test (Nov 25; Cory: "it's your bots over indexing on that"): the seat named here ignores White's
+// contest (for itself and its rivals) when it decides; the other seats play as today. If that seat wins more, today's
+// bots value White's contest too highly.
+const WHITE_BLIND = globalThis.process?.env?.WHITEBLIND === undefined ? -1 : Number(globalThis.process.env.WHITEBLIND);
+let DECIDER = -1;
 let MINION_FIX = globalThis.process?.env?.BOTMINION !== '0';
 export const setMinionFix = on => { MINION_FIX = !!on; };
 const NORMAL_LEAD = globalThis.process?.env?.BOTLEAD !== '0'; // on for Normal and Easy since Nov 12
@@ -1202,6 +1212,7 @@ export function buyShortcut(state, opts = {}) {
 export function chooseNormalMove(state, rand = Math.random, opts = {}) {
   const pend = state.pending;
   if (!pend) return null;
+  DECIDER = pend.player;
   const move = o => ({ player: pend.player, option: o.id });
   switch (pend.kind) {
     case 'setup': return setupPick(pend, rand);

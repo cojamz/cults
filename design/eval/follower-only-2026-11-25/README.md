@@ -19,3 +19,10 @@ Mechanism: with 0 members the follower-only seat wins White's "fewest members" c
 
 ## Correction (Nov 25, 7am, after Cory: "white isn't in every game... gold wasn't even really in the game")
 Tables deal 4 of 8 colors at random (each color in ~50% of games); Gold was never dealt. The 85% figure was over rounds where White was dealt. Pooled post-Nov-7 builds (~440 follower-only games): White dealt 43% wins, not dealt 18%; pre-Nov-7 21% / 15%. White contest: follower-only seat wins alone 54% of rounds, ties 32%; any other seat alone 2%. Green: alone only 15% (the 81% was mostly ties). Magenta: alone 43% vs 14%. The follower-only bot never buys from the shop; spaces or rivals hand it a member in ~half its games; it ends with 0 in ~6 of 10. Script: split.py.
+
+## Do the bots over-value White's contest? (Nov 25, 7:20am, Cory: "it's your bots over indexing on that")
+White dealt in every game (MUST=trading), Normal, 4 seats, seeds 1-500, DECK=10, byColor.
+- Bot contest estimate counted a tie as the whole prize (core pays half, rounded up). TIEHALF=1 (bots.js) counts it half. Follower-only seat: control 48/100, tie-half 42/100 (noise). Normal seats' members 5.1 -> 5.3. Flag left off.
+- WHITEBLIND=0: seat 0 ignores White's contest when deciding; same seeds, 400 games without the follower-only seat. Seat 0 wins 121 (30%) today vs 108 (27%) blind; members 5.2 -> 6.5; lead over best rival -2.2 +- 1.8 followers. So shrinking with White out is right, not a bot over-valuation.
+- Normal seats hold 5.9 members with White dealt vs 8.7 without (bisect pooled).
+- Agent primer (design/notes/expert-primer.md) says nothing pushing fewest members; its line "Grey members are not a color" is stale against Yellow's live contest "(grey is a color)".
