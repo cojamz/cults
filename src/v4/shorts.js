@@ -63,7 +63,7 @@ const LIVE_WORDS = {
   silver: { toast: '+4 silver; each rival +2 silver', polish: '+3 silver; then turn all your silver into one color; each rival +1 silver', flaunt: '+1 of each other color per 3 silver held (up to 3 each)' },
   yellow: {
     dilute: '+2 yellow; +3 yellow if you recruit a new color', makeover: '+4 yellow; turn up to 8 of rivals’ resources yellow',
-    meltingpot: 'per member color: +1 follower and +1 of it', offering: '+5 yellow; each rival discards 2 resources of each of your members’ colors',
+    meltingpot: 'per member color: +1 follower and +1 of it', offering: '+5 yellow; each rival discards 2 of each color your members have',
   },
   market: {
     testdrive: 'use a shop member’s effect now, then discard it', markdown: '+3 blue; recruit from the discard pile, paying 2 less',

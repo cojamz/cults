@@ -153,7 +153,7 @@ const P = {
     meltingpot: { verb: 'Per member color: +1 @f and +1 of it' }, // Cory, Nov 11; grey: 1 of any (hover)
     makeover: { verb: '+4 yellow, turn up to 8 of rivals’ resources yellow' },
     // Cory's words, "rivals discard" moved up to line 1: the center ring showed a bare "+5 yellow" (picky bot, Nov 11)
-    offering: { verb: '+5 yellow, each rival discards 2 resources', second: 'of each of your members’ colors' }, // Cory, Nov 11
+    offering: { verb: '+5 yellow, each rival discards 2 of each color your members have' }, // Cory, Nov 11
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),
     // Match the current rule: the yellow arrives before the optional swaps.
     // the condition sat in line 3, which the wheel drops: the board read "pick a color: each rival" (Cory, Nov 3: "wtf is
@@ -217,7 +217,7 @@ const P = {
     // one word for it, the hover's (w3a #22: "redo" here, "copy" there)
     refrain: { verb: 'Copy an action with your minion', note: '+1 green' }, // whose minion in line 1 (picky bot, Nov 11)
     // "not green" in line 1: the center ring drops line 2 (picky bot, Nov 11)
-    eternity: { verb: 'Copy all your minions’ spaces on one color, not green', note: '+1 green' }, // your own minions only (Cory, Nov 11 11:20pm)
+    eternity: { verb: 'Copy your spaces on one color, not green', note: '+1 green' }, // your own minions only (Cory, Nov 11 11:20pm)
   },
 };
 
