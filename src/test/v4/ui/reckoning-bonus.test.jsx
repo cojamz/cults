@@ -12,7 +12,7 @@ it('Blue Bloods with three blue members rebased to worth 1 (Cory, Nov 12): the c
     members: [['market.snob', 'market.shopaholic', 'market.windowdresser'], []] });
   s = resume(s);
   const paid = s.players[0].final.cards.find(c => c.name === 'Blue Bloods').n;
-  expect(paid).toBe(1 + 1 + 1); // Blue Bloods, Shopaholics, Window Dressers: each rebased to worth 1 and 1 member (Cory, Nov 12)
+  expect(paid).toBe(2 + 1 + 1); // Blue Bloods counts as 2 (Cory, Nov 25), Shopaholics and Window Dressers 1 each (Cory, Nov 12)
   const info = { after: s, board: s, result: { round: 'III', rows: [] } };
   const snob = reckonSteps(info).find(x => x.kind === 'bonus' && x.rule === 'Blue Bloods');
   expect(snob.prize).toBe(paid);

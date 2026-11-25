@@ -142,6 +142,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'market.swapshoppers', 'trading.heiress', // under 3 holds when Nov 11's Blue, Green and White members moved the games; blue-new-members (Old-Clothes Dealers) and cards-trading cover them (Heiresses is cut)
       'market.repeatcustomers', // under 3 holds (2, named in 1) when every member was rebased to worth 1 (Cory, Nov 12) moved the games; blue-new-members and barker cover it
       'market.trendsetter', 'trading.evictors', // under 3 holds when Green, Blue and White reached 12 members (Nov 24) moved the games; replace14 and spree-uses (Trendsetters) and replace3 / members-maybes (Evictors) cover them
+      'market.makeover', // cut; under 3 holds when Blue Bloods and Patron Saints went to worth 2 (Cory, Nov 25) moved the games; cards-market-concepts covers it
       'thieves.robinhood']); // under 3 holds when Sleepyheads and Hurriers joined Purple and Victors left (Nov 6) moved the games; cards-thieves covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
