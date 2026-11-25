@@ -861,7 +861,7 @@ function inputFor(state, task) {
       const real = opts.filter(o => o.kind === 'card' || o.kind === 'tier' || o.kind === 'use' || o.kind === 'release' || o.kind === 'swapcard');
       if (!real.length) return { kind: 'buy', prompt: '', options: [], onEmpty: task.extra ? undefined : () => log(state, `${p.name} couldn't afford anything.`) };
       opts.push({ id: 'pass', label: 'Pass', kind: 'pass' });
-      if (task.doorbuster) return { kind: 'buy', prompt: `${p.name}: Forestallers: recruit once before anyone places, or pass`, options: opts };
+      if (task.doorbuster) return { kind: 'buy', prompt: `${p.name}: Firstborn: recruit once before anyone places, or pass`, options: opts };
       if (task.lastMinute) return { kind: 'buy', prompt: `${p.name}: Dusk Buyer: recruit once before contests are scored, or pass`, options: opts };
       if (task.lateShop) return { kind: 'buy', prompt: `${p.name}: Late Shoppers: recruit once after the contests, or pass`, options: opts };
       if (task.cheap) return { kind: 'buy', prompt: `${p.name}: Ushers: also recruit a member costing ${task.cheap} or less, or pass`, options: opts };

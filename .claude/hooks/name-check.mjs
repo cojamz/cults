@@ -14,7 +14,7 @@ const nos = guide.split(/^## /m).find(s => s.startsWith('His nos')) || '';
 const refused = new Map();
 for (const line of nos.split('\n').filter(l => l.startsWith('- '))) {
   const why = line.slice(2, line.indexOf(':'));
-  const names = line.slice(line.indexOf(':') + 1).replace(/\([^)]*\)/g, '').split(',').map(s => s.trim().replace(/\.$/, '')).filter(Boolean);
+  const names = line.slice(line.indexOf(':') + 1).replace(/\([^)]*\)/g, '').split(',').map(s => s.trim().replace(/\.$/, '').trim()).filter(Boolean);
   for (const n of names) refused.set(n.toLowerCase(), why);
 }
 const norm = s => s.toLowerCase().replace(/[’']/g, "'").trim();

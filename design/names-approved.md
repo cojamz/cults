@@ -1,10 +1,11 @@
 # Names that passed the village check
 
-Every dealt member and action name must be listed here or under Awaiting rename; src/test/engine/v4/names-theme.test.js fails on any other (Cory, Nov 26, on Doorbusters: "thats not on theme", "how did Doorbusters slip through the cracks?"). A new or renamed member or action gets its name from .claude/rules/member-names.md (five candidates, three fresh judges) before it is added here.
+Every dealt member and action name must be listed here or under Awaiting rename; src/test/engine/v4/names-theme.test.js fails on any other (Cory, Nov 26, on Doorbusters: "thats not on theme", "how did Doorbusters slip through the cracks?"). A new or renamed member or action gets its name from .claude/rules/member-names.md through the naming skill (.claude/skills/naming/SKILL.md) before it is added here.
 
 ## Members
 - Abbess
 - Admirers
+- Alchemists
 - Almsgiver
 - Bannermen
 - Bargainer
@@ -45,7 +46,7 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Fairy Godmother
 - Fence
 - Ferryman
-- Forestallers
+- Firstborn
 - Forger
 - Gardeners
 - Gate-Shutter
@@ -74,8 +75,10 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Journeyman
 - Juggler
 - Lackey
+- Laggard
 - Latecomers
 - Lord of the Manor
+- Market Sweeper
 - Market-Day Shopper
 - Martyrs
 - Matchmaker
@@ -94,6 +97,7 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Pawnbrokers
 - Peddlers
 - Penitents
+- Penny-Pincher
 - Pied Piper
 - Pilgrims
 - Plague Bearer
@@ -187,8 +191,3 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Try Out
 - Welcome Strangers
 
-## Awaiting rename (flagged off theme Nov 26; Cory to decide)
-- Book Cookers
-- Last Callers
-- Regular
-- Restockers

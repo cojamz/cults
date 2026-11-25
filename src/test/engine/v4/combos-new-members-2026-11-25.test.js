@@ -311,7 +311,7 @@ describe('7e. Doorbusters ("Round Start: recruit once, before anyone places.")',
   it('a Doppelganger copying Doorbusters is a second Doorbusters: two recruits before P2 places, the second offered after the first', () => {
     const { s } = go('door', { quads: Q, queue: [{ t: 'round', r: 3 }], res: [{ blue: 60, green: 60, red: 60, magenta: 60 }, {}], members: [['market.doorbusters', 'echo.doppel'], []],
       prep: st => { st.cards[uidOf(st, 'echo.doppel', 0)].copy = 'market.doorbusters'; } }, [/Planner|Innkeeper|Auctioneer/, /pay:/, /Planner|Innkeeper|Auctioneer|Admirers/, /pay:/]);
-    expect(lines(s, /Forestallers: recruits once before anyone places/)).toHaveLength(1);
+    expect(lines(s, /Firstborn: recruits once before anyone places/)).toHaveLength(1);
     expect(s.log.filter(l => /^P1 recruited/.test(l))).toHaveLength(2);
     expect(s.log.some(l => /^P2 /.test(l))).toBe(false); // nobody has placed yet
   });

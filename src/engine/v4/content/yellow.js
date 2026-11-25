@@ -889,9 +889,9 @@ export default {
       onGameEnd: (ctx, owner) => 2 * ctx.memberColorsWithGrey(owner, { wild: false }).filter(q => ctx.countMembersOfColor(owner, q, { wild: false }) <= 3).length, // grey is a color (Cory, Nov 13)
     }),
     // Cory, 2026-10-31: named Book Cookers; "agree this gives multiple followers"
-    m('bookcooker', 'Book Cookers', 5, 4, 'On Use, once per game: rearrange your resources into any mix of colors.', { f: 3, keepCount: true, /* given back: costs 10+ */
+    m('bookcooker', 'Alchemists', /* renamed (Cory, Nov 26: "yes. but rename them WELL."); named through .claude/skills/naming */ /* was Book Cookers */ 5, 4, 'On Use, once per game: rearrange your resources into any mix of colors.', { f: 3, keepCount: true, /* given back: costs 10+ */
       activate: 'game',
-      onActivate(ctx, owner) { startLaunder(ctx, owner, 'Book Cookers'); },
+      onActivate(ctx, owner) { startLaunder(ctx, owner, 'Alchemists'); },
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.left === 0,
     }),
     // Claude's fill-in, the second big card

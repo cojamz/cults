@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Cory's Nov 11 member calls for White and Purple (design/decisions.md, 9:10pm and 9:12pm Eastern):
-// Mourners replaces Undertaker, Connoisseurs fills White's last slot, Last Callers fills Purple's open slot.
+// Mourners replaces Undertaker, Connoisseurs fills White's last slot, Laggard fills Purple's open slot.
 import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
 import { describe, it, expect } from 'vitest';
 import { contextFor } from '../../../engine/v4/core.js';
@@ -34,7 +34,7 @@ describe('White: Mourners and Connoisseurs', () => {
   });
 });
 
-describe('Purple: Last Callers', () => {
+describe('Purple: Laggard', () => {
   it('prints his text; Sleepyheads\' price', () => {
     const d = defById('purple.lastcallers');
     expect(d.text).toBe('On Use, once per round: take the Goes Last token.');
@@ -47,7 +47,7 @@ describe('Purple: Last Callers', () => {
     const opt = `use:${s.players[0].members.find(u => s.cards[u].def === 'purple.lastcallers')}`;
     s = move(s, opt);
     expect(s.goesLast).toEqual({ round: 2, pid: 0 });
-    expect(named(s, 'Last Callers').length).toBeGreaterThan(0);
+    expect(named(s, 'Laggard').length).toBeGreaterThan(0);
   });
 });
 

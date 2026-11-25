@@ -31,7 +31,7 @@ describe('REPLACE13=fashionpolice: Fashion Police', () => {
     while (s.pending?.prompt.includes('pay')) s = go(s, s.pending.options[0].id);
     const sent = ['Volunteer', 'Patriarch'];
     for (const n of sent) expect(s.shop.map(u => defById(s.cards[u].def).name)).not.toContain(n);
-    expect(s.shop.map(u => defById(s.cards[u].def).name)).toContain('Regular');
+    expect(s.shop.map(u => defById(s.cards[u].def).name)).toContain('Penny-Pincher');
     expect(s.log.join('\n')).toMatch(/P1's Fashion Police: sends [2-9] red members to the discard pile\./);
   });
 });

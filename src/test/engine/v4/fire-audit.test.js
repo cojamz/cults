@@ -92,7 +92,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
     'market.snob', // Blue Bloods pays only for blue members at game end; Cutpurse 7 and Heiresses 9 (Oct 30) moved the games so its owners had none. cards-market covers it
     'echo.bait', // Trapper pays only when a rival copies its owner's space; the Nov 3 live replacements moved the games so its 3 holders were never copied. green-bait-trading covers it
     'market.sommelier', // Sommelier (cut) pays only when its owner recruits a blue member; every member +1 (Nov 5) moved the games so its 4 holders never did. cards-market covers it
-    'market.restocker', // Restockers: bots held it in 4 seeded games without using it once Clear Out went back to per member (Oct 28); cards-member-structure covers it
+    'market.restocker', // Market Sweeper: bots held it in 4 seeded games without using it once Clear Out went back to per member (Oct 28); cards-member-structure covers it
     'thieves.fixer', // Briber is On Use once per game; Victors leaving the grey deck (Nov 6) moved the games so its 3 holders never used it. cards-member-structure (Briber) covers it
     'echo.encore', // Minstrel: held in 3 games without its copy coming up once Victors left the grey deck (Nov 6); cards-echo and replace4 cover it
     'trading.reinvestor', // Reinvestor pays only on a sale; its 3 holders never sold once Victors left the grey deck (Nov 6). cards-trading (Reinvestor) covers it
@@ -138,7 +138,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'echo.impersonators', // under 3 holds once every member cost 4 more (Nov 5 evening) moved the games; cards-market-concepts and replace3 cover it
       'trading.reinvestor', // under 3 holds when Matchmaker and Dowry-Givers moved to White (Nov 11) moved the games; cards-trading (Reinvestor) covers it
       'trading.godparents', // Dowry-Givers: under 3 holds when Guild Master and Bannermen (Nov 11) moved the games; cards-trading and silver tests cover it
-      'trading.appraiser', // cut; under 3 holds when Mourners, Connoisseurs and Last Callers (Nov 11) moved the games; cards-trading (Appraiser) covers it
+      'trading.appraiser', // cut; under 3 holds when Mourners, Connoisseurs and Laggard (Nov 11) moved the games; cards-trading (Appraiser) covers it
       'market.swapshoppers', 'trading.heiress', // under 3 holds when Nov 11's Blue, Green and White members moved the games; blue-new-members (Old-Clothes Dealers) and cards-trading cover them (Heiresses is cut)
       'market.repeatcustomers', // under 3 holds (2, named in 1) when every member was rebased to worth 1 (Cory, Nov 12) moved the games; blue-new-members and barker cover it
       'market.trendsetter', 'trading.evictors', // under 3 holds when Green, Blue and White reached 12 members (Nov 24) moved the games; replace14 and spree-uses (Trendsetters) and replace3 / members-maybes (Evictors) cover them
@@ -194,7 +194,7 @@ const ALLOW = {
   'yellow.tastemaker': 'pays only when its owner changes a rival\'s resources (cards-yellow: Tastemaker)',
   'yellow.matchmaker': 'pays only for a yellow recruit after it (Nov 6); owners may recruit none (cards-yellow)',
   // Plunder steals followers (Nov 4) moved the seeded games: recruited in 1, and its bot holds On Use for a round III with no minions left
-  'yellow.bookcooker': 'fires only On Use, once per game (cards-yellow: Book Cookers)',
+  'yellow.bookcooker': 'fires only On Use, once per game (cards-yellow: Alchemists)',
   // live Nov 4 in Harmonist's place: recruited in 1 sample game whose owner never held a full set
   'yellow.seamstress': 'fires only On Use, once per game, with a full set (seamstress-live.test.js)',
   'silver.dowager': 'a plain worth-3 member the audit counts (cards-silver)',
@@ -255,7 +255,7 @@ const ALLOW = {
   'yellow.customs': 'pays only when a rival steals or changes your resources (cards-yellow: Customs Officer)',
   // Melt Down taking all its coins at once (Nov 5) moved the seeded games: recruited in 1 game, with no Silver space after
   'silver.majordomo': 'pays only when its holder takes a Silver space; recruited once in the sample (cards-silver: Majordomo)',
-  // Mourners, Connoisseurs and Last Callers (Nov 11) moved the seeded games: recruited in 8 games where its Normal-bot
+  // Mourners, Connoisseurs and Laggard (Nov 11) moved the seeded games: recruited in 8 games where its Normal-bot
   // holders never took the use (they weigh it against the round's other uses)
   'red.panel': 'pays only when used, and Normal bots rarely take it (red-recruit-chain: Fairy Godmother)',
   // Guild Master and Bannermen (Nov 11) moved the seeded games: recruited once, never used before the game ended

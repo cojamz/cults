@@ -124,7 +124,7 @@ for (const [key, name, source] of [
 // Member structure (Cory, 2026-10-24): the new members reuse cut portraits while names and artwork settle.
 for (const [id, name, source] of [
   ['red.headhunter', 'Headhunter', 'red.sponsor'], ['thieves.fixer', 'Fixer', 'thieves.bigscore'],
-  ['market.windowshopper', 'Window Shopper', 'market.curator'], ['market.restocker', 'Restockers', 'market.makeover'],
+  ['market.windowshopper', 'Window Shopper', 'market.curator'], ['market.restocker', 'Market Sweeper', 'market.makeover'],
   ['purple.timekeepers', 'Timekeeper', 'purple.patience'], ['trading.oldmoney', 'Old Money', 'trading.shareholder'],
   ['trading.recluse', 'Recluse', 'market.recluse'], // Recluse moves to White (Cory, 2026-10-25)
 ]) {
@@ -135,7 +135,7 @@ for (const [id, name, source] of [
 for (const [key, name, source] of [
   ['customs', 'Customs Officer', 'gleaner'], ['tinker', 'Tinker', 'sower'], ['matchmaker', 'Matchmaker', 'admirer'],
   ['agitator', 'Agitator', 'farmer'], ['ringleader', 'Meddler', 'latebloomer'], ['drifters', 'Drifters', 'weaver'],
-  ['leveler', 'Leveler', 'rainmaker'], ['bigtent', 'Big Tent', 'pilgrim'], ['bookcooker', 'Book Cookers', 'peddler'],
+  ['leveler', 'Leveler', 'rainmaker'], ['bigtent', 'Big Tent', 'pilgrim'], ['bookcooker', 'Alchemists', 'peddler'],
   ['puppeteer', 'Puppeteers', 'feastmaker'], ['caravan', 'Caravan', 'peddler'], ['tastemaker', 'Tastemaker', 'admirer'], ['jack', 'Jack-of-All-Trades', 'admirer'], ['seamstress', 'Seamstress', 'harmonist'], ['dutycollector', 'Duty Collector', 'gleaner'], ['spiceroute', 'Spice Route', 'gleaner'], ['guestbook', 'Guest Book', 'farmer'],
 ]) {
   const art = BY_ID.get(`yellow.${source}`);
@@ -190,7 +190,7 @@ for (const [id, name, source] of [
   ['silver.paupers', 'Paupers', 'silver.spoon'], ['silver.loanofficers', 'Loan Officers', 'silver.revelers'], ['silver.splurgers', 'Splurgers', 'silver.heir'], ['silver.tollcollectors', 'Toll Collectors', 'silver.majordomo'], ['silver.bookies', 'Bookies', 'silver.steward'], ['silver.hustlers', 'Hustlers', 'silver.silversmith'],
   ['yellow.exchangestudents', 'Exchange Students', 'yellow.pilgrim'], ['yellow.headhunters', 'Headhunters', 'yellow.explorer'], ['yellow.cosmopolitans', 'Cosmopolitans', 'yellow.weaver'], // Nov 11: new Yellow members, on retired scenes
   ['red.brethren', 'Brethren', 'red.proselytizer'], ['red.purists', 'Purists', 'red.mob'], ['red.assimilators', 'Assimilators', 'red.movementpenalty'], ['purple.placekeepers', 'Place Keepers', 'purple.gossip'], // Nov 11: new Red members, on retired scenes until their own are drawn
-  ['trading.leavetakers', 'Leavetakers', 'trading.undertaker'], ['trading.minimalists', 'Minimalists', 'trading.oldmoney'], ['purple.lastcallers', 'Last Callers', 'purple.sleepyheads'], // Nov 11: new White and Purple members, on retired scenes until their own are drawn
+  ['trading.leavetakers', 'Leavetakers', 'trading.undertaker'], ['trading.minimalists', 'Minimalists', 'trading.oldmoney'], ['purple.lastcallers', 'Laggard', 'purple.sleepyheads'], // Nov 11: new White and Purple members, on retired scenes until their own are drawn
   ['echo.mimics', 'Mimics', 'echo.impersonators'], ['echo.regulars', 'Regulars', 'echo.dejavu'], ['echo.diehards', 'Die-Hards', 'echo.choir'], // Nov 11: new Green members, on retired scenes until their own are drawn
   ['yellow.exchangestudents', 'Exchange Students', 'yellow.pilgrim'], ['yellow.headhunters', 'Talent Scouts', 'yellow.explorer'], ['yellow.cosmopolitans', 'Cosmopolitans', 'yellow.weaver'],
   ['market.swapshoppers', 'Swap Shoppers', 'market.critic'], ['market.thrifthunters', 'Thrift Hunters', 'market.trendsetter'], ['market.repeatcustomers', 'Repeat Customers', 'market.windowdresser'], // Nov 11: new Blue member, on a retired scene // Nov 11: new Yellow members, on retired scenes

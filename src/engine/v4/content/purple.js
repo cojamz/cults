@@ -1277,12 +1277,12 @@ export default {
     // Cory, 2026-11-11 9:10pm Eastern: "last callers is fine. Let's try that" (his ask, 2:27pm: a member that grabs the Goes
     // Last token). Takes it as a Purple space does: your other minions wait until every other hand is empty. Sleepyheads'
     // place and price (Claude, under Cory's go-with-your-gut).
-    m('lastcallers', 'Last Callers', 2, 2, 'On Use, once per round: take the Goes Last token.', {
+    m('lastcallers', 'Laggard', /* renamed (Cory, Nov 26: "yes. but rename them WELL."); named through .claude/skills/naming */ /* was Last Callers */ 2, 2, 'On Use, once per round: take the Goes Last token.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         // "take the Goes Last token" with no minion left still takes it (from a rival too), as Last Call does (combo test Nov 12)
-        toToken(ctx, owner, 1, 'Last Callers');
+        toToken(ctx, owner, 1, 'Laggard');
       },
       // a bot takes it with its last minion in hand, when a rival holds the token
       botActivate: (ctx, p) => turnsLeft(ctx, p) === 1 && tokenHolder(ctx.state) != null && tokenHolder(ctx.state) !== p.id,

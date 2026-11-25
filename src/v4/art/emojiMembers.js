@@ -82,9 +82,9 @@ const M = {
   hawker: ['🍎', '🔁 Offer a shop member: rivals may buy it for its cost +2 to you; if none does, it’s yours free'],
   'rag-and-bone-man': ['🗑️', '♾️ Members go to the discard pile: +1 blue'],
   critic: ['🧐', '♾️ A rival recruits a blue member: +1 follower'],
-  regular: ['☕', '♾️ You buy followers: +1 blue'],
+  'penny-pincher': ['🪙', '♾️ You buy followers: +1 blue'],
   tagalongs: ['🧑‍🤝‍🧑', '✨ Recruit again this turn'],
-  restockers: ['🔄', '☝️ Send the whole shop to the discard pile, then refill'],
+  'market-sweeper': ['🧹', '☝️ Send the whole shop to the discard pile, then refill'],
   trendsetters: ['💅', '♾️ You recruit: send 1 shop member to the discard pile'],
   'window-dressers': ['🪟', '✨ Send 3 shop members to the discard pile'],
   culler: ['🧹', '✨🌅 Send 2 shop members to the discard pile, +1 of each one’s color'],
@@ -140,7 +140,7 @@ const M = {
   harmonist: ['🎼', '🏁 +1 follower per full set'],
   witch: ['🧙‍♀️', '🔁 Each rival’s biggest color: 1 becomes your pick'],
   peddlers: ['🐪', '✨🌅 +1 of each color you hold'],
-  'book-cookers': ['📚', '☝️ Rearrange your resources any way'],
+  alchemists: ['⚗️', '☝️ Rearrange your resources any way'],
   // Grey
   trespasser: ['🚷', '☝️ Your next minion can share a taken space'],
   weeders: ['🌿', '🔁 Discard any shop members, then refill'],
@@ -198,7 +198,7 @@ const M = {
   'guild-master': ['🫂', '♾️ You recruit a member of a color you already have: +1 follower'], // Nov 11: Red
   bannermen: ['🚩', '🌙 Your members have 2 or fewer colors: +3 followers'],
   dyer: ['🖌️', '♾️ Your greys count as your biggest color'], // Nov 12: Red
-  'last-callers': ['🔔', '🔁 Take the Goes Last token'], // Nov 11: Purple
+  laggard: ['🐌', '🔁 Take the Goes Last token'], // Nov 11: Purple
   usher: ['🪑', '🌅 Choose your place in the turn order'], // Nov 12: Purple
   mourners: ['🥀', '♾️ One of your members leaves your cult: +2 white'], // Nov 11: White
   connoisseurs: ['🍷', '🏁 +2 followers per member you have costing 8 or more'],
@@ -219,7 +219,7 @@ const M = {
   lackey: ['🪣', '♾️ Same color as the minion before yours: +2 green'],
   'packed-house': ['🎪', '🌙 +1 follower per minion on Green spaces'],
   'rabble-rouser': ['🪧', '🌙 Steal 2 followers from the leader'],
-  forestallers: ['🥬', '🌅 Recruit once before anyone places'],
+  firstborn: ['🥇', '🌅 Recruit once before anyone places'],
   onlooker: ['👀', '♾️ A rival recruits a blue member: +2 blue'],
   mendicant: ['🙏', '🌙 +1 follower per color you hold none of'],
   successors: ['👑', '♾️ You discard one of yours: recruit one up to its cost, free'],

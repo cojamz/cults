@@ -2,7 +2,7 @@
 // Combo tester, Cory's Nov 11 White and Purple members (design/decisions.md, 9:10pm, 9:12pm, and Claude's 9:35pm build
 // notes): Mourners ("Whenever one of your members leaves your cult, +2 white."; any of your members, itself included:
 // discard, give, steal, swap), Connoisseurs ("Game End: +2 followers per member you have costing 8 or more.", was 6; the cost the
-// shop shows, Richer moves the 6 with the text), Last Callers ("On Use, once per round: take the Goes Last token."; as a
+// shop shows, Richer moves the 6 with the text), Laggard ("On Use, once per round: take the Goes Last token."; as a
 // Purple space takes it: all your other minions wait). Played against every way a member leaves, the costing cards and
 // Purple's turn-order spaces. Harness: combos-green-nov12.test.js's scene/drive/go (the queue array is copied).
 import { describe, it, expect } from 'vitest';
@@ -126,10 +126,10 @@ describe('Mourners: "Whenever one of your members leaves your cult, +2 white."',
     expect(leave(s, 0)).toHaveLength(1);
   });
 
-  it('Hostages swaps your Raiders for a rival\'s Last Callers: one leaves, one arrives, +2 once', () => {
+  it('Hostages swaps your Raiders for a rival\'s Laggard: one leaves, one arrives, +2 once', () => {
     const { s } = go('lt-exchange', { quads: W, queue: BUY, shop: ['yellow.exchangestudents'], members: [['trading.leavetakers', 'trading.raider'], ['purple.lastcallers']], res: [{ yellow: 9, red: 9 }] },
-      [/Hostages/, /Raiders ↔ P2: Last Callers/]);
-    expect(names(s, 0)).toEqual(['Mourners', 'Hostages', 'Last Callers']);
+      [/Hostages/, /Raiders ↔ P2: Laggard/]);
+    expect(names(s, 0)).toEqual(['Mourners', 'Hostages', 'Laggard']);
     expect(s.players[0].res.white).toBe(2);
     expect(leave(s, 0)).toEqual(["P1's Mourners: Raiders left: +2 white."]);
     cleanLog(s);
@@ -242,30 +242,30 @@ describe('Connoisseurs: "Game End: +2 followers per member you have costing 8 or
   });
 });
 
-describe('Last Callers: "On Use, once per round: take the Goes Last token."', () => {
+describe('Laggard: "On Use, once per round: take the Goes Last token."', () => {
   const lc = s => s.players[0].members.find(u => s.cards[u].def === 'purple.lastcallers');
   const useOpt = (s, uid) => (s.pending?.options || []).some(o => o.id === `use:${uid}`);
   it('2 players, round II, nobody holds it: you take it and your other 2 minions wait on it', () => {
-    const { s } = go('lc-take', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] }, [/Gather the Kin/, /Last Callers/]);
+    const { s } = go('lc-take', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] }, [/Gather the Kin/, /Laggard/]);
     expect(s.goesLast).toEqual({ round: 2, pid: 0 });
     expect(turnsLine(s)).toBe('1 1 1 0T 0T');
-    expect(lines(s, /Last Callers/)).toEqual(["P1's Last Callers: P1 takes the Goes Last token.", "P1's Last Callers: 2 minions wait on the Goes Last token."]);
+    expect(lines(s, /Laggard/)).toEqual(["P1's Laggard: P1 takes the Goes Last token.", "P1's Laggard: 2 minions wait on the Goes Last token."]);
     cleanLog(s);
   });
 
   it('4 players: takes it from P3 after Lie Abed, and P3\'s 2 waiting minions go back to P3', () => {
     const { s } = go('lc-4p', { quads: P, n: 4, round: 2, left: 3, queue: T(2, 0, 1, 3, 3, 1, 0, 2, 2, 0, 1, 3), members: [['purple.lastcallers'], [], [], []] },
-      [/Lie Abed/, /^pass$/, /Gather the Kin/, /Last Callers/]);
+      [/Lie Abed/, /^pass$/, /Gather the Kin/, /Laggard/]);
     expect(s.goesLast).toEqual({ round: 2, pid: 0 });
-    expect(s.log).toContain("P1's Last Callers: P1 takes the Goes Last token from P3, and the 2 minions on it go back to P3.");
-    expect(s.log).toContain("P1's Last Callers: 2 minions wait on the Goes Last token.");
+    expect(s.log).toContain("P1's Laggard: P1 takes the Goes Last token from P3, and the 2 minions on it go back to P3.");
+    expect(s.log).toContain("P1's Laggard: 2 minions wait on the Goes Last token.");
     expect(s.queue.filter(t => t.t === 'turn' && t.p === 2).some(t => t.token)).toBe(false);
     cleanLog(s);
   });
 
   it('once per round: not offered again that round; Round Start makes it usable again', () => {
     let { s } = go('lc-once', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] },
-      [/Gather the Kin/, /Last Callers/, /^pass$/, /Borrow/, /^pass$/, /Call to Arms/, /^pass$/, /Put By/, /^pass$/, /Lie Abed/]);
+      [/Gather the Kin/, /Laggard/, /^pass$/, /Borrow/, /^pass$/, /Call to Arms/, /^pass$/, /Put By/, /^pass$/, /Lie Abed/]);
     expect(s.pending.kind).toBe('buy');
     expect(s.pending.player).toBe(0);
     expect(useOpt(s, lc(s))).toBe(false);
@@ -276,38 +276,38 @@ describe('Last Callers: "On Use, once per round: take the Goes Last token."', ()
   });
 
   it('you already hold it (Lie Abed): you keep it, and no minion is added', () => {
-    const { s } = go('lc-keep', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] }, [/Lie Abed/, /Last Callers/]);
-    expect(s.log).toContain("P1's Last Callers: P1 keeps the Goes Last token.");
+    const { s } = go('lc-keep', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] }, [/Lie Abed/, /Laggard/]);
+    expect(s.log).toContain("P1's Laggard: P1 keeps the Goes Last token.");
     expect(lines(s, /wait on the Goes Last token/)).toEqual(["P1's Lie Abed: 2 minions wait on the Goes Last token."]);
   });
 
   it('after your last minion, a rival holding it with a minion on it: you still take it, their minion goes back (fixed Nov 12)', () => {
     const { s } = go('lc-lastminion', { quads: P, round: 2, left: 2, queue: T(1, 0, 0, 1), members: [['purple.lastcallers'], []] },
-      [/Lie Abed/, /^pass$/, /Gather the Kin/, /^pass$/, /Borrow/, /Last Callers/]);
+      [/Lie Abed/, /^pass$/, /Gather the Kin/, /^pass$/, /Borrow/, /Laggard/]);
     expect(s.goesLast).toEqual({ round: 2, pid: 0 });
-    expect(s.log).toContain("P1's Last Callers: P1 takes the Goes Last token from P2, and the minion on it goes back to P2.");
+    expect(s.log).toContain("P1's Laggard: P1 takes the Goes Last token from P2, and the minion on it goes back to P2.");
   });
 
-  it('Flurry pulls your next 2 turns up, then Last Callers: those 2 minions wait on the token instead', () => {
-    const { s } = go('lc-crunch', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] }, [/Flurry/, /Last Callers/]);
+  it('Flurry pulls your next 2 turns up, then Laggard: those 2 minions wait on the token instead', () => {
+    const { s } = go('lc-crunch', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] }, [/Flurry/, /Laggard/]);
     expect(s.log).toContain("P1's Flurry: P1 takes their next 2 turns now.");
     expect(turnsLine(s)).toBe('1 1 1 0T 0T');
   });
 
-  it('Make Haste, then Last Callers: the turn Make Haste pulled up waits on the token too', () => {
-    const { s } = go('lc-rightaway', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] }, [/Make Haste/, /Last Callers/]);
+  it('Make Haste, then Laggard: the turn Make Haste pulled up waits on the token too', () => {
+    const { s } = go('lc-rightaway', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] }, [/Make Haste/, /Laggard/]);
     expect(turnsLine(s)).toBe('1 1 1 0T 0T');
   });
 
   it('a rival\'s Lie Abed takes it back: your waiting minions go back to your hand', () => {
-    const { s } = go('lc-takenback', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] }, [/Gather the Kin/, /Last Callers/, /^pass$/, /Lie Abed/]);
+    const { s } = go('lc-takenback', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers']] }, [/Gather the Kin/, /Laggard/, /^pass$/, /Lie Abed/]);
     expect(s.goesLast).toEqual({ round: 2, pid: 1 });
     expect(s.log).toContain("P2's Lie Abed: P2 takes the Goes Last token from P1, and the 2 minions on it go back to P1.");
   });
 
   it('used, then swapped to a rival by Hostages: once per round is once for the card; usable again next round', () => {
     let { s } = go('lc-swapped', { quads: P, round: 2, queue: [{ t: 'buy', p: 1 }], shop: ['yellow.exchangestudents'], members: [['purple.lastcallers'], ['trading.raider']],
-      res: [{}, { yellow: 9, red: 9 }], prep: st => { st.cards[st.players[0].members[0]].used = true; } }, [/Hostages/, /Raiders ↔ P1: Last Callers/]);
+      res: [{}, { yellow: 9, red: 9 }], prep: st => { st.cards[st.players[0].members[0]].used = true; } }, [/Hostages/, /Raiders ↔ P1: Laggard/]);
     const uid = s.players[1].members.find(u => s.cards[u].def === 'purple.lastcallers');
     expect(uid).toBeDefined();
     expect(useOpt(s, uid)).toBe(false);
@@ -321,7 +321,7 @@ describe('Last Callers: "On Use, once per round: take the Goes Last token."', ()
   });
 
   it('Early Birds ("Your turns can\'t be skipped."): you don\'t go last, the token stays put', () => {
-    const { s } = go('lc-early', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers', 'purple.earlybird']] }, [/Gather the Kin/, /Last Callers/]);
+    const { s } = go('lc-early', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers', 'purple.earlybird']] }, [/Gather the Kin/, /Laggard/]);
     expect(s.goesLast ?? null).toBe(null);
     expect(s.log).toContain("P1's Early Birds: P1's turns can't be skipped, so P1 doesn't go last.");
   });

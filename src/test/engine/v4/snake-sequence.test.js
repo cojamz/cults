@@ -53,7 +53,7 @@ function botMove(s, rand) {
     const alt = s.pending.options.find(x => x.kind === 'slot' && x.q !== undefined && !['skip', 'holdup', 'again', 'lastcall', 'crowdin'].includes(actionAt(s, x.q, x.i).key));
     if (alt) return { player: m.player, option: alt.id };
   }
-  // nor Latecomers or Last Callers (the Goes Last token holds all your other minions, Nov 12), nor recruit Bouncers (On Recruit: the next two rivals' turns are skipped): since Night Watch left Purple (Nov 6) the
+  // nor Latecomers or Laggard (the Goes Last token holds all your other minions, Nov 12), nor recruit Bouncers (On Recruit: the next two rivals' turns are skipped): since Night Watch left Purple (Nov 6) the
   // bots buy it on every seed this test tried
   if (o?.kind === 'card' && ['purple.bouncer', 'purple.latecomers', 'purple.lastcallers'].includes(s.cards[o.uid]?.def)) return { player: m.player, option: s.pending.options.find(x => x.kind === 'pass')?.id ?? m.option };
   return m;

@@ -165,8 +165,8 @@ describe('threats you can see coming (w2b #19, #21)', () => {
   });
 });
 
-describe('a use that changes only the shop is a real use (Cory, Oct 28: Restockers "says it will do nothing")', () => {
-  it('Restockers: a Use button, never "Use: +0"', () => {
+describe('a use that changes only the shop is a real use (Cory, Oct 28: Market Sweeper "says it will do nothing")', () => {
+  it('Market Sweeper: a Use button, never "Use: +0"', () => {
     const s = table(['market', 'gold', 'echo', 'trading'], { members: [['market.restocker']], res: [{}, {}], shop: ['gold.midas', 'gold.banker'] });
     const uid = uidIn(s, 'market.restocker', 0);
     expect(s.shop.length).toBeGreaterThan(0);

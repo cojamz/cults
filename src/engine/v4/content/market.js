@@ -1209,13 +1209,13 @@ const market = {
     // in that round's turn order, before the row goes to the bottom; in round III, before the Game End cards count.
     ...add4(m('lateshoppers', 'Late Shoppers', 4, 3, 'Round End: after contests are scored, recruit once.', { roundEndBuy: true,
       ...see(i => endsAhead(i).length * 2.5) })), // BOTSEE: an extra recruit each round end still ahead
-    m('restocker', 'Restockers', 2, 1, 'On Use, once per game: discard the whole shop and refill.', {
+    m('restocker', 'Market Sweeper', /* renamed (Cory, Nov 26: "yes. but rename them WELL."); named through .claude/skills/naming */ /* was Restockers */ 2, 1, 'On Use, once per game: discard the whole shop and refill.', {
       f: 2, // (Cory, Oct 29, balance run: +1 follower)
       activate: 'game',
       onActivate(ctx, owner, card) {
-        if (!ctx.state.shop.length) { card.used = false; ctx.log(`${owner.name}'s Restockers: the shop is empty.`); return; }
+        if (!ctx.state.shop.length) { card.used = false; ctx.log(`${owner.name}'s Market Sweeper: the shop is empty.`); return; }
         sweepRow(ctx, owner); ctx.refillShop();
-        ctx.log(`${owner.name}'s Restockers sends the whole shop to the discard pile and refills it.`);
+        ctx.log(`${owner.name}'s Market Sweeper sends the whole shop to the discard pile and refills it.`);
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && !ctx.shopCards().some(c => ctx.payChoices(owner, c.uid, {}).length),
     }),
@@ -1223,7 +1223,7 @@ const market = {
     // REPLACE2 bot test (Nov 3, replacement batch 2): Shopaholics' place. 5 blue + 3 any as a player sees it. Core runs it
     // (flag roundStartBuy): at each round start after the fresh row is dealt, one buy step (a member or followers) per
     // holder, in that round's turn order, before the first placement.
-    m('doorbusters', 'Forestallers', /* Doorbusters until Cory, Nov 26: "that's not on theme"; three fresh judges each scored Forestallers best, 8 of 10 */ 4, 3, 'Round Start: recruit once, before anyone places.', { f: 3, n: 3, keepCount: true, /* worth 3 (Cory, Nov 26: "that's fine" to scoring 3 instead of 1; member and follower counts stay equal, Nov 12) */ roundStartBuy: true }), // dealt since Cory, Nov 24 10:04pm
+    m('doorbusters', 'Firstborn', /* Doorbusters until Cory, Nov 26: "that's not on theme"; then Forestallers until "Forestallers is also bad" (too obscure); named through .claude/skills/naming */ 4, 3, 'Round Start: recruit once, before anyone places.', { f: 3, n: 3, keepCount: true, /* worth 3 (Cory, Nov 26: "that's fine" to scoring 3 instead of 1; member and follower counts stay equal, Nov 12) */ roundStartBuy: true }), // dealt since Cory, Nov 24 10:04pm
     // REPLACE4 bot test (Nov 3, replacement batch 4): Window Dressers' place. 3 blue + 1 any as a player sees it. Core asks
     // it in the recruit step (askOutbid, core.js): a rival's shop member chosen and paid for there.
     ...add4(m('outbidders', 'Outbidders', 2, 1, 'Whenever a rival recruits a shop member, you may pay its cost plus 2 to recruit it instead. They get back what they paid and recruit again.', { outbids: true })),
@@ -1287,8 +1287,8 @@ const market = {
         const c = i.owner.members.length, now = i.s.queue.filter(t => t.t === 'buy' && t.p === i.owner.id).length >= 2 && [3, 6, 9].includes(c + 1); // queue[0] is this buy
         return [3, 6, 9].filter(n => n > c && n - c <= Math.max(1, i.placesLeft * 0.6)).length * 4 + (now ? 3 : 0);
       }) })),
-    m('regular', 'Regular', 1, 1, 'Whenever you buy followers, +1 blue.', { ...old9('market.regular'), ...old11('punchcard'),
-      onBuyFollowers(ctx, owner, card, by) { if (by.id === owner.id && ctx.gain(owner, B, 1)) ctx.log(`${owner.name}'s Regular: +1 blue.`); },
+    m('regular', 'Penny-Pincher', /* renamed (Cory, Nov 26: "yes. but rename them WELL."); named through .claude/skills/naming */ /* was Regular */ 1, 1, 'Whenever you buy followers, +1 blue.', { ...old9('market.regular'), ...old11('punchcard'),
+      onBuyFollowers(ctx, owner, card, by) { if (by.id === owner.id && ctx.gain(owner, B, 1)) ctx.log(`${owner.name}'s Penny-Pincher: +1 blue.`); },
     }),
     // REPLACE9 bot test (Members C, Nov 4): Regular's place. 2 blue + 1 any as a player sees it (Blue's cheap way in once Regular and Critic are gone; paper gate, Nov 4). "Fewest" is read at each
     // purchase, before it lands (ties count): the buy that lifts you past a rival is still free, the next one isn't. A

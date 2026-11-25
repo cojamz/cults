@@ -43,7 +43,7 @@ describe.runIf(ON)('Purifiers (leave version)', () => {
     if (!s.log.some(l => /Purifiers left/.test(l))) console.log(s.log.join('\n'));
     expect(s.log.join('\n')).toContain("P2's Purifiers left: each rival discards a member.");
     expect(names(s, 0)).toContain('Purifiers');
-    expect(names(s, 0)).not.toContain('Regular');
+    expect(names(s, 0)).not.toContain('Penny-Pincher');
     expect(names(s, 2)).toEqual([]);
   });
 });
