@@ -242,3 +242,11 @@ Verdict: send
 9. Biggest case: One member of a color, worth at most one contest swing of 10 in round III, against a winner's 70 to 110.
 Verdict: send
 
+
+## Idea: Blue's 12th
+Source: Cory, 2026-11-24 10:11pm: "lets get everything to 12. we'll worry about 15 later". Not a new idea: a pick between two of his own maybes, Doorbusters and Onlooker, whose records are in the earlier batch pages.
+Verdict: send
+
+## Idea: White's 12th
+Source: Cory, 2026-11-24 10:11pm: "lets get everything to 12. we'll worry about 15 later". Not a new idea: a pick between two of his own maybes, Evictors and Successors.
+Verdict: send
