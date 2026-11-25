@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.800 — 2026-11-24
+
+- The last seven members (Purifiers, Gift Swappers, Mutineers, Protesters, Monks, Old Guard, Repossessors) get their new pictures
+
 ## v0.99.799 — 2026-11-24
 
 - Gold is gone from the game: its spaces, members and pictures. Spend Freely gives +1 follower for every 2 resources you pay in every round.
