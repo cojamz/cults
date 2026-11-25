@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.799 — 2026-11-24
+
+- Gold is gone from the game: its spaces, members and pictures. Spend Freely gives +1 follower for every 2 resources you pay in every round.
+
 ## v0.99.798 — 2026-11-24
 
 - Keep Going's You'd get no longer counts turns you haven't taken
