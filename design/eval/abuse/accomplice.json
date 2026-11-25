@@ -1,0 +1,182 @@
+{
+ "card": "thieves.accomplice",
+ "o": {
+  "card": "Tax Men",
+  "rules": {
+   "deck": 10
+  },
+  "budget": 150,
+  "rivals": "normal"
+ },
+ "results": [
+  {
+   "g": 0,
+   "seed": 5000,
+   "seat": 0,
+   "table": [
+    "thieves",
+    "purple",
+    "red",
+    "echo"
+   ],
+   "without": {
+    "mx": 30,
+    "own": 93,
+    "win": 1,
+    "bought": 0,
+    "boughtRound": 0,
+    "yieldF": null,
+    "lines": []
+   },
+   "with": {
+    "mx": 10,
+    "own": 60,
+    "win": 1,
+    "bought": 1,
+    "boughtRound": 2,
+    "yieldF": 1,
+    "lines": [
+     "New in the shop: Cutthroats, Secret-Keepers, Comforter, Tax Men, Informer, Shirker, Mutineers.",
+     "P1 recruited Tax Men (2 magenta, 5 red).",
+     "P4 gave P1 1 purple (P1's Tax Men).",
+     "P4 gave P1 1 magenta (P1's Tax Men)."
+    ]
+   }
+  },
+  {
+   "g": 1,
+   "seed": 5001,
+   "seat": 1,
+   "table": [
+    "thieves",
+    "red",
+    "yellow",
+    "market"
+   ],
+   "without": {
+    "mx": 5,
+    "own": 72,
+    "win": 1,
+    "bought": 0,
+    "boughtRound": 0,
+    "yieldF": null,
+    "lines": []
+   },
+   "with": {
+    "mx": 2,
+    "own": 59,
+    "win": 1,
+    "bought": 1,
+    "boughtRound": 2,
+    "yieldF": 1,
+    "lines": [
+     "P2 recruited Tax Men (2 magenta, 1 red, 3 yellow, 1 blue).",
+     "P3 gave P2 1 blue (P2's Tax Men).",
+     "P3 gave P2 1 magenta (P2's Tax Men).",
+     "P3 gave P2 1 red (P2's Tax Men).",
+     "P1's Sleight of Hand: took P2's Tax Men.",
+     "P4 gave P1 1 yellow (P1's Tax Men).",
+     "P4 gave P1 1 magenta (P1's Tax Men).",
+     "New in the shop: Tax Men.",
+     "P2 gave P1 1 yellow (P1's Tax Men).",
+     "P2's Meddler swapped P1's Tax Men and P2's Scavengers."
+    ]
+   }
+  },
+  {
+   "g": 2,
+   "seed": 5002,
+   "seat": 2,
+   "table": [
+    "thieves",
+    "purple",
+    "yellow",
+    "echo"
+   ],
+   "without": {
+    "mx": 34,
+    "own": 83,
+    "win": 1,
+    "bought": 0,
+    "boughtRound": 0,
+    "yieldF": null,
+    "lines": []
+   },
+   "with": {
+    "mx": -25,
+    "own": 45,
+    "win": 0,
+    "bought": 1,
+    "boughtRound": 1,
+    "yieldF": 0,
+    "lines": [
+     "P3 recruited Tax Men (2 magenta, 1 yellow, 4 green).",
+     "P4's Sleight of Hand: took P3's Tax Men.",
+     "P2 gave P4 1 purple (P4's Tax Men).",
+     "P2 gave P4 1 yellow (P4's Tax Men).",
+     "P3 gave P4 1 purple (P4's Tax Men).",
+     "P3 gave P4 1 green (P4's Tax Men).",
+     "P3 has nothing to give P4's Tax Men.",
+     "P2 gave P4 1 green (P4's Tax Men).",
+     "New in the shop: Tax Men, Starveling, Jack-of-All-Trades, Spoilsport, Mutineers, Dawn Traders, Conjurer, Mimics.",
+     "P4's Sleight of Hand: gave P3 Tax Men from the shop."
+    ]
+   }
+  },
+  {
+   "g": 3,
+   "seed": 5003,
+   "seat": 3,
+   "table": [
+    "thieves",
+    "market",
+    "trading",
+    "red"
+   ],
+   "without": {
+    "mx": 8,
+    "own": 69,
+    "win": 1,
+    "bought": 0,
+    "boughtRound": 0,
+    "yieldF": null,
+    "lines": []
+   },
+   "with": {
+    "mx": -14,
+    "own": 54,
+    "win": 0,
+    "bought": 1,
+    "boughtRound": 1,
+    "yieldF": 0,
+    "lines": [
+     "New in the shop: Robbers, Cutpurse, Highwayman, Tax Men, Clan Chief, Preachers, Cutthroats.",
+     "P2 gave P4 1 red (P4's Tax Men).",
+     "P1's Sleight of Hand: took P4's Tax Men.",
+     "P1's Sleight of Hand: gave P4 Tax Men from the shop.",
+     "P3 swapped P3's Purifiers and P4's Tax Men.",
+     "P3 gave P1 1 magenta (P1's Tax Men).",
+     "P3 gave P1 1 red (P1's Tax Men).",
+     "P4 gave P1 1 white (P1's Tax Men).",
+     "P4 gave P3 1 white (P3's Tax Men).",
+     "P4 gave P3 1 red (P3's Tax Men).",
+     "P1 gave P3 1 white (P3's Tax Men).",
+     "P1 gave P3 1 blue (P3's Tax Men).",
+     "P2 gave P1 1 white (P1's Tax Men).",
+     "P2 gave P3 1 magenta (P3's Tax Men).",
+     "P2 gave P3 1 white (P3's Tax Men).",
+     "P1 swapped P2's Robbers and P1's Tax Men.",
+     "P1 gave P2 1 blue (P2's Tax Men).",
+     "P1 gave P2 1 white (P2's Tax Men).",
+     "P1 gave P3 1 red (P3's Tax Men).",
+     "P3 gave P2 1 red (P2's Tax Men).",
+     "P3's Mourners: Tax Men left: +2 white.",
+     "P3 swapped P3's Tax Men and Shop's Connoisseurs.",
+     "New in the shop: Tax Men.",
+     "P3 gave P2 1 white (P2's Tax Men).",
+     "P3 gave P2 1 magenta (P2's Tax Men)."
+    ]
+   }
+  }
+ ]
+}

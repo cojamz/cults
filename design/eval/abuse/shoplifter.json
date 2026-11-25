@@ -1,0 +1,167 @@
+{
+ "card": "thieves.shoplifter",
+ "o": {
+  "card": "Cutpurse",
+  "rules": {
+   "deck": 10
+  },
+  "budget": 150,
+  "rivals": "normal"
+ },
+ "results": [
+  {
+   "g": 0,
+   "seed": 5000,
+   "seat": 0,
+   "table": [
+    "thieves",
+    "purple",
+    "red",
+    "echo"
+   ],
+   "without": {
+    "mx": 30,
+    "own": 93,
+    "win": 1,
+    "bought": 0,
+    "boughtRound": 0,
+    "yieldF": null,
+    "lines": []
+   },
+   "with": {
+    "mx": 30,
+    "own": 92,
+    "win": 1,
+    "bought": 1,
+    "boughtRound": 2,
+    "yieldF": 1,
+    "lines": [
+     "New in the shop: Cutpurse.",
+     "P1 recruited Cutpurse (6 magenta, 1 purple, 1 red, 2 green).",
+     "P1's Cutpurse stole 1 (1 red from P3).",
+     "P1's Cutpurse stole 1 (1 green from P4).",
+     "P1's Cutpurse stole 1 (1 purple from P4).",
+     "P1's Cutpurse stole 1 (1 magenta from P3).",
+     "P1's Cutpurse stole 1 (1 magenta from P2).",
+     "P1's Cutpurse stole 1 (1 purple from P2)."
+    ]
+   }
+  },
+  {
+   "g": 1,
+   "seed": 5001,
+   "seat": 1,
+   "table": [
+    "thieves",
+    "red",
+    "yellow",
+    "market"
+   ],
+   "without": {
+    "mx": 5,
+    "own": 72,
+    "win": 1,
+    "bought": 0,
+    "boughtRound": 0,
+    "yieldF": null,
+    "lines": []
+   },
+   "with": {
+    "mx": 11,
+    "own": 66,
+    "win": 1,
+    "bought": 1,
+    "boughtRound": 2,
+    "yieldF": 0,
+    "lines": [
+     "P2 recruited Cutpurse (7 magenta, 3 yellow).",
+     "New in the shop: Cutpurse.",
+     "P2's Cutpurse stole 1 (1 yellow from P4).",
+     "P2's Cutpurse stole 1 (1 blue from P4).",
+     "P2's Cutpurse stole 1 (1 red from P1).",
+     "P2 swapped P2's Cutpurse and P4's Robbers.",
+     "P4's Cutpurse stole 1 (1 red from P3).",
+     "P4's Cutpurse stole 1 (1 yellow from P2).",
+     "P4's Cutpurse stole 1 (1 magenta from P3).",
+     "P4's Cutpurse stole 1 (1 blue from P1).",
+     "P4's Cutpurse stole 1 (1 magenta from P2)."
+    ]
+   }
+  },
+  {
+   "g": 2,
+   "seed": 5002,
+   "seat": 2,
+   "table": [
+    "thieves",
+    "purple",
+    "yellow",
+    "echo"
+   ],
+   "without": {
+    "mx": 34,
+    "own": 83,
+    "win": 1,
+    "bought": 0,
+    "boughtRound": 0,
+    "yieldF": null,
+    "lines": []
+   },
+   "with": {
+    "mx": 14,
+    "own": 74,
+    "win": 1,
+    "bought": 1,
+    "boughtRound": 1,
+    "yieldF": 1,
+    "lines": [
+     "P3 recruited Cutpurse (4 magenta, 1 purple, 1 yellow, 4 green).",
+     "P3's Cutpurse stole 1 (1 purple from P1).",
+     "P3's Cutpurse stole 1 (1 green from P1).",
+     "P3's Cutpurse stole 1 (1 green from P2).",
+     "P3's Cutpurse stole 1 (1 purple from P2).",
+     "P3's Cutpurse stole 1 (1 green from P4)."
+    ]
+   }
+  },
+  {
+   "g": 3,
+   "seed": 5003,
+   "seat": 3,
+   "table": [
+    "thieves",
+    "market",
+    "trading",
+    "red"
+   ],
+   "without": {
+    "mx": 8,
+    "own": 69,
+    "win": 1,
+    "bought": 0,
+    "boughtRound": 0,
+    "yieldF": null,
+    "lines": []
+   },
+   "with": {
+    "mx": 19,
+    "own": 82,
+    "win": 1,
+    "bought": 1,
+    "boughtRound": 3,
+    "yieldF": 1,
+    "lines": [
+     "New in the shop: Robbers, Cutpurse, Highwayman, Tax Men, Clan Chief, Preachers, Cutthroats.",
+     "P2's Clear Out sends Cutpurse to the discard pile: +1 magenta.",
+     "P4's Cutpurse stole 1 (1 blue from P3).",
+     "P4 recruited Cutpurse (4 magenta, 1 blue, 5 white).",
+     "P4's Cutpurse stole 1 (1 blue from P1).",
+     "P4's Cutpurse stole 1 (1 white from P1).",
+     "P4's Cutpurse stole 1 (1 magenta from P1).",
+     "P4's Cutpurse stole 1 (1 blue from P2).",
+     "P4's Cutpurse stole 1 (1 white from P2)."
+    ]
+   }
+  }
+ ]
+}
