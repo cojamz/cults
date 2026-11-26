@@ -42,6 +42,7 @@ for (const r of roots) {
     for (const id of eng.allQuadrantIds()) {
       let q; try { q = eng.quadrant(id); } catch { continue; }
       for (const c of [...(q.actions || []), ...(q.members || [])]) { if (c.name) live.names.add(norm(c.name)); if (c.text) live.texts.push(norm(c.text)); }
+      if (q.name) live.names.add(norm(`${q.name} Cloak`)); // each color's cloak is live (Nov 26: a cloak results post was refused as a pitch)
     }
     for (const m of con.guestMembers?.() || []) { live.names.add(norm(m.name)); if (m.text) live.texts.push(norm(m.text)); }
     break;
