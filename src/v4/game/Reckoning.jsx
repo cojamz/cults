@@ -60,7 +60,7 @@ export function afterContestSteps(info, phase = 'afterContests') {
     if (!st) {
       const st0 = info.board || info.after;
       const def = st0.cards[e.cause.uid] ? cardDef(st0, e.cause.uid) : null;
-      st = { key, kind: 'after', uid: e.cause.uid, pid: e.cause.pid, qid: def ? def.quadrant : null, rule: def ? def.name : 'Member', counts: def ? def.text : null, deltas: {}, res: {} };
+      st = { key, kind: 'after', phase, uid: e.cause.uid, pid: e.cause.pid, qid: def ? def.quadrant : null, rule: def ? def.name : 'Member', counts: def ? def.text : null, deltas: {}, res: {} };
       steps.push(st);
     }
     const add = (pid, n) => { st.deltas[pid] = (st.deltas[pid] || 0) + n; };
@@ -88,9 +88,12 @@ export function stealFrom(row) {
   return losers.length === 1 ? losers[0].id : null;
 }
 
-/** The round's steps on screen: the contests, then the members that answer them, then (round III) the Game End members, each credited to its member on the table. */
+/** The round's steps on screen: the Round End members, the contests, then the members that answer them, then (round III)
+ *  the Game End members, each credited to its member on the table. The Round End members lead (Cory, Nov 26: "little
+ *  plus followers get added to people's score at the end of the round, and I have no idea where they're coming from"):
+ *  they landed during the round's last turn, under that player's name, with nothing naming the member. */
 export function reckonSteps(info) {
-  const contests = [...reckonRows(info), ...afterContestSteps(info)];
+  const contests = [...afterContestSteps(info, 'roundEnd'), ...reckonRows(info), ...afterContestSteps(info)];
   if (!info.after.over) return contests;
   const bonuses = info.after.players.flatMap(p => finalGrants(info.after, p).filter(g => g.n).map(g => ({
     key: `bonus:${p.id}:${g.uid ?? g.name}`, kind: 'bonus', uid: g.uid, pid: p.id,
@@ -338,7 +341,7 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
       <div className={`reckon-head${mid ? ' at-mid' : atTop ? ' at-top' : ''}`} style={{ '--c': row && ready ? `var(--${row.qid})` : undefined, ...(mid ? { left: mid.left, top: mid.top, '--mid-w': `${mid.w}px` } : null) }} aria-live="polite">
         {ready && (
           <>
-          <small data-reckon-phase={row?.kind || 'contest'}>{row?.kind === 'bonus' ? 'Game End' : row?.kind === 'after' ? 'After contests' : `Round ${info.result.round} contests`} · {Math.min(step + 1, rows.length)} of {rows.length}</small>
+          <small data-reckon-phase={row?.phase === 'roundEnd' ? 'roundEnd' : row?.kind || 'contest'}>{row?.kind === 'bonus' ? 'Game End' : row?.phase === 'roundEnd' ? `Round ${info.result.round} end` : row?.kind === 'after' ? 'After contests' : `Round ${info.result.round} contests`} · {Math.min(step + 1, rows.length)} of {rows.length}</small>
           {/* (keyed by the rim: the next rim's words fade in rather than swap in one frame, round-end smoothing) */}
           {row && <b key={`r${step}`} className="reckon-rule">{row.rule}</b>}
           {row && row.counts && <span key={`c${step}`} className="reckon-counts">{row.kind === 'bonus' || row.kind === 'after' ? '' : 'Counts '}{row.counts.replace(/\.\s*$/, '')}{row.tiebreak && row.tiebreak.text ? `; ${row.tiebreak.text}` : ''}.</span>}

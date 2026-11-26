@@ -65,7 +65,9 @@ it('flies only the closing move\'s own followers, from their own sources, before
       // ...and less what the members that answer the contests give (Cory, Nov 5: "round ends, contests, members."):
       // the Reckoning shows those after the contests, never the closing move's chain before them
       const later = {};
-      for (const st of afterContestSteps(info)) for (const [id, n] of Object.entries(st.deltas)) later[id] = (later[id] || 0) + n;
+      // ...and the Round End members, which lead the Reckoning since Cory, Nov 26 ("little plus followers get added to
+      // people's score at the end of the round, and I have no idea where they're coming from")
+      for (const st of [...afterContestSteps(info, 'roundEnd'), ...afterContestSteps(info)]) for (const [id, n] of Object.entries(st.deltas)) later[id] = (later[id] || 0) + n;
       const own = Object.fromEntries(next.players.map(p => [p.id, followers(next, p) - (prize[p.id] || 0) - (later[p.id] || 0) - followers(prev, prev.players[p.id])]));
       const got = flown(plan);
       const moved = (shown.effects || []).some(e => ['member-move', 'release'].includes(e.type));

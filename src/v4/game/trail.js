@@ -89,6 +89,11 @@ function tell(trail, c, end, last = null) {
   if (fx && last && last.round !== c.round) {
     const cut = fx.findIndex(e => e.cause && ['contest', 'round', 'final'].includes(e.cause.kind));
     fx = cut >= 0 ? fx.slice(0, cut) : fx.filter(e => !(e.cause && e.cause.kind === 'member' && e.cause.pid !== c.actor));
+    // the scoring move's Round End members are the Reckoning's first steps, never the last turn's doing (Cory, Nov 26: the
+    // strip read "P4 Root: you +1 (Harlequin)")
+    const closing = new Set(Array.isArray(last.effects) ? last.effects : []);
+    const reckoned = e => e.phase === 'afterContests' || (e.phase === 'roundEnd' && e.cause && e.cause.kind === 'member' && ['followers', 'gain', 'pay', 'transfer'].includes(e.type));
+    fx = fx.filter(e => !reckoned(e) || (closing.size && !closing.has(e)));
   }
   return told(trail, c, end, fx ? effectStory(c.start, end, c.actor, trail.me, fx) : turnStory(c.start, end, c.actor, trail.me, c.mid));
 }

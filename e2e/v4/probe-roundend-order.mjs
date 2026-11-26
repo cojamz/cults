@@ -21,7 +21,7 @@ const give = (pid, def) => {
   const c = Object.values(s.cards).find(x => x.def === def && !taken.has(x.uid));
   const uid = c ? c.uid : Math.max(...Object.keys(s.cards).map(Number)) + 1;
   if (!c) s.cards[uid] = { uid, def };
-  for (const k of Object.keys(s)) if (Array.isArray(s[k]) && s[k].includes(uid) && k !== 'members') s[k] = s[k].filter(x => x !== uid);
+  for (const k of ['pile', 'shop', 'discard']) s[k] = s[k].filter(x => x !== uid); for (const r of Object.keys(s.waiting || {})) s.waiting[r] = s.waiting[r].filter(x => x !== uid); // card lists only: order and firstOrder hold player ids
   taken.add(uid);
   s.players[pid].members.push(uid);
 };

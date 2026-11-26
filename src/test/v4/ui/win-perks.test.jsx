@@ -39,8 +39,12 @@ describe('contest-win members on the round-end card', () => {
     expect(contests.compareDocumentPosition(line) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     // and the Reckoning plays them after every contest
     const steps = reckonSteps(info);
-    const firstAfter = steps.findIndex(r => r.kind === 'after');
+    const firstAfter = steps.findIndex(r => r.kind === 'after' && r.phase === 'afterContests');
     expect(firstAfter).toBeGreaterThan(-1);
-    expect(steps.slice(firstAfter).every(r => r.kind === 'after' || r.kind === 'bonus')).toBe(true);
+    expect(steps.slice(firstAfter).every(r => (r.kind === 'after' && r.phase === 'afterContests') || r.kind === 'bonus')).toBe(true);
+    // the Round End members lead, before every contest (Cory, Nov 26)
+    const lastEnd = steps.map(r => r.phase === 'roundEnd').lastIndexOf(true);
+    const firstContest = steps.findIndex(r => r.kind !== 'after' && r.kind !== 'bonus');
+    if (lastEnd >= 0) expect(lastEnd).toBeLessThan(firstContest);
   });
 });

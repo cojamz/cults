@@ -228,8 +228,13 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   const income = roundAdvance ? fx.filter(e => e && e.cause && e.cause.kind === 'member' && e.type === 'gain' && e.to && e.to.kind === 'stack' && e.to.pid === e.cause.pid) : [];
   if (income.length) fx = fx.filter(e => !income.includes(e));
   const beats = [];
+  // the move that scores the round: its Round End members' followers and resources are the Reckoning's first steps, each
+  // named (Cory, Nov 26: "little plus followers get added to people's score at the end of the round, and I have no idea
+  // where they're coming from"); flown here too they landed under the last player's turn with no name
+  const scoring = (state.contests || []).length > (before.contests || []).length;
+  const reckoned = e => e.phase === 'afterContests' || (scoring && e.phase === 'roundEnd' && e.cause.kind === 'member' && ['followers', 'gain', 'pay', 'transfer'].includes(e.type));
   for (const e of fx) {
-    if (!e || !e.cause || ['contest', 'final'].includes(e.cause.kind) || e.phase === 'afterContests') continue; // the Reckoning flies prizes, the members that answer them and end-game member bonuses
+    if (!e || !e.cause || ['contest', 'final'].includes(e.cause.kind) || reckoned(e)) continue; // the Reckoning flies prizes, the Round End members, the members that answer them and end-game member bonuses
     if (['refill', 'shop-out', 'discount'].includes(e.type)) continue; // bookkeeping: the deck deals, the price shows it
     const k = causeKey(e.cause);
     if (!beats.length || beats[beats.length - 1].key !== k) beats.push({ key: k, cause: e.cause, effects: [] });
@@ -269,7 +274,9 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     // (Cory, Nov 12: "the followers coming from followers dont look like multiple when they are", "animation is
     // confusing") two or more followers gained fly as one token that says so, "+3 followers" over what paid them, the
     // round end's token (Reckoning.jsx); a single follower stays the follower mark. A little slower than a coin, to read.
-    if (opt.fol && !opt.pay && n >= 2) {
+    // (a new round's Round Start followers fly as the token even for 1, so the member that paid them is named: Spice
+    // Merchant's +1 landed after the round card with nothing saying why, Cory, Nov 26)
+    if (opt.fol && !opt.pay && (n >= 2 || opt.named)) {
       const d = Math.round(coinFlightMs(dist(from, to)) * 1.1);
       hand = Math.max(hand, time + d * (2 / 3));
       at(time, { ...opt, op: 'piece', from, to, n, bundle: true, token: true, dur: d }); // (its own time: a recruit's worth hop asks for a short one)
@@ -599,7 +606,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       ends(cur + d);
       cur += nextBeatAt(d);
     }
-    phase(m.fols.map(f => (f.what.n > 0 ? { from: f.from.kind === 'bank' && pulsed ? { kind: 'space', key: pulsed } : f.from, to: f.to, n: f.what.n, opt: { fol: true, why: causeName(state, c) } } : { from: f.from, to: f.to, n: -f.what.n, opt: { fol: true, pay: true } })));
+    phase(m.fols.map(f => (f.what.n > 0 ? { from: f.from.kind === 'bank' && pulsed ? { kind: 'space', key: pulsed } : f.from, to: f.to, n: f.what.n, opt: { fol: true, why: causeName(state, c), ...(roundAdvance && c.kind === 'member' ? { named: true } : {}) } } : { from: f.from, to: f.to, n: -f.what.n, opt: { fol: true, pay: true } })));
     // Each named cause gets a clear landing before the next source enters. Color fans within a cause stay together.
     // A rival's beats overlap instead: the next starts at this one's hand-off (its last piece two-thirds along, grammar
     // §5), except after a recruit or a follower buy, which lands in full before anything else moves.

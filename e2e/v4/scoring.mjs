@@ -146,15 +146,19 @@ try {
   // (Trumpeter, Trumpeters, Victors, Sore Loser: "After contests", Cory Nov 5: "round ends, contests, members."), then the
   // Game End members. This gate's fixture is about Game End; the After contests steps the dealt table brings are checked
   // against the engine's log lines, and must all come before the first Game End step.
-  const gameEnd = fs.bonuses.filter(b => b.phase === 'bonus'), afters = fs.bonuses.filter(b => b.phase === 'after');
-  if (gameEnd.length + afters.length !== fs.bonuses.length) errors.push(`member steps with no phase: ${JSON.stringify(fs.bonuses.filter(b => b.phase !== 'bonus' && b.phase !== 'after').map(b => b.name))}`);
+  // Since Nov 26 the Round End members lead, each its own step before the contests (Cory: "little plus followers get added
+  // to people's score at the end of the round, and I have no idea where they're coming from"); checked like the After ones.
+  const gameEnd = fs.bonuses.filter(b => b.phase === 'bonus'), afters = fs.bonuses.filter(b => b.phase === 'after' || b.phase === 'roundEnd');
+  if (gameEnd.length + afters.length !== fs.bonuses.length) errors.push(`member steps with no phase: ${JSON.stringify(fs.bonuses.filter(b => b.phase !== 'bonus' && b.phase !== 'after' && b.phase !== 'roundEnd').map(b => b.name))}`);
   if (fs.bonuses.findIndex(b => b.phase === 'bonus') >= 0 && fs.bonuses.slice(fs.bonuses.findIndex(b => b.phase === 'bonus')).some(b => b.phase === 'after')) errors.push('an After contests step came after a Game End step');
   for (const b of afters) {
     const who = b.pid === '0' ? 'P1' : `P${+b.pid + 1}`;
     const amount = b.verdict.match(/\+(\d+) follower/);
     // (the engine's line may say why first: "P4's Comforter: didn’t win 4 contests, +8 followers.")
     const line = amount && new RegExp(`${who}'s ${b.name}: (.*, )?\\+${amount[1]} follower`);
-    if (!line || !state.log.some(l => line.test(l))) errors.push(`${b.name} (P${+b.pid + 1}): After contests step "${b.verdict}" matches no engine log line`);
+    // (a Round End member's line may say what it counted first, and "followers" for 1: "P1's Clan Chief: 1 member …: +1 followers.")
+    const endLine = amount && new RegExp(`${who}'s ${b.name}: .*\\+${amount[1]} follower`);
+    if (!line || !state.log.some(l => line.test(l) || (b.phase === 'roundEnd' && endLine.test(l)))) errors.push(`${b.name} (P${+b.pid + 1}): ${b.phase === 'roundEnd' ? 'Round End' : 'After contests'} step "${b.verdict}" matches no engine log line`);
   }
   if (gameEnd.length !== expected.length) errors.push(`showed ${gameEnd.length} Game End steps; engine granted ${expected.length}`);
   for (const g of expected) {
@@ -175,8 +179,12 @@ try {
     const start = end[g.pid] ? end[g.pid].final - expected.filter(x => x.pid === g.pid).reduce((n, x) => n + x.n, 0) : null;
     if (start != null && b.values.at(-1) > start + prior) errors.push(`${g.name}: chair overshot, showed ${b.values.at(-1)} with ${start} + ${prior} granted`);
   }
-  const firstBonus = fs.order.findIndex(k => k.startsWith('bonus:'));
-  if (firstBonus !== state.quadrants.length || fs.order.slice(firstBonus).some(k => k.startsWith('contest:'))) errors.push(`bonuses did not follow every contest: ${fs.order.join(', ')}`);
+  // the order: Round End members, every contest, then the After contests and Game End members
+  const endUids = new Set(fs.bonuses.filter(b => b.phase === 'roundEnd').map(b => `bonus:${b.uid}`));
+  const order = fs.order.filter(k => !endUids.has(k)), lead = fs.order.slice(0, endUids.size);
+  if (lead.some(k => !endUids.has(k))) errors.push(`the Round End members did not lead: ${fs.order.join(', ')}`);
+  const firstBonus = order.findIndex(k => k.startsWith('bonus:'));
+  if (firstBonus !== state.quadrants.length || order.slice(firstBonus).some(k => k.startsWith('contest:'))) errors.push(`bonuses did not follow every contest: ${fs.order.join(', ')}`);
   for (const [pid, f] of Object.entries(end)) {
     const sum = expected.filter(g => g.pid === pid).reduce((n, g) => n + g.n, 0);
     if (sum !== f.endGame || f.seat !== f.table || f.final !== f.table) errors.push(`P${+pid + 1}: bonuses ${sum}, end-game column ${f.endGame}, table ${f.table}, chair ${f.seat}, engine ${f.final}`);
