@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.813 — 2026-11-25
+
+- Tests follow the Nov 26 renames and new members; Go-Between and Rummager get their own emoji
+
 ## v0.99.812 — 2026-11-25
 
 - Round End members (Harlequin, Pilgrims, Clan Chief, Bannermen) now score as their own named steps at the start of round-end scoring, so every follower they add says where it came from
