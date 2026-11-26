@@ -81,7 +81,8 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     const stunt = member('Shadow');
     let s = table(Q, { round: 3, left: 7, shop: [stunt], queue: turns(0, 0, 0, 0) });
     s = go(s, 'red.hire');
-    while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
+    // the first Walk-In takes anything but Shadow (the deal moved with Cory's Nov 26 members)
+    while (s.pending?.kind === 'choose') s = move(s, (s.pending.options.find(o => !/Shadow/.test(o.label || '')) || s.pending.options[0]).id);
     s = pass(s);
     const u = onTop(s, stunt);
     s = choose(take(s, 'echo.refrain'), 'red.hire');
