@@ -16,3 +16,6 @@ The bot that saw members' later abilities bought about 2 more members a game (7.
 ## Next (no call needed)
 - Cory's Dominion test, played straight: the strongest bot buying only followers, against the same bot allowed exactly one member in round I and then only followers. Same deals.
 - Save each round's contest winners in these games, to see whether one player sweeping Went last (purple) and contests nobody scores in still happen between strong bots.
+
+## Added 12:30am: stronger counterplay (deny + rivals block the leader in its look-ahead)
+60 games: first places 30 with it, 36 today's bot; 69.2 vs 70.1 followers a player (-0.9 ± 1.3). No change. Four counterplay or plan habits, none moved the strongest bot by more than a follower.
