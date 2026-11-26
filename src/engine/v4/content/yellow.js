@@ -78,6 +78,9 @@ function newColor(ctx, owner, member, { grey = false } = {}) {
   // grey counts as a color for Guest Book (Cory, Nov 1: "Yes"), as for HR; Dabblers is grey and every color
   const pool = grey ? [...ctx.state.quadrants, 'guest'] : ctx.state.quadrants;
   if (isWild(ctx, member)) return pool.some(q => !has(q));
+  // Drifters before its color is chosen: its owner will pick, so it is new while they lack a table color (review, Nov 25:
+  // Welcome Strangers paid before the color was chosen; Cory: "it should just do the best thing")
+  if (def.key === 'drifters' && !member.asColor) return ctx.state.quadrants.some(q => !has(q));
   const q = member.asColor || def.quadrant;
   return pool.includes(q) && !has(q);
 }
