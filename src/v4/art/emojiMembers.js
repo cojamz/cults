@@ -22,6 +22,7 @@ const M = {
   'pied-piper': ['🪈', '☝️ Swap a rival’s member for a shop one, same cost or more'],
   'rabble-rousers': ['🥴', '☝️ Swap this member for a rival’s member'],
   'go-between': ['📨', '☝️ Recruit a rival’s member, paying them its cost'],
+  purifiers: ['🧼', '☝️ Discard one of yours; each rival with more members discards one'],
   rummager: ['🗃️', '☝️ +1 of each color'],
   patriarch: ['👴', '🏁 +1 follower per 2 members'],
   'clan-chief': ['👪', '🌙 +1 follower per member in your biggest one-color group'],

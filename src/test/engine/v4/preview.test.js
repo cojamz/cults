@@ -39,7 +39,10 @@ describe('v4 previewSpace', () => {
           const hidden = s.pile.slice(pileReach(s, me0));
           const fromPile = me.members.some(u => hidden.includes(u));
           for (const u of hidden) expect(pv.joins || [], `${o.label}: names a face-down card`).not.toContain(u);
-          if (!pv.partial && !pastRound && !fromPile) {
+          // Bookkeeper (retired, dealt only in these all-card test games) pays after the turn's buy step, which a space
+          // preview stops before; the Nov 26 deal (Purifiers to Blue) first sampled a turn where it fired
+          const afterTurn = t.log.slice(s.log.length).some(l => /'s Bookkeeper: /.test(l));
+          if (!pv.partial && !pastRound && !fromPile && !afterTurn) {
             for (const r of s.resources) expect(inRange(pv.you.res[r], (me.res[r] || 0) - (me0.res[r] || 0)), `${o.label}: ${r} ${JSON.stringify(pv.you.res[r])}`).toBe(true);
             expect(inRange(pv.you.members, memberCount(t, me) - memberCount(s, me0)), `${o.label}: members`).toBe(true);
             // followers: the buy step can't have run yet (we stop at the next decision), so it's the space's own

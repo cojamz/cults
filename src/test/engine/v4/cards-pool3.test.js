@@ -235,7 +235,8 @@ describe('Purple candidates', () => {
     return { s, afterOne };
   };
   it('Heavies (the brief\'s Bouncers): a rival who recruits two or more members in one turn skips their next turn; one recruit does nothing', () => {
-    const one = d => (defById(d.def).n || 1) === 1;
+    // members counting 1 with no On Recruit, so a recruit's own effect can't move the turns (Nov 26: the deal moved)
+    const one = d => (defById(d.def).n || 1) === 1 && !/^On Recruit|turn/i.test(defById(d.def).text || ''); // and none that touch turns (Early Birds: "your turns cannot be skipped")
     const { s, afterOne } = recruitTwice('purple.bouncers3', one);
     expect(linesNaming(afterOne, 'Heavies')).toEqual([]);
     expect(named(s, 'Heavies')).toEqual(["P2's Heavies: P1 recruited 2 or more members this turn.", "P2's Heavies: P1 skips their next turn."]);

@@ -45,7 +45,7 @@ describe('11 · every choice names the card or space that asked', () => {
     const first = s.pile[0];
     s = take(s, 'red.hire'); // P2 takes Walk-In: the deck's top member, free
     expect(s.players[1].members).toEqual([first]);
-    while (s.pending && s.pending.player === 1) s = move(s, 'pass');
+    while (s.pending && s.pending.player === 1) s = move(s, s.pending.options?.some(o => o.id === 'pass') ? 'pass' : s.pending.options[0].id) // pass where it can (the deal moved with Purifiers to Blue, Nov 26);
     const second = s.pile[0];
     s = take(s, 'echo.echo');
     if (s.pending?.kind === 'choose' && s.pending.options.some(o => o.label.startsWith('Walk-In'))) s = move(s, s.pending.options.find(o => o.label.startsWith('Walk-In')).id);
