@@ -321,7 +321,7 @@ const members = [
   // Cory, 2026-11-12 9:30pm Eastern, on catching up to a member leader: Mutineers, with no cost cap to try ("7 feels
   // like the right cutoff. maybe we should just make it any? lets try it"). A take from a rival, so Bodyguards and
   // the other steal rules apply as for Poach. Grey, round II deck, 6 any, worth 1 (Claude's fill-ins).
-  pool(m('mutineers', 'Mutineers', null, 0, 3, 'On Use, once per game: take a member from a rival with more members than you.', {
+  pool(m('mutineers', 'Mutineers', null, 0, 4, /* 7 as a player sees it (Cory, Nov 25: "Increase the cost"; was 6) */ 'On Use, once per game: take a member from a rival with more members than you.', {
     round: 2,
     activate: 'game',
     onActivate(ctx, owner, card) {

@@ -833,7 +833,7 @@ export function changeWords(d, state) {
   // a card that counts as more than one says so on itself ("Sleepyheads (+2 members)" read as two more cards on top:
   // picky bot, Nov 11)
   const weight = u => { try { return memberWeight(state, u); } catch { return 1; } };
-  if (d.members > 0 && names && d.joined.some(u => weight(u) > 1)) gain.push(d.joined.map((u, k) => (weight(u) > 1 ? `${names[k]} (counts as ${weight(u)} members)` : names[k])).join(' and '));
+  if (d.members > 0 && names && d.joined.some(u => weight(u) > 1)) gain.push(d.joined.map((u, k) => (weight(u) > 1 ? `${names[k]} (worth ${weight(u)})` : names[k])).join(' and '));
   else if (d.members > 0 && names && names.length !== d.members) gain.push(`${names.join(' and ')} (${n(d.members, 'member')})`);
   else if (d.members > 0) gain.push(n(d.members, 'member') + who);
   if (d.followers + went > 0) gain.push(n(d.followers + went, 'follower'));

@@ -7,7 +7,7 @@ const CLOAKS = new Set(Object.values(ARTIFACTS)); // each color's cloak is an ar
 import * as idx from '../../../src/engine/v4/content/index.js';
 import { sphereVersion } from '../../../src/v4/tables.js';
 const out = { members: [], spaces: [] };
-const price = (m, res) => `${m.s ? `${m.s} ${res} + ` : ''}${m.w} any, worth ${m.f}${m.n > 1 ? `, counts as ${m.n}` : ''}`;
+const price = (m, res) => `${m.s ? `${m.s} ${res} + ` : ''}${m.w} any, worth ${m.f}${m.n > 1 && m.n !== m.f ? `, counts as ${m.n}` : ''}`;
 for (const id of allQuadrantIds()) {
   const q = quadrant(id), ver = sphereVersion(id);
   for (const a of q.actions) out.spaces.push({ id: a.id || a.key, name: a.name, text: a.text, color: id, colorName: q.name, round: a.ring, ver });

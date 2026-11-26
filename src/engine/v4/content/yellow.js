@@ -947,7 +947,7 @@ export default {
     // Cory, 2026-11-11 8:21pm Eastern: "You buy it, swap your members for arrivals that cost the same… mixing and matching
     // colors around… Costing the same might be a little restrictive, but that might keep it power balanced." A swap as
     // Body Snatchers' (Loyalists stop it; Bodyguards don't, Cory Nov 1: "blocks steals, not swaps"). Price is Claude's fill-in.
-    m('exchangestudents', 'Hostages', 2, 2, 'On Recruit: swap one of your members for a rival\u2019s member that costs the same.', {
+    m('exchangestudents', 'Hostages', 2, 3, /* 8 as a player sees it (Cory, Nov 25: "sure, increase the cost"; was 7) */ 'On Recruit: swap one of your members for a rival\u2019s member that costs the same.', {
       onRecruited(ctx, owner) {
         const pairs = exchangePairs(ctx, owner);
         if (!pairs.length) {

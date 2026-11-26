@@ -37,6 +37,10 @@ How to use it:
 
 - `purple.extrashift` Day Laborer ("On Recruit: +1 minion this round.", the same text as Extra Hand) · 2026-11-24 7:53pm · "yes" to cutting it with no replacement (already out of the 10-card deck)
 - Bandit (`thieves.accomplice`, "On Recruit: steal 3 resources.") and Stallholder (`market.mannequin`, "Blue members in the shop count as your members when contests are scored.") · 2026-11-24 7:53pm · "yes": replaced in place by Tax Men and Gleaner (same ids, new cards; the old ones live on only as test fixtures `thieves.banditold`, `market.mannequinold`)
+- `market.mannequin` Gleaner · 2026-11-25 8:58pm Eastern · "Cut. Yeah, okay. Cut cleaner." (from the review's cut list)
+- `purple.closer` Gate-Shutter · 2026-11-25 8:58pm Eastern · "Gate shutter. Okay. Okay, cut."
+- `red.innkeeper` Innkeeper · 2026-11-25 8:58pm Eastern · "Innkeeper. Okay." ("So okay means cut for these in this situation")
+- `yellow.dyer` Gilder · 2026-11-25 8:58pm Eastern · "Gilder. Okay. Cut."
 
 ## Disliked, not cut (ask him; don't cut on these)
 - Mannequin "Blue members in the shop count as your members when contests are scored." · Nov 11 11:35pm: "i dont love mannequins"

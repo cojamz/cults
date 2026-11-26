@@ -63,7 +63,7 @@ function Tarot({ d, small }) {
       <div className="c-art"><Art d={d} size={small ? 48 : 96} /></div>
       <b className="c-name">{d.name}</b>
       {!small && <div className="c-box"><Text d={d} /></div>}
-      {!small && <footer className="c-foot">{colorName(d)}{d.n > 1 ? ` · counts as ${d.n}` : ''}</footer>}
+      {!small && <footer className="c-foot">{colorName(d)}{d.n > 1 ? ` · worth ${d.n}` : ''}</footer>}
     </div>
   </article>;
 }

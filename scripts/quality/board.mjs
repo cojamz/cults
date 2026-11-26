@@ -19,7 +19,7 @@ export function boardText(colors = [], { without = [], members = true, spaces = 
     if (id === 'guests') {
       if (!members) continue;
       L.push('', '## Guests (no color; cost only "any"; can join any cult)');
-      for (const m of guestMembers().filter(inDeck)) if (!drop.has(m.name.toLowerCase())) L.push(`    · ${m.name} [${m.w} any, worth ${m.f}${m.n > 1 ? `, counts as ${m.n}` : ''}] ${m.text ?? ''}`);
+      for (const m of guestMembers().filter(inDeck)) if (!drop.has(m.name.toLowerCase())) L.push(`    · ${m.name} [${m.w} any, worth ${m.f}${m.n > 1 && m.n !== m.f ? `, counts as ${m.n}` : ''}] ${m.text ?? ''}`);
       for (const m of extra.filter(x => /^guests?$|^grey$|^gray$/i.test(x.color))) L.push(`    · ${m.name} [${m.price}] ${m.text}`);
       continue;
     }
@@ -29,7 +29,7 @@ export function boardText(colors = [], { without = [], members = true, spaces = 
     L.push('', `## ${q.name} · resource: ${q.resource} · contest each round (By color): ${contest}`);
     if (spaces) for (const a of [...q.actions].sort((x, y) => x.ring - y.ring)) if (!drop.has(a.name.toLowerCase())) L.push(`  ${R[a.ring] || a.ring}  ${a.name}: ${a.text}`);
     if (spaces) for (const a of extraSpaces.filter(x => (ALIAS[x.color.toLowerCase()] || x.color.toLowerCase()) === id)) L.push(`  ${R[a.round] || a.round}  ${a.name}: ${a.text}`);
-    if (members) for (const m of q.members.filter(inDeck)) if (!drop.has(m.name.toLowerCase())) L.push(`    · ${m.name} [${m.s ? `${m.s} ${q.resource} + ` : ''}${m.w} any, worth ${m.f}${m.n > 1 ? `, counts as ${m.n}` : ''}] ${m.text ?? ''}`);
+    if (members) for (const m of q.members.filter(inDeck)) if (!drop.has(m.name.toLowerCase())) L.push(`    · ${m.name} [${m.s ? `${m.s} ${q.resource} + ` : ''}${m.w} any, worth ${m.f}${m.n > 1 && m.n !== m.f ? `, counts as ${m.n}` : ''}] ${m.text ?? ''}`);
     // cards in bot test that the lanes want on the board: [{color, name, price, text}]
     if (members) for (const m of extra.filter(x => (ALIAS[x.color.toLowerCase()] || x.color.toLowerCase()) === id)) L.push(`    · ${m.name} [${m.price}] ${m.text}`);
   }
@@ -43,9 +43,9 @@ export function findCard(name, colorHint) {
   const order = [...allQuadrantIds().filter(q => sphereVersion(q) === '2.0'), ...allQuadrantIds().filter(q => sphereVersion(q) !== '2.0' && !['blue', 'green', 'guest'].includes(q))];
   for (const id of order) { let q; try { q = quadrant(id); } catch { continue; }
     for (const a of q.actions) if (a.name.toLowerCase() === n) hits.push({ kind: 'space', name: a.name, text: a.text, color: q.name, qid: id, round: a.ring });
-    for (const m of q.members) if (m.name.toLowerCase() === n && !m.retired) hits.push({ kind: 'member', name: m.name, text: m.text, color: q.name, qid: id, def: m, price: `${m.s ? `${m.s} ${q.resource} + ` : ''}${m.w} any, worth ${m.f}${m.n > 1 ? `, counts as ${m.n}` : ''}` });
+    for (const m of q.members) if (m.name.toLowerCase() === n && !m.retired) hits.push({ kind: 'member', name: m.name, text: m.text, color: q.name, qid: id, def: m, price: `${m.s ? `${m.s} ${q.resource} + ` : ''}${m.w} any, worth ${m.f}${m.n > 1 && m.n !== m.f ? `, counts as ${m.n}` : ''}` });
   }
-  for (const m of guestMembers()) if (m.name.toLowerCase() === n && !m.retired) hits.push({ kind: 'member', name: m.name, text: m.text, color: 'Guests', qid: 'guests', def: m, price: `${m.w} any, worth ${m.f}${m.n > 1 ? `, counts as ${m.n}` : ''}` });
+  for (const m of guestMembers()) if (m.name.toLowerCase() === n && !m.retired) hits.push({ kind: 'member', name: m.name, text: m.text, color: 'Guests', qid: 'guests', def: m, price: `${m.w} any, worth ${m.f}${m.n > 1 && m.n !== m.f ? `, counts as ${m.n}` : ''}` });
   // a card in the live 10-card deck beats a cut or stand-in card of the same name
   const live = h => h.kind === 'space' || (!CUT.has(h.def.id) && !CUT10.has(h.def.id) && !h.def.artifact);
   const pool = hint ? hits.filter(h => h.qid === hint || h.color.toLowerCase() === hint) : hits;

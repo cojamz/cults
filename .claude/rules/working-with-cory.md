@@ -30,6 +30,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 - Bold card and space names and the ask; one item per line; blank lines between groups. No tables or headers.
 - Card shorthand: 🔴🟢🟣🔵⚪🟡 resource, 🌈 any color, 🧍 follower, 🟥 a red member.
 - A member's name is a person or a group of people, never a place, building or thing (Cory, Nov 5: "these should be MEMBERS not buildings or things", on Ballroom).
+- A member's worth and its member count are always equal: write "worth 3", never "worth 3, counts as 3" (Cory, Nov 25: "worth 3 counts as 3 is redundant those numbers should always be equal").
 - Prices: "costs more" / "costs less", never "dear" or "dearer" (Cory, Nov 26: "what the fuck does 'Dearer' mean why do you keep using tha tword?"; message-check refuses it).
 - His words, never coined labels ("buy followers"). Every pick names the real card and says what a player does differently; never a pick on a category ("the member-count cards").
 - Leave out the +1 of its color every space gives.

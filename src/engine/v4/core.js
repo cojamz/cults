@@ -30,7 +30,7 @@ function pinToTop(state) {
 }
 
 // PRIZES=a,b,c: bot games only (economy test, Cory Nov 7: "yes you can adjust follower price etc.")
-export const RING_VALUE = ECON.prizes || [4, 6, 10];
+export const RING_VALUE = ECON.prizes || [4, 6, 8]; // round III 10 → 8 (Cory, Nov 25: "Let's try end of round being 4/6/8?", "let's default to it, so ship even if it seems neutral")
 export const WORKERS = [3, 4, 5];
 export const SHOP_SIZE = 8;
 /** Face-up members by round: 6 in round I (and setup), 7 in round II, 8 in round III (Cory, 2026-10-22). SHOP_SIZE is the most. */
@@ -1516,7 +1516,10 @@ export function scoringOf(state, qid) {
     if (fix.yellow === 'colors') by.yellow = { label: 'Most member colors', counts: 'the colors among your members when the round ends (grey is a color)',
       score: (ctx, p) => { const have = state.quadrants.filter(q => countMembersOfColor(state, p, q, { cards: true, wild: false }) > 0).length;
         const grey = greyColor(state, p) ? 1 : 0;
-        return Math.min(state.quadrants.length, have + p.members.filter(u => countsAsEveryColor(state, u)).length) + grey; } };
+        // each Jester counts as whichever color you lack, grey included once the table's colors are full (Cory, Nov 25:
+        // "most member colors should count it as the color that would give the player the most... it should just do the best thing")
+        const lacking = state.quadrants.length - have + 1 - grey;
+        return have + grey + Math.min(lacking, p.members.filter(u => countsAsEveryColor(state, u)).length); } };
     // Silver: plain Fewest silver, 0 counts (Cory, 2026-11-07 11:47pm: "why at least one???")
     if (fix.silver === 'fewest0') by.silver = { label: 'Fewest silver', counts: 'the silver you hold when the round ends',
       score: (ctx, p) => 1000 - (p.res.silver || 0), show: (ctx, p) => ({ count: p.res.silver || 0 }) };

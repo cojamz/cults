@@ -143,7 +143,7 @@ export function cardsMd(s) {
     out.push(`### ${qid === 'guest' ? 'Guests (no color)' : quadrant(qid).name}`);
     for (const d of ds.sort((x, y) => (x.s + x.w) - (y.s + y.w))) {
       const copies = all.filter(x => x.id === d.id).length;
-      out.push(`- ${d.name} — cost ${costWords(d)}, worth ${d.f} follower${d.f === 1 ? '' : 's'}${(d.n ?? 1) !== 1 ? `, counts as ${d.n} members` : ''}${copies > 1 ? `, ${copies} copies` : ''}: ${d.text}`);
+      out.push(`- ${d.name} — cost ${costWords(d)}, worth ${d.f} follower${d.f === 1 ? '' : 's'}${(d.n ?? 1) !== (d.f ?? 1) ? `, counts as ${d.n} members` : ''}${copies > 1 ? `, ${copies} copies` : ''}: ${d.text}`);
     }
     out.push('');
   }

@@ -49,6 +49,7 @@ export const CUT = new Set([
   'purple.gossip', // Cory, 2026-11-12 6:49pm: "Gossip is still in the game as well" (no turn is skipped since the Nov 9 token)
   'red.movementpenalty', // Cory, 2026-11-12 6:16pm: "why is deprogrammers in the game? didnt we cut" (Nov 8: "I don't like it"); slot open
   'purple.extrashift', // Cory, 2026-11-24 7:53pm: yes to cutting Day Laborer, the same text as Extra Hand (already out of the 10-card deck)
+  'market.mannequin', 'purple.closer', 'red.innkeeper', 'yellow.dyer', // Gleaner, Gate-Shutter, Innkeeper, Gilder (Cory, Nov 25: "Cut. Yeah, okay. Cut cleaner. Gate shutter. Okay. Okay, cut. Innkeeper. Okay. Gilder. Okay. Cut. So okay means cut for these"); design/cuts.md
 ]);
 
 // The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";

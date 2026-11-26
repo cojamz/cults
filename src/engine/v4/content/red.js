@@ -354,12 +354,12 @@ export default {
       resolve(ctx, p) { ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
     {
-      key: 'take', ring: 3, name: 'Induct', text: `Recruit a shop member costing ${INIT_CAP} or less, for free. +1 red.`, // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
-      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= INIT_CAP + richUp(ctx.state)).map(c => c.def.f + cost(c) * 0.6)),
+      key: 'take', ring: 3, name: 'Induct', text: 'Recruit a shop member, for free. +1 red.', // no cost limit (Cory, Nov 25: "Just make it no limit, I think, is the key here for induction"); the old cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
+      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().map(c => c.def.f + cost(c) * 0.6)),
       resolve(ctx, p) {
-        const shop = ctx.shopCards().filter(c => cost(c) <= INIT_CAP + richUp(ctx.state));
+        const shop = ctx.shopCards();
         ctx.gain(p, 'red', 1, { fromAction: true });
-        if (!shop.length) { ctx.log(`${p.name}: no shop member costs ${INIT_CAP + richUp(ctx.state)} or less.`); return; }
+        if (!shop.length) { ctx.log(`${p.name}'s Induct: the shop is empty.`); return; }
         if (ACT.has('initiation')) usesRecruit(ctx, p);
         ctx.choose(p, 'Induct: which member?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(c),
@@ -642,7 +642,7 @@ export default {
     // 4 red + 2 any as a player sees it. Its swap is a choice with "Don't swap" (Red's swaps can be skipped: Cory,
     // 2026-10-22, "You shouldnt HAVE to swap"); a rival's member it can take is one that may be swapped (Loyalists,
     // Bodyguards). The member you get is your recruit (its On Recruit fires), as with Promote.
-    m('bodysnatchers', 'Swindler', 2, 2, /* any rival's member (Cory, Nov 8: "swapped for any… make it mid priced… let's try it this way"); already 6, mid priced */ "Round Start: swap one of your members with a rival's member costing up to 3 more.", { f: 2,
+    m('bodysnatchers', 'Swindler', 2, 3, /* 8 as a player sees it (Cory, Nov 25: "Swindler. Sure. Increase the cost"; was 7) */ /* any rival's member (Cory, Nov 8: "swapped for any… make it mid priced… let's try it this way"); already 6, mid priced */ "Round Start: swap one of your members with a rival's member costing up to 3 more.", { f: 2,
       onRoundStart(ctx, owner, card) {
         const pairs = snatchPairs(ctx, owner);
         if (!pairs.length) { ctx.log(`${owner.name}'s Swindler: no rival member to swap with.`); return; }
