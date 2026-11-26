@@ -64,11 +64,11 @@ describe('Paupers: "Round End: if you hold no silver, +3 followers."', () => {
     expect(s.log.filter(l => l === "P1's Paupers: no silver, +3 followers.").length).toBe(2);
   });
 
-  it('Paupers taken by Hostages mid-round pays its new holder at Round End', () => {
-    // P2 recruits Hostages and swaps their Good Samaritans for P1's Paupers (both cost 6)
+  it('Paupers taken by Exchanger mid-round pays its new holder at Round End', () => {
+    // P2 recruits Exchanger and swaps their Good Samaritans for P1's Paupers (both cost 6)
     const { s } = go('paupers-exchange', { quads: Q, turns: [1], queue: [{ t: 'turn', p: 1 }, { t: 'allPlaced' }], shop: ['yellow.exchangestudents'],
       members: [['silver.paupers'], ['silver.kingmakers']], res: [{ silver: 0 }, { yellow: 9, red: 9 }] },
-      [/Gather the Kin/, /Hostages/, /Paupers/]);
+      [/Gather the Kin/, /Exchanger/, /Paupers/]);
     expect(names(s, 1)).toContain('Paupers');
     expect(names(s, 0)).toContain('Good Samaritans');
     expect(has(s, /P2's Paupers: no silver, \+3 followers\./)).toBe(true);
@@ -212,11 +212,11 @@ describe('Pawnbrokers: "On Use, once per round: swap up to 5 of your silver for 
     cleanLog(s);
   });
 
-  it('used, then taken by Hostages: still used for its new holder this round', () => {
+  it('used, then taken by Exchanger: still used for its new holder this round', () => {
     const st = scene({ quads: Q, turns: [1], members: [['silver.loanofficers'], ['echo.songrequest']], shop: ['yellow.exchangestudents'], res: [{ silver: 5 }, { yellow: 9, red: 9, silver: 5, magenta: 5 }] });
     const u = uidOf(st, 0, 'silver.loanofficers');
     st.cards[u].used = true;
-    const { s, trail } = drive(st, [/Gather the Kin/, /Hostages/, /Pawnbrokers/]);
+    const { s, trail } = drive(st, [/Gather the Kin/, /Exchanger/, /Pawnbrokers/]);
     if (DUMP) dump('loan-exchange-used', s, trail);
     expect(s.players[1].members).toContain(u);
     expect(s.cards[u].used).toBe(true);

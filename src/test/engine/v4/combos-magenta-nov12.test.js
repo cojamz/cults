@@ -312,18 +312,18 @@ describe('Changeling: "On Recruit: swap this member for a rival\'s member costin
     expect(s.log).toContain("P1's Changeling swaps sides: P1 gets P2's Safecracker.");
   });
 
-  it("swapped for a rival's Hostages: its On Recruit fires for the new holder (your own swap is a recruit: Cory, Nov 1)", () => {
+  it("swapped for a rival's Exchanger: its On Recruit fires for the new holder (your own swap is a recruit: Cory, Nov 1)", () => {
     const { s } = go('da-exchange', { quads: Q, turns: [0], shop: ['thieves.doubleagent'], members: [['red.twins'], ['yellow.exchangestudents', 'echo.regulars']], res: [RICHRES] },
-      [/Stash/, /Changeling/, /Hostages/, /Triplets ↔ P2: Gardeners/]); // Gardeners, not Copyist, since Copyist costs 7 (Nov 13)
-    expect(names(s, 0).sort()).toEqual(['Gardeners', 'Hostages']);
+      [/Stash/, /Changeling/, /Exchanger/, /Triplets ↔ P2: Gardeners/]); // Gardeners, not Copyist, since Copyist costs 7 (Nov 13)
+    expect(names(s, 0).sort()).toEqual(['Gardeners', 'Exchanger']);
     expect(names(s, 1).sort()).toEqual(['Changeling', 'Triplets']);
     cleanLog(s);
   });
 
-  it("Hostages swaps in a rival's Changeling: the Changeling's On Recruit fires and swaps it on", () => {
+  it("Exchanger swaps in a rival's Changeling: the Changeling's On Recruit fires and swaps it on", () => {
     const { s } = go('exchange-da', { quads: Q, turns: [0], shop: ['yellow.exchangestudents'], members: [['red.proselytizer'], ['thieves.doubleagent', 'red.bigfamily']], res: [{ yellow: 12, red: 12 }] },
-      [/Stash/, /Hostages/, /Proselytizers ↔ P2: Changeling/, /Big Family/]);
-    expect(names(s, 0).sort()).toEqual(['Big Family', 'Hostages']);
+      [/Stash/, /Exchanger/, /Proselytizers ↔ P2: Changeling/, /Big Family/]);
+    expect(names(s, 0).sort()).toEqual(['Big Family', 'Exchanger']);
     expect(names(s, 1).sort()).toEqual(['Changeling', 'Proselytizers']);
     expect(s.log).toContain("P1's Changeling swaps sides: P1 gets P2's Big Family.");
     cleanLog(s);

@@ -126,18 +126,18 @@ describe('Mourners: "Whenever one of your members leaves your cult, +2 white."',
     expect(leave(s, 0)).toHaveLength(1);
   });
 
-  it('Hostages swaps your Raiders for a rival\'s Laggard: one leaves, one arrives, +2 once', () => {
+  it('Exchanger swaps your Raiders for a rival\'s Laggard: one leaves, one arrives, +2 once', () => {
     const { s } = go('lt-exchange', { quads: W, queue: BUY, shop: ['yellow.exchangestudents'], members: [['trading.leavetakers', 'trading.raider'], ['purple.lastcallers']], res: [{ yellow: 9, red: 9 }] },
-      [/Hostages/, /Raiders ↔ P2: Laggard/]);
-    expect(names(s, 0)).toEqual(['Mourners', 'Hostages', 'Laggard']);
+      [/Exchanger/, /Raiders ↔ P2: Laggard/]);
+    expect(names(s, 0)).toEqual(['Mourners', 'Exchanger', 'Laggard']);
     expect(s.players[0].res.white).toBe(2);
     expect(leave(s, 0)).toEqual(["P1's Mourners: Raiders left: +2 white."]);
     cleanLog(s);
   });
 
-  it('Hostages swaps Mourners itself away: +2 to you; the rival who swaps it in gets nothing for their Raiders leaving', () => {
+  it('Exchanger swaps Mourners itself away: +2 to you; the rival who swaps it in gets nothing for their Raiders leaving', () => {
     const { s } = go('lt-exchange-self', { quads: W, queue: BUY, shop: ['yellow.exchangestudents'], members: [['trading.leavetakers', 'red.panel'], ['trading.raider']], res: [{ yellow: 9, red: 9 }] },
-      [/Hostages/, /Mourners ↔ P2: Raiders/]);
+      [/Exchanger/, /Mourners ↔ P2: Raiders/]);
     expect(names(s, 1)).toEqual(['Mourners']);
     expect(s.players.map(p => p.res.white)).toEqual([2, 0]);
     expect(leave(s, 1)).toEqual([]);
@@ -305,9 +305,9 @@ describe('Laggard: "On Use, once per round: take the Goes Last token."', () => {
     expect(s.log).toContain("P2's Lie Abed: P2 takes the Goes Last token from P1, and the 2 minions on it go back to P1.");
   });
 
-  it('used, then swapped to a rival by Hostages: once per round is once for the card; usable again next round', () => {
+  it('used, then swapped to a rival by Exchanger: once per round is once for the card; usable again next round', () => {
     let { s } = go('lc-swapped', { quads: P, round: 2, queue: [{ t: 'buy', p: 1 }], shop: ['yellow.exchangestudents'], members: [['purple.lastcallers'], ['trading.raider']],
-      res: [{}, { yellow: 9, red: 9 }], prep: st => { st.cards[st.players[0].members[0]].used = true; } }, [/Hostages/, /Raiders ↔ P1: Laggard/]);
+      res: [{}, { yellow: 9, red: 9 }], prep: st => { st.cards[st.players[0].members[0]].used = true; } }, [/Exchanger/, /Raiders ↔ P1: Laggard/]);
     const uid = s.players[1].members.find(u => s.cards[u].def === 'purple.lastcallers');
     expect(uid).toBeDefined();
     expect(useOpt(s, uid)).toBe(false);

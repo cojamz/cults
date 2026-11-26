@@ -321,15 +321,15 @@ const members = [
   // Cory, 2026-11-12 9:30pm Eastern, on catching up to a member leader: Mutineers, with no cost cap to try ("7 feels
   // like the right cutoff. maybe we should just make it any? lets try it"). A take from a rival, so Bodyguards and
   // the other steal rules apply as for Poach. Grey, round II deck, 6 any, worth 1 (Claude's fill-ins).
-  pool(m('mutineers', 'Mutineers', null, 0, 4, /* 7 as a player sees it (Cory, Nov 25: "Increase the cost"; was 6) */ 'On Use, once per game: take a member from a rival with more members than you.', {
+  pool(m('mutineers', 'Snatcher', /* Mutineers until Cory, Nov 25: "That's a bad name"; named through .claude/skills/naming */ null, 0, 4, /* 7 as a player sees it (Cory, Nov 25: "Increase the cost"; was 6) */ 'On Use, once per game: take a member from a rival with more members than you.', {
     round: 2,
     activate: 'game',
     onActivate(ctx, owner, card) {
       const n = ctx.memberCount(owner);
       const list = ctx.rivals(owner).filter(o => ctx.memberCount(o) > n && ctx.canSteal(owner, o, 'member'))
         .flatMap(o => ctx.membersOf(o).map(c => [o, c]));
-      if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Mutineers: no rival with more members has a member to take.`); return; }
-      ctx.choose(owner, 'Mutineers: take which member?', list.map(([o, c]) => ({
+      if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Snatcher: no rival with more members has a member to take.`); return; }
+      ctx.choose(owner, 'Snatcher: take which member?', list.map(([o, c]) => ({
         id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${cost(c)})`, kind: 'member', value: c.uid, hint: moveWorth(c),
       })), 'benders.mutiny', { uid: card.uid });
     },
@@ -677,7 +677,7 @@ export const handlers = {
     const v = ctx.ownerOf(uid), c = ctx.card(uid);
     if (!v || v === p || ctx.memberCount(v) <= ctx.memberCount(p)) return;
     if (!ctx.steal(p, v, { uid })) return;
-    ctx.log(`${p.name}'s Mutineers: takes ${v.name}'s ${c.def.name}.`);
+    ctx.log(`${p.name}'s Snatcher: takes ${v.name}'s ${c.def.name}.`);
   },
   purgeOwn(ctx, p, uid, data) {
     if (!p.members.includes(uid)) return;

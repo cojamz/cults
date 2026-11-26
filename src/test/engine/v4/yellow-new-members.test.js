@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Yellow's Nov 11 member calls (Cory): Dawn Traders, Herald's numbers, Hostages, Benefactor.
+// Yellow's Nov 11 member calls (Cory): Dawn Traders, Herald's numbers, Exchanger, Benefactor.
 import { describe, it, expect } from 'vitest';
 import { applyMove, resume } from '../../../engine/v4/core.js';
 import { quadrant, defById } from '../../../engine/v4/content/index.js';
@@ -30,14 +30,14 @@ describe('Dawn Traders: "Round Start: +2 yellow. Swap up to 4 of your resources 
   });
 });
 
-describe('Hostages: "On Recruit: swap one of your members for a rival’s member that costs the same."', () => {
+describe('Exchanger: "On Recruit: swap one of your members for a rival’s member that costs the same."', () => {
   it('offers only same-cost pairs, and swaps the pair you pick', () => {
     // Deprogrammers and Journeyman cost the same as a player sees them (5); Fairy Godmother costs more
     let s = table(['red', 'yellow', 'thieves'], { n: 2, round: 2, res: [{ red: 0, yellow: 20 }], members: [['red.movementpenalty'], ['red.seatfiller', 'red.panel']], shop: ['yellow.exchangestudents'] });
     s = answer(s, `slot:${slot(s, 'red', 'Gather the Kin')}`);
     s = toBuy(s);
     s = answer(s, `card:${uidIn(s, 'yellow.exchangestudents', 'shop')}`);
-    while (s.pending && s.pending.player === 0 && !String(s.pending.prompt).startsWith('Hostages')) s = answer(s, s.pending.options[0].id);
+    while (s.pending && s.pending.player === 0 && !String(s.pending.prompt).startsWith('Exchanger')) s = answer(s, s.pending.options[0].id);
     const pairs = s.pending.options.filter(o => o.kind === 'trade');
     expect(pairs.map(o => o.label)).toEqual(['Deprogrammers ↔ P2: Journeyman (5)']);
     const [a, b] = pairs[0].value;

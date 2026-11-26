@@ -40,13 +40,14 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Early Riser
 - Errand Boy
 - Evictors
+- Exchanger
 - Executioner
 - Extortionist
 - Extra Hand
 - Fairy Godmother
 - Fence
 - Ferryman
-- Firstborn
+- Firstcomers
 - Forger
 - Gardeners
 - Gate-Shutter
@@ -63,7 +64,6 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Highwayman
 - Hoarder
 - Homecomers
-- Hostages
 - Hostess
 - Hurriers
 - Impostors
@@ -114,6 +114,7 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Shirker
 - Silver Tongues
 - Sleepyhead
+- Snatcher
 - Spice Merchant
 - Spoilsport
 - Squanderer

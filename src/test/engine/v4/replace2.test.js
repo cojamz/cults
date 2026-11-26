@@ -107,9 +107,9 @@ describe('REPLACE2: each card fires', () => {
     let s = table(['red', 'market', 'thieves', 'yellow'], { round: 1, res: [{ red: 5 }], members: [['market.doorbusters']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.player).toBe(0);
     expect(s.pending.kind).toBe('buy');
-    expect(s.pending.prompt).toBe('P1: Firstborn: recruit once before anyone places, or pass');
+    expect(s.pending.prompt).toBe('P1: Firstcomers: recruit once before anyone places, or pass');
     expect(s.pending.options.every(o => ['card', 'tier', 'pass'].includes(o.kind))).toBe(true);
-    expect(named(s, 'Firstborn')).toEqual(["P1's Firstborn: recruits once before anyone places."]);
+    expect(named(s, 'Firstcomers')).toEqual(["P1's Firstcomers: recruits once before anyone places."]);
     s = move(s, 'tier:mid');
     expect(s.players[0].bonus).toBe(5);
     expect(s.pending.kind).toBe('place');

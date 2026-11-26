@@ -54,12 +54,12 @@ const RICH = { green: 9, red: 9 };
 
 describe('Mimics: "On Recruit: use the On Recruit of any member in play."', () => {
   // Druids, not Gardeners, since Copyist costs 7 (Cory, Nov 13: "Copyist can be more expensive")
-  it("copies a rival's Hostages: swaps one of the Mimics owner's members for a same-cost rival member", () => {
+  it("copies a rival's Exchanger: swaps one of the Mimics owner's members for a same-cost rival member", () => {
     const { s } = go('mimics-exchange', { quads: Q, turns: [0], shop: ['echo.mimics'], members: [['echo.copyist'], ['yellow.exchangestudents', 'silver.bookies', 'echo.diehards']], res: [RICH] },
-      [/Gather the Kin/, /Mimics/, /Hostages/, /Copyist ↔ P2: Druids/]);
+      [/Gather the Kin/, /Mimics/, /Exchanger/, /Copyist ↔ P2: Druids/]);
     expect(names(s, 0).sort()).toEqual(['Druids', 'Mimics']);
-    expect(names(s, 1).sort()).toEqual(['Copyist', 'Hostages', 'Indulgence Seller']);
-    expect(has(s, /P1's Hostages: swaps Copyist for P2's Druids/)).toBe(true);
+    expect(names(s, 1).sort()).toEqual(['Copyist', 'Exchanger', 'Indulgence Seller']);
+    expect(has(s, /P1's Exchanger: swaps Copyist for P2's Druids/)).toBe(true);
     cleanLog(s);
   });
 
@@ -156,10 +156,10 @@ describe('Mimics: "On Recruit: use the On Recruit of any member in play."', () =
 
 // Kidnapper scenes dropped: Press Gang was reworked Nov 11 (Magenta thread); the Magenta combo pass covers it
 describe('Mimics arriving other ways (a swap or steal brings a member in as your recruit: Cory, Nov 4; Kidnapper, Changeling notes)', () => {
-  it('swapped in with Hostages: its On Recruit fires for the new holder', () => {
+  it('swapped in with Exchanger: its On Recruit fires for the new holder', () => {
     const { s } = go('mimics-swapped-in', { quads: Q, turns: [0], shop: ['yellow.exchangestudents'], members: [['silver.bookies'], ['echo.mimics', 'gold.banker']], res: [{ yellow: 9, red: 9 }] },
-      [/Gather the Kin/, /Hostages/, /Indulgence Seller ↔ P2: Mimics/, /Banker/]);
-    expect(names(s, 0).sort()).toEqual(['Hostages', 'Mimics']);
+      [/Gather the Kin/, /Exchanger/, /Indulgence Seller ↔ P2: Mimics/, /Banker/]);
+    expect(names(s, 0).sort()).toEqual(['Exchanger', 'Mimics']);
     expect(s.log).toContain("P1's Mimics uses P2's Banker's On Recruit.");
     expect(s.players[0].res.gold).toBe(3);
   });
@@ -238,10 +238,10 @@ describe('Druids: "Game End: if you have the most green members, +6 followers."'
     expect(part(s, 0)).toEqual(['Druids +6', 'Druids +6']);
   });
 
-  it('Mimics copies Hostages to take a rival\'s Druids: it scores for its new holder', () => {
+  it('Mimics copies Exchanger to take a rival\'s Druids: it scores for its new holder', () => {
     const { s } = go('diehards-mimics-exchange', { quads: Q, queue: [{ t: 'turn', p: 0 }, ...FIN], shop: ['echo.mimics'],
       members: [['echo.hourglass'], ['yellow.exchangestudents', 'echo.diehards', 'echo.copyist']], res: [RICH] },
-      [/Gather the Kin/, /Mimics/, /Hostages/, /Shadow ↔ P2: Druids/]);
+      [/Gather the Kin/, /Mimics/, /Exchanger/, /Shadow ↔ P2: Druids/]);
     expect(names(s, 0).sort()).toEqual(['Druids', 'Mimics']);
     expect(part(s, 0)).toEqual(['Druids +6']); // 2 green (Mimics, Druids) to P2's 2 (Shadow, Copyist): a tie
     expect(part(s, 1)).toEqual([]);

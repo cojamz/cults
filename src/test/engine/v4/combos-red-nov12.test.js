@@ -135,20 +135,20 @@ describe('Guild Master: "Whenever you recruit a member of a color you already ha
     expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Informer is a color they already have: +1 follower."]);
   });
 
-  it('Hostages\' swap-in (your own swap is a recruit): Triplets for P2\'s Journeyman, red already held: +1; Hostages itself (yellow, new): nothing', () => {
+  it('Exchanger\' swap-in (your own swap is a recruit): Triplets for P2\'s Journeyman, red already held: +1; Exchanger itself (yellow, new): nothing', () => {
     const { s } = go('br-xs', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['yellow.exchangestudents'], members: [['red.brethren', 'red.twins'], ['red.seatfiller']] },
-      [/Hostages/, /pay:/, /Triplets ↔/]);
-    expect(s.log).toContain("P1's Hostages: swaps Triplets for P2's Journeyman.");
-    expect(names(s, 0)).toEqual(['Guild Master', 'Hostages', 'Journeyman']);
+      [/Exchanger/, /pay:/, /Triplets ↔/]);
+    expect(s.log).toContain("P1's Exchanger: swaps Triplets for P2's Journeyman.");
+    expect(names(s, 0)).toEqual(['Guild Master', 'Exchanger', 'Journeyman']);
     expect(lines(s, /Guild Master/)).toEqual(["P1's Guild Master: Journeyman is a color they already have: +1 follower."]);
     expect(bonusOf(s, 0)).toBe(1);
     // the rival's arrival (Triplets) is not their recruit: their own Guild Master would not pay
     cleanLog(s);
   });
 
-  it('the rival on the other end of Hostages holds Guild Master: Triplets arrives by P1\'s swap, not P2\'s recruit: nothing', () => {
+  it('the rival on the other end of Exchanger holds Guild Master: Triplets arrives by P1\'s swap, not P2\'s recruit: nothing', () => {
     const { s } = go('br-xs-rival', { quads: QR, round: 2, queue: BUY, res: [RICH], shop: ['yellow.exchangestudents'], members: [['red.twins'], ['red.brethren', 'red.seatfiller']] },
-      [/Hostages/, /pay:/, /Triplets ↔/]);
+      [/Exchanger/, /pay:/, /Triplets ↔/]);
     expect(names(s, 1)).toEqual(['Guild Master', 'Triplets']);
     expect(has(s, /Guild Master:/)).toBe(false);
   });

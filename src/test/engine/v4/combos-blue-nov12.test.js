@@ -152,8 +152,8 @@ describe('Old-Clothes Dealers: "On Use, once per round: swap one of your members
   it('a yellow member swapped in: Herald and Guild Master pay, and Market-Day Shopper counts it as the first member that turn', () => {
     const { s } = go('ss-recruit-hooks', { quads: QB, round: 2, queue: [{ t: 'buy', p: 0 }, { t: 'buy', p: 0 }], res: [{ red: 10 }], shop: ['red.intern'],
       members: [['market.swapshoppers', 'yellow.matchmaker', 'red.brethren', 'market.powershoppers', 'silver.teetotalers']], prep: disc('yellow.exchangestudents') },
-      [/use:/, /Teetotalers ↔ Hostages/, /./, /./, /Intern/, /pay:/]);
-    expect(names(s, 0)).toEqual(['Old-Clothes Dealers', 'Herald', 'Guild Master', 'Market-Day Shopper', 'Hostages', 'Intern']);
+      [/use:/, /Teetotalers ↔ Exchanger/, /./, /./, /Intern/, /pay:/]);
+    expect(names(s, 0)).toEqual(['Old-Clothes Dealers', 'Herald', 'Guild Master', 'Market-Day Shopper', 'Exchanger', 'Intern']);
     expect(has(s, /Herald/)).toBe(true);
     expect(has(s, /Guild Master/)).toBe(true);
     expect(lines(s, /Market-Day Shopper/)).toEqual(["P1's Market-Day Shopper: a second member this turn, +3 followers."]);
@@ -258,10 +258,10 @@ describe('Market-Day Shopper: "Whenever you recruit your second member in a turn
     expect(bonusOf(s, 0)).toBe(1);
   });
 
-  it('Hostages\' swap-in counts as the second (Cory, Nov 1: "A member you get by your own swap is recruited")', () => {
+  it('Exchanger\' swap-in counts as the second (Cory, Nov 1: "A member you get by your own swap is recruited")', () => {
     const { s } = go('ps-xs', { quads: QB, round: 2, queue: BUY, res: [{ red: 20, yellow: 20 }], shop: ['yellow.exchangestudents'], members: [['market.powershoppers', 'red.twins'], ['red.seatfiller']] },
-      [/Hostages/, /pay:/, /Triplets ↔/]);
-    expect(s.log).toContain("P1's Hostages: swaps Triplets for P2's Journeyman.");
+      [/Exchanger/, /pay:/, /Triplets ↔/]);
+    expect(s.log).toContain("P1's Exchanger: swaps Triplets for P2's Journeyman.");
     expect(lines(s, /Market-Day Shopper/)).toEqual(["P1's Market-Day Shopper: a second member this turn, +3 followers."]);
   });
 

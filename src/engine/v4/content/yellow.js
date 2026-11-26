@@ -404,13 +404,13 @@ export default {
   handlers: {
     poolFree: freeTake,
     exchange(ctx, p, value) {
-      if (!Array.isArray(value)) { ctx.log(`${p.name}'s Hostages: no swap.`); return; }
+      if (!Array.isArray(value)) { ctx.log(`${p.name}'s Exchanger: no swap.`); return; }
       const [a, b] = value;
       if (!exchangePairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
       const names = [ctx.card(a).def.name, `${ctx.ownerOf(b).name}'s ${ctx.card(b).def.name}`];
       // said before the swap, so the log reads cause first: what the swap sets off (Matchmaker, the incoming member's On
       // Recruit, Deprogrammers) follows it (combo tester, Nov 12). The pair was checked swappable just above.
-      ctx.log(`${p.name}'s Hostages: swaps ${names[0]} for ${names[1]}.`);
+      ctx.log(`${p.name}'s Exchanger: swaps ${names[0]} for ${names[1]}.`);
       ctx.swapMembers(p, a, b);
     },
     fair(ctx, p, k, data) {
@@ -947,17 +947,17 @@ export default {
     // Cory, 2026-11-11 8:21pm Eastern: "You buy it, swap your members for arrivals that cost the same… mixing and matching
     // colors around… Costing the same might be a little restrictive, but that might keep it power balanced." A swap as
     // Body Snatchers' (Loyalists stop it; Bodyguards don't, Cory Nov 1: "blocks steals, not swaps"). Price is Claude's fill-in.
-    m('exchangestudents', 'Hostages', 2, 3, /* 8 as a player sees it (Cory, Nov 25: "sure, increase the cost"; was 7) */ 'On Recruit: swap one of your members for a rival\u2019s member that costs the same.', {
+    m('exchangestudents', 'Exchanger', /* Hostages until Cory, Nov 25: "Name is bad too. It doesn't make sense"; named through .claude/skills/naming */ 2, 3, /* 8 as a player sees it (Cory, Nov 25: "sure, increase the cost"; was 7) */ 'On Recruit: swap one of your members for a rival\u2019s member that costs the same.', {
       onRecruited(ctx, owner) {
         const pairs = exchangePairs(ctx, owner);
         if (!pairs.length) {
           // a same-cost pair that Loyalists shields is not "no member costs the same" (combo tester, Nov 12)
           const same = ctx.membersOf(owner).some(a => ctx.rivals(owner).some(o => ctx.membersOf(o).some(b => hwCost(a) === hwCost(b))));
-          ctx.log(same ? `${owner.name}'s Hostages: no rival's member that costs the same as one of yours can be swapped.`
-            : `${owner.name}'s Hostages: no rival's member costs the same as one of yours.`);
+          ctx.log(same ? `${owner.name}'s Exchanger: no rival's member that costs the same as one of yours can be swapped.`
+            : `${owner.name}'s Exchanger: no rival's member costs the same as one of yours.`);
           return;
         }
-        ctx.choose(owner, 'Hostages: swap one of your members for a rival’s that costs the same?', pairs.map(([a, b]) => ({
+        ctx.choose(owner, 'Exchanger: swap one of your members for a rival’s that costs the same?', pairs.map(([a, b]) => ({
           id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} ↔ ${ctx.ownerOf(b.uid).name}: ${b.def.name} (${hwCost(b)})`, kind: 'trade', value: [a.uid, b.uid],
           // bots take a member that adds a color they have none of, or is worth more
           hint: (b.def.f - a.def.f) + (ctx.countMembersOfColor(owner, ctx.defOf(b).quadrant) ? 0 : 1) - (a.uid === b.uid ? 9 : 0),

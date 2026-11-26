@@ -18,7 +18,6 @@ Read when: step 2 of the naming skill, every time. Add every new yes or no the t
 - On Restockers, Regular, Last Callers, Book Cookers, Nov 25: "yes. but rename them WELL."
 - On Forestallers (the judges' 8-of-10 pick), Nov 25: "Forestallers is also bad." Lesson: judges' taste is not the bar; plain words a casual player knows.
 - Nov 25: "you are really bad at naming ... i dont want to pick. i want you to improve."
-
 ## Yes (and why it works)
 - **Tavern Keeper** (+1 red per 2 members): a fuller house takes in more.
 - **Guild Master** (+1 follower for recruiting a color you have): more of the same trade. "ok"
@@ -44,5 +43,8 @@ Read when: step 2 of the naming skill, every time. Add every new yes or no the t
 - Weak tie: Gatekeeper, Tailor ("eh"), Puritan, Dowager ("need better options"), Matriarch, Shepherd ("both bad"), Interior Decorator, Kinsman ("I don't like Kinsman as much").
 - Not a member at all: Ballroom, and any place, building or thing.
 
+- Mutineers, Hostages, Firstborn (Nov 25): "That's a bad name"; Hostages "doesn't really read as a hostage... you're swapping members" (the name pointed at a story, not the swap); "Firstborn, that's a fucking terrible name" (a family role with no tie to buying first). Also Gate-Shutter and Market-Day Shopper: "you can't draw things from folklore that are closer to the meaning".
+
 ## Claude's own names, not yet answered by Cory (Nov 25)
 Firstborn, Market Sweeper, Penny-Pincher, Laggard, Alchemists. Move each to Yes or No when he answers.
+- Snatcher (was Mutineers), Exchanger (was Hostages), Firstcomers (was Firstborn), Nov 26: blind read landed for each.

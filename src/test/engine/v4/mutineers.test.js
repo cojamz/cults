@@ -1,4 +1,4 @@
-// Mutineers (Cory, Nov 12: "maybe we should just make it any? lets try it"):
+// Snatcher (Cory, Nov 12: "maybe we should just make it any? lets try it"):
 // "On Use, once per game: take a member from a rival with more members than you."
 import { describe, it, expect } from 'vitest';
 import { createGame, resume, applyMove } from '../../../engine/v4/core.js';
@@ -20,7 +20,7 @@ function scene({ quads = ['red', 'yellow', 'market', 'trading'], n = 3, round = 
 const pick = (s, re) => applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => re.test(o.id) || re.test(o.label || '')).id });
 const useId = s => s.pending.options.find(o => /^use:/.test(o.id))?.id;
 
-describe('Mutineers: "On Use, once per game: take a member from a rival with more members than you."', () => {
+describe('Snatcher: "On Use, once per game: take a member from a rival with more members than you."', () => {
   it('is dealt in the game (test version) and costs 7, round II', () => {
     const d = defById('benders.mutineers');
     expect(d.s + d.w).toBe(7); // 6 before Cory's Nov 25 calls (+1 any)
@@ -31,20 +31,20 @@ describe('Mutineers: "On Use, once per game: take a member from a rival with mor
     let s = scene({ members: [['benders.mutineers'], ['red.intern', 'red.twins', 'silver.patronsaints'], ['red.intern']] });
     expect(useId(s)).toBeTruthy();
     s = applyMove(s, { player: 0, option: useId(s) });
-    expect(s.pending.prompt).toBe('Mutineers: take which member?');
+    expect(s.pending.prompt).toBe('Snatcher: take which member?');
     const labels = s.pending.options.map(o => o.label);
     expect(labels.every(l => l.startsWith("P2's"))).toBe(true); // P3 has fewer members than P1: not offered
     expect(labels.some(l => /Patron Saints \(8\)/.test(l))).toBe(true); // no cost cap
     s = pick(s, /Patron Saints/);
-    expect(names(s, 0)).toEqual(['Mutineers', 'Patron Saints']);
+    expect(names(s, 0)).toEqual(['Snatcher', 'Patron Saints']);
     expect(names(s, 1)).not.toContain('Patron Saints');
-    expect(s.log).toContain("P1's Mutineers: takes P2's Patron Saints.");
+    expect(s.log).toContain("P1's Snatcher: takes P2's Patron Saints.");
   });
 
   it('no rival ahead: says so and stays unused', () => {
     let s = scene({ members: [['benders.mutineers', 'red.intern'], ['red.intern'], []] });
     s = applyMove(s, { player: 0, option: useId(s) });
-    expect(s.log).toContain("P1's Mutineers: no rival with more members has a member to take.");
+    expect(s.log).toContain("P1's Snatcher: no rival with more members has a member to take.");
     const uid = s.players[0].members.find(u => s.cards[u].def === 'benders.mutineers');
     expect(s.cards[uid].used).toBeFalsy();
   });
