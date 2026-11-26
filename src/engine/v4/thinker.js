@@ -34,7 +34,9 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   if (!rival && !['place', 'buy'].includes(pend.kind)) return chooseNormalMove(state, rand);
   // an activation or a Release normal would take: nothing to think about
   const smart = opts.smart ?? SMART;
-  const policy = { ...ROLLOUT, ...(smart ? { smart } : {}), ...(opts.future !== undefined ? { future: opts.future } : {}), ...(opts.tempo !== undefined ? { tempo: opts.tempo === true } : {}) };
+  // opts.rivalSpite (counterplay, Nov 26): in the played-out games every bot counts the best rival's total against its own at this
+  // weight (normal: 0.4), so the rivals it imagines block the leader as hard as they chase their own gains (1 = pure margin)
+  const policy = { ...ROLLOUT, ...(smart ? { smart } : {}), ...(opts.future !== undefined ? { future: opts.future } : {}), ...(opts.tempo !== undefined ? { tempo: opts.tempo === true } : {}), ...(opts.rivalSpite !== undefined ? { spite: opts.rivalSpite } : {}) };
   let short = pend.kind === 'buy' ? buyShortcut(state, { smart }) : smart && pend.kind === 'place' ? placeUse(state) : null;
   // holdRollouts (on by default under BOTSMART): 6 rollouts to game end are noisy for a now-or-later of 2 to 6 followers,
   // but without them smart Hard did worse head to head (12 seats to 13, -2.7 followers, 23 games; with them 15 to 9,
@@ -160,7 +162,7 @@ function rollout(state, me, o, seed, { full, cap, round, late, opts }) {
     s = applyMove(state, { player: me, option: o.id });
     while (!s.over && (full || (s.round === round && steps < cap)) && steps < 800 && !late()) {
       const counted = s.pending && (s.pending.kind === 'place' || s.pending.kind === 'buy');
-      s = applyMove(s, opts.rollout === 'greedy' ? chooseGreedyMove(s, r, { noise: 1 }) : chooseNormalMove(s, r, { ...ROLLOUT, ...((opts.smart ?? SMART) ? { smart: true } : {}), ...(opts.future !== undefined ? { future: opts.future } : {}) }));
+      s = applyMove(s, opts.rollout === 'greedy' ? chooseGreedyMove(s, r, { noise: 1 }) : chooseNormalMove(s, r, { ...ROLLOUT, ...((opts.smart ?? SMART) ? { smart: true } : {}), ...(opts.future !== undefined ? { future: opts.future } : {}), ...(opts.rivalSpite !== undefined ? { spite: opts.rivalSpite } : {}) }));
       if (counted) steps++;
     }
     value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel, opts.future, opts.engine);
