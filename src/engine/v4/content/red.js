@@ -516,6 +516,14 @@ export default {
         ctx.recruit(p, uid, { free: true });
       },
     }),
+    // Rabble-Rousers: they go to the rival, the rival's member comes to you (your recruit, as with Promote)
+    rabble(ctx, p, uid, data) {
+      const card = ctx.card(data.uid), v = ctx.ownerOf(uid);
+      if (!card || !p.members.includes(data.uid) || !rabbleList(ctx, p, card).some(([, c]) => c.uid === uid)) return;
+      if (!v || !ctx.moveMember(uid, v, p, { recruit: true })) return;
+      ctx.moveMember(data.uid, p, v);
+      ctx.log(`${p.name}'s Rabble-Rousers stir up ${v.name}'s ${ctx.card(uid).def.name}: it joins ${p.name}, and the Rabble-Rousers go to ${v.name}.`);
+    },
     panelMode(ctx, p, mode, data) {
       if (mode === 'promote' || mode === 'demote') swap(ctx, p, mode, `Fairy Godmother: ${mode} another member`, data?.excludeUid);
     },
@@ -1055,6 +1063,22 @@ export default {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && swapPairs(ctx, owner, 'rival').some(([a]) => cost(a) >= 5 + MORE + richUp(ctx.state)),
     }),
+    // Cory, 2026-11-26 9:37pm Eastern, on Turncoat "On Use, once per round: swap this member for a rival's member.":
+    // "Yes. but ... it should be worth a few members so that there's actually a downside on who you give it to. Like 3
+    // members. Maybe like the Drunkards or the Rabblerousers". Worth 3 and counts as 3; name his; price Claude's fill-in
+    // (4 red + 5 any). A swap: Warden blocks it on either side, and it stays used this round in the rival's cult.
+    m('rabblerousers', 'Rabble-Rousers', 3, 3, 'On Use, once per round: swap this member for a rival\u2019s member.', { f: 3, n: 3, keepCount: true,
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = rabbleList(ctx, owner, card);
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Rabble-Rousers: no rival member to swap for.`); return; }
+        ctx.choose(owner, 'Rabble-Rousers: swap them for which rival member?', list.map(([o, c]) => ({
+          id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${cost(c)})`, kind: 'member', value: c.uid, hint: (c.def.f + cost(c)) - (card.def.f + cost(card)),
+        })), 'red.rabble', { uid: card.uid });
+      },
+      botActivate: (ctx, owner) => { const card = ctx.membersOf(owner).find(c => c.def.key === 'rabblerousers'); return rabbleList(ctx, owner, card).some(([, c]) => c.def.f + cost(c) >= 3 + 9); },
+    }),
     m('reserve', 'Benchwarmer', 1, 0, 'Worth 1 follower.'), // placeholder until Cory designs its hold (then it becomes Seat Saver)
   ],
 };
@@ -1211,4 +1235,10 @@ function titheStep(ctx, owner, left) {
     // a hint for quick reads: the card worth least to keep (a spent or plain one), Old Maid first
     hint: -((c.def.f || 1) * 1.5 + cost(c) * 0.5 + (c.used || c.def.vanilla ? 0 : 1)) + (c.def.onJoined ? 5 : 0),
   })), 'red.tithe', { to: owner.id, left: left.slice(at + 1) });
+}
+
+// Rabble-Rousers' targets: any rival member that may be swapped, while the Rabble-Rousers themselves may be swapped
+function rabbleList(ctx, p, card) {
+  if (!card || !ctx.canSwapMember(card.uid)) return [];
+  return ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'swap')).flatMap(o => ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid)).map(c => [o, c]));
 }

@@ -104,6 +104,7 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Preachers
 - Press Gang
 - Purse-Switchers
+- Rabble-Rousers
 - Rag-and-Bone Man
 - Robbers
 - Robin Hood
