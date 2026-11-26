@@ -785,7 +785,7 @@ const market = {
     },
     // Go-Between (Cory, Nov 26): pick the rival's member, then how to pay; the payment goes to that rival
     goBetween(ctx, p, uid, data) {
-      if (uid == null) { const c = ctx.card(data.uid); if (c) c.used = false; ctx.log(`${p.name}'s Go-Between: recruits nothing.`); return; }
+      if (uid == null) { ctx.log(`${p.name}'s Go-Between: recruits nothing.`); return; } // the round's use is spent (a bot re-used it forever)
       const o = ctx.ownerOf(uid);
       if (!o || o === p || !ctx.payChoices(p, uid, {}).length) return;
       const list = ctx.payChoices(p, uid, {});
@@ -1195,7 +1195,7 @@ const market = {
           id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${ctx.price(owner, c.uid, {}).total})`, kind: 'member', value: c.uid, hint: (c.def.f || 1) * 2 + priceOf(c) * 0.3,
         })).concat({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: 0 }), `${Q}.goBetween`, { uid: card.uid });
       },
-      botActivate: ctx => ctx.state.round >= 2,
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.membersOf(o).some(c => ctx.payChoices(owner, c.uid, {}).length)),
     }),
     m('mannequin', 'Gleaner', 2, 2, 'You may recruit from the discard pile as you would from the shop.', { discardAny: true }),
     m('mannequinold', 'Stallholder', 2, 2, 'Blue members in the shop count as your members when contests are scored.', { retired: true }), // retired Nov 24 (Gleaner): a test fixture // joins by cost (round II), per Cory's round I cost cutoffs

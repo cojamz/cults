@@ -193,6 +193,8 @@ const ALLOW = {
   'yellow.tinker': 'recruited once in the sample (cards-yellow: Haggler)',
   // the Nov 3 card words (Doormen's price, Night Owls, Lie Abed, Bide Your Time) moved the seeded games: recruited once, never changing a rival's resources after
   'yellow.tastemaker': 'pays only when its owner changes a rival\'s resources (cards-yellow: Tastemaker)',
+  // Cory's Nov 26 members (Rabble-Rousers, Go-Between, Rummager) moved the seeded games: recruited in 1, never named there
+  'gold.underdog': 'recruited once in the sample; interactions.test.js covers Poor Relation',
   // Cory's Nov 25 calls (prizes 4/6/8, prices, four cuts, Induct with no limit) moved the seeded games: Witch recruited in 1, never named there
   'yellow.leveler': 'On Use, once per round; cards-yellow covers it (Witch: once per round, and again next round)',
   'yellow.matchmaker': 'pays only for a yellow recruit after it (Nov 6); owners may recruit none (cards-yellow)',

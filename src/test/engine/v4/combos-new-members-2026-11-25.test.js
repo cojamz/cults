@@ -317,13 +317,13 @@ describe('7e. Doorbusters ("Round Start: recruit once, before anyone places.")',
   const Q = ['market', 'echo', 'red', 'thieves'];
   it('a Doppelganger copying Doorbusters is a second Doorbusters: two recruits before P2 places, the second offered after the first', () => {
     const { s } = go('door', { quads: Q, queue: [{ t: 'round', r: 3 }], res: [{ blue: 60, green: 60, red: 60, magenta: 60 }, {}], members: [['market.doorbusters', 'echo.doppel'], []],
-      prep: st => { st.cards[uidOf(st, 'echo.doppel', 0)].copy = 'market.doorbusters'; } }, [/Planner|Innkeeper|Auctioneer/, /pay:/, /Planner|Innkeeper|Auctioneer|Admirers/, /pay:/]);
+      prep: st => { st.cards[uidOf(st, 'echo.doppel', 0)].copy = 'market.doorbusters'; } }, [/Pied Piper|Extortionist/, /pay:/, /Pied Piper|Extortionist|Meddler/, /pay:/]);
     expect(lines(s, /Firstcomers: recruits once before anyone places/)).toHaveLength(1);
     expect(s.log.filter(l => /^P1 recruited/.test(l))).toHaveLength(2);
     expect(s.log.some(l => /^P2 /.test(l))).toBe(false); // nobody has placed yet
   });
-  it('a 7-cost recruit at Round Start (Planner) pays a rival\'s Tax Men like any recruit: 2 resources to P2', () => {
-    const { s } = go('door-tax', { quads: Q, queue: [{ t: 'round', r: 3 }], res: [{ blue: 60, green: 60, red: 60, magenta: 60 }, {}], members: [['market.doorbusters'], ['thieves.accomplice']] }, [/Planner/, /pay:/, /color:red/, /color:red/]);
+  it('a 7-cost recruit at Round Start (Rabble-Rousers, 9) pays a rival\'s Tax Men like any recruit: 2 resources to P2', () => {
+    const { s } = go('door-tax', { quads: Q, queue: [{ t: 'round', r: 3 }], res: [{ blue: 60, green: 60, red: 60, magenta: 60 }, {}], members: [['market.doorbusters'], ['thieves.accomplice']] }, [/Rabble-Rousers/, /pay:/, /color:red/, /color:red/]);
     expect(s.players[1].res.red).toBe(2);
     expect(lines(s, /gave P2 1 red \(P2's Tax Men\)/)).toHaveLength(2);
   });
