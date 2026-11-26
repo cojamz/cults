@@ -15,3 +15,7 @@ Command: `DECK=10 TODAY=1 node scripts/v4-bot-duel.mjs --a='{"level":"veryhard",
 ## After
 Whichever wins becomes part of the strongest bot; then the three questions get rechecked with it: do members feel optional (does buying followers only still tie), does one player still sweep Went last, and do contests still end with everyone on 0.
 Not tested: a habit tied to one card (Bride and Groom's pile-up) — that needs the card valued by what it will double, a separate change.
+
+## Test 3, added 9:05pm: members' abilities after the round ends (`engine`)
+Found while reading the code: Very Hard plays each option to the round's end, then scores that position with members counted only as their followers; what a member still does in rounds II and III counts as nothing (design/eval/hard-value/README.md saw the same on Oct 31). So a member bought in round I for what it does later looks no better than its followers, which matches "members feel optional". The change: at the end of the played-out round, every player's members are credited for what they still do, read the way the bot reads a member when it buys it. Question (Cory): "only followers plus a member from the early round should be winning" — does the strongest bot win more when it can see that? Expected: it recruits more early and wins more; if it wins less, the member readings themselves are off.
+Runs after tests 1 and 2 finish (the box has 4 CPUs).

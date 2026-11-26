@@ -1272,6 +1272,20 @@ export function standings(state) {
   const income = turns.map(t => (t * INCOME[Math.max(1, state.round) - 1] + lt.income) * INCOME_SCALE);
   return evaluate(lightClone(state), buys, income, roundLeft, {});
 }
+// ENGINE (Nov 26; Cory: "Members feel optional ... I feel like this comes down to the bots not playing correctly", money plus a
+// Smithy beats money): Very Hard plays its options out to the round's end and scores the position there. That score counted a
+// member for its followers only: what its ability still does in the rounds left counted as nothing, so a member bought early
+// for what it does later looked no better than its worth in followers. engineMargin scores the position with every player's
+// members credited for what they still do (abilityValue, the same reading the bot uses when it buys one), minus the best rival's.
+export function engineMargin(s, me, future) {
+  const { turns, roundLeft } = horizon(s);
+  const lt = laterTurns(s);
+  const buys = s.players.map((_, i) => turns[i] + lt.turns);
+  const income = turns.map(t => (t * INCOME[Math.max(1, s.round) - 1] + lt.income) * INCOME_SCALE);
+  const ab = abilityTotals(s, buys);
+  const vals = evaluate(lightClone(s), buys, income, roundLeft, Object.fromEntries(ab.map((v, i) => [i, v])), future);
+  return vals[me] - Math.max(...vals.filter((_, i) => i !== me));
+}
 export function denyOption(state, me) {
   const pend = state.pending;
   if (!pend || !state.round || !['place', 'buy'].includes(pend.kind)) return null;

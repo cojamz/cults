@@ -3,7 +3,7 @@
 // best average result. Work is counted in simulated moves, not wall time, so a seed always gives the same move;
 // chooseBotMove also caps a move at 250ms of wall time for the UI (see opts.maxMs).
 import { applyMove, followers } from './core.js';
-import { turnsMoved, chooseNormalMove, chooseGreedyMove, scoreOptions, buyShortcut, rankRivalChoice, boundaryParts, denyOption, SMART, useGain, followUpGain, placeUse } from './bots.js';
+import { turnsMoved, chooseNormalMove, chooseGreedyMove, scoreOptions, buyShortcut, rankRivalChoice, boundaryParts, denyOption, engineMargin, SMART, useGain, followUpGain, placeUse } from './bots.js';
 import { defById } from './content/index.js';
 import { seededRandom } from './rng.js';
 import { planProfile, planNudge, lessonNudge, modelValues } from './mind.js';
@@ -95,7 +95,7 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
         if (counted) steps++;
       }
       // at a round boundary, value what's left the way normal does (followers + resources' worth)
-      value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel, opts.future);
+      value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel, opts.future, opts.engine);
     } catch (err) {
       // an engine error down a hypothetical line must never break the real move: count it as a very bad line
       // (the real game would crash there too), and keep a copy for a repro when THINKER_DUMP is set
@@ -163,7 +163,7 @@ function rollout(state, me, o, seed, { full, cap, round, late, opts }) {
       s = applyMove(s, opts.rollout === 'greedy' ? chooseGreedyMove(s, r, { noise: 1 }) : chooseNormalMove(s, r, { ...ROLLOUT, ...((opts.smart ?? SMART) ? { smart: true } : {}), ...(opts.future !== undefined ? { future: opts.future } : {}) }));
       if (counted) steps++;
     }
-    value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel, opts.future);
+    value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel, opts.future, opts.engine);
   } catch (err) {
     if (globalThis.process?.env?.THINKER_DUMP) rolloutCrash(state, o.id, err);
     value = -100;
@@ -212,8 +212,10 @@ function searchPaired(state, rand, pool, opts, { me, rival, nudge, now, until, f
 
 // A position mid-game, scored the way normal scores a pass: followers, contests, and what resources can still become.
 // With a learned value model (mind.js) at a round's end, every player's expected final followers come from it instead.
-function valueAtBoundary(s, me, model = null, future) {
+function valueAtBoundary(s, me, model = null, future, engine = false) {
   if (!s.pending) return margin(s, me);
+  // opts.engine (Nov 26): members' abilities still to come count too (bots.js engineMargin)
+  if (engine && !model) try { return engineMargin(s, me, future); } catch { /* normal's yardstick below */ }
   if (model && s.round !== undefined) {
     const vals = modelValues(model, s.round, boundaryParts(s));
     if (vals) return vals[me] - Math.max(...vals.filter((_, i) => i !== me));
