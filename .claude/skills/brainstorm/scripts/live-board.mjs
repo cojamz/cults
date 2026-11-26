@@ -12,7 +12,7 @@ const want = args.filter(a => !a.startsWith('--'));
 const ids = (want.length ? want : allQuadrantIds()).filter(id => !['guest', 'blue', 'green'].includes(id)); // blue/green are test stand-ins; the real ones are market and echo
 const ROMAN = ['', 'I', 'II', 'III'];
 // s = colored part, w = "any" part, f = followers it's worth, n = how many members it counts as
-const card = (m, color) => `${m.s ? `${m.s} ${color} + ` : ''}${m.w} any, worth ${m.f}${m.n > 1 ? `, counts as ${m.n}` : ''}`;
+const card = (m, color) => `${m.s ? `${m.s} ${color} + ` : ''}${m.w} any, worth ${m.f}${m.n > 1 && m.n !== m.f ? `, counts as ${m.n}` : ''}`;
 
 for (const id of ids) {
   let q;
