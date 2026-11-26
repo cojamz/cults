@@ -55,6 +55,12 @@ async function playOne({ g, side, A, B }) {
     } else if (o.ban && pend.kind === 'place' && pend.options.some(x => x.kind === 'slot' && o.ban.includes(actionAt(s, x.q, x.i)?.key))) {
       const left = pend.options.filter(x => x.kind !== 'slot' || !o.ban.includes(actionAt(s, x.q, x.i)?.key));
       m = chooseBotMove(left.some(x => x.kind === 'slot') ? { ...s, pending: { ...pend, options: left } } : s, rand, { maxMs: Infinity, ...o });
+    // o.maxMembers = n, o.memberRounds = [1] (Cory's Dominion test, Nov 26: "going no members versus ... only followers plus a
+    // member from the early round should be winning"): that seat never takes a shop member once it holds n, or outside those rounds
+    } else if (o.maxMembers !== undefined && pend.kind === 'buy' && pend.options.some(x => x.kind === 'card' || x.kind === 'swapcard')
+      && (s.players[pl].members.length >= o.maxMembers || (o.memberRounds && !o.memberRounds.includes(s.round)))) {
+      const left = pend.options.filter(x => x.kind !== 'card' && x.kind !== 'swapcard');
+      m = chooseBotMove({ ...s, pending: { ...pend, options: left } }, rand, { maxMs: Infinity, ...o });
     } else m = chooseBotMove(s, rand, { maxMs: Infinity, ...o });
     const slot = track.length && s.pending.kind === 'place' ? s.pending.options.find(x => x.id === m.option && x.kind === 'slot') : null;
     const key = slot ? actionAt(s, slot.q, slot.i)?.key : null;
@@ -63,7 +69,7 @@ async function playOne({ g, side, A, B }) {
   }
   const f = s.players.map(p => followers(s, p));
   const top = Math.max(...f);
-  return { g, side, quads, who, followers: f, members: s.players.map(p => memberCount(s, p)), won: f.map(x => x === top), picks, ms: Date.now() - t0 };
+  return { g, side, quads, who, followers: f, members: s.players.map(p => memberCount(s, p)), won: f.map(x => x === top), picks, contests: (s.contests || []).map(c => ({ round: c.round, won: Object.fromEntries((c.results || []).map(x => [x.qid, x.winners])) })), ms: Date.now() - t0 };
 }
 
 if (!isMainThread) {
