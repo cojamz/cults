@@ -33,3 +33,24 @@ describe('Rabble-Rousers', () => {
     expect(ids).toContain(w);
   });
 });
+
+describe('Go-Between and Rummager (Cory, Nov 26)', () => {
+  it('Go-Between: recruits a rival member, paying that rival', () => {
+    let s = table(Q, { n: 2, round: 2, members: [['market.gobetween'], ['thieves.doubleagent']], res: [{ magenta: 10, red: 10 }, {}], queue: [{ t: 'buy', p: 0 }] });
+    const g = uidIn(s, 'market.gobetween', 0), t = uidIn(s, 'thieves.doubleagent', 1);
+    const before = Object.values(s.players[1].res).reduce((a, b) => a + b, 0);
+    s = move(s, `use:${g}`);
+    s = move(s, `card:${t}`);
+    while (s.pending?.kind === 'choose' && s.pending.prompt.startsWith('Go-Between: how')) s = move(s, s.pending.options[0].id);
+    expect(s.players[0].members).toContain(t);
+    const after = Object.values(s.players[1].res).reduce((a, b) => a + b, 0);
+    expect(after - before).toBe(defById('thieves.doubleagent').s + defById('thieves.doubleagent').w);
+    expect(defById('market.gobetween').text).toBe('On Use, once per round: recruit a rival’s member, paying its cost to that rival.');
+  });
+  it('Rummager: +1 of each color', () => {
+    let s = table(Q, { n: 2, round: 2, members: [['thieves.rummager'], []], queue: [{ t: 'buy', p: 0 }] });
+    const r = uidIn(s, 'thieves.rummager', 0);
+    s = move(s, `use:${r}`);
+    for (const c of s.resources) expect(s.players[0].res[c]).toBe(1);
+  });
+});

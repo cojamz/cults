@@ -73,11 +73,11 @@ describe('Silver actions', () => {
     expect(R(s, 1).silver).toBe(2);
   });
 
-  it('rings: Melt Down and Hand Out Gifts open in round I, Flaunt and Hire Away in round II, Throw Coins in round III', () => {
+  it('rings: Melt Down and Hand Out Gifts open in round I, Pay in Coin and Hire Away in round II, Throw Coins in round III', () => {
     const names = s => s.pending.options.map(o => o.label);
     expect(names(scene())).toEqual(expect.arrayContaining(['Raise a Glass', 'Melt Down', 'Hand Out Gifts']));
     expect(names(scene())).not.toContain('Hire Away');
-    expect(names(scene({ round: 2 }))).toEqual(expect.arrayContaining(['Flaunt', 'Hire Away']));
+    expect(names(scene({ round: 2 }))).toEqual(expect.arrayContaining(['Pay in Coin', 'Hire Away']));
     expect(names(scene({ round: 2 }))).not.toContain('Sweet Nothings'); // off the wheel since Nov 11 (Flaunt)
     expect(names(scene({ round: 2 }))).not.toContain('Sweet Talk'); // off the wheel since Nov 11
     expect(names(scene({ round: 2 }))).not.toContain('Throw Coins');

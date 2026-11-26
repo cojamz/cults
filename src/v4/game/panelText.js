@@ -118,7 +118,8 @@ const P = {
     sweetnothings: { main: '+3 silver', second: 'give rivals up to 3: +2 any per silver given' },  // off the wheel since Nov 11 (Flaunt)
     // Cory's words, as a verb with the rate in line 1: as a gain the words set huge, and a tight ring dropped the rate so
     // it read as a flat +1 of each (picky bot, Nov 11)
-    flaunt: { verb: '+1 of each other color per 3 silver you hold', second: 'up to 3 each' }, // Cory, Nov 11
+    flaunt: { verb: '+1 of each other color per 3 silver you hold', second: 'up to 3 each' }, // off the wheel since Nov 26 (Pay in Coin)
+    payincoin: { verb: 'Your silver counts double for recruiting this turn', second: 'each rival +2 silver' }, // Cory, Nov 26
     // ring II's line 2 drops at some turns of the wheel and left a bare "+3 silver" (picky bot, Nov 4): whole in line 1
     tongue: { verb: '+3 silver, then turn silver into colors' }, // off the wheel since Nov 11 (Buyout)
     // (all in line 1 it ran six lines deep on a tight ring II, past its panel: picky bot, Nov 11; shorter words are Cory's)

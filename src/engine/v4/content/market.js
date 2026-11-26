@@ -218,9 +218,8 @@ function windowPick(ctx, owner, left, sent = [], who = 'Culler', row = null) {
 /** Test Drive (Nov 10): the hook that plays a member's effect now, by its printed timing; null when its timing doesn't count. */
 export function driveHook(def) {
   const t = def.text || '';
-  // Claude, under Cory's go-with-your-gut, Nov 24 (Cory, Nov 13: "test drive is probably a bit too good"; Nov 10 2:49pm
-  // he had kept once per game in "for now, watched in play"): a once per game effect no longer plays through Test Drive
-  if (/once per game/i.test(t)) return null;
+  // once per game effects play through Try Out again (Cory, Nov 26: "Just bring back the activate then, like the once a
+  // game activate"); the Nov 24 gut call that left them out is undone
   if (/^On Use\b/.test(t)) return def.onActivate ? 'onActivate' : null;
   if (/^On Recruit\b/.test(t)) return def.onRecruited ? 'onRecruited' : null;
   if (/^Round Start\b/.test(t)) return def.onRoundStart ? 'onRoundStart' : def.onRoundStartLate ? 'onRoundStartLate' : null;
@@ -390,7 +389,7 @@ const market = {
       // per game, once per round, Round End, Round start, On recruit" (2:49pm: once per game included for now, watched in
       // play); 2:51pm: named Test Drive. Any shop member may go; a member whose timing isn't one of those (Whenever, Game
       // End, none) only goes to the discard pile. The shop refills.
-      key: 'testdrive', ring: 1, name: 'Try Out', copyDoesIt: true, text: 'Discard a shop member. Use its effect now, unless it is once per game. +1 blue.',
+      key: 'testdrive', ring: 1, name: 'Try Out', copyDoesIt: true, text: 'Discard a shop member. Use its effect now. +1 blue.',
       estimate: ctx => 1 + (ctx.shopCards().some(c => driveHook(c.def)) ? 2.5 : 0.3),
       resolve(ctx, p) {
         ctx.gain(p, B, 1, { fromAction: true });
@@ -784,6 +783,18 @@ const market = {
       ctx.log(`${owner.name}'s Hawker: ${o.name} recruits ${ctx.card(data.uid).def.name} and pays ${payLabel(plan.extra)} to ${owner.name}.`);
       ctx.recruit(o, data.uid, { free: false, spend: plan.spend });
     },
+    // Go-Between (Cory, Nov 26): pick the rival's member, then how to pay; the payment goes to that rival
+    goBetween(ctx, p, uid, data) {
+      if (uid == null) { const c = ctx.card(data.uid); if (c) c.used = false; ctx.log(`${p.name}'s Go-Between: recruits nothing.`); return; }
+      const o = ctx.ownerOf(uid);
+      if (!o || o === p || !ctx.payChoices(p, uid, {}).length) return;
+      const list = ctx.payChoices(p, uid, {});
+      if (list.length === 1) { goBetweenPay(ctx, p, uid, list[0]); return; }
+      ctx.choose(p, `Go-Between: how do you pay ${o.name} ${ctx.price(p, uid, {}).total} for ${ctx.card(uid).def.name}?`, list.map((v, i) => ({
+        id: `pay:${ctx.state.resources.map(r => v[r] || 0).join('-')}`, label: payLabel(v), kind: 'pay', value: v, hint: i === 0 ? 1 : 0, uid, how: {},
+      })), `${Q}.goBetweenPay`, { uid });
+    },
+    goBetweenPay(ctx, p, v, data) { goBetweenPay(ctx, p, data.uid, v); },
     pay(ctx, p, v, data) {
       if (!v) { ctx.log(`${data.why}: ${p.name} recruits nothing.`); return; }
       payAndRecruit(ctx, p, v, data);
@@ -1170,6 +1181,22 @@ const market = {
     // Live since Nov 5 in Hawker's place: the one blue card on Cory's short list ("Pretty cool; short list for blue").
     // Gleaner replaces Stallholder (Cory, 2026-11-24 7:53pm Eastern, yes; Nov 11: "i dont love mannequins"): the id stays
     // 'mannequin'. Every recruit may take a discard pile member as if it were in the shop (core.js, flag discardAny)
+    // Cory, 2026-11-26 9:47pm Eastern, on Go-Between "You may recruit a rival's member as if it were in the shop, paying
+    // its cost to that rival.": "lol whenever is way too good. Let's try once per round". Its own recruit (not the turn's),
+    // at the member's price as the shop would charge you, paid to the rival; the member is your recruit (its On Recruit
+    // fires). Not a swap or a steal, so Warden doesn't block it. Price Claude's fill-in (3 blue + 4 any).
+    m('gobetween', 'Go-Between', 2, 2, 'On Use, once per round: recruit a rival\u2019s member, paying its cost to that rival.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o).filter(c => ctx.payChoices(owner, c.uid, {}).length).map(c => [o, c]));
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Go-Between: no rival member you can pay for.`); return; }
+        ctx.choose(owner, 'Go-Between: recruit which rival member?', list.map(([o, c]) => ({
+          id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${ctx.price(owner, c.uid, {}).total})`, kind: 'member', value: c.uid, hint: (c.def.f || 1) * 2 + priceOf(c) * 0.3,
+        })).concat({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: 0 }), `${Q}.goBetween`, { uid: card.uid });
+      },
+      botActivate: ctx => ctx.state.round >= 2,
+    }),
     m('mannequin', 'Gleaner', 2, 2, 'You may recruit from the discard pile as you would from the shop.', { discardAny: true }),
     m('mannequinold', 'Stallholder', 2, 2, 'Blue members in the shop count as your members when contests are scored.', { retired: true }), // retired Nov 24 (Gleaner): a test fixture // joins by cost (round II), per Cory's round I cost cutoffs
     // REPLACE9 bot test (Members C, Nov 4): Hawker's place, second try (Mannequin lost its blind A/B). 4 blue + 1 any as a
@@ -1489,4 +1516,11 @@ function hawkAsk(ctx, owner, uid, left) {
   }
   ctx.log(`${owner.name}'s Hawker: no rival recruits ${c.def.name}, so ${owner.name} recruits it for free.`);
   ctx.recruit(owner, uid, { free: true });
+}
+
+function goBetweenPay(ctx, p, uid, v) {
+  const o = ctx.ownerOf(uid);
+  if (!o || o === p || Object.keys(v).some(r => (v[r] || 0) > (p.res[r] || 0))) return;
+  for (const r in v) { if (!v[r]) continue; p.res[r] -= v[r]; o.res[r] = (o.res[r] || 0) + v[r]; }
+  if (ctx.moveMember(uid, o, p, { recruit: true })) ctx.log(`${p.name}'s Go-Between: recruits ${o.name}'s ${ctx.card(uid).def.name}, paying ${o.name} ${payLabel(v)}.`);
 }

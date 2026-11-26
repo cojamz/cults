@@ -122,19 +122,19 @@ describe('2. Comforter ("Round End: +2 followers per contest you don\'t win.") w
     expect(s.players[0].bonus).toBe(16);
   });
 });
-describe('3. Chapman ("Whenever one of your members is swapped, +2 followers.") with every swapper in one round III', () => {
+// Chapman since Cory, Nov 26: "Whenever one of your members leaves your cult, +2 followers."
+describe('3. Chapman ("Whenever one of your members leaves your cult, +2 followers.") with every swapper in one round III', () => {
   const Q = ['red', 'market', 'thieves', 'echo'];
-  const swapped = s => lines(s, /Chapman: .* was swapped, \+2 followers/);
-  it('Swindler, a Doppelganger copying Swindler, Promote, Fairy Godmother and Demote: 5 swaps, +10; Journeyman going to the shop is not a swap', () => {
+  const swapped = s => lines(s, /Chapman: .* left, \+2 followers/);
+  it('Swindler, a Doppelganger copying Swindler, Promote, Fairy Godmother and Demote: 5 swaps and Journeyman going to the shop: 6 members left, +12', () => {
     const { s } = go('chapman-round', { quads: Q, auto: true, queue: [{ t: 'round', r: 3 }], shop: ['red.volunteer', 'market.bargainer'],
       prep: st => { st.cards[uidOf(st, 'echo.doppel', 0)].copy = 'red.bodysnatchers'; },
       members: [['red.chapman', 'red.bodysnatchers', 'red.seatfiller', 'red.panel', 'echo.doppel', 'red.intern', 'red.twins', 'benders.tiebreaker'], ['red.bigfamily', 'silver.dowager']] },
       [/Triplets ↔ P2: Big Family/, /Journeyman ↔/, /Intern ↔ P2: Dowager/, /^Promote$/, /Crooked Judge ↔ Shop/, /pass/, /use:/, /^promote/, /Dowager ↔ Shop/, /^Demote$/, /Talent Scout ↔ Shop|Ferryman ↔ Shop|Big Family ↔ Shop/, /pass/]);
-    expect(swapped(s)).toHaveLength(5);
-    expect(s.players[0].bonus).toBe(10);
+    expect(swapped(s)).toHaveLength(6);
+    expect(s.players[0].bonus).toBe(12);
     expect(has(s, /P1's Journeyman goes to the shop/)).toBe(true);
-    const j = s.log.findIndex(l => /P1 put Journeyman face up into the shop/.test(l));
-    expect(s.log.slice(j, j + 3).some(l => /Chapman/.test(l))).toBe(false);
+    expect(has(s, /Chapman: Journeyman left, \+2 followers/)).toBe(true);
   });
 });
 

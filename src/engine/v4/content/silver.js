@@ -442,17 +442,16 @@ export const silverActions = [
   },
   // Sweet Nothings takes Potluck's place (Cory, Nov 6: "yeah 1"; Potluck had rivals choose on your turn). Potluck stays
   // in code, off the wheel; REPLACE11=favors puts it back for a comparison.
-  // Flaunt takes Sweet Nothings' place (Cory, Nov 11: "i like 1.", then "lets remove the 'if you hold the most'").
-  // You keep your silver; the colors come from the bank. The name is Claude's fill-in.
+  // Flaunt took Sweet Nothings' place (Cory, Nov 11); Pay in Coin takes Flaunt's (Cory, Nov 26).
   swap11({
-    key: 'flaunt', copyDoesIt: true, ring: 2, name: 'Flaunt', text: '+1 of each other color per 3 silver you hold, up to 3 each. +1 silver.',
-    estimate: (ctx, p) => Math.min(3, Math.floor((p.res[S] || 0) / 3)) * otherColors(ctx).length + 1,
+    // Cory, Nov 26: Pay in Coin takes Flaunt's place, "I think it should be your silver counts double for recruiting?"
+    // (the rival gift and +1 silver from the pitch kept). Each silver pays 2 toward a member's price until the turn ends.
+    key: 'payincoin', copyDoesIt: true, ring: 2, name: 'Pay in Coin', text: 'Each rival +2 silver. This turn your silver counts double for recruiting. +1 silver.',
+    estimate: (ctx, p) => 1 + Math.min(6, p.res[S] || 0) * 0.5 - spillCost(ctx, 2),
     resolve(ctx, p) {
-      const k = Math.min(3, Math.floor((p.res[S] || 0) / 3));
-      if (k) {
-        for (const c of otherColors(ctx)) ctx.gain(p, c, k, { fromAction: true });
-        ctx.log(`${p.name}'s Flaunt: ${p.res[S]} silver held, +${k} of each other color.`);
-      } else ctx.log(`${p.name}'s Flaunt: under 3 silver held, no colors.`);
+      giveAll(ctx, p, S, 2);
+      p.silverDouble = true;
+      ctx.log(`${p.name}'s Pay in Coin: +2 silver to everyone else; this turn ${p.name}'s silver counts double for recruiting.`);
       hostGain(ctx, p, 1);
     },
   }, {
@@ -464,6 +463,20 @@ export const silverActions = [
     },
   }),
   SWEET_NOTHINGS,
+  {
+    // Out of the wheel since Nov 26 (Pay in Coin takes its place); kept for old saves and its tests
+    pool: true,
+    key: 'flaunt', copyDoesIt: true, ring: 2, name: 'Flaunt', text: '+1 of each other color per 3 silver you hold, up to 3 each. +1 silver.',
+    estimate: (ctx, p) => Math.min(3, Math.floor((p.res[S] || 0) / 3)) * otherColors(ctx).length + 1,
+    resolve(ctx, p) {
+      const k = Math.min(3, Math.floor((p.res[S] || 0) / 3));
+      if (k) {
+        for (const c of otherColors(ctx)) ctx.gain(p, c, k, { fromAction: true });
+        ctx.log(`${p.name}'s Flaunt: ${p.res[S]} silver held, +${k} of each other color.`);
+      } else ctx.log(`${p.name}'s Flaunt: under 3 silver held, no colors.`);
+      hostGain(ctx, p, 1);
+    },
+  },
   {
     // Out of the wheel since Nov 11 (Buyout takes its place); kept for old saves and its tests
     pool: true,

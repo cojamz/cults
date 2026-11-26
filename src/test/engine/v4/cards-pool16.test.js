@@ -72,19 +72,22 @@ describe('Cutthroats (Magenta)', () => {
     for (let k = 0; k < 3; k++) s = move(s, 'take:1:red');
     return s;
   };
-  it('Whenever you steal resources, you may steal that many followers instead.', () => {
-    let s = steal3();
-    expect(s.pending.prompt).toMatch(/^Cutthroats/);
-    s = move(s, 'followers');
+  // Cory, Nov 26: no choice now ("outright be followers")
+  it('Whenever you steal resources, steal that many followers instead.', () => {
+    const s = steal3();
+    expect(s.pending?.prompt || '').not.toMatch(/^Cutthroats/);
     expect(s.players[0].res.red).toBe(0);
     expect(s.players[1].res.red).toBe(5);
     expect(s.players[0].bonus).toBe(3);
     expect(s.players[1].bonus).toBe(1);
-    expect(named(s, 'Cutthroats')).toContain("P1's Cutthroats: gives back the 3 resources and steals 3 of P2's followers instead.");
+    expect(named(s, 'Cutthroats')).toContain("P1's Cutthroats: gives back 3 resources and steals 3 of P2's followers instead.");
   });
-  it('may: keep the resources', () => {
-    let s = move(steal3(), 'keep');
-    expect(s.players[0].res.red).toBe(3);
-    expect(s.players[1].bonus).toBe(4);
+  it('a victim with fewer followers: the rest stay resources', () => {
+    let s = sceneQ({ quadrants: ['thieves', 'yellow', 'red', 'market'], members: [['thieves.cutthroats']], res: [{}, { red: 5 }], bonus: [0, 1] });
+    s = take(placed(s, 0, 2), 'thieves.pickpocket');
+    for (let k = 0; k < 3; k++) s = move(s, 'take:1:red');
+    expect(s.players[0].res.red).toBe(2);
+    expect(s.players[0].bonus).toBe(1);
+    expect(s.players[1].bonus).toBe(0);
   });
 });

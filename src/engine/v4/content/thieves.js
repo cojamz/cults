@@ -779,16 +779,33 @@ const thieves = {
     // idea pipeline pool 16 (Nov 7; ideas/magenta-r2.md; price a fill-in): after any steal of yours that took resources,
     // you choose; reactions to the steal already ran on the resources (a table settles the steal, then the swap)
     // Cory, 2026-11-25 9:55pm Eastern ("really interesting. probably yes", then "yes"): dealt in the decks
-    m('cutthroats', 'Cutthroats', 3, 2, 'Whenever you steal resources, you may steal that many followers instead.', {
+    // Cory, 2026-11-26 ("a good magenta member would be like once per round, +1 of each color or something like that",
+    // then "yeah" to the read-back). Name through .claude/skills/naming (blind read: "searches through a pile for something
+    // useful"); price Claude's fill-in (3 magenta + 4 any, Peddlers' cost less its On Recruit).
+    m('rummager', 'Rummager', 2, 2, 'On Use, once per round: +1 of each color.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner) {
+        for (const r of ctx.state.resources) ctx.gain(owner, r, 1);
+        ctx.log(`${owner.name}'s Rummager: +1 of each color.`);
+      },
+    }),
+    // Cory, 2026-11-26 ("maybe just make cutthroats outright be followers", then "yeah"): no choice now. Followers that
+    // can be stolen are the victim's bought or won ones; when they hold fewer than were stolen, the rest stay resources.
+    m('cutthroats', 'Cutthroats', 3, 2, 'Whenever you steal resources, steal that many followers instead.', {
       onSteal(ctx, owner, card, info) {
         if (info.thief !== owner || info.victim === owner) return;
         const n = Object.values(info.took || {}).reduce((a, b) => a + b, 0);
         if (!n || !(info.victim.bonus > 0)) return;
-        const f = Math.min(n, info.victim.bonus), late = ctx.state.round >= 3 ? 1 : 0;
-        ctx.choose(owner, `Cutthroats: you stole ${n} from ${info.victim.name}. Keep them, or give them back and steal ${f} follower${f === 1 ? '' : 's'} instead?`, [
-          { id: 'keep', label: `Keep the ${n} resource${n === 1 ? '' : 's'}`, kind: 'choice', value: 'keep', hint: n * 0.7 },
-          { id: 'followers', label: `Steal ${f} follower${f === 1 ? '' : 's'}`, kind: 'choice', value: 'followers', hint: f * (1.1 + late) },
-        ], 'thieves.cutthroats', { vid: info.victim.id, took: { ...info.took }, n });
+        const o = info.victim, f = Math.min(n, o.bonus);
+        let back = f;
+        for (const [c, k] of Object.entries(info.took)) {
+          if (!back) break;
+          const x = Math.min(k, owner.res[c] || 0, back);
+          owner.res[c] -= x; o.res[c] = (o.res[c] || 0) + x; back -= x;
+        }
+        o.bonus -= f; owner.bonus += f;
+        ctx.log(`${owner.name}'s Cutthroats: gives back ${f} resource${f === 1 ? '' : 's'} and steals ${f} of ${o.name}'s followers instead.`);
       },
       ...see(info => 2 * endsAhead(info).length),
     }),

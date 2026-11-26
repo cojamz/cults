@@ -53,6 +53,7 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Gate-Shutter
 - Gilder
 - Gleaner
+- Go-Between
 - Good Samaritans
 - Governess
 - Gravedigger
@@ -108,6 +109,7 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Rag-and-Bone Man
 - Robbers
 - Robin Hood
+- Rummager
 - Scavengers
 - Secret-Keepers
 - Shadow
@@ -167,6 +169,7 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Hand Out Gifts
 - Harvest
 - Hire Away
+- Pay in Coin
 - Hold a Fair
 - Imitate
 - Induct

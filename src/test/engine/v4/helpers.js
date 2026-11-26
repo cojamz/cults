@@ -14,6 +14,7 @@ export const RETIRED_NOV10 = {
   'market.bargain': 'testdrive', 'market.showroom': 'markdown', 'market.pricecheck': 'wordofmouth',
   'echo.encore': 'crowd2', 'purple.holdup': 'onaroll', 'thieves.hideout': 'catchup', 'thieves.ransom': 'swindle',
   'silver.tongue': 'buyout', 'trading.stipend': 'modestmeans', 'silver.sweetnothings': 'flaunt', 'trading.exchange': 'nestegg', 'yellow.housewarming': 'makeover', 'trading.estatesale': 'writeoff',
+  'silver.flaunt': 'payincoin', // Cory, Nov 26
 };
 /** Put these retired spaces back on the wheel, each in the slot its replacement took, for the whole file. */
 export function useRetired(spaceIds) {

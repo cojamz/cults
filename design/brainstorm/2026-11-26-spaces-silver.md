@@ -131,3 +131,5 @@ Verdict: cut (Misers' exact shape in another color; Cory asked for interesting c
 8. Color interactions: none.
 9. Biggest case: 3 a round.
 Verdict: cut (Pawnbrokers already)
+
+Held (coordinator, Nov 26 9:14pm Eastern): Cory liked Buy Loyalty ("yeah kinda intersting") but didn't pick a slot. Keep Throw Coins; Buy Loyalty is held for a weak Silver slot (Raise a Glass is the candidate) and goes out with the next held list.

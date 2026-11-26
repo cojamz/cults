@@ -36,7 +36,9 @@ import new5
 NEW7.update({'Spice Merchant':'yellow.tourists'})
 import new10  # Nov 25 renames, drawn for the new names (new9's Forestallers picture is retired)
 NEW7.update({'Firstborn':'market.doorbusters','Market Sweeper':'market.restocker','Penny-Pincher':'market.regular','Laggard':'purple.lastcallers','Alchemists':'yellow.bookcooker'})
-for n,v in new7.ALL()+new8.ALL()+new3.ALL()+new4.ALL()+new5.ALL()+new10.ALL():
+import new11  # Nov 26: Cory's yeses
+NEW7.update({'Rabble-Rousers':'red.rabblerousers','Go-Between':'market.gobetween','Rummager':'thieves.rummager'})
+for n,v in new7.ALL()+new8.ALL()+new3.ALL()+new4.ALL()+new5.ALL()+new10.ALL()+new11.ALL():
     pal={}; rev={}; rows=[]
     for row in v.g:
         s2=''

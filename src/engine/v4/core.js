@@ -472,7 +472,9 @@ function priceParts(state, p, def, how = {}) {
   // Silver Tongues (REPLACE16=tongues, flag tableSilverPaysColor): everyone's silver pays a colored part
   // how.silverAny: a recruit whose own rule lets silver pay any color (Gift Exchange, idea pipeline pool 5; bot games only)
   const alt = q && q !== 'silver' && (how.silverAny || sumMemberFlag(state, p, 'silverPaysColor') > 0 || tableFlag(state, 'tableSilverPaysColor')) ? 'silver' : null;
-  return { q, alt, colored, total, worth: () => 1 };
+  // Pay in Coin (p.silverDouble, this turn only): each silver pays 2 toward a member's price (Cory, Nov 26: "your silver
+  // counts double for recruiting")
+  return { q, alt, colored, total, worth: c => (c === 'silver' && p.silverDouble ? 2 : 1) };
 }
 const unitsOf = (v, worth) => Object.entries(v).reduce((t, [c, n]) => t + (n || 0) * worth(c), 0);
 /** Does paying the coins `v` cover the price? The colored units from q, the rest from anything (q's spare too). */
@@ -1203,6 +1205,7 @@ function runTask(state, task) {
       delete p.recruitFollowers;
       delete p.spendFollowers;
       delete p.cleanSweep;
+      delete p.silverDouble; // Pay in Coin: "this turn"
       state.current = null;
       return;
     }
@@ -1805,6 +1808,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
         notes.push(`${sumMemberFlag(state, p, 'silverPaysColor') > 0 ? flagName(state, p, 'silverPaysColor') : 'Silver Tongues'}: silver paid for ${q0}`);
       }
     }
+    if (p.silverDouble && spend.silver > 0) notes.push(`Pay in Coin: ${spend.silver} silver paid ${2 * spend.silver}`);
     if (notes.length) paid += `; ${notes.join(', ')}`;
     if (stall) { for (const r in spend) stall.res[r] = (stall.res[r] || 0) + spend[r]; paid += `, paid to ${stall.name}'s ${stallAt[2]}`; }
     // a discount waits for a member that actually costs something

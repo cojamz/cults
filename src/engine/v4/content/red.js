@@ -870,12 +870,12 @@ export default {
       },
       ...see(info => 4 * endsAhead(info).length),
     }), 'pool-maybe'),
-    // Cory, 2026-11-25 ("I like Chapman"). Price is Claude's fill-in (3 red + 3 any). Any swap of one of your members, by
-    // anyone's card or space, with a rival's member or a shop member; Chapman itself swapped away pays nothing.
-    m('chapman', 'Chapman', 2, 2, 'Whenever one of your members is swapped, +2 followers.', {
-      onCultMove(ctx, owner, card, { uid, from, swappedWith }) {
-        if (from !== owner || swappedWith == null || uid === card.uid) return;
-        owner.bonus += 2; ctx.log(`${owner.name}'s Chapman: ${ctx.card(uid).def.name} was swapped, +2 followers.`);
+    // Cory, 2026-11-25 ("I like Chapman"). Price is Claude's fill-in (3 red + 3 any). Cory, 2026-11-26 ("Maybe it's just
+    // like whenever one of your members leaves your cult, because then it like is a defensive against red. It like works
+    // well with white", then "Yes"): any of your members leaving, itself too (discarded, given, stolen, swapped), as Mourners.
+    m('chapman', 'Chapman', 2, 2, 'Whenever one of your members leaves your cult, +2 followers.', {
+      onAnyLeave(ctx, owner, card, gone) {
+        owner.bonus += 2; ctx.log(`${owner.name}'s Chapman: ${gone.def.name} left, +2 followers.`);
       },
       ...see(info => 2 * endsAhead(info).length),
     }),

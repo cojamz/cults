@@ -27,7 +27,7 @@ const S = {
     hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+1 follower and +1 purple per minion left to place; take the Goes Last token with the rest on it; +1 purple', skip: '+5 purple; take the Goes Last token with your other minions on it', onaroll: '+2 purple per turn of yours in a row; take the Goes Last token', holdup: r => `+${r + 1} purple, whoever is next skips, even you`, crowdin: '+4 purple, +1 minion this round; take the Goes Last token', rally: '+2 purple, then go twice more right away', again: '+3 purple, then go again right away',
   },
   silver: {
-    toast: '+4 silver · others +2 silver · +1 silver', polish: '+2 silver · all silver → one color · +1 silver', buyout: "recruit a rival's member, pay its cost in silver", partygifts: 'give rivals up to 3 silver, +2 followers each', favors: '+2 silver · each rival gives 1', sweetnothings: '+3 silver · give rivals up to 3, +2 any each', flaunt: '+1 each other color per 3 silver held (up to 3) · +1 silver', tongue: '+3 silver · turn into colors', largesse: 'give rivals 10 silver, +7 followers',
+    toast: '+4 silver · others +2 silver · +1 silver', polish: '+2 silver · all silver → one color · +1 silver', buyout: "recruit a rival's member, pay its cost in silver", partygifts: 'give rivals up to 3 silver, +2 followers each', favors: '+2 silver · each rival gives 1', sweetnothings: '+3 silver · give rivals up to 3, +2 any each', flaunt: '+1 each other color per 3 silver held (up to 3) · +1 silver', payincoin: 'others +2 silver · silver counts double for recruiting this turn · +1 silver', tongue: '+3 silver · turn into colors', largesse: 'give rivals 10 silver, +7 followers',
   },
   yellow: {
     harvest: '+3 any, colors you choose', offering: '+5 yellow · rivals discard 2 of each of your member colors', bloom: r => `+${r} yellow · +1 of your fewest`, transmute: '+1 yellow per minion on the color whose spaces hold the most minions', prism: '+1 each per 3 yellow', gather: '1 per member', flourish: '+1 each per set',
@@ -56,7 +56,7 @@ const LIVE_WORDS = {
     trade: '+3 red; swap a member for one costing up to 3 less', take: `recruit for free, costing ${9 + MORE} or less`,
   },
   purple: { rally: '+2 purple; then go twice more right away', again: '+3 purple; then go again right away', crowdin: '+4 purple; +1 extra minion this round; take the Goes Last token' },
-  silver: { toast: '+4 silver; each rival +2 silver', polish: '+3 silver; then turn all your silver into one color; each rival +1 silver', flaunt: '+1 of each other color per 3 silver held (up to 3 each)' },
+  silver: { toast: '+4 silver; each rival +2 silver', polish: '+3 silver; then turn all your silver into one color; each rival +1 silver', flaunt: '+1 of each other color per 3 silver held (up to 3 each)', payincoin: 'each rival +2 silver; this turn your silver counts double for recruiting' },
   yellow: {
     dilute: '+2 yellow; +3 yellow if you recruit a new color', makeover: '+4 yellow; turn up to 8 of rivals’ resources yellow',
     meltingpot: 'per member color: +1 follower and +1 of it', offering: '+5 yellow; each rival discards 2 of each color your members have',

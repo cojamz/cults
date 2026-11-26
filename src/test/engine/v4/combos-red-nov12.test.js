@@ -292,14 +292,13 @@ describe('Bannermen: "Round End: if your members have 2 or fewer colors, +3 foll
     cleanLog(a);
   });
 
-  // Claude, under Cory's go-with-your-gut, Nov 24 (Cory, Nov 13: "test drive is probably a bit too good"): Try Out
-  // ("Discard a shop member. Use its effect now, unless it is once per game. +1 blue.") sends a once per game member
-  // to the discard pile without using it; Benefactor ("On Use, once per game: recruit a member costing up to 7 for free.")
-  it('Try Out on Benefactor (once per game): discarded, effect not used', () => {
+  // Cory, Nov 26 ("Just bring back the activate then, like the once a game activate"): Try Out ("Discard a shop member.
+  // Use its effect now. +1 blue.") uses a once per game member's effect again; Benefactor ("On Use, once per game:
+  // recruit a member costing up to 7 for free.")
+  it('Try Out on Benefactor (once per game): discarded, and its effect is used', () => {
     const { s } = go('td-opg', { quads: QR, round: 1, turns: [0], shop: ['yellow.headhunters', 'red.purists'] }, [/Try Out/, /Benefactor/]);
-    expect(s.log).toContain("P1's Try Out: sends Benefactor to the discard pile.");
+    expect(s.log).toContain("P1's Try Out: sends Benefactor to the discard pile and uses its effect.");
     expect(s.discard.map(u => defById(s.cards[u].def).name)).toContain('Benefactor');
-    expect(s.players[0].members.length).toBe(0);
   });
 
   // OPEN QUESTION: with no members at all, "your members have 2 or fewer colors" is true (0 colors); only reachable by

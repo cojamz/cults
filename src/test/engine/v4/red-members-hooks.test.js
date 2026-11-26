@@ -13,7 +13,7 @@ const acquire = (s, id) => contextFor(s).recruit(s.players[0], uidIn(s, id, 'sho
 
 describe('new Red member hooks', () => {
   it('deals exactly fifteen ordinary Red members, with the approved printed bodies and prices', () => {
-    expect(quadrant('red').members.filter(d => !CUT.has(d.id) && !d.retired)).toHaveLength(15); // Wet Nurse, Chapman in (Nov 25); Innkeeper cut (Cory's Nov 25 calls); Mob and Proselytizers out, Guild Master and Bannermen in (Nov 11); Dyer in for Deprogrammers (Nov 12)
+    expect(quadrant('red').members.filter(d => !CUT.has(d.id) && !d.retired)).toHaveLength(16); // Rabble-Rousers in (Cory, Nov 26); Wet Nurse, Chapman in (Nov 25); Innkeeper cut (Cory's Nov 25 calls); Mob and Proselytizers out, Guild Master and Bannermen in (Nov 11); Dyer in for Deprogrammers (Nov 12)
     for (const [id, s, w, f] of [['volunteer', 0, 0, 1], ['bodysnatchers', 2, 3, 1], ['panel', 4, 2, 1], ['mob', 7, 4, 1], ['loyalists', 1, 1, 1]]) {
       expect(defById(`red.${id}`)).toMatchObject({ s: s + COLOR_PART, w: w + EXTRA_WILD - COLOR_PART, f }); // Nov 2: 1 of the wild is paid in the member's color
     }

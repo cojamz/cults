@@ -91,10 +91,10 @@ describe('Green exact action targets alongside Red recruitment', () => {
 });
 
 describe('Red members: bounded acquisition and body invariants', () => {
-  it('the normal Red deck contains fifteen approved members (Wet Nurse and Chapman in, Nov 25; Innkeeper cut again, Cory’s Nov 25 calls; Swindler in Triplets’ place, Nov 3; Journeyman in Volunteer’s, Nov 5; Clan Chief in Patriarch’s, Nov 11; Guild Master in Proselytizers’ and Bannermen in Mob’s, Nov 11; Dyer in for Deprogrammers, Nov 12), all priced at twelve or less (Mob 12, Cory Oct 24)', () => {
+  it('the normal Red deck contains sixteen approved members (Rabble-Rousers, Nov 26; Wet Nurse and Chapman in, Nov 25; Innkeeper cut again, Cory’s Nov 25 calls; Swindler in Triplets’ place, Nov 3; Journeyman in Volunteer’s, Nov 5; Clan Chief in Patriarch’s, Nov 11; Guild Master in Proselytizers’ and Bannermen in Mob’s, Nov 11; Dyer in for Deprogrammers, Nov 12), all priced at twelve or less (Mob 12, Cory Oct 24)', () => {
     const s = createGame({ seats: [{}, {}], quadrants: ['red', 'echo'], rules: { cull: true, guests: false } });
     const red = Object.values(s.cards).map(c => defById(c.def)).filter(d => d.quadrant === 'red');
-    expect(red.map(d => d.key).sort()).toEqual(['host', 'loyalists', 'mentor', 'purists', 'assimilators', 'panel', 'clan', 'brethren', 'fosterparents', 'recruiter', 'bodysnatchers', 'seatfiller', 'headhunter', 'wetnurse', 'chapman'].sort());
+    expect(red.map(d => d.key).sort()).toEqual(['host', 'loyalists', 'mentor', 'purists', 'assimilators', 'panel', 'clan', 'brethren', 'fosterparents', 'recruiter', 'bodysnatchers', 'seatfiller', 'headhunter', 'wetnurse', 'chapman', 'rabblerousers'].sort()); // Rabble-Rousers in (Cory, Nov 26)
     expect(red.every(d => d.s + d.w <= 12 + EXTRA_WILD)).toBe(true); // printed 12 or less, plus the extra wild
     expect(['red.bigfamily', 'red.intern', 'red.drive', 'red.sponsor', 'red.crowd', 'red.reserve'].every(id => CUT.has(id))).toBe(true);
   });
