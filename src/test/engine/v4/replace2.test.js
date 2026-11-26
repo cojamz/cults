@@ -23,10 +23,10 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE2: the switch', () => {
   it('prints the spec prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; }; // worth: every live member rebased to 1 unless its card gives the number (Cory, Nov 12)
-    expect(price('red.bodysnatchers')).toEqual([3, 3, 1]); // cheaper (Cory, Nov 5)
+    expect(price('red.bodysnatchers')).toEqual([3, 4, 1]); // cheaper (Cory, Nov 5), then +1 any (Cory's Nov 25 calls: 7 as a player sees it, was 6)
     expect(price('echo.mirrorimage')).toEqual([6, 4, 1]);
     expect(price('thieves.skimmers')).toEqual([4, 3, 1]);
-    expect(price('market.doorbusters')).toEqual([5, 4, 3]); // worth 3 (Cory, Nov 26)
+    expect(price('market.doorbusters')).toEqual([5, 3, 3]); // worth 3 (Cory, Nov 26); 9 as a player sees it, was 10 (Cory, Nov 25)
     expect(price('yellow.nightmarket')).toEqual([3, 1, 1]);
     expect(price('silver.fundraisers')).toEqual([6, 4, 1]);
     expect(price('silver.hushmoney')).toEqual([4, 3, 1]);

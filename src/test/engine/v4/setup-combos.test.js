@@ -66,15 +66,14 @@ describe('Richer and +1 any move every named member cost', () => {
     expect(shiftCosts('Swap any member for one costing up to 3 more', 2)).toBe('Swap any member for one costing up to 3 more');
     expect(shiftCosts('a shop member costing at most 2 less', 2)).toBe('a shop member costing at most 2 less');
   });
-  it('Induct offers exactly the shop members its words allow, at both prices', () => {
+  it('Induct offers every shop member (no cost limit), at both prices', () => {
     for (const econ of [undefined, 'rich', 'any1']) {
-      // members around the cap: Induct's cap is 9 + MORE as printed, 2 more under Richer, 1 more under +1 any
+      // Induct has no cost limit (Cory, Nov 25: "Just make it no limit"), so no price setting changes what it offers
       const s0 = sceneQ({ round: 3, rules: { ...base, econ }, quadrants: ['yellow', 'red', 'market', 'echo'] });
-      const cap = Number(/costing (\d+) or less/.exec(spacesOf(s0, 'red').find(a => a.key === 'take').text)[1]);
-      expect(cap).toBe(9 + MORE + (econ ? ECON_SETS[econ].up : 0));
+      expect(spacesOf(s0, 'red').find(a => a.key === 'take').text).toBe('Recruit a shop member, for free. +1 red.');
       const s = take(s0, 'red.take');
       const offered = (s.pending?.options || []).filter(o => o.kind === 'card').map(o => o.value).sort();
-      const fits = s0.shop.filter(u => { const d = cardDef(s0, u); return d.s + d.w <= cap; }).sort();
+      const fits = [...s0.shop].sort();
       expect(offered, econ || 'today').toEqual(fits);
       void settle; void actionAt; void defById; void quadrant;
     }

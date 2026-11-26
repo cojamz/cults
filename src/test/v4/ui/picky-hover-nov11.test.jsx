@@ -55,7 +55,7 @@ describe("You'd get (B5, W5, W18)", () => {
     const u = s.players[0].members.find(x => memberWeight(s, x) > 1);
     const w = memberWeight(s, u);
     const d = { res: Object.fromEntries(s.resources.map(r => [r, 0])), followers: 2, members: w, lost: 0, turns: 0, early: 0, late: 0, discount: 0, swapped: 0, joined: [u] };
-    expect(changeWords(d, s)).toMatch(new RegExp(`\\(counts as ${w} members\\)`));
+    expect(changeWords(d, s)).toMatch(new RegExp(`\\(worth ${w}\\)`));
     expect(changeWords(d, s)).not.toMatch(/\(\+\d+ members\)/);
   });
 

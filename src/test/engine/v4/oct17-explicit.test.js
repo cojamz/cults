@@ -25,7 +25,7 @@ describe('October17 explicit rules',()=>{
   expect(s.pending.kind).toBe('place');expect(s.players.map(p=>p.res)).toEqual(before);
  });
  it('gives every tied leader half the round prize, including three-way ties',()=>{
-  for(const [round,half] of [[1,2],[2,3],[3,5]]){
+  for(const [round,half] of [[1,2],[2,3],[3,4]]){
    const s=sceneQ({quadrants:Q,n:3,round,res:[{gold:5},{gold:5},{gold:5}],queue:[{t:'endRound'}]});
    const c=contestTable(s).find(c=>c.qid==='gold');
    expect(c.winners).toHaveLength(3);expect(c.prize).toBe(half);

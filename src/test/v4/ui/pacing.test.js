@@ -91,7 +91,8 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // p50 1.36s to 2.52s, p95 4.28s to 5.51s; the usual wait 7.4s to 10.7s; the longest run of six 24.9s to 30.0s
     // 4800, 8500 and 25000 (Cory, Nov 9: a recruit's card "lingers for 3-4 seconds" in the middle, 3.5s at every speed):
     // rival turn p95 6.41s to 7.47s, the usual wait 11.5s to 13.3s, the longest run of six 30.0s to 39.0s; slower by his call
-    expect(h3p95).toBeLessThanOrEqual(4800 * K); // 4000 (Nov 4 night, the same content move: 6.41s)
+    // 5300 (Claude, Nov 26): Cory's Nov 25 calls (prizes 4/6/8, prices, four cuts, Induct with no limit, Jester) changed these seeded games; rival turn p95 7.41s to 8.50s at Steady, p50 2.78s, motion code unchanged; content, not slower motion
+    expect(h3p95).toBeLessThanOrEqual(5300 * K); // 4000 (Nov 4 night, the same content move: 6.41s)
     expect(h2p50).toBeLessThanOrEqual(8500 * K); // 7300 (Nov 4, same content move: 11.5s)
     // 13.5s (was 13s; Claude, 2026-10-29): HR at 4 members moved seed 2's bots into a run of six turns holding a Walk-In
     // 14s (Claude, 2026-10-29): members counting their printed number moved a seeded run of six to 13.76s; same shows, longer chain

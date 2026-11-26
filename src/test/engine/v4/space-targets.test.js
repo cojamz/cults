@@ -42,10 +42,10 @@ describe('space targets', () => {
       [intern, twins],
     ].map(key).sort());
   });
-  it('Induct: every face-up member costing 11 or less (8 on Oct 25; up with the price since Nov 5)', () => {
+  it('Induct: every face-up member, whatever it costs (no cost limit since Cory\'s Nov 25 calls; was 11 or less)', () => {
     const s = table(Q, { round: 3, shop: ['gold.tycoon', 'red.intern', 'red.bigfamily', 'gold.taxman', 'red.sponsor'] });
     const t = targetsAt(s, 'take');
-    expect(sorted(t.shop)).toEqual(sorted(['red.intern', 'red.bigfamily', 'gold.taxman'].map(d => uidIn(s, d, 'shop'))));
+    expect(sorted(t.shop)).toEqual(sorted(['gold.tycoon', 'red.intern', 'red.bigfamily', 'gold.taxman', 'red.sponsor'].map(d => uidIn(s, d, 'shop'))));
   });
   it('Try Out and Clear Out: no member is lit up front, since the player picks which go to the discard pile', () => {
     const defs = ['gold.tycoon', 'red.intern', 'red.bigfamily'];

@@ -47,8 +47,8 @@ describe('v4 contests: one function decides and describes them', () => {
     const s = sceneQ({ quadrants: ['purple', 'red', 'yellow'], n: 3, round: 3,
       members: [['red.volunteer'], ['red.intern'], ['red.crowd']],
       res: Array.from({ length: 3 }, () => ({ purple: 1, red: 1, yellow: 1 })), queue: [{ t: 'endRound' }] });
-    expect(s.contests.at(-1).results.every(c => c.winners.length === 3 && c.prize === 5)).toBe(true);
-    expect(s.players.map(p => p.contest)).toEqual([15, 15, 15]);
+    expect(s.contests.at(-1).results.every(c => c.winners.length === 3 && c.prize === 4)).toBe(true);
+    expect(s.players.map(p => p.contest)).toEqual([12, 12, 12]);
   });
   it('Red and Yellow still award no prize when nobody holds any of the color', () => {
     const s = sceneQ({ quadrants: ['purple', 'red', 'yellow'], n: 3, res: [{ purple: 9 }, {}, {}] });

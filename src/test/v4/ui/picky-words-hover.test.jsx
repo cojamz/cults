@@ -68,7 +68,7 @@ describe('picky words on hovers (Nov 4)', () => {
     const s = start(['silver', 'red', 'yellow', 'trading']);
     const { container } = render(<StandingsCard state={s} qid="silver" />);
     const text = container.textContent;
-    expect(text).toMatch(/At the end of round I: \+4 followers to whoever has the most silver resources \(round II \+6, III \+10\)\. Tied leaders get half each, rounded up\./);
+    expect(text).toMatch(/At the end of round I: \+4 followers to whoever has the most silver resources \(round II \+6, III \+8\)\. Tied leaders get half each, rounded up\./);
     expect(text).not.toMatch(/Tied leaders all score|not the final score/);
     const rows = [...container.querySelectorAll('[data-pid]')].map(r => Number(r.dataset.pid));
     expect(rows).toEqual(s.order.slice(0, 4));

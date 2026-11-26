@@ -21,9 +21,9 @@ const pick = (s, re) => applyMove(s, { player: s.pending.player, option: s.pendi
 const useId = s => s.pending.options.find(o => /^use:/.test(o.id))?.id;
 
 describe('Mutineers: "On Use, once per game: take a member from a rival with more members than you."', () => {
-  it('is dealt in the game (test version) and costs 6, round II', () => {
+  it('is dealt in the game (test version) and costs 7, round II', () => {
     const d = defById('benders.mutineers');
-    expect(d.s + d.w).toBe(6);
+    expect(d.s + d.w).toBe(7); // 6 before Cory's Nov 25 calls (+1 any)
     expect(d.round).toBe(2);
   });
 

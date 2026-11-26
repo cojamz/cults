@@ -251,8 +251,8 @@ describe('follower buys', () => {
 });
 
 describe('round-end contests', () => {
-  it('rings pay full +4/+6/+10 to a solo leader, half rounded up to every tied leader, and nothing for zero', () => {
-    for (const [round, v] of [[1, 4], [2, 6], [3, 10]]) {
+  it('rings pay full +4/+6/+8 to a solo leader, half rounded up to every tied leader, and nothing for zero', () => {
+    for (const [round, v] of [[1, 4], [2, 6], [3, 8]]) {
       const s = scene({ n: 3, round, members: [['blue.hand'], [], []], res: [{ gold: 5, blue: 1 }, { gold: 5 }, { gold: 3 }], queue: [{ t: 'endRound' }] });
       expect(s.players.map(p => p.contest)).toEqual([v + Math.ceil(v / 2), Math.ceil(v / 2), 0]);
     }

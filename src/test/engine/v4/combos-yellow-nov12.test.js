@@ -165,9 +165,8 @@ describe('Hostages: "On Recruit: swap one of your members for a rival’s member
     const { s } = run('es-4p', { quads: SQ, n: 4, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents'],
       members: [['echo.encore'], ['silver.dowager'], ['silver.hustlers'], ['silver.revelers', 'red.panel']] }, [/Hostages/]);
     expect(s.pending.options.filter(o => o.kind === 'trade').map(o => o.label)).toEqual([
-      'Minstrel ↔ P2: Dowager (7)', 'Minstrel ↔ P3: Purse-Switchers (7)', 'Minstrel ↔ P4: Revelers (7)',
-      // Hostages itself costs 7 too
-      'Hostages ↔ P2: Dowager (7)', 'Hostages ↔ P3: Purse-Switchers (7)', 'Hostages ↔ P4: Revelers (7)']);
+      'Minstrel ↔ P2: Dowager (7)', 'Minstrel ↔ P3: Purse-Switchers (7)', 'Minstrel ↔ P4: Revelers (7)']);
+    // Hostages itself costs 8 now (Cory, Nov 25), so it matches none of these 7-cost members
     const r = drive(s, [/Minstrel ↔ P4/]);
     expect(names(r.s, 3)).toEqual(['Fairy Godmother', 'Minstrel']);
     expect(r.s.log).toContain("P1's Hostages: swaps Minstrel for P4's Revelers.");

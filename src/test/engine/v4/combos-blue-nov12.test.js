@@ -151,8 +151,8 @@ describe('Old-Clothes Dealers: "On Use, once per round: swap one of your members
   });
   it('a yellow member swapped in: Herald and Guild Master pay, and Market-Day Shopper counts it as the first member that turn', () => {
     const { s } = go('ss-recruit-hooks', { quads: QB, round: 2, queue: [{ t: 'buy', p: 0 }, { t: 'buy', p: 0 }], res: [{ red: 10 }], shop: ['red.intern'],
-      members: [['market.swapshoppers', 'yellow.matchmaker', 'red.brethren', 'market.powershoppers', 'silver.dowager']], prep: disc('yellow.exchangestudents') },
-      [/use:/, /Dowager ↔ Hostages/, /./, /./, /Intern/, /pay:/]);
+      members: [['market.swapshoppers', 'yellow.matchmaker', 'red.brethren', 'market.powershoppers', 'silver.teetotalers']], prep: disc('yellow.exchangestudents') },
+      [/use:/, /Teetotalers ↔ Hostages/, /./, /./, /Intern/, /pay:/]);
     expect(names(s, 0)).toEqual(['Old-Clothes Dealers', 'Herald', 'Guild Master', 'Market-Day Shopper', 'Hostages', 'Intern']);
     expect(has(s, /Herald/)).toBe(true);
     expect(has(s, /Guild Master/)).toBe(true);

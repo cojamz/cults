@@ -69,7 +69,7 @@ describe('Journeyman: "Round Start: you may put this in the shop and recruit a s
     const s = start();
     expect(s.pending.prompt).toBe('Journeyman: give it to the shop and recruit a shop member costing up to 7?');
     const labels = s.pending.options.map(o => o.label);
-    expect(labels.some(l => l.includes('Swindler (6)'))).toBe(true);
+    expect(labels.some(l => l.includes('Swindler (7)'))).toBe(true);
     expect(labels.some(l => l.includes('Fairy Godmother'))).toBe(false); // 8 is 4 more
     expect(labels).toContain('Keep it');
   });

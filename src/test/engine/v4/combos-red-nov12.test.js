@@ -267,7 +267,7 @@ describe('Bannermen: "Round End: if your members have 2 or fewer colors, +3 foll
     const { s } = go('pu-doppel', { quads: QE, round: 3, queue: [...BUY, ...END], res: [RICH], shop: ['echo.doppel'], members: [['red.purists']] }, [/Doppelganger/, /pay:/, /Bannermen/]);
     expect(s.log).toContain("P1's Doppelganger becomes a copy of Bannermen.");
     expect(lines(s, /Bannermen:/)).toEqual(["P1's Bannermen: members of 2 colors: +3 followers.", "P1's Bannermen: members of 2 colors: +3 followers."]);
-    expect(bonusOf(s, 0)).toBe(6 + 4 * 10); // and the four round III contests, P2 holding nothing
+    expect(bonusOf(s, 0)).toBe(6 + 4 * 8); // and the four round III contests, P2 holding nothing
   });
 
   // AI game, Nov 12: Try Out on Journeyman asked which member to take, then gave nothing (the card had to be held).

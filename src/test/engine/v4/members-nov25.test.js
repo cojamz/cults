@@ -10,7 +10,7 @@ const fixture = (quads, opts) => { const s = table(quads, opts); s.queue = []; s
 const R = ['red', 'market', 'purple', 'silver'];
 
 describe('the new members are dealt in the 10-card decks', () => {
-  for (const id of ['red.innkeeper', 'red.wetnurse', 'red.chapman', 'thieves.hoarder', 'market.bargainer', 'silver.beggar', 'purple.nightporter', 'yellow.pilgrims', 'purple.shirker', 'thieves.cutthroats', 'yellow.drifters']) {
+  for (const id of ['red.wetnurse', 'red.chapman', 'thieves.hoarder', 'market.bargainer', 'silver.beggar', 'purple.nightporter', 'yellow.pilgrims', 'purple.shirker', 'thieves.cutthroats', 'yellow.drifters']) {
     it(id, () => {
       const d = defById(id);
       expect(d.retired).toBeFalsy();
@@ -18,6 +18,10 @@ describe('the new members are dealt in the 10-card decks', () => {
       expect(quadrant(id.split('.')[0]).members.some(x => x.id === id)).toBe(true);
     });
   }
+});
+
+it('red.innkeeper is cut again (Cory\'s Nov 25 calls) and never dealt', () => {
+  expect(CUT.has('red.innkeeper')).toBe(true);
 });
 
 describe('Innkeeper: "Whenever one of your members goes back to the shop, +3 red."', () => {

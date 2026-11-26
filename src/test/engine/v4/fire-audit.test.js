@@ -193,6 +193,8 @@ const ALLOW = {
   'yellow.tinker': 'recruited once in the sample (cards-yellow: Haggler)',
   // the Nov 3 card words (Doormen's price, Night Owls, Lie Abed, Bide Your Time) moved the seeded games: recruited once, never changing a rival's resources after
   'yellow.tastemaker': 'pays only when its owner changes a rival\'s resources (cards-yellow: Tastemaker)',
+  // Cory's Nov 25 calls (prizes 4/6/8, prices, four cuts, Induct with no limit) moved the seeded games: Witch recruited in 1, never named there
+  'yellow.leveler': 'On Use, once per round; cards-yellow covers it (Witch: once per round, and again next round)',
   'yellow.matchmaker': 'pays only for a yellow recruit after it (Nov 6); owners may recruit none (cards-yellow)',
   // Plunder steals followers (Nov 4) moved the seeded games: recruited in 1, and its bot holds On Use for a round III with no minions left
   'yellow.bookcooker': 'fires only On Use, once per game (cards-yellow: Alchemists)',

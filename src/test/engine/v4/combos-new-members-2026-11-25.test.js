@@ -95,17 +95,17 @@ describe('2. Comforter ("Round End: +2 followers per contest you don\'t win.") w
     const { s } = go('comf-4', sc([['benders.sorelosers'], ['red.twins']], [{}, { ...ALL4 }]), []);
     expect(s.players[0].bonus).toBe(8);
     expect(comforterLines(s)).toEqual(["P1's Comforter: didn’t win 4 contests, +8 followers."]);
-    expect(s.players[1].bonus).toBe(40); // 4 contests at round III's 10 each: the rival's prizes dwarf the +8
+    expect(s.players[1].bonus).toBe(32); // 4 contests at round III's 8 each: the rival's prizes dwarf the +8
   });
   it('wins one contest: +6; a tie for a contest counts as a win (Comforter pays only for the ones with no share)', () => {
     const one = go('comf-one', sc([['benders.sorelosers'], []], [{ red: 5 }, { ...ALL4 }]), []);
-    expect(one.s.players[0].bonus).toBe(10 + 6);
+    expect(one.s.players[0].bonus).toBe(8 + 6);
     expect(comforterLines(one.s)).toEqual(["P1's Comforter: didn’t win 3 contests, +6 followers."]);
     const tie = go('comf-tie', sc([['benders.sorelosers'], []], [{ red: 3 }, { ...ALL4 }]), []);
-    expect(tie.s.players[0].bonus).toBe(5 + 6); // red shared: half the prize, and it counts as won
+    expect(tie.s.players[0].bonus).toBe(4 + 6); // red shared: half the prize, and it counts as won
   });
   it('Spoilsport owned by the Comforter holder: the spoiled contest pays nobody, so it is one more contest not won (+2)', () => {
-    // P1 leads red; spoiling its own lead costs the 10 and the Comforter gives back 2: 3 contests lost became 4
+    // P1 leads red; spoiling its own lead costs the 8 and the Comforter gives back 2: 3 contests lost became 4
     const { s } = go('comf-spoil-own', sc([['benders.sorelosers', 'benders.spoilsports'], []], [{ red: 5 }, { blue: 3, magenta: 3, green: 3 }]), [/spoil:red/]);
     expect(has(s, /P1's Spoilsport: nobody wins the Red contest/)).toBe(true);
     expect(s.players[0].bonus).toBe(8);
@@ -114,7 +114,7 @@ describe('2. Comforter ("Round End: +2 followers per contest you don\'t win.") w
   it('Spoilsport on a contest the rival leads: Comforter still counts it once; the rival loses the prize, not the Comforter holder more', () => {
     const { s } = go('comf-spoil-rival', sc([['benders.sorelosers', 'benders.spoilsports'], []], [{}, { ...ALL4 }]), [/spoil:red/]);
     expect(s.players[0].bonus).toBe(8);
-    expect(s.players[1].bonus).toBe(30);
+    expect(s.players[1].bonus).toBe(24);
   });
   it('RUNAWAY: a Doppelganger copying Comforter pays twice: a player who wins nothing gets +16 followers at Round End', () => {
     const { s } = go('comf-doppel', sc([['benders.sorelosers', 'echo.doppel'], []], [{}, { ...ALL4 }], { prep: st => { st.cards[uidOf(st, 'echo.doppel', 0)].copy = 'benders.sorelosers'; } }), []);
@@ -208,7 +208,7 @@ describe('5. Wet Nurse ("Whenever you recruit the cheapest member in the shop, +
 describe('6. Hoarder ("Round End: if you hold 10 or more resources, +3 followers.") copied', () => {
   const Q = ['thieves', 'echo', 'red', 'market'];
   const pays = s => lines(s, /Hoarder: \d+ resources held, \+3 followers/);
-  // holding the most red also wins Most red (+10 in round III), so each scene is compared with its own control
+  // holding the most red also wins Most red (+8 in round III), so each scene is compared with its own control
   it('9 resources pay nothing, 10 pay +3 (all colors count)', () => {
     const nine = go('hoard-9', { quads: Q, queue: END, res: [{ red: 4, blue: 3, magenta: 2 }, { red: 6, blue: 4, magenta: 3, green: 1 }], members: [['thieves.hoarder'], []] }, []);
     expect(pays(nine.s)).toHaveLength(0);
