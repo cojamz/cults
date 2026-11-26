@@ -23,7 +23,10 @@ describe('Red action gains', () => {
   });
   it('Walk-In and Induct give a free member plus their red (Walk-In: +1, each rival +1)', () => {
     for (const [action, round, red, rival] of [['red.hire', 1, 1, 1], ['red.take', 3, 1, 0]]) {
-      const s = settle(take(sceneQ({ round, shop: ['red.volunteer'] }), action));
+      const s0 = sceneQ({ round, shop: ['red.volunteer'] });
+      // Walk-In takes the pile's top card: put Volunteer (no recruit effect) there, so the pile order after Cory's Nov 25 cuts can't add red
+      if (action === 'red.hire') s0.pile.unshift(s0.shop.splice(s0.shop.findIndex(u => s0.cards[u].def === 'red.volunteer'), 1)[0]);
+      const s = settle(take(s0, action));
       expect(s.players[0].members).toHaveLength(1);
       expect(R(s).red).toBe(red);
       expect(R(s, 1).red).toBe(rival);

@@ -23,6 +23,9 @@ function play(seed, n = 4) {
       const a = (s.cards[u] && s.cards[u].made) || {}, b = next.cards[u].made || {};
       if (next.cards[u].made) for (const k of Object.keys(a)) expect(b[k] ?? 0, `seed ${seed} card ${u} ${k}`).toBeGreaterThanOrEqual(a[k]);
     }
+    // a member back in the shop, pile or discard pile is wiped clean (core's wipeCard): its tally starts again from 0
+    const held = new Set(next.players.flatMap(p => [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])]).map(String));
+    for (const u of Object.keys(fromStream)) if (!held.has(String(u))) delete fromStream[u];
     s = next;
   }
   expect(s.over).toBe(true);

@@ -158,9 +158,9 @@ describe('turn labels agree with the engine', () => {
 
 describe('a gap closed by Flurry is said as such (Cory #98, #99)', () => {
   it('3 players, round III: A takes Flurry first, so B places twice in a row: never "snake order"', () => {
-    // a seeded bot game with the A A A B C C B A A B C C B B C shape (seed 15 since Victors left the grey deck, Nov 6; seed 14 since Even Swap's +2 red (Oct 25) changed what bots buy)
-    let s = createGame({ seats: Array.from({ length: 3 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 15, quadrants: ['gold', 'red', 'purple', 'green'] });
-    const rand = seededRandom(15);
+    // a seeded bot game with the A A A B C C B A A B C C B B C shape (seed 16 since the Nov 26 member batch; seed 15 since Victors left the grey deck, Nov 6; seed 14 since Even Swap's +2 red (Oct 25) changed what bots buy)
+    let s = createGame({ seats: Array.from({ length: 3 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 16, quadrants: ['gold', 'red', 'purple', 'green'] });
+    const rand = seededRandom(16);
     while (!(s.round === 3 && s.pending?.kind === 'place')) s = applyMove(s, plainBot(s, rand));
     const [A, B] = s.order;
     s = applyMove(s, nextMove(s, rand, true)); // A takes Flurry: A A A B C C B A A B C C B B C, give or take extra turns

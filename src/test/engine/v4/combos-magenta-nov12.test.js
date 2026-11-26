@@ -315,7 +315,7 @@ describe('Changeling: "On Recruit: swap this member for a rival\'s member costin
   it("swapped for a rival's Exchanger: its On Recruit fires for the new holder (your own swap is a recruit: Cory, Nov 1)", () => {
     const { s } = go('da-exchange', { quads: Q, turns: [0], shop: ['thieves.doubleagent'], members: [['red.twins'], ['yellow.exchangestudents', 'echo.regulars']], res: [RICHRES] },
       [/Stash/, /Changeling/, /Exchanger/, /Triplets ↔ P2: Gardeners/]); // Gardeners, not Copyist, since Copyist costs 7 (Nov 13)
-    expect(names(s, 0).sort()).toEqual(['Gardeners', 'Exchanger']);
+    expect(names(s, 0).sort()).toEqual(['Exchanger', 'Gardeners']);
     expect(names(s, 1).sort()).toEqual(['Changeling', 'Triplets']);
     cleanLog(s);
   });
