@@ -1197,6 +1197,19 @@ const market = {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.membersOf(o).some(c => ctx.payChoices(owner, c.uid, {}).length)),
     }),
+    // Purifiers moves from grey to Blue (Cory, 2026-11-26 10:25am Eastern: "Purifiers should just become blue"), card
+    // text unchanged; the rival discards go to the discard pile Blue's spaces recruit from. Price Claude's fill-in: 3 blue
+    // + 3 any, the 6 it cost as a grey. Its choices still run through the grey card's handlers (benders.purgeOwn).
+    m('purifiers', 'Purifiers', 2, 1, 'On Use, once per game: discard one of your members. Each rival with more members than you discards one too.', {
+      activate: 'game',
+      onActivate(ctx, owner) {
+        ctx.choose(owner, 'Purifiers: discard which of your members?', ctx.membersOf(owner).map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${c.def.s + c.def.w})`, kind: 'card', value: c.uid, hint: -(c.def.f || 1),
+        })), 'benders.purgeOwn', { owner: owner.id });
+      },
+      // bots use it when at least two rivals would discard (counted after their own discard)
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner) - 1).length >= 2,
+    }),
     m('mannequin', 'Gleaner', 2, 2, 'You may recruit from the discard pile as you would from the shop.', { discardAny: true }),
     m('mannequinold', 'Stallholder', 2, 2, 'Blue members in the shop count as your members when contests are scored.', { retired: true }), // retired Nov 24 (Gleaner): a test fixture // joins by cost (round II), per Cory's round I cost cutoffs
     // REPLACE9 bot test (Members C, Nov 4): Hawker's place, second try (Mannequin lost its blind A/B). 4 blue + 1 any as a

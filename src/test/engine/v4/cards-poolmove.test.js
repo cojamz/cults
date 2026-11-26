@@ -6,7 +6,7 @@ import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming } from './cards-helpers.js';
 import { usePool, price } from './pool-helpers.js';
 
-usePool(['benders.giftswappers', 'benders.purifiers'], ['market.foreclose']);
+usePool(['benders.giftswappers'], ['market.foreclose']);
 const named = (s, name) => linesNaming(s.log, name);
 const give = (s, p, n, test = () => true) => {
   const out = s.pile.filter(test).slice(0, n);
@@ -49,10 +49,10 @@ describe('Gift Swappers (grey)', () => {
   });
 });
 
-describe('Purifiers (grey)', () => {
+describe('Purifiers (Blue)', () => {
   it('On Use, once per game: discard one of your members. Each rival with more members than you discards one too.', () => {
-    let s = sceneQ({ quadrants: ['market', 'yellow', 'red'], n: 3, round: 2, members: [['benders.purifiers']] });
-    const pu = uidOf(s, 'benders.purifiers', 0);
+    let s = sceneQ({ quadrants: ['market', 'yellow', 'red'], n: 3, round: 2, members: [['market.purifiers']] });
+    const pu = uidOf(s, 'market.purifiers', 0);
     const [mine] = give(s, 0, 1), two = give(s, 1, 2), [one] = give(s, 2, 1);
     s = move(s, `use:${pu}`);
     expect(s.pending.prompt).toBe('Purifiers: discard which of your members?');

@@ -19,12 +19,12 @@ describe('Test version (rules.testSet)', () => {
   });
   it('deals the four candidate members, without Hermit, Misers and Regular', () => {
     const d = defs(createGame({ seats, seed: 3, quadrants: Q, rules: { deck: 10, testSet: true } }));
-    for (const id of ['trading.anchorites', 'trading.oldguard', 'market.repossessors', 'benders.protesters', 'benders.giftswappers', 'benders.purifiers']) expect(d.has(id)).toBe(true);
+    for (const id of ['trading.anchorites', 'trading.oldguard', 'market.repossessors', 'benders.protesters', 'benders.giftswappers']) expect(d.has(id)).toBe(true);
     for (const id of ['trading.recluse', 'trading.heirs', 'market.regular']) expect(d.has(id)).toBe(false);
   });
   it('a live game is unchanged', () => {
     const d = defs(createGame({ seats, seed: 3, quadrants: Q, rules: { deck: 10 } }));
-    for (const id of ['trading.anchorites', 'trading.oldguard', 'market.repossessors', 'benders.protesters', 'benders.giftswappers', 'benders.purifiers']) expect(d.has(id)).toBe(false);
+    for (const id of ['trading.anchorites', 'trading.oldguard', 'market.repossessors', 'benders.protesters', 'benders.giftswappers']) expect(d.has(id)).toBe(false);
     for (const id of ['trading.recluse', 'market.regular']) expect(d.has(id)).toBe(true);
     expect(spacesOf({ rules: {} }, 'yellow').map(a => a.name)).toContain('Hold a Fair');
   });
@@ -32,8 +32,8 @@ describe('Test version (rules.testSet)', () => {
     for (const q of [Q, Q2]) {
       const a = Object.values(createGame({ seats, seed: 5, quadrants: q, rules: { deck: 10 } }).cards).length;
       const b = Object.values(createGame({ seats, seed: 5, quadrants: q, rules: { deck: 10, testSet: true } }).cards).length;
-      // Protesters, Gift Swappers, Purifiers and Snatcher (Nov 12) join the grey members (Tribute Band is cut for good since Nov 11)
-      expect(b).toBe(a + 4);
+      // Protesters, Gift Swappers and Snatcher (Nov 12) join the grey members (Purifiers moved to Blue Nov 26, so it deals in both)
+      expect(b).toBe(a + 3);
     }
   });
 });

@@ -218,6 +218,8 @@ for (const [id, name, source] of [
 // The 48-pixel member figures (Cory, Nov 24: "these are good enough. use this for all") win over every older picture:
 // a whole person on a clear ground, drawn in its card's color
 for (const i of MEMBERS48) PORTRAIT.set(i.id, { ...i, portrait: true, scene: true, figure: true });
+// Purifiers moved from grey to Blue (Nov 26): it keeps its grey figure until a blue one is drawn
+if (PORTRAIT.has('benders.purifiers')) PORTRAIT.set('market.purifiers', { ...PORTRAIT.get('benders.purifiers'), id: 'market.purifiers' });
 export function iconFor(id, kind = 'member') {
   const ids = Array.isArray(id) ? id : [id];
   const hit = (kind !== 'action' && ids.map(x => PORTRAIT.get(x)).find(Boolean)) || ids.map(x => BY_ID.get(x)).find(Boolean);

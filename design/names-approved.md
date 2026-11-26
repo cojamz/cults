@@ -104,6 +104,7 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Plague Bearer
 - Preachers
 - Press Gang
+- Purifiers
 - Purse-Switchers
 - Rabble-Rousers
 - Rag-and-Bone Man

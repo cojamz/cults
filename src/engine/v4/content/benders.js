@@ -336,16 +336,7 @@ const members = [
     // bots use it from round II on the best member a rival ahead holds, once it is worth 3 or more
     botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.memberCount(o) > ctx.memberCount(owner) && ctx.canSteal(owner, o, 'member') && ctx.membersOf(o).some(c => moveWorth(c) >= 3)),
   }), 'poolmove'),
-  ...(PURIFY_LEAVE ? [] : [pool(m('purifiers', 'Purifiers', null, 0, 3, 'On Use, once per game: discard one of your members. Each rival with more members than you discards one too.', {
-    activate: 'game',
-    onActivate(ctx, owner) {
-      ctx.choose(owner, 'Purifiers: discard which of your members?', ctx.membersOf(owner).map(c => ({
-        id: `card:${c.uid}`, label: `${c.def.name} (${c.def.s + c.def.w})`, kind: 'card', value: c.uid, hint: -moveWorth(c),
-      })), 'benders.purgeOwn', { owner: owner.id });
-    },
-    // bots use it when at least two rivals would discard (counted after their own discard)
-    botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner) - 1).length >= 2,
-  }), 'poolmove')]),
+  // Purifiers (the On Use version) moved to Blue (Cory, 2026-11-26: "Purifiers should just become blue"): content/market.js
   // idea pipeline pool 15 (Nov 7, round 2): Mercenaries with the thief choosing the colors (the verdict's change), one
   // resource at a time, then one shared steal; only rivals you can steal from are offered, so it never moves for nothing.
   pool(m('sellswords', 'Sellswords', null, 0, 1, 'On Use, once per round: steal 3 resources of your choice from a rival, then give them this member.', {
