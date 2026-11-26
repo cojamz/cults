@@ -1260,5 +1260,35 @@ export const chooseFollowerBuyerMove = (state, rand = Math.random) => {
   return chooseNormalMove(state, rand, { noMembers: true });
 };
 
+// DENY (counterplay, Nov 26; Cory: "I'm suspicious that your bots aren't doing enough counterplay", "you need to maybe spend
+// some resources to slow the leader down", "a losing rival, you probably don't really care"). standings: every player's
+// expected final total the way normal sees it. denyOption: the open space (or face-up member) that the rival who leads those
+// totals, among rivals still to place this round, would take if it were their move now. Very Hard adds it to the moves it
+// plays out (thinker.js opts.deny), so taking it is weighed like any other move, never forced.
+export function standings(state) {
+  const { turns, roundLeft } = horizon(state);
+  const lt = laterTurns(state);
+  const buys = state.players.map((_, i) => turns[i] + lt.turns);
+  const income = turns.map(t => (t * INCOME[Math.max(1, state.round) - 1] + lt.income) * INCOME_SCALE);
+  return evaluate(lightClone(state), buys, income, roundLeft, {});
+}
+export function denyOption(state, me) {
+  const pend = state.pending;
+  if (!pend || !state.round || !['place', 'buy'].includes(pend.kind)) return null;
+  const options = pend.options.filter(o => (pend.kind === 'place' ? o.kind === 'slot' : o.kind === 'card'));
+  if (!options.length) return null;
+  const { turns } = horizon(state);
+  let vals;
+  try { vals = standings(state); } catch { return null; }
+  let lead = -1;
+  for (let i = 0; i < vals.length; i++) if (i !== me && turns[i] > 0 && (lead < 0 || vals[i] > vals[lead])) lead = i;
+  if (lead < 0) return null;
+  try {
+    const probe = { ...state, pending: { ...pend, player: lead, options } };
+    const top = asNormal(() => scoreOptions(probe, () => 0, {})).filter(r => r.v > -1e5)[0];
+    return top ? { option: top.o, rival: lead } : null;
+  } catch { return null; }
+}
+
 /** For audits (scripts/v4-bot-choice-audit.mjs): the pieces bots choose with. Not used by the game. */
 export const botInternals = { evaluate: (...a) => evaluate(...a), horizon: s => horizon(s), laterTurns: s => laterTurns(s), contests: (...a) => contests(...a), rateOnCopy: (...a) => asNormal(() => rateOnCopy(...a)), avoidUndo: (...a) => avoidUndo(...a), lightClone: s => lightClone(s), settle: (...a) => settle(...a), givenAway: (...a) => givenAway(...a) };

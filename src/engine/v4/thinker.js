@@ -3,7 +3,7 @@
 // best average result. Work is counted in simulated moves, not wall time, so a seed always gives the same move;
 // chooseBotMove also caps a move at 250ms of wall time for the UI (see opts.maxMs).
 import { applyMove, followers } from './core.js';
-import { turnsMoved, chooseNormalMove, chooseGreedyMove, scoreOptions, buyShortcut, rankRivalChoice, boundaryParts, SMART, useGain, followUpGain, placeUse } from './bots.js';
+import { turnsMoved, chooseNormalMove, chooseGreedyMove, scoreOptions, buyShortcut, rankRivalChoice, boundaryParts, denyOption, SMART, useGain, followUpGain, placeUse } from './bots.js';
 import { defById } from './content/index.js';
 import { seededRandom } from './rng.js';
 import { planProfile, planNudge, lessonNudge, modelValues } from './mind.js';
@@ -61,6 +61,13 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   // tempo 'look' (bot audit, Nov 11): a space that moves the bot's turns up is always played out, since normal's yardstick
   // can't see what those turns are worth; the rollouts can
   if (opts.tempo === 'look' && pend.kind === 'place') for (const r of ranked) if (!pool.includes(r) && r.o.kind === 'slot' && turnsMoved(state, r.o)) pool.push(r);
+  // opts.deny (counterplay, Nov 26): the move the leading rival wants most is played out too, however normal rates it for
+  // this seat, so taking it to slow the leader down is weighed on the same rollouts as the rest (bots.js denyOption)
+  if (opts.deny && !rival) {
+    const want = denyOption(state, me);
+    const r = want && ranked.find(x => x.o.id === want.option.id);
+    if (r && !pool.includes(r)) { pool.push(r); opts.onDeny?.({ round: state.round, kind: pend.kind, option: r.o.id, rival: want.rival, rank: ranked.indexOf(r) }); }
+  }
   if (pool.length === 1) {
     opts.onDecision?.({ player: me, kind: pend.kind, round: state.round, chosen: pool[0].o.id, ranked, options: [{ id: pool[0].o.id, normal: pool[0].v, mean: null, n: 0 }] }, state);
     return { player: me, option: pool[0].o.id };
