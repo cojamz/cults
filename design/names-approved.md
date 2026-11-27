@@ -152,6 +152,7 @@ Every dealt member and action name must be listed here or under Awaiting rename;
 - Bide Your Time
 - Borrow
 - Bring Back
+- Buy Anywhere
 - Burn the Candle
 - Buy Secondhand
 - Call to Arms

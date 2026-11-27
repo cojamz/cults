@@ -875,7 +875,9 @@ export default {
     // well with white", then "Yes"): any of your members leaving, itself too (discarded, given, stolen, swapped), as Mourners.
     m('chapman', 'Chapman', 2, 2, 'Whenever one of your members leaves your cult, +2 followers.', {
       onAnyLeave(ctx, owner, card, gone) {
-        owner.bonus += 2; ctx.log(`${owner.name}'s Chapman: ${gone.def.name} left, +2 followers.`);
+        // credited to Chapman, so a leave with no space or card asking (Borrow's member going back at round end) isn't
+        // a nameless line on the results screen
+        ctx.asMember(owner, 'Chapman', () => { owner.bonus += 2; ctx.log(`${owner.name}'s Chapman: ${gone.def.name} left, +2 followers.`); }, card.uid);
       },
       ...see(info => 2 * endsAhead(info).length),
     }),

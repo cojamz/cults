@@ -127,7 +127,7 @@ describe('Old-Clothes Dealers: "On Use, once per round: swap one of your members
     const { s } = go('ss-usedgame', { quads: QB, round: 2, queue: [{ t: 'buy', p: 0 }, { t: 'turn', p: 1 }], res: [{}, { blue: 20, red: 20 }],
       members: [['market.swapshoppers', 'market.repossessors'], ['red.twins']],
       prep: both(disc('echo.mimics'), st => { st.cards[uidOf(st, 0, 'market.repossessors')].used = true; }) },
-      [/use:/, /Repossessors ↔ Mimics/, /Bring Back/, /Repossessors/, /pay:/]);
+      [/use:/, /Repossessors ↔ Mimics/, /Buy Anywhere/, /Repossessors/, /pay:/]);
     expect(names(s, 0)).toEqual(['Old-Clothes Dealers', 'Mimics']);
     const repo = uidOf(s, 1, 'market.repossessors');
     expect(repo).toBeDefined();
@@ -167,9 +167,9 @@ describe('Old-Clothes Dealers: "On Use, once per round: swap one of your members
 });
 
 describe('Scavengers ("Whenever you recruit from the discard pile, +2 followers.") and Homecomers ("On Recruit: +3 blue, then recruit from the discard pile.")', () => {
-  it('Bring Back takes Homecomers off the discard pile, and its On Recruit takes Triplets: +2 followers twice, +3 blue', () => {
+  it('Buy Anywhere takes Homecomers off the discard pile, and its On Recruit takes Triplets: +2 followers twice, +3 blue', () => {
     const { s } = go('th-rc', { quads: QB, round: 2, turns: [0], res: [{ red: 20, blue: 20 }], members: [['market.thrifthunters']], prep: disc('red.twins', 'market.repeatcustomers') },
-      [/Bring Back/, /Homecomers/, /pay:7-0-1-0/, /Triplets/, /pay:3-0-2-0/]);
+      [/Buy Anywhere/, /Homecomers/, /pay:7-0-1-0/, /Triplets/, /pay:3-0-2-0/]);
     expect(names(s, 0)).toEqual(['Scavengers', 'Homecomers', 'Triplets']);
     expect(lines(s, /Scavengers/)).toEqual(["P1's Scavengers: Homecomers from the discard pile, +2 followers.", "P1's Scavengers: Triplets from the discard pile, +2 followers."]);
     expect(s.log).toContain("P1's Homecomers: +3 blue.");
@@ -211,11 +211,11 @@ describe('Scavengers ("Whenever you recruit from the discard pile, +2 followers.
     expect(has(s, /Scavengers/)).toBe(false);
   });
 
-  it("3 players: Repossessors (\"On Use, once per game: discard a rival's member costing up to 8.\") offers both rivals' members up to 8, the victim's Mourners pays, and Bring Back takes it back for Scavengers", () => {
+  it("3 players: Repossessors (\"On Use, once per game: discard a rival's member costing up to 8.\") offers both rivals' members up to 8, the victim's Mourners pays, and Buy Anywhere takes it back for Scavengers", () => {
     const { s } = go('repo-thrift', { quads: QB, n: 3, round: 2, queue: [{ t: 'buy', p: 0 }, { t: 'turn', p: 0 }], res: [{ red: 20, blue: 20 }],
       members: [['market.repossessors', 'market.thrifthunters'], ['trading.leavetakers', 'red.bigfamily', 'red.panel'], ['red.twins']] }, [/use:/]);
     expect(s.pending.options.map(o => o.label)).toEqual(["P2's Mourners (7)", "P2's Big Family (8)", "P3's Triplets (5)"]);
-    const { s: t } = drive(s, [/Big Family/, /^pass$/, /Bring Back/, /Big Family/, /pay:/]);
+    const { s: t } = drive(s, [/Big Family/, /^pass$/, /Buy Anywhere/, /Big Family/, /pay:/]);
     expect(t.log).toContain("P1's Repossessors: discards P2's Big Family.");
     expect(t.log).toContain("P2's Mourners: Big Family left: +2 white.");
     expect(t.players[1].res.white).toBe(2);
@@ -226,7 +226,7 @@ describe('Scavengers ("Whenever you recruit from the discard pile, +2 followers.
   });
 
   it('Scavengers itself taken off the discard pile does not pay for itself (the code reads "whenever" as after it joins; open question)', () => {
-    const { s } = go('th-self', { quads: QB, round: 2, turns: [0], res: [{ red: 20, blue: 20 }], prep: disc('market.thrifthunters') }, [/Bring Back/, /Scavengers/, /pay:/]);
+    const { s } = go('th-self', { quads: QB, round: 2, turns: [0], res: [{ red: 20, blue: 20 }], prep: disc('market.thrifthunters') }, [/Buy Anywhere/, /Scavengers/, /pay:/]);
     expect(names(s, 0)).toEqual(['Scavengers']);
     expect(has(s, /Scavengers:/)).toBe(false);
   });
@@ -250,9 +250,9 @@ describe('Market-Day Shopper: "Whenever you recruit your second member in a turn
     expect(bonusOf(s, 0)).toBe(3);
   });
 
-  it('buying followers is not a member: Bring Back then +1 follower pays nothing', () => {
+  it('buying followers is not a member: Buy Anywhere then +1 follower pays nothing', () => {
     const { s } = go('ps-followers', { quads: QB, round: 2, turns: [0], res: [{ red: 20, blue: 20 }], members: [['market.powershoppers']], prep: disc('red.twins') },
-      [/Bring Back/, /Triplets/, /pay:/, /tier:small/, /pay:/]);
+      [/Buy Anywhere/, /Triplets/, /pay:/, /tier:small/, /pay:/]);
     expect(has(s, /bought 1 follower/)).toBe(true);
     expect(has(s, /Market-Day Shopper/)).toBe(false);
     expect(bonusOf(s, 0)).toBe(1);

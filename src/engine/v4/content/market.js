@@ -115,7 +115,7 @@ function payAndRecruit(ctx, p, v, { uid, why, fromPile, how = howFor(why) }) {
   if (LADDER.has(why) && ctx.state.shop.includes(uid) === false && ctx.membersOf(p).some(c => ctx.defsOf(c).some(d => d.followersTwice)))
     ctx.state.queue.unshift({ t: 'buy', p: p.id, barker: true });
 }
-const LADDER = new Set(['Buy Secondhand', 'Bring Back', 'Salvage']);
+const LADDER = new Set(['Buy Secondhand', 'Bring Back', 'Buy Anywhere', 'Salvage']);
 
 /** Offer face-up members the player can pay for at the price `how` sets, in any colors. */
 function offerRow(ctx, p, how, why) {
@@ -468,9 +468,13 @@ const market = {
       // extra time this turn."); the turn's own recruit still comes at turn end
       // Claude, under Cory's over-2-days rule, Nov 24 (his Nov 14 "+5 blue recruit twice is a little too much maybe?",
       // pitched +3 and unanswered): +3 blue, own +1 included
-      key: 'clearance', ring: 2, name: 'Bring Back', text: 'Recruit a member from the discard pile now. +3 blue.', copyDoesIt: true,
-      estimate: (ctx, p) => 3 + discardBest(ctx, p, {}) * 0.6,
-      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); discardOffer(ctx, p, { why: 'Bring Back', how: {}, left: 1 }); },
+      // Cory, 2026-11-26 10:30pm Eastern, on the pitch "Recruit a member now from the shop, the discard pile or a rival's
+      // cult, paying its cost (to that rival, if it's theirs). +3 blue.": "Buy Anywhere is good". It takes Bring Back's
+      // round II slot (Claude's call: it does everything Bring Back did, and Bring Back tested 3 to 4 wins in 100 under).
+      // A rival's member is bought as Go-Between buys it (paid to that rival, an arrival that is your recruit).
+      key: 'clearance', ring: 2, name: 'Buy Anywhere', text: 'Recruit a member now from the shop, the discard pile or a rival\u2019s cult, paying its cost (to that rival, if it\u2019s theirs). +3 blue.', copyDoesIt: true,
+      estimate: (ctx, p) => 3 + Math.max(discardBest(ctx, p, {}), bestRowValue(ctx, p, {})) * 0.6,
+      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); anywhereOffer(ctx, p); },
     },
     // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md), one at a time in Bury's place.
     // Dumpster Dive: the bottom 3 members of the pile (the last ones sent down), one recruited free if it costs 6 or less;
@@ -794,7 +798,20 @@ const market = {
         id: `pay:${ctx.state.resources.map(r => v[r] || 0).join('-')}`, label: payLabel(v), kind: 'pay', value: v, hint: i === 0 ? 1 : 0, uid, how: {},
       })), `${Q}.goBetweenPay`, { uid });
     },
-    goBetweenPay(ctx, p, v, data) { goBetweenPay(ctx, p, data.uid, v); },
+    goBetweenPay(ctx, p, v, data) { goBetweenPay(ctx, p, data.uid, v, data.why); },
+    // Buy Anywhere: one list of everything you can pay for, from the shop, the discard pile and rivals' cults
+    anywherePick(ctx, p, uid) {
+      const why = 'Buy Anywhere';
+      if (uid == null) { ctx.log(`${p.name}'s ${why}: recruits nothing.`); return; }
+      if (ctx.state.shop.includes(uid)) { if (ctx.payChoices(p, uid, {}).length) askPay(ctx, p, `${why}: how do you pay ${ctx.price(p, uid, {}).total} for ${ctx.card(uid).def.name}?`, { uid, why, how: {} }); return; }
+      if (discardOf(ctx.state).includes(uid)) { market.handlers.discardPick(ctx, p, uid, { why, how: {}, left: 1 }); return; }
+      const o = ctx.ownerOf(uid), list = ctx.payChoices(p, uid, {});
+      if (!o || o === p || !list.length) return;
+      if (list.length === 1) { goBetweenPay(ctx, p, uid, list[0], why); return; }
+      ctx.choose(p, `${why}: how do you pay ${o.name} ${ctx.price(p, uid, {}).total} for ${ctx.card(uid).def.name}?`, list.map((v, i) => ({
+        id: `pay:${ctx.state.resources.map(r => v[r] || 0).join('-')}`, label: payLabel(v), kind: 'pay', value: v, hint: i === 0 ? 1 : 0, uid, how: {},
+      })), `${Q}.goBetweenPay`, { uid, why, by: why });
+    },
     pay(ctx, p, v, data) {
       if (!v) { ctx.log(`${data.why}: ${p.name} recruits nothing.`); return; }
       payAndRecruit(ctx, p, v, data);
@@ -1531,9 +1548,23 @@ function hawkAsk(ctx, owner, uid, left) {
   ctx.recruit(owner, uid, { free: true });
 }
 
-function goBetweenPay(ctx, p, uid, v) {
+function goBetweenPay(ctx, p, uid, v, why = 'Go-Between') {
   const o = ctx.ownerOf(uid);
   if (!o || o === p || Object.keys(v).some(r => (v[r] || 0) > (p.res[r] || 0))) return;
   for (const r in v) { if (!v[r]) continue; p.res[r] -= v[r]; o.res[r] = (o.res[r] || 0) + v[r]; }
-  if (ctx.moveMember(uid, o, p, { recruit: true })) ctx.log(`${p.name}'s Go-Between: recruits ${o.name}'s ${ctx.card(uid).def.name}, paying ${o.name} ${payLabel(v)}.`);
+  if (ctx.moveMember(uid, o, p, { recruit: true })) ctx.log(`${p.name}'s ${why}: recruits ${o.name}'s ${ctx.card(uid).def.name}, paying ${o.name} ${payLabel(v)}.`);
+}
+/** Buy Anywhere: shop, discard pile and rivals' members you can pay for, in one list. */
+function anywhereOffer(ctx, p) {
+  const why = 'Buy Anywhere', opt = (c, where) => ({
+    id: `card:${c.uid}`, label: `${where}${c.def.name} · pay ${ctx.price(p, c.uid, {}).total}`, kind: 'card', value: c.uid, hint: botWorth(c) + 0.1,
+  });
+  const ok = c => ctx.payChoices(p, c.uid, {}).length > 0;
+  const opts = [
+    ...ctx.shopCards().filter(ok).map(c => opt(c, 'Shop: ')),
+    ...discardOf(ctx.state).map(u => ctx.card(u)).filter(ok).map(c => opt(c, 'Discard pile: ')),
+    ...ctx.rivals(p).flatMap(o => ctx.membersOf(o).filter(ok).map(c => opt(c, `${o.name}'s `))),
+  ];
+  if (!opts.length) { ctx.log(`${p.name}'s ${why}: can't pay for any member.`); return; }
+  ctx.choose(p, `${why}: recruit which member (shop, discard pile or a rival's)?`, opts.concat({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: -1 }), `${Q}.anywherePick`, { by: why });
 }

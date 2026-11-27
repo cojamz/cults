@@ -179,19 +179,19 @@ describe('Blue members', () => {
     expect(R(rivalBuys([['market.onlooker']], 'gold.tycoon')).blue).toBe(0);
   });
   it('Connoisseurs: whenever you recruit a blue member, +1 blue', () => {
-    let s = take(scene({ round: 2, res: [{ gold: 9, blue: 1 }], members: [['market.connoisseur']], shop: ['market.recluse', ...SHOP.slice(0, 5)] }), 'market.clearance');
+    let s = move(take(scene({ round: 2, res: [{ gold: 9, blue: 1 }], members: [['market.connoisseur']], shop: ['market.recluse', ...SHOP.slice(0, 5)] }), 'market.clearance'), 'none');
     s = move(s, card(s, 'market.recluse'));
     // payments draw on what you hold most of since Gold left (Nov 24): 2 blue and 1 of the 9 gold pay Recluse
     expect(R(s).gold).toBe(8);
     expect(R(s).blue).toBe(4 - 2 + 1);
-    let t = take(scene({ round: 2, res: [{ red: 9 }], members: [['market.connoisseur']], shop: CHEAP }), 'market.clearance');
+    let t = move(take(scene({ round: 2, res: [{ red: 9 }], members: [['market.connoisseur']], shop: CHEAP }), 'market.clearance'), 'none');
     t = move(t, card(t, 'red.twins'));
     // Bring Back's 3 blue (Nov 24) are kept (Blue scores held blue since Oct 20, like Red's held red), Twins is all red,
     // and no +1 comes back for a red member
     expect(R(t)).toMatchObject({ red: 7, blue: 3 });
   });
   it('Reseller: whenever you recruit, +1 of that member’s color', () => {
-    let s = take(scene({ round: 2, res: [{ gold: 9 }], members: [['market.reseller']], shop: SHOP }), 'market.clearance');
+    let s = move(take(scene({ round: 2, res: [{ gold: 9 }], members: [['market.reseller']], shop: SHOP }), 'market.clearance'), 'none');
     s = move(s, card(s, 'gold.tycoon'));
     // Bring Back's 3 blue (Nov 24) are kept: 4 of the 9 gold pay Baron's 4 (payments draw on what you hold most of since
     // Gold left, Nov 24), Reseller's +1 gold back.
@@ -231,10 +231,10 @@ describe('Blue members', () => {
     expect(R(rivalBuys([['market.auctioneer']], 'market.recluse')).blue).toBe(0);
   });
   it('Sommelier: whenever you recruit a blue member, your next costs 2 less', () => {
-    let s = take(scene({ round: 2, res: [{ gold: 9, blue: 1 }], members: [['market.sommelier']], shop: ['market.recluse', ...SHOP.slice(0, 5)] }), 'market.clearance');
+    let s = move(take(scene({ round: 2, res: [{ gold: 9, blue: 1 }], members: [['market.sommelier']], shop: ['market.recluse', ...SHOP.slice(0, 5)] }), 'market.clearance'), 'none');
     s = move(s, card(s, 'market.recluse'));
     expect(s.players[0].discount).toBe(2);
-    let t = take(scene({ round: 2, res: [{ gold: 9 }], members: [['market.sommelier']], shop: SHOP }), 'market.clearance');
+    let t = move(take(scene({ round: 2, res: [{ gold: 9 }], members: [['market.sommelier']], shop: SHOP }), 'market.clearance'), 'none');
     t = move(t, card(t, 'gold.tycoon'));
     expect(t.players[0].discount).toBe(0);
   });

@@ -131,24 +131,39 @@ describe('Blue actions', () => {
     for (const u of top) expect(ids(s)).not.toContain(`card:${u}`);
   });
 
-  it('Bring Back (Nov 24): +3 blue, recruit a member from the discard pile now, then the turn\'s own recruit', () => {
+  it('Buy Anywhere (Nov 24): +3 blue, recruit a member from the discard pile now, then the turn\'s own recruit', () => {
     let s = table(Q, { round: 2, res: [{ gold: 4 }], shop: ROW5 });
     const [twins] = onDiscard(s, ['gold.banker']);
     s = take(s, 'market.clearance');
     expect(R(s).blue).toBe(3);
-    expect(s.pending.prompt).toBe('Bring Back: recruit which member from the discard pile?');
-    expect(ids(s)).toEqual([`card:${twins}`, 'none']);
+    expect(s.pending.prompt).toBe("Buy Anywhere: recruit which member (shop, discard pile or a rival's)?");
+    // the shop members you can pay for are offered too (Buy Anywhere, Nov 26); the discard pile's Banker among them
+    expect(ids(s)).toContain(`card:${twins}`);
+    expect(ids(s).at(-1)).toBe('none');
     s = pickPay(move(s, `card:${twins}`), 'gold');
     expect(owns(s, 0, 'gold.banker')).toBe(true);
     expect(s.discard).not.toContain(twins);
-    expect(s.log.some(l => /^P1's Bring Back: pays .* for Banker\.$/.test(l))).toBe(true);
+    expect(s.log.some(l => /^P1's Buy Anywhere: pays .* for Banker\.$/.test(l))).toBe(true);
     expect(s.pending.kind).toBe('buy');
   });
-  it('Bring Back: an empty discard pile says so, and the turn\'s recruit still comes', () => {
+  it('Buy Anywhere (Cory, Nov 26): a rival\'s member is offered, recruited, and its cost paid to that rival', () => {
+    let s = table(Q, { round: 2, n: 2, members: [[], ['gold.banker']], res: [{ gold: 9 }, {}], shop: ROW5 });
+    const banker = uidIn(s, 'gold.banker', 1);
+    s = take(s, 'market.clearance');
+    expect(ids(s)).toContain(`card:${banker}`);
+    const before = Object.values(s.players[1].res).reduce((a, b) => a + (b || 0), 0);
+    s = move(s, `card:${banker}`);
+    if (/how do you pay P2/.test(s.pending?.prompt || '')) s = move(s, ids(s)[0]);
+    expect(owns(s, 0, 'gold.banker')).toBe(true);
+    expect(owns(s, 1, 'gold.banker')).toBe(false);
+    expect(Object.values(s.players[1].res).reduce((a, b) => a + (b || 0), 0)).toBeGreaterThan(before);
+    expect(s.log.some(l => /^P1's Buy Anywhere: recruits P2's Banker, paying P2 /.test(l))).toBe(true);
+  });
+  it('Buy Anywhere: an empty discard pile says so, and the turn\'s recruit still comes', () => {
     let s = table(Q, { round: 2, shop: ROW5 });
     s.discard = [];
     s = take(s, 'market.clearance');
-    expect(s.log).toContain("P1's Bring Back: the discard pile is empty.");
+    expect(s.log).toContain("P1's Buy Anywhere: can't pay for any member.");
     expect(s.pending.kind).toBe('buy');
   });
 
@@ -239,13 +254,13 @@ describe('Blue members', () => {
     s = buyTurn([['market.connoisseur']], [{ red: 8 }], 'red.bigfamily');
     expect(R(s).blue).toBe(0);
   });
-  it('× Bring Back: the discard pile recruit and the turn\'s own both pay Connoisseurs', () => {
+  it('× Buy Anywhere: the discard pile recruit and the turn\'s own both pay Connoisseurs', () => {
     let s = table(Q, { round: 2, members: [['market.connoisseur']], res: [{ blue: 8 }], shop: ['market.curator', ...ROW] });
     const [recluse] = onDiscard(s, ['market.recluse']);
     s = pickPay(move(take(s, 'market.clearance'), `card:${recluse}`), 'blue');
     s = move(s, card(s, 'market.curator'));
     expect(owns(s, 0, 'market.recluse') && owns(s, 0, 'market.curator')).toBe(true);
-    // 8, Bring Back's 3 (Nov 24), two members at 4 blue each, Connoisseurs' 1 twice, Curator's own 3 (Connoisseurs, Hermit)
+    // 8, Buy Anywhere's 3 (Nov 24), two members at 4 blue each, Connoisseurs' 1 twice, Curator's own 3 (Connoisseurs, Hermit)
     expect(R(s).blue).toBe(8 + 3 - 8 + 2 + 3); // Curator now counts Connoisseurs as 2 (worth 2 followers since Nov 1 balance; member count = follower count)
     expect(named(s, 'Connoisseurs').length).toBe(2);
   });
@@ -257,12 +272,12 @@ describe('Blue members', () => {
   });
   it('× guest leaning to an absent sphere: Reseller gives nothing (no color on this table)', () => {
     // Front-runner leans purple; purple isn't on this table
-    // red enough to pay Front-runner exactly (4 any since every member cost 3 more as any, Nov 5 night), so only Bring Back's blue is left
+    // red enough to pay Front-runner exactly (4 any since every member cost 3 more as any, Nov 5 night), so only Buy Anywhere's blue is left
     let s = table(Q, { round: 2, members: [['market.reseller']], res: [{ red: 4 }], shop: ['benders.frontrunner', ...ROW.slice(1)] });
     s.discard = [];
-    s = move(take(s, 'market.clearance'), card(s, 'benders.frontrunner'));
+    s = move(move(take(s, 'market.clearance'), 'none'), card(s, 'benders.frontrunner'));
     expect(owns(s, 0, 'benders.frontrunner')).toBe(true);
-    expect(Object.values(R(s)).reduce((a, b) => a + b, 0)).toBe(3); // only Bring Back's 3 blue (Nov 24)
+    expect(Object.values(R(s)).reduce((a, b) => a + b, 0)).toBe(3); // only Buy Anywhere's 3 blue (Nov 24)
     expect(named(s, 'Reseller')).toEqual([]);
   });
 
@@ -402,7 +417,7 @@ describe('Blue members', () => {
   it('× Doppelganger copying Talent Scout: a second once-per-game use', () => {
     let s = table(Q, { round: 2, members: [['market.blackmarket', 'echo.doppel']], res: [{ red: 8 }], shop: ROW });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'market.blackmarket';
-    s = take(s, 'market.clearance');
+    s = move(take(s, 'market.clearance'), 'none');
     expect(ids(s)).toContain(`use:${uidIn(s, 'echo.doppel', 0)}`);
     expect(ids(s)).toContain(`use:${uidIn(s, 'market.blackmarket', 0)}`);
   });
