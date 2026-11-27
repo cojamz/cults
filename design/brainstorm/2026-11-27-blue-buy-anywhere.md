@@ -76,3 +76,17 @@ Verdict: cut (random draws from the face-down pile; "the whole deck" can only me
 8. Color interactions: none.
 9. Biggest case: about 10 followers at game end.
 Verdict: cut (Gravedigger already pays this moment; nobody feels it)
+
+## Idea: Cory's trade-up (his seed, Nov 27 6:16pm Eastern)
+
+Source: Cory, 2026-11-27: "maybe an action that's like, discard the most recently purchased member and replace it with one of equal or greater cost from the shop"
+1. Printed text (read plainly): "Discard the member you recruited most recently. Recruit a shop member costing the same or more, for free. +1 blue." Cards it touches: Promote "+3 red. Swap any member for one costing up to 3 more, from another cult or the shop."; Journeyman "Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free."; Old-Clothes Dealers "On Use, once per round: swap one of your members for a discard-pile member that costs the same."
+2. Played turn: round II, 4 players, you hold a 4-cost member you recruited last turn. Free, uncapped: take the shop's 8-cost member, a gain of 4 resources and a better ability; Promote gives +3 red and a swap capped at +3. Round I: most players hold 0 or 1 members, so it does nothing for anyone who hasn't recruited (most of round I).
+3. Both sides: you choose which shop member; always the costliest you'd use. No rival choice.
+4. Who feels it: nobody but you, unless the shop member you take was one a rival wanted. The discarded member feeds Blue's discard-pile cards.
+5. Not refused: same shape as Red's Promote and Journeyman (trade up from the shop). Verdict 25 shape (more of what Red already does).
+6. Judged: Intuitive except "most recently" (a table doesn't mark which member came last: needs memory, kill-list item 8). Its color: an upgrade, Red's verb; it doesn't reach the deck, the discard pile or a rival, so it misses "buy from anywhere".
+7. Public and certain: yes, but "most recent" is a fact a table forgets.
+8. Color interactions: overlaps Red's swaps rather than tying to them.
+9. Biggest case: round III, uncapped and free: a 2-cost member recruited for it becomes the shop's 10 to 12-cost member, about 8 to 10 resources' worth plus its ability, on a round I or II space; with Green copying it, twice. Over a round II space's 4 to 6.
+Verdict: send (his idea read back with the risks; no rewrite offered)
