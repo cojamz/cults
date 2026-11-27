@@ -1,0 +1,24 @@
+## White
+Contest: Fewest members — counts your members when the round ends. AI players called it "a free +6 and +10 for passivity": players with 0 or 1 members collected +4, +6 or +10 (or a shared half) in 3 of 4 games without doing anything for it (themes.md section 6).
+**Works and is interesting**
+- **Spend Freely** (round I space) "+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay." — Bots were positive at both levels (2 more wins per 100 with Normal bots, 5 more with Hard bots), and it is one of the few round I spaces that rewards buying a member.
+- **Evictors** (5 white + 5 any, worth 1) "On Use, once per game: discard a rival's member. You and that rival each gain white equal to its cost." — The most felt White card in the play judges: it removed a rival's 8-cost and 7-cost member in strong-bot games, and Normal bots won 8 more games in every 100 with it (wide margin, Hard bots too few). Watch that the victim gains the same white; one victim went on to win with 95.
+**Maybe**
+- **Live Simply** (round I space) "+2 white. +1 white per rival with more members than you." — Normal bots 2 more wins per 100, Hard bots 2 fewer, both within chance; no other test spoke to it.
+- **Put By** (round I space) "+3 white." — Both bot levels 1 more win per 100, within chance; plain and small, nothing showed it was felt.
+- **Bid Farewell** (round II space) "Discard a member for its cost in followers. +1 white." — Normal bots 2 more, Hard bots 2 fewer, both within chance; one judge saw it resell a Mendicant for 6, otherwise unnoticed.
+- **Redeem** (round III space) "Turn all your white into followers, 1 for 1. +1 white." — Normal bots 3 more, Hard bots 3 fewer, both within chance; a player found its preview (-1 white beside +2 followers) read like a mistake.
+- **Hermit** (3 white + 3 any, worth 1) "Round End: +2 followers per rival with more members than you." — Bots bought too few to measure; no test showed anything either way.
+- **Preachers** (3 white + 4 any, worth 1) "Whenever a White action gives you followers, +2 followers." — Normal bots 4 more wins per 100 but the margin is as big as the result, and Hard bots bought too few.
+- **Misers** (4 white + 5 any, worth 1) "Game End: +1 follower per 2 white you hold." — Bots bought too few at both levels; no test showed anything either way.
+- **Mourners** (3 white + 4 any, worth 1) "Whenever one of your members leaves your cult, +2 white." — Normal bots 1 more win per 100, within chance; Hard bots bought too few.
+- **Connoisseurs** (2 white + 8 any, worth 1) "Game End: +2 followers per member you have costing 8 or more." — Bought in over half the games it showed, yet no more wins than players with as many members at either level; popular but not shown to matter.
+- **Dowry-Givers** (4 white + 3 any, worth 1) "On Use, once per game: give one of your members to a rival. Gain its cost in followers." — Normal bots 7 more wins per 100, Hard bots 3 fewer; a judge saw it in one chain turn worth +10 with Evictors.
+- **Penitents** (3 white + 3 any, worth 1) "Whenever you buy followers, +2 white." — Bots bought too few at both levels; no test showed anything either way.
+- **Martyrs** (3 white + 3 any, worth 1) "Whenever this member is discarded, +4 white and +4 followers." — Normal bots 9 more wins per 100 but they bought it in only 3% of games it showed; Hard bots too few.
+- **Washerwoman** (5 white + 5 any, worth 1) "On Use, once per game: turn all your resources into white." — Normal bots 2 fewer wins with a wide margin, bought in 9% of games; Hard bots too few.
+- **Mendicant** (3 white + 3 any, worth 1) "Round End: +1 follower per color of resource you hold none of." — Normal bots 3 fewer, Hard bots 5 more, both within chance; a judge saw a steady +2 to +4 a round but "barely felt", and it won a player-agent game held with 3 members.
+**Cut, replace or rework**
+- **Give Away** (round II space) "Give a member to a rival for its cost in white. +1 white." — Flagged WEAK by the bot test: Normal bots won 8 fewer games in every 100, Hard bots 5 fewer. Fix: rework the effect (it hands a rival a member for white you cannot turn into much); only two player-agents liked it.
+- **Executioner** (3 white + 3 any, worth 1) "On Use, once per round: discard one of your members. +4 white." — Normal bots won 6 fewer games in every 100 than players with as many members, and bought it in only 11% of games it showed; you pay a member to get white. Fix: rework the effect, or +1 follower printed.
+- **Matchmaker** (2 white + 3 any, worth 1) "On Use, once per round: give a rival one of your members. +4 followers." — Both bot levels 2 fewer wins per 100 while bots bought it in a third to nearly half of the games it showed (a trap); 4 AI players called it poor ("best use removes the card you paid for"). Fix: rework the effect.

@@ -1,0 +1,74 @@
+<title>Card Changes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral+SC:wght@600&family=Work+Sans:wght@400;600&display=swap">
+<style>
+/* Layout: one narrow column, a color band per color, each change as Was / Now. */
+:root{--bg:#f6f4f8;--panel:#fff;--fg:#1e1b24;--muted:#7a7387;--line:#e2dde8;--now:#1d6b3a;
+--c-red:#c8372d;--c-blue:#2f62c9;--c-white:#efebe0;--c-silver:#a3a9b3;--c-magenta:#c2307f;--c-yellow:#e2b31f;--c-green:#2e9a52;--c-purple:#6f3fb0;--c-grey:#8a8a8a;
+--display:"Spectral SC",Georgia,serif;--body:"Work Sans",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17141c;--panel:#211d28;--fg:#ece8f2;--muted:#9d96aa;--line:#363041;--now:#7fd39b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17141c;--panel:#211d28;--fg:#ece8f2;--muted:#9d96aa;--line:#363041;--now:#7fd39b;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45}
+.wrap{max-width:620px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+h1{font-family:var(--display);font-size:28px;margin:0}
+.lead{margin:4px 0 0;color:var(--muted);font-size:14px}
+h2{font-family:var(--display);font-size:20px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+h2 i{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.3)}
+.list{display:grid;gap:10px}
+.c{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.n{font-weight:600}
+.r{display:grid;grid-template-columns:42px 1fr;gap:6px;margin-top:4px;font-size:15px}
+.r b{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding-top:3px}
+.was{color:var(--muted)} .was b{color:var(--muted)}
+.now b{color:var(--now)}
+</style>
+<div class="wrap">
+<header><h1>Card Changes</h1><p class="lead">Every default from card review 2. Prices are my guesses.</p></header>
+<div id="out"></div>
+</div>
+<script>
+const D=[
+["red","Red",[
+["Mentor → Long-Lost Cousins","On Recruit: recruit the cheapest member in the shop.","On Recruit: recruit a shop member of the color you have the most of, for free. Price 13."],
+["Deprogrammers → Concerned Parents","Whenever you take a rival's member out of their cult, they lose 1 follower.","Whenever a rival takes one of your members, +3 followers. Price 5."],
+["Seat Filler","Round Start: you may give this to the shop and recruit a shop member costing up to 3 more, for free.","Round Start: you may discard this and recruit a shop member costing up to 3 more, for free."]]],
+["blue","Blue",[
+["Window Shopper → Thrift Shoppers","On Recruit and at Round Start: send 2 shop members to the discard pile. +1 of each one's color.","On Use, once per round: recruit a member from the discard pile, paying its cost. Price 7."]]],
+["white","White",[
+["Recluse → Guest of Honor (moved in)","Round End: +2 followers per rival with more members than you.","On Use, once per round: give a rival one of your members. +4 followers. Price 5."],
+["Heiresses → Godparent (moved in)","On Use, once per game: +1 white per member you have.","On Use, once per game: give one of your members to a rival. Gain followers equal to its cost. Price 7."],
+["Old Money","Game End: +1 follower per white member you have.","Game End: +2 followers per white member your rivals have. Price 8."],
+["Allowance","…This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.","…This turn, if you buy followers, +1 follower in round I, +2 in round II, +3 in round III."],
+["Farewell","Cast out one of your members to the discard pile, gain followers equal to its cost. +1 white.","Discard one of your members. Gain followers equal to its cost. +1 white."],
+["Estate Sale","Cast out one of your members to the discard pile, gain white equal to its cost. +1 white.","Discard one of your members. Gain white equal to its cost. +1 white."],
+["Downsizers","On Use, once per round: cast out one of your members to the discard pile. +4 white.","On Use, once per round: discard one of your members. +2 followers."],
+["Magpie → Hoarders","Magpie","Hoarders (same text: On Use, once per game: turn all your resources into white.)"]]],
+["silver","Silver",[
+["Silver Cloak","Whenever you gift silver, +2 silver.","Whenever you gift silver, +2 of any colors."],
+["Sweet Nothings → High Tide","+3 silver. Give rivals up to 3 of your silver, split as you choose: +2 of any colors each.","Each rival +1 silver. Then gain 1 follower per silver the rival with the most silver holds."],
+["Caterer's empty place → Silver Barons","(cut)","Round End: +1 follower per 3 silver all players hold together. Price 8."],
+["Kingmakers","Round End: give a rival 3 silver from the bank. +3 followers.","Round End: give a rival 3 silver from the bank. +2 followers."]]],
+["magenta","Magenta",[
+["Stash → Turf","+2 magenta in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.","Steal 1 resource from each rival per minion they have on Magenta spaces. +1 magenta."],
+["Shake Down → Mugging","Choose a rival. They choose one of their members costing 7 or less, then pay you its cost or you steal it. +1 magenta.","Steal half of one rival's resources, rounded down. +1 magenta."],
+["Extortionist","On Recruit and at Round Start: steal 2 resources.","Round Start: steal 3 resources."],
+["Double Agent","On Recruit: give this member to a rival and recruit one of theirs. Price 10.","Same text. Price 11."]]],
+["yellow","Yellow",[
+["Seamstress → Influencers","On Use, once per game: double your full sets.","On Use, once per game: choose two colors; every player's resources of the first become the second. Price 8."]]],
+["green","Green",[
+["Tribute Band → Leakers","On Use, once per game: choose a rival. Do every action they have a minion on this round.","On Use, once per game: copy an action that opens in a later round. Price 11."]]],
+["purple","Purple",[
+["Bouncers → Latecomers","On Recruit: the next two rivals' turns are skipped.","On Recruit: take the Goes Last token: your next minion is placed after everyone else's. Price 7."],
+["Pocket Watch (cloak)","Whenever you take the Goes Last token, +3 purple.","Whenever any player takes the Goes Last token, +2 purple."],
+["Gossip","Whenever a player's turn is skipped, +1 follower.","Whenever a player's turn is skipped, +1 follower. (Taking the Goes Last token counts.)"]]],
+["grey","Grey",[
+["Anarchist","On Use, once per round: swap any 2 members that cost the same, in any cult or the shop.","On Use, once per round: swap any 2 members that cost the same, but not your own."],
+["Ghost","Worth 0 members. Whenever this member joins your cult, −5 followers.","Worth −5 followers and 0 members. On Recruit: give this member to a rival. Price 5."],
+["Party Crasher → Scouts","On Use, once per game: your next minion can be placed on a space a rival already took.","Counts as 2 members. On Use, once per round: send any shop members to the discard pile, then refill. Price 5."],
+["Sore Loser → Bulk Buyers","Round End: if you win no contest, steal 5 followers from the rival who wins the most.","Whenever you buy 10 followers at once, +5 followers. Price 7."],
+["Line Cutters","You go first every round.","Counts as 3 members. You go first every round."]]]
+];
+const e=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+document.getElementById("out").innerHTML=D.map(([k,name,cs])=>`<section><h2><i style="background:var(--c-${k})"></i>${name}</h2><div class="list">${cs.map(c=>`<div class="c"><div class="n">${e(c[0])}</div><div class="r was"><b>Was</b><span>${e(c[1])}</span></div><div class="r now"><b>Now</b><span>${e(c[2])}</span></div></div>`).join("")}</div></section>`).join("");
+document.getElementById("out").style.cssText="display:grid;gap:22px";
+</script>

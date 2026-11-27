@@ -1,0 +1,10 @@
+{
+ "deal1/K": "n12 color-1",
+ "deal1/P": "n12 pricier",
+ "deal1/R": "n12 today",
+ "deal1/T": "n12 color+1",
+ "deal2/K": "n12 color+1",
+ "deal2/P": "n12 color-1",
+ "deal2/R": "n12 pricier",
+ "deal2/T": "n12 today"
+}

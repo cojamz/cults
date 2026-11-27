@@ -1,0 +1,18 @@
+# Blue: the live 10-card deck and spaces (Nov 8)
+
+- space (round I) **Savings**: "+2 blue in round I, +3 in round II, +4 in round III. Before you recruit, you may send one shop member to the discard pile, then refill."
+- space (round I) **Out of Style**: "Send every shop member of one color to the discard pile, then refill. +1 blue per member sent. +1 blue."
+- space (round I) **Peek**: "Look at the top 4 of the pile and put them back in any order. This turn your recruit may be one of them. +3 blue in round I, +4 in round II, +5 in round III."
+- space (round II) **Recruit Twice**: "Recruit an extra time this turn. +3 blue."
+- space (round II) **Bury**: "Send a shop member to the discard pile, then refill. Gain blue equal to half its cost, rounded down. +1 blue."
+- space (round III) **Spree**: "Recruit two extra times this turn. +6 blue."
+- member (price 10) **Patroness**: "Whenever shop members go to the discard pile, +1 follower."
+- member (price 8) **Snobs**: "Game End: +1 follower per blue member you have."
+- member (price 8) **Power Shoppers**: "Whenever you recruit your second member in a turn, +4 followers."
+- member (price 7) **Mannequin**: "Blue members in the shop count as your members when contests are scored."
+- member (price 7) **Window Shopper**: "On Recruit and at Round Start: send 2 shop members to the discard pile. +1 of each one’s color."
+- member (price 5) **Window Dressers**: "On Recruit: send 3 shop members to the discard pile, then refill."
+- member (price 5) **Regular**: "Whenever you buy followers, +1 blue."
+- member (price 6) **Trendsetters**: "Whenever you recruit a member, send 1 shop member to the discard pile, then refill."
+- member (price 5) **Critic**: "Whenever a rival recruits a blue member, +1 follower."
+- member (price 5) **Last-Minute Shopper**: "Round End: +3 blue, then you may recruit."

@@ -1,0 +1,113 @@
+{
+  "color": "White",
+  "id": "trading",
+  "slots": [
+    {
+      "current": {
+        "name": "Splurge",
+        "text": "This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +2 white.",
+        "why weak (one line)": "Cost math, twin of Allowance's recruit bonus, and its followers cost White its own contest."
+      },
+      "options": [
+        {
+          "name": "Pocket Money",
+          "text": "+1 white per rival with at least as many followers as you (+2 each in round II, +3 in round III). +1 white.",
+          "moment": "Round II, lowest of 4: +7 white, stay lowest for the +6 and first pick in round III.",
+          "ties": "Every rival's followers, turn order, Cash In and Misers.",
+          "risk": "Still a white formula; Oct 22 'per rival' shape drew 'eh'."
+        },
+        {
+          "name": "Keep Splurge",
+          "text": "This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +2 white.",
+          "moment": "Round II, recruit a 9-cost member: +9 followers, +2 white.",
+          "ties": "Big members of any color.",
+          "risk": "Pulls White players out of White's contest."
+        }
+      ],
+      "pick": "Pocket Money",
+      "pickWhy": "Pays White in white for staying low, the reverse of Splurge's followers that lose White's contest."
+    },
+    {
+      "current": {
+        "name": "Brokers",
+        "text": "[3 white + 4 any, worth 3, counts as 3] Whenever a White action gives you followers, +1 follower.",
+        "why weak (one line)": "A +1 stuck on other cards; worth 3 pushes you out of White's contest."
+      },
+      "options": [
+        {
+          "name": "Spendthrifts",
+          "text": "[4 white + 4 any, worth 1] You may pay for members with followers, 1 follower for each resource.",
+          "moment": "Round II: pay 5 followers for Accomplice, steal 3, drop to lowest, win +6 and first pick.",
+          "ties": "Shop, any color's On Recruit, contest, turn order.",
+          "risk": "Followers paying colored parts lets White buy any color."
+        },
+        {
+          "name": "Pallbearers",
+          "text": "[3 white + 4 any, worth 1] Whenever you cast out one of your members, first do its On Use, even if it's used up.",
+          "moment": "Round II: Estate Sale casts out used Heist Crew; it steals ~5 again, then +10 white.",
+          "ties": "Any color's On Use members, the discard pile.",
+          "risk": "Close to Green's doing members' abilities again."
+        },
+        {
+          "name": "Keep Brokers",
+          "text": "[3 white + 4 any, worth 3, counts as 3] Whenever a White action gives you followers, +1 follower.",
+          "moment": "Exchange, Farewell, Cash In over a game: +3 followers.",
+          "ties": "White's own spaces only.",
+          "risk": ""
+        }
+      ],
+      "pick": "Spendthrifts",
+      "pickWhy": "Cory's own Oct 27 idea: fewer followers on purpose, spent on any color's members to use and cast out."
+    },
+    {
+      "current": {
+        "name": "Misers",
+        "text": "[4 white + 5 any, worth 2, counts as 2] Game End: +1 follower per 2 white you hold.",
+        "why weak (one line)": "Half Cash In's rate for the same white; never the right play."
+      },
+      "options": [
+        {
+          "name": "Misers (full rate)",
+          "text": "[4 white + 5 any, worth 2, counts as 2] Game End: +1 follower per white you hold.",
+          "moment": "Round III: skip Cash In, stay lowest for +10, then 12 white is +12 at game end.",
+          "ties": "White's contest, turn order, white steals.",
+          "risk": "Third white-to-followers card; worth 2 fights the contest."
+        },
+        {
+          "name": "Keep Misers",
+          "text": "[4 white + 5 any, worth 2, counts as 2] Game End: +1 follower per 2 white you hold.",
+          "moment": "Game end with 10 white: +5.",
+          "ties": "Competes with Cash In and Cashier for white.",
+          "risk": ""
+        }
+      ],
+      "pick": "Misers (full rate)",
+      "pickWhy": "Same card at a real rate; the only way to hold white through the last contest."
+    },
+    {
+      "current": {
+        "name": "Old Money",
+        "text": "[2 white + 6 any, worth 1] Game End: +1 follower per white member you have.",
+        "why weak (one line)": "Cory refused this exact card Oct 22; rewards keeping members White casts out."
+      },
+      "options": [
+        {
+          "name": "Penitents",
+          "text": "[3 white + 3 any, worth 1] On Use, once per round: turn up to 5 of your followers into white, 1 for 1.",
+          "moment": "Round I last turn: 6 to 3 followers, lowest, +4 contest and first in round II.",
+          "ties": "Every rival's followers, contest, turn order, follower cards.",
+          "risk": "With full-rate Misers it wins White's contest every round."
+        },
+        {
+          "name": "Keep Old Money",
+          "text": "[2 white + 6 any, worth 1] Game End: +1 follower per white member you have.",
+          "moment": "Game end with 5 White members: +5.",
+          "ties": "Works against casting out and the contest.",
+          "risk": ""
+        }
+      ],
+      "pick": "Penitents",
+      "pickWhy": "Cory's Oct 15 'dip under the table, buy back after', made a card White steers."
+    }
+  ]
+}

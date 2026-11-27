@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cults</title>
+<script>
+  // Cults moved from /patrons/ to /cults/ (Nov 4, 2026): keep the rest of the path, the join code and the hash.
+  var p = location.pathname, to = /^\/patrons(\/|$)/.test(p) ? p.replace(/^\/patrons/, '/cults') : '/cults/';
+  location.replace(to + location.search + location.hash);
+</script>
+<meta http-equiv="refresh" content="0;url=/cults/">
+</head>
+<body style="background:#111;color:#ddd;font:16px sans-serif;padding:16px"><a style="color:#fc6" href="/cults/">Cults has moved: open it here</a></body>
+</html>

@@ -1,0 +1,524 @@
+[
+ {
+  "subject": "Promote",
+  "kind": "space",
+  "claim": "Promote and Demote let one player move a rival's members, which wrecks member plans and is the only way a small cult touches the Red and Yellow contests.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "Four swaps aimed at rival cults (Clan, Dabblers, Loyalists, Spoilsport) moved roughly 25 contest followers, all off Ava, and Ava left both spaces open on her round III double turn.",
+  "strength": 5,
+  "count_specific": false
+ },
+ {
+  "subject": "Demote",
+  "kind": "space",
+  "claim": "Demote and Promote give a lean cult real levers on the leader and create the game's biggest swings.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben's Demote took Clan off Ava before it paid (about 6 to 8 followers) and his round III Demote took Spoilsport, the move that won 87 to 86.",
+  "strength": 5,
+  "count_specific": false
+ },
+ {
+  "subject": "Spoilsport",
+  "kind": "member",
+  "claim": "Spoilsport cancels a contest after the last placement and can decide a close game with no reply.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Cal",
+   "Ben"
+  ],
+  "evidence": "Ben cancelled the 3-3 Yellow tie, taking 5 from Ava who lost by 1; without it Ava wins 91 to 87.",
+  "strength": 5,
+  "count_specific": false
+ },
+ {
+  "subject": "Spoilsport",
+  "kind": "member",
+  "claim": "Holding the veto into the last round end is the tensest decision of the game.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben's choice between Red and Yellow at round III end decided the winner.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Fewest members",
+  "kind": "contest",
+  "claim": "One small cult wins Fewest members every round with nobody contesting it.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "Ben won it +4, +6, +10 with 1 to 2 members while the next-smallest cult had 2, 4 and 4.",
+  "strength": 4,
+  "count_specific": true
+ },
+ {
+  "subject": "Modest Means",
+  "kind": "space",
+  "claim": "Modest Means rewards the small cult directly for staying small.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "It paid Ben +4 white twice (rounds II and III) because both rivals had more members.",
+  "strength": 2,
+  "count_specific": true
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "Once members stop paying back, the recruit step becomes the same follower buy every turn.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "23 of 36 recruit steps were follower buys; Ben's last 10 of 12 recruits were 5-follower buys.",
+  "strength": 4,
+  "count_specific": false
+ },
+ {
+  "subject": "White Cloak",
+  "kind": "cloak",
+  "claim": "The White Cloak refunds part of every follower buy, making the buying line a loop that needs few decisions and outpaces the other cloaks.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "The White Cloak paid 22 white over 11 buys, against 12 yellow for the Yellow Cloak and 7 red for the Red Cloak.",
+  "strength": 4,
+  "count_specific": false
+ },
+ {
+  "subject": "Round end",
+  "kind": "rule",
+  "claim": "The last placement of the game can collapse into several options that all give +1 follower.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Ava reached her last turn with 0 resources after a 1-follower buy; Ben and Cal still had a 5- and a 10-follower buy.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Patrons",
+  "kind": "member",
+  "claim": "Giving a member away pays the giver its cost while the receiver gets a card they did not choose.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal",
+   "Ava"
+  ],
+  "evidence": "Ava's Patrons paid her +7 for Brokers; Guest of Honor paid her +4; the receivers got 1 printed follower each.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Write-Off",
+  "kind": "space",
+  "claim": "A gifted member can be passed on again, so a gift lands on a player its first giver never chose.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Ava gave Brokers to Cal for +7, Cal wrote it off to Ben for 8 white, and Ben's +1 printed follower was the winning margin.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Write-Off",
+  "kind": "space",
+  "claim": "Being given a member hurts the receiver in the Fewest members contest and leaves them with a useless card.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Cal had 6 members to Ben's 1 before Brokers arrived, so White did not change, and he turned Brokers into 8 white and a 10-follower buy.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Round end",
+  "kind": "rule",
+  "claim": "A player out of the race decides the winner by choosing which leader receives a gift.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal",
+   "Ben"
+  ],
+  "evidence": "Cal's choice to write Brokers off to Ben instead of Ava gave Ben the 1 follower he won by.",
+  "strength": 4,
+  "count_specific": true
+ },
+ {
+  "subject": "Dabblers",
+  "kind": "member",
+  "claim": "Dabblers at 5 counts as 2 members of one color and adds a missing color, so it decides contests far above its price.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "Free off Late Shift, it won Ava round I Red, round I Yellow outright and round II Red (about 12 followers), then gave Cal the Yellow tie in round III.",
+  "strength": 4,
+  "count_specific": false
+ },
+ {
+  "subject": "Borrow",
+  "kind": "space",
+  "claim": "It is unclear whether a borrowed member given to a rival still returns to the shop.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Ava"
+  ],
+  "evidence": "Borrow's text says the member returns at round end, and the log returned Guest of Honor from Ben's cult as printed; Ben had planned to use it every round.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Makeover",
+  "kind": "space",
+  "claim": "Makeover's rearrange does nothing when no contest counts resources.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben's last-turn Makeover rearrange was a confirmation click; none of White, Red or Yellow counts resources.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Makeover",
+  "kind": "space",
+  "claim": "Makeover reshaping the whole pile at once frees a player stuck with the wrong colors.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Cal turned his pile into 7 red to buy Brethren in round II.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Body Snatchers",
+  "kind": "member",
+  "claim": "Members with only a Round Start ability do nothing if bought in round III.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Cal's round III Body Snatchers never acted; he bought it for Gather's +4 and Brethren's +1.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Loyalists",
+  "kind": "member",
+  "claim": "Loyalists protects your other members but can be swapped away itself, which surprised a new player.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Ben's Promote swapped Cal's Loyalists out, then his Demote took Spoilsport; the text says 'your other members'.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Cash In",
+  "kind": "space",
+  "claim": "Cash In is a single center space, so it becomes denial, and its +1 white back is a crumb that needs a recruit.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Ava's Cash In turned 3 white into 5 followers (with Brokers) and left 1 white that became 1 follower for a whole recruit.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Offering",
+  "kind": "space",
+  "claim": "Offering feeds your buy and taxes both rivals in one placement.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "It gave Ava 5 yellow for a 5-follower buy and made Ben discard 2 white and Cal 2 red.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Late Shift",
+  "kind": "space",
+  "claim": "Late Shift's limit growing with each minion placed makes the order of placements matter.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "Ava's last-minion Late Shifts took Dabblers, Clan and Patrons free, worth 20 resources by price.",
+  "strength": 4,
+  "count_specific": false
+ },
+ {
+  "subject": "Splurge",
+  "kind": "space",
+  "claim": "Splurge's round II rate turns a member purchase into a big follower payout.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava",
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "Splurge paid Ava +7 on Brokers in round II and Ben +3 on Anchorites in round I.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "New Blood",
+  "kind": "space",
+  "claim": "New Blood with the Yellow Cloak refunds a first new-color member almost entirely, making the wide opening rewarding but nearly free.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Early Traders cost Ava 5 yellow and New Blood plus the cloak returned 5 the same turn.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Early Traders",
+  "kind": "member",
+  "claim": "Early Traders' Round Start swap turns a pile into an exact colored cost each round.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Ava swapped 3 yellow into white at round II start and paid exactly 7 for Brokers.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Farewell",
+  "kind": "space",
+  "claim": "Farewell and Patrons make round III a satisfying cash-out of finished members.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Farewell on Alchemists paid 9 and Patrons on Brokers paid 7 in Ava's round III.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Turn order",
+  "kind": "rule",
+  "claim": "Back-to-back turns from the snake order let a player plan two-turn combos.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal",
+   "Ava"
+  ],
+  "evidence": "Cal's Write-Off, 1-follower buy, Nest Egg and 10-follower buy finish came from one double turn.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Survey",
+  "kind": "space",
+  "claim": "Survey's payout depends on where others crowded, a small reading puzzle.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Survey paid Ben 3, 4 and 5 yellow across the three rounds.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Consolation Prize",
+  "kind": "member",
+  "claim": "Consolation Prize pays a player who is losing contests and feels sweet and sour.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "It paid Cal 10 followers for 7 resources, the best return on a bought member after Anchorites.",
+  "strength": 2,
+  "count_specific": false
+ },
+ {
+  "subject": "Anchorites",
+  "kind": "member",
+  "claim": "Anchorites pays +5 a round for 6 resources and is the best bought member for a small cult.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "+3 from Splurge on the buy, +10 over two rounds, then traded for Spoilsport.",
+  "strength": 4,
+  "count_specific": false
+ },
+ {
+  "subject": "Gather",
+  "kind": "space",
+  "claim": "Gather's +4 followers cannot fire on a player's first member.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Cal's first-turn Gather into Loyalists paid no +4 because he had no color yet.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Brethren",
+  "kind": "member",
+  "claim": "Brethren pays less than a 5-follower buy over a game.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "It cost Cal 7 and paid 3 followers plus 1 printed.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Protesters",
+  "kind": "member",
+  "claim": "Protesters' block comes too late in the turn order to be worth 6 resources.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Ben"
+  ],
+  "evidence": "Nobody paid for Protesters; its one appearance came free off Borrow and was never used.",
+  "strength": 1,
+  "count_specific": false
+ },
+ {
+  "subject": "Most members of one color",
+  "kind": "contest",
+  "claim": "The contest text says each card counts 1, but Dabblers counts as 2 in the count.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ava's round I count was 3 from Early Traders and Dabblers; Cal skipped Dabblers at [13] because of the printed text.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Most member colors",
+  "kind": "contest",
+  "claim": "With three colors on the table the contest caps at 3, so ties at the cap are easy.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Round III was a 3-3 tie between Ava and Cal, which is what Spoilsport cancelled.",
+  "strength": 2,
+  "count_specific": true
+ },
+ {
+  "subject": "Recruiting members",
+  "kind": "whole game",
+  "claim": "A cult of 2 members won the game.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ben won 87 to 86 holding 2 members, on 51 bought followers, 20 from Fewest members and 10 from Anchorites.",
+  "strength": 3,
+  "count_specific": true
+ },
+ {
+  "subject": "Round end",
+  "kind": "rule",
+  "claim": "All round III contest followers moved through swaps and a veto, and the leader at round III start got none of them.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ava led Red 4-3 and Yellow 3-1 at round III start and scored 0 of 30; Cal took Red +10 and Ben Fewest members +10.",
+  "strength": 4,
+  "count_specific": false
+ },
+ {
+  "subject": "Turn order",
+  "kind": "rule",
+  "claim": "Fewest-followers-first order gave the leader's double turn before the swap player, and she did not use it to take the swap spaces.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Round III order was Cal, Ben, Ava; Ava took Cash In and Offering while Promote and Demote stayed open for Ben.",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Recruiting members",
+  "kind": "rule",
+  "claim": "Members from free-recruit spaces paid as well as the best bought members.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Late Shift and Borrow gave 5 members worth 31 resources by price; Dabblers (about 12) and Patrons (7) matched Consolation Prize (10) and Purists (9).",
+  "strength": 3,
+  "count_specific": false
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "No contest at this table counts resources, so every leftover goes into follower buys and color choices rarely matter.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Every pay-color choice in round III was called irrelevant by the payer; Makeover's rearrange and Early Traders' swap were called formalities.",
+  "strength": 2,
+  "count_specific": false
+ }
+]

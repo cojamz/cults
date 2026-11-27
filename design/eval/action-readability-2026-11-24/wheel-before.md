@@ -1,0 +1,203 @@
+# Wheel print at 1270×700
+
+## Dropped lines
+- Grease a Palm round I: note "of your choice"
+- Borrow round I: line 2 "it returns to the shop at round end"
+- Call to Arms round I: line 2 "you placed this round, this one included"
+- Make Haste round I: note "purple: I +2 · II +3 · III +4"
+- Hand Out Gifts round I: note "from the bank"
+- Grease a Palm round II: note "of your choice"
+- Borrow round II: line 2 "it returns to the shop at round end"
+- Call to Arms round II: line 2 "you placed this round, this one included"
+- Lie Abed round II: note "purple: I +4 · II +5 · III +6"
+- Make Haste round II: note "purple: I +2 · II +3 · III +4"
+- Hand Out Gifts round II: note "from the bank"
+- Flaunt round II: line 2 "up to 3"
+- Hire Away round II: line 2 "pay them its cost in silver"
+- Grease a Palm round III: note "of your choice"
+- Borrow round III: line 2 "it returns to the shop at round end"
+- Call to Arms round III: line 2 "you placed this round, this one included"
+- Lie Abed round III: note "purple: I +4 · II +5 · III +6"
+- Make Haste round III: note "purple: I +2 · II +3 · III +4"
+- Hand Out Gifts round III: note "from the bank"
+- Flaunt round III: line 2 "up to 3"
+- Hire Away round III: line 2 "pay them its cost in silver"
+- Throw Coins round III: note "from the bank"
+- Pilfer round I: line 2 "this round, this one included"
+- Pilfer round II: line 2 "this round, this one included"
+- Paint Over round III: line 2 "of rivals' resources yellow"
+- Pilfer round III: line 2 "this round, this one included"
+- Sleight of Hand round III: line 2 "you give them one"
+- Bide Your Time round II: line 2 "+1 purple"
+- Draw a Crowd round III: line 2 "+1 @f per minion on Green", note "this one included"
+- Burn the Candle round III: line 2 "the extra minion this round"
+
+## Every space
+- round I Grease a Palm (gold): shows "+3 / +1 to a rival" · DROPPED note "of your choice"
+- round I Let It Grow (gold): shows "+2 / I +2 · II +4 · III +6"
+- round I Bargain Down (gold): shows "4 off / your next member"
+- round I Borrow (red): shows "Recruit the cheapest for free, this round only" · DROPPED line 2 "it returns to the shop at round end" · tight
+- round I Call to Arms (red): shows "Recruit for free, costing up to 2 per minion" · DROPPED line 2 "you placed this round, this one included" · tight
+- round I Gather the Kin (red): shows "+3 / +4followers if you recruit a color you have" (taken: minion over the lines)
+- round I Lie Abed (purple): shows "+4, take the Goes Last token" (taken: minion over the lines)
+- round I Keep Going (purple): shows "+2 per turn in a row, then go last"
+- round I Make Haste (purple): shows "+2, your next turn right after" · DROPPED note "purple: I +2 · II +3 · III +4"
+- round I Raise a Glass (silver): shows "+4 / each rival +2"
+- round I Melt Down (silver): shows "+3 / turn all your silver into one color, each rival +1"
+- round I Hand Out Gifts (silver): shows "Give rivals up to 3, +2followers per silver given" · DROPPED note "from the bank" · tight
+- round II Grease a Palm (gold): shows "+3 / +1 to a rival" · DROPPED note "of your choice"
+- round II Let It Grow (gold): shows "+4 / I +2 · II +4 · III +6"
+- round II Bargain Down (gold): shows "4 off / your next member"
+- round II Call In Debts (gold): shows "Steal up to 3 / from rivals"
+- round II Pass the Plate (gold): shows "+3 / 1 per member"
+- round II Borrow (red): shows "Recruit the cheapest for free, this round only" · DROPPED line 2 "it returns to the shop at round end" · tight
+- round II Call to Arms (red): shows "Recruit for free, costing up to 2 per minion" · DROPPED line 2 "you placed this round, this one included" · tight
+- round II Gather the Kin (red): shows "+3 / +4followers if you recruit a color you have" (taken: minion over the lines)
+- round II Promote (red): shows "+3, promote (cost up to +3)" (taken: minion over the lines)
+- round II Demote (red): shows "+3, demote (cost up to −3)" (taken: minion over the lines)
+- round II Lie Abed (purple): shows "+5, take the Goes Last token" · DROPPED note "purple: I +4 · II +5 · III +6"
+- round II Keep Going (purple): shows "+2 per turn in a row, then go last"
+- round II Make Haste (purple): shows "+3, your next turn right after" · DROPPED note "purple: I +2 · II +3 · III +4"
+- round II Bide Your Time (purple): shows "+1followers and +1 per minion left, then go last" (taken: minion over the lines) · tight
+- round II Flurry (purple): shows "+2, your next 2 turns right after"
+- round II Raise a Glass (silver): shows "+4 / each rival +2"
+- round II Melt Down (silver): shows "+3 / turn all your silver into one color, each rival +1" (taken: minion over the lines)
+- round II Hand Out Gifts (silver): shows "Give rivals up to 3, +2followers per silver given" · DROPPED note "from the bank" · tight
+- round II Flaunt (silver): shows "+1 each other color per 3 held" · DROPPED line 2 "up to 3" · tight
+- round II Hire Away (silver): shows "Recruit a rival's member" · DROPPED line 2 "pay them its cost in silver" · tight
+- round III Grease a Palm (gold): shows "+3 / +1 to a rival" · DROPPED note "of your choice"
+- round III Let It Grow (gold): shows "+6 / I +2 · II +4 · III +6"
+- round III Bargain Down (gold): shows "4 off / your next member"
+- round III Call In Debts (gold): shows "Steal up to 3 / from rivals"
+- round III Pass the Plate (gold): shows "+4 / 1 per member"
+- round III Multiply (gold): shows "Double your gold"
+- round III Borrow (red): shows "Recruit the cheapest for free, this round only" · DROPPED line 2 "it returns to the shop at round end" · tight
+- round III Call to Arms (red): shows "Recruit for free, costing up to 2 per minion" · DROPPED line 2 "you placed this round, this one included" · tight
+- round III Gather the Kin (red): shows "+3 / +4followers if you recruit a color you have"
+- round III Promote (red): shows "+3, promote (cost up to +3)"
+- round III Demote (red): shows "+3, demote (cost up to −3)"
+- round III Induct (red): shows "Recruit for free, costing 10 or less" (taken: minion over the lines) · tight
+- round III Lie Abed (purple): shows "+6, take the Goes Last token" · DROPPED note "purple: I +4 · II +5 · III +6"
+- round III Keep Going (purple): shows "+2 per turn in a row, then go last"
+- round III Make Haste (purple): shows "+4, your next turn right after" · DROPPED note "purple: I +2 · II +3 · III +4"
+- round III Burn the Candle (purple): shows "+4, +1 minion, then go last" (taken: minion over the lines) · tight
+- round III Bide Your Time (purple): shows "+1followers and +1 per minion left, then go last" (taken: minion over the lines) · tight
+- round III Flurry (purple): shows "+2, your next 2 turns right after"
+- round III Raise a Glass (silver): shows "+4 / each rival +2"
+- round III Melt Down (silver): shows "+3 / turn all your silver into one color, each rival +1"
+- round III Hand Out Gifts (silver): shows "Give rivals up to 3, +2followers per silver given" · DROPPED note "from the bank" · tight
+- round III Flaunt (silver): shows "+1 each other color per 3 held" · DROPPED line 2 "up to 3" · tight
+- round III Hire Away (silver): shows "Recruit a rival's member" · DROPPED line 2 "pay them its cost in silver" · tight
+- round III Throw Coins (silver): shows "Give rivals 10 / +7followers" · DROPPED note "from the bank"
+- round I Harvest (yellow): shows "+3 / colors you choose" (taken: minion over the lines)
+- round I Count Heads (yellow): shows "+1 per minion on the color with the most minions" · tight
+- round I Welcome Strangers (yellow): shows "+2 / +3 if you recruit a new color"
+- round I Try Out (market): shows "Discard a shop member / use its effect now"
+- round I Clear Out (market): shows "Discard 3 shop members / +1 of each one’s color" (taken: minion over the lines)
+- round I Buy Secondhand (market): shows "+3, recruit from the discard pile, 2 less" · tight
+- round I Pilfer (thieves): shows "Steal 1 per minion you placed" · DROPPED line 2 "this round, this one included" · tight
+- round I Stash (thieves): shows "+3"
+- round I Beg (thieves): shows "+2 / per rival with more resources"
+- round I Live Simply (trading): shows "+2 / +1 per rival with more members"
+- round I Spend Freely (trading): shows "+2 / +1followers per 2 spent on a member"
+- round I Put By (trading): shows "+3"
+- round II Harvest (yellow): shows "+3 / colors you choose"
+- round II Count Heads (yellow): shows "+1 per minion on the color with the most minions" · tight
+- round II Welcome Strangers (yellow): shows "+2 / +3 if you recruit a new color"
+- round II Paint Over (yellow): shows "+4, turn up to 8" (taken: minion over the lines) · tight
+- round II Hold a Fair (yellow): shows "Per member color: +1followers and +1 of it"
+- round II Try Out (market): shows "Discard a shop member / use its effect now" (taken: minion over the lines)
+- round II Clear Out (market): shows "Discard 3 shop members / +1 of each one’s color" (taken: minion over the lines)
+- round II Buy Secondhand (market): shows "+3, recruit from the discard pile, 2 less" · tight
+- round II Bring Back (market): shows "+3, recruit from the discard pile" (taken: minion over the lines) · tight
+- round II Spread the Word (market): shows "+1followers per 2 members"
+- round II Pilfer (thieves): shows "Steal 1 per minion you placed" · DROPPED line 2 "this round, this one included" · tight
+- round II Stash (thieves): shows "+3"
+- round II Beg (thieves): shows "+2 / per rival with more resources"
+- round II Plunder (thieves): shows "Steal 4followers and 4 resources" (taken: minion over the lines)
+- round II Sleight of Hand (thieves): shows "Steal a member up to 7 for a shop member" (taken: minion over the lines) · tight
+- round II Live Simply (trading): shows "+2 / +1 per rival with more members"
+- round II Spend Freely (trading): shows "+2 / +1followers per resource spent on a member"
+- round II Put By (trading): shows "+3"
+- round II Bid Farewell (trading): shows "Discard a member for its cost in followers" · tight
+- round II Give Away (trading): shows "Give a member to a rival for its cost in white" · tight
+- round III Harvest (yellow): shows "+3 / colors you choose"
+- round III Count Heads (yellow): shows "+1 per minion on the color with the most minions" · tight
+- round III Welcome Strangers (yellow): shows "+2 / +3 if you recruit a new color"
+- round III Paint Over (yellow): shows "+4, turn up to 8" · DROPPED line 2 "of rivals' resources yellow" · tight
+- round III Hold a Fair (yellow): shows "Per member color: +1followers and +1 of it"
+- round III Demand Tribute (yellow): shows "+5, each rival discards" (taken: minion over the lines) · tight
+- round III Try Out (market): shows "Discard a shop member / use its effect now"
+- round III Clear Out (market): shows "Discard 3 shop members / +1 of each one’s color"
+- round III Buy Secondhand (market): shows "+3, recruit from the discard pile, 2 less" · tight
+- round III Bring Back (market): shows "+3, recruit from the discard pile" · tight
+- round III Spread the Word (market): shows "+1followers per 2 members"
+- round III Salvage (market): shows "+7, recruit 2 from the discard pile" · tight
+- round III Pilfer (thieves): shows "Steal 1 per minion you placed" · DROPPED line 2 "this round, this one included" · tight
+- round III Stash (thieves): shows "+3"
+- round III Beg (thieves): shows "+2 / per rival with more resources"
+- round III Plunder (thieves): shows "Steal 4followers and 4 resources" (taken: minion over the lines)
+- round III Sleight of Hand (thieves): shows "Steal a member up to 7 for a shop member" · DROPPED line 2 "you give them one" · tight
+- round III Poach (thieves): shows "Recruit a rival’s member for free" (taken: minion over the lines)
+- round III Live Simply (trading): shows "+2 / +1 per rival with more members"
+- round III Spend Freely (trading): shows "+2 / +1followers per 2 spent on a member"
+- round III Put By (trading): shows "+3"
+- round III Bid Farewell (trading): shows "Discard a member for its cost in followers" · tight
+- round III Give Away (trading): shows "Give a member to a rival for its cost in white" · tight
+- round III Redeem (trading): shows "Turn all your white into followers"
+- round I Flock Together (echo): shows "+1 per minion on Green / this one included"
+- round I Follow Suit (echo): shows "Copy the previous action" (taken: minion over the lines)
+- round I Do It Again (echo): shows "Copy an action with your minion"
+- round I Borrow (red): shows "Recruit the cheapest for free, this round only" · DROPPED line 2 "it returns to the shop at round end" · tight
+- round I Call to Arms (red): shows "Recruit for free, costing up to 2 per minion" · DROPPED line 2 "you placed this round, this one included" · tight
+- round I Gather the Kin (red): shows "+3 / +4followers if you recruit a color you have" (taken: minion over the lines)
+- round I Live Simply (trading): shows "+2 / +1 per rival with more members"
+- round I Spend Freely (trading): shows "+2 / +1followers per 2 spent on a member"
+- round I Put By (trading): shows "+3"
+- round I Lie Abed (purple): shows "+4, take the Goes Last token" (taken: minion over the lines)
+- round I Keep Going (purple): shows "+2 per turn in a row, then go last"
+- round I Make Haste (purple): shows "+2, your next turn right after" · DROPPED note "purple: I +2 · II +3 · III +4"
+- round II Flock Together (echo): shows "+1 per minion on Green / this one included"
+- round II Follow Suit (echo): shows "Copy the previous action" (taken: minion over the lines)
+- round II Do It Again (echo): shows "Copy an action with your minion" (taken: minion over the lines)
+- round II Draw a Crowd (echo): shows "+3" (taken: minion over the lines) · tight
+- round II Imitate (echo): shows "Copy an action with a rival’s minion" (taken: minion over the lines)
+- round II Borrow (red): shows "Recruit the cheapest for free, this round only" · DROPPED line 2 "it returns to the shop at round end" · tight
+- round II Call to Arms (red): shows "Recruit for free, costing up to 2 per minion" · DROPPED line 2 "you placed this round, this one included" · tight
+- round II Gather the Kin (red): shows "+3 / +4followers if you recruit a color you have"
+- round II Promote (red): shows "+3, promote (cost up to +3)" (taken: minion over the lines)
+- round II Demote (red): shows "+3, demote (cost up to −3)" (taken: minion over the lines)
+- round II Live Simply (trading): shows "+2 / +1 per rival with more members"
+- round II Spend Freely (trading): shows "+2 / +1followers per resource spent on a member"
+- round II Put By (trading): shows "+3"
+- round II Bid Farewell (trading): shows "Discard a member for its cost in followers"
+- round II Give Away (trading): shows "Give a member to a rival for its cost in white" · tight
+- round II Lie Abed (purple): shows "+5, take the Goes Last token" · DROPPED note "purple: I +4 · II +5 · III +6"
+- round II Keep Going (purple): shows "+2 per turn in a row, then go last"
+- round II Make Haste (purple): shows "+3, your next turn right after" · DROPPED note "purple: I +2 · II +3 · III +4"
+- round II Bide Your Time (purple): shows "+1followers and +1 per minion left, then go last" · DROPPED line 2 "+1 purple" · tight
+- round II Flurry (purple): shows "+2, your next 2 turns right after" · tight
+- round III Flock Together (echo): shows "+1 per minion on Green / this one included"
+- round III Follow Suit (echo): shows "Copy the previous action" (taken: minion over the lines)
+- round III Do It Again (echo): shows "Copy an action with your minion" (taken: minion over the lines)
+- round III Draw a Crowd (echo): shows "+3" · DROPPED line 2 "+1 @f per minion on Green", note "this one included" · tight
+- round III Imitate (echo): shows "Copy an action with a rival’s minion" (taken: minion over the lines)
+- round III Replay All (echo): shows "Copy your actions on a color, not green" · tight
+- round III Borrow (red): shows "Recruit the cheapest for free, this round only" · DROPPED line 2 "it returns to the shop at round end" · tight
+- round III Call to Arms (red): shows "Recruit for free, costing up to 2 per minion" · DROPPED line 2 "you placed this round, this one included" · tight
+- round III Gather the Kin (red): shows "+3 / +4followers if you recruit a color you have"
+- round III Promote (red): shows "+3, promote (cost up to +3)"
+- round III Demote (red): shows "+3, demote (cost up to −3)"
+- round III Induct (red): shows "Recruit for free, costing 10 or less" (taken: minion over the lines) · tight
+- round III Live Simply (trading): shows "+2 / +1 per rival with more members"
+- round III Spend Freely (trading): shows "+2 / +1followers per 2 spent on a member"
+- round III Put By (trading): shows "+3"
+- round III Bid Farewell (trading): shows "Discard a member for its cost in followers"
+- round III Give Away (trading): shows "Give a member to a rival for its cost in white" · tight
+- round III Redeem (trading): shows "Turn all your white into followers" (taken: minion over the lines)
+- round III Lie Abed (purple): shows "+6, take the Goes Last token" · DROPPED note "purple: I +4 · II +5 · III +6"
+- round III Keep Going (purple): shows "+2 per turn in a row, then go last"
+- round III Make Haste (purple): shows "+4, your next turn right after" · DROPPED note "purple: I +2 · II +3 · III +4"
+- round III Burn the Candle (purple): shows "+4, +1 minion, then go last" · DROPPED line 2 "the extra minion this round" · tight
+- round III Bide Your Time (purple): shows "+1followers and +1 per minion left, then go last" (taken: minion over the lines) · tight
+- round III Flurry (purple): shows "+2, your next 2 turns right after" · tight

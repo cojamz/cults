@@ -1,0 +1,94 @@
+// @vitest-environment node
+// The Goes Last token (Cory, Nov 1 2:16pm and 2:35pm: "Let's just try it with the goes last token"). "Its holder places
+// the minions on it once every hand is empty. If someone takes it, the minions on it go back to their owner's hand."
+// Bide Your Time: "+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token and put your other
+// minions on it." Lie Abed: "+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your other
+// minions are placed after everyone else’s." (Nov 10; was "put your next minion on it"). Night Owls: "Once per round: after you place your last minion, take the Goes Last token with 1 more
+// minion on it." A pass because your hand is empty counts as a skipped turn (Sleepyhead, Gossip).
+import { describe, it, expect } from 'vitest';
+import { applyMove } from '../../../engine/v4/core.js';
+import { take } from './helpers.js';
+import { sceneQ } from './cards-helpers.js';
+
+const Q = ['yellow', 'red', 'purple', 'echo'];
+const turns = (...ps) => ps.map(p => ({ t: 'turn', p }));
+const pass = s => applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.id === 'pass')?.id ?? s.pending.options[0].id });
+const toPlace = s => { while (s.pending && s.pending.kind !== 'place') s = pass(s); return s; };
+const slot = (s, key) => s.pending.options.find(o => o.kind === 'slot' && o.label === key)?.id;
+const skips = s => s.log.filter(l => / turn is skipped/.test(l));
+function playOut(s) {
+  const placed = [];
+  const r = s.round;
+  while (s.round === r && s.pending) {
+    if (s.pending.kind === 'place') { placed.push(s.pending.player); s = applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.kind === 'slot').id }); }
+    else s = pass(s);
+  }
+  return { s, placed };
+}
+
+describe('the Goes Last token', () => {
+  it('Bide Your Time: takes the token, every minion left waits on it, and each pass while rivals place is a skip', () => {
+    const s = take(sceneQ({ quadrants: Q, round: 2, left: 3, members: [[], ['purple.gossip']], queue: [...turns(0, 1, 0, 1, 0, 1), { t: 'allPlaced' }] }), 'purple.lastcall');
+    expect(s.goesLast).toEqual({ round: 2, pid: 0 });
+    expect(s.queue.filter(t => t.t === 'turn' && t.p === 0).every(t => t.token)).toBe(true);
+    const { s: end, placed } = playOut(s);
+    expect(placed).toEqual([1, 1, 1, 0, 0]);
+    expect(skips(end)).toHaveLength(2);
+    expect(end.players[1].bonus).toBe(2); // Gossip
+  });
+
+  it('Lie Abed takes the token from a Bide Your Time: the caller’s minions go back to their hand and take their turns again', () => {
+    let s = take(sceneQ({ quadrants: Q, round: 2, left: 4, queue: [...turns(0, 1, 0, 1, 0, 1, 0), { t: 'allPlaced' }] }), 'purple.lastcall');
+    expect(s.goesLast.pid).toBe(0);
+    s = toPlace(s);
+    expect(s.pending.player).toBe(1);
+    s = applyMove(s, { player: 1, option: slot(s, 'Lie Abed') });
+    expect(s.goesLast).toEqual({ round: 2, pid: 1 });
+    expect(s.log.some(l => /takes the Goes Last token from P1, and the 3 minions on it go back to P1/.test(l))).toBe(true);
+    const { s: end, placed } = playOut(s);
+    // P1's minions take their own turns again; P2's other minions all wait on the token (Nov 10) and place last
+    expect(placed).toEqual([0, 0, 0, 1, 1]);
+    expect(skips(end).filter(l => /P1's turn/.test(l))).toHaveLength(0);
+  });
+
+  it('Lie Abed (Nov 10): all your other minions wait on the token and are placed after everyone else\'s', () => {
+    const s = take(sceneQ({ quadrants: Q, round: 2, left: 3, members: [[], ['purple.gossip']], queue: [...turns(0, 1, 0, 1, 0, 1), { t: 'allPlaced' }] }), 'purple.skip');
+    const { s: end, placed } = playOut(s);
+    expect(placed).toEqual([1, 1, 1, 0, 0]);
+    expect(skips(end)).toEqual(["P1's turn is skipped (Lie Abed).", "P1's turn is skipped (Lie Abed)."]); // both waiting minions' turns
+  });
+
+  it('Early Birds: Bide Your Time pays, nothing goes on the token, and the token stays with its holder', () => {
+    let s = sceneQ({ quadrants: Q, round: 2, left: 3, members: [['purple.earlybird']], queue: [...turns(0, 1, 0, 1), { t: 'allPlaced' }] });
+    s.goesLast = { round: 2, pid: 1 };
+    s = take(s, 'purple.lastcall');
+    expect(s.goesLast.pid).toBe(1);
+    expect(s.players[0].bonus).toBe(2);
+    // none of the Early Birds player's minions go on it (the holder's own minions wait on it, as every holder's do: Nov 12)
+    expect(s.queue.some(t => t.t === 'turn' && t.p === 0 && t.token)).toBe(false);
+  });
+});
+
+// Cory, Nov 14 ("why is this happening still"): his seat showed one minion in hand beside the token. Keep Going took the
+// token, then Extra Hand added a minion after the take, and that minion's turn was not on the token. Every minion its
+// holder has left waits on the token, whenever it was gained (Nov 12), and a turn moved up to now that the token then
+// sends to the end isn't "now" any more.
+describe('the Goes Last token holds minions gained after the take', () => {
+  it('a minion added after the token is taken waits on it too, and places after every rival', () => {
+    let s = take(sceneQ({ quadrants: Q, round: 2, left: 2, queue: [...turns(0, 1, 0, 1), { t: 'allPlaced' }] }), 'purple.skip');
+    s = toPlace(s);
+    // a new minion for the holder, as Extra Hand adds one, sitting before a rival's turn
+    const at = s.queue.findIndex(t => t.t === 'turn' && t.p === 1);
+    s.queue.splice(at + 1, 0, { t: 'turn', p: 0 });
+    s.players[0].left += 1;
+    s.queue.splice(at + 2, 0, { t: 'turn', p: 1 });
+    s.players[1].left += 1;
+    s = applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.kind === 'slot').id });
+    const close = s.queue.findIndex(t => t.t === 'allPlaced');
+    const mine = s.queue.slice(0, close).filter(t => t.t === 'turn' && t.p === 0);
+    expect(mine.length).toBe(2);
+    expect(mine.every(t => t.token)).toBe(true);
+    const { placed } = playOut(s);
+    expect(placed).toEqual([1, 1, 0, 0]);
+  });
+});

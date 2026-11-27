@@ -1,0 +1,382 @@
+[
+ {
+  "name": "Big Tent",
+  "C4": 1,
+  "why": "A quiet game-end goal of one member per color; fine to chase."
+ },
+ {
+  "name": "Sweet Nothings",
+  "C4": 2,
+  "why": "Hand out 3 silver and take 6 of any colors; rivals get a gift too."
+ },
+ {
+  "name": "Promote",
+  "C4": 1,
+  "why": "Trading up a rival's member stings, but they get yours back and can see the space coming."
+ },
+ {
+  "name": "Hoarder",
+  "C4": 2,
+  "why": "Turning everything white before Cash In is a big setup moment the owner plans for."
+ },
+ {
+  "name": "Regular",
+  "C4": 1,
+  "why": "Small blue drip when buying followers; fine."
+ },
+ {
+  "name": "Stash",
+  "C4": 1,
+  "why": "Resources plus a follower if you recruit; solid, unremarkable."
+ },
+ {
+  "name": "Gather",
+  "C4": 1,
+  "why": "Resources plus a recruit bonus; fine."
+ },
+ {
+  "name": "Money Changers",
+  "C4": 1,
+  "why": "Small white trickle off everyone's follower buys; fine."
+ },
+ {
+  "name": "Build Up",
+  "C4": 1,
+  "why": "Plain resources; does its job."
+ },
+ {
+  "name": "Kidnapper",
+  "C4": 0,
+  "why": "Takes the leader's member on recruit and again every round start, with no answer; feels like being robbed."
+ },
+ {
+  "name": "Tourist",
+  "C4": 2,
+  "why": "Paying followers every round for a spread of colors feels good each round start."
+ },
+ {
+  "name": "Shopaholics",
+  "C4": 2,
+  "why": "Recruiting twice every turn feels powerful."
+ },
+ {
+  "name": "Sleep In",
+  "C4": 1,
+  "why": "Big purple, going last; fine."
+ },
+ {
+  "name": "Polish",
+  "C4": 1,
+  "why": "A simple converter; fine."
+ },
+ {
+  "name": "Splurge",
+  "C4": 2,
+  "why": "Buying an expensive member in round II for a pile of followers is a big moment."
+ },
+ {
+  "name": "Timekeeper",
+  "C4": 1,
+  "why": "Game-end points per purple member; fine."
+ },
+ {
+  "name": "Recluse",
+  "C4": 1,
+  "why": "A small-cult game-end bonus; fine."
+ },
+ {
+  "name": "Gardeners",
+  "C4": 1,
+  "why": "Filling missing colors each round; useful, quiet."
+ },
+ {
+  "name": "Encore",
+  "C4": 2,
+  "why": "Doubling a big On Recruit is a combo moment."
+ },
+ {
+  "name": "Anarchist",
+  "C4": 0,
+  "why": "Swaps a rival's member away every round and they can't stop it; being singled out repeatedly feels bad."
+ },
+ {
+  "name": "Allowance",
+  "C4": 1,
+  "why": "Resources plus a recruit bonus; fine."
+ },
+ {
+  "name": "Caravan",
+  "C4": 1,
+  "why": "A steady resource engine; fine."
+ },
+ {
+  "name": "Volunteer",
+  "C4": 1,
+  "why": "A cheap point; fine filler."
+ },
+ {
+  "name": "Foster Parents",
+  "C4": 1,
+  "why": "Pays off swaps and steals; situational but fine."
+ },
+ {
+  "name": "Recruit Twice",
+  "C4": 2,
+  "why": "Two recruits in a turn feels great."
+ },
+ {
+  "name": "Cover",
+  "C4": 1,
+  "why": "Copying an empty space is handy; fine."
+ },
+ {
+  "name": "Harvest",
+  "C4": 1,
+  "why": "Resources in your choice of colors; fine."
+ },
+ {
+  "name": "Cash In",
+  "C4": 2,
+  "why": "Turning a white stockpile into followers is the payoff turn."
+ },
+ {
+  "name": "Wallflower",
+  "C4": 2,
+  "why": "Doubling every copy makes copy turns feel big."
+ },
+ {
+  "name": "Roadie",
+  "C4": 1,
+  "why": "Green per green member each round; fine."
+ },
+ {
+  "name": "Gossip",
+  "C4": 1,
+  "why": "Followers off skipped turns; fine."
+ },
+ {
+  "name": "Smooth Talkers",
+  "C4": 1,
+  "why": "Silver pays for anything; convenient, not a moment."
+ },
+ {
+  "name": "Peek",
+  "C4": 1,
+  "why": "Arranging the pile and picking from it; fine."
+ },
+ {
+  "name": "Makeover",
+  "C4": 1,
+  "why": "Rearranging resources; fine."
+ },
+ {
+  "name": "Toastmaster",
+  "C4": 1,
+  "why": "A follower per Silver space; fine."
+ },
+ {
+  "name": "Alchemists",
+  "C4": 1,
+  "why": "Resources count as any when recruiting; convenient."
+ },
+ {
+  "name": "Shift Crew",
+  "C4": 1,
+  "why": "Plain points; fine."
+ },
+ {
+  "name": "Desperado",
+  "C4": 1,
+  "why": "Catch-up steals take a bit more resources; mild sting, fine."
+ },
+ {
+  "name": "Recruiter",
+  "C4": 1,
+  "why": "Red per recruit; fine."
+ },
+ {
+  "name": "Snobs",
+  "C4": 1,
+  "why": "Game-end points per blue member; fine."
+ },
+ {
+  "name": "Heiresses",
+  "C4": 1,
+  "why": "One white burst; fine."
+ },
+ {
+  "name": "Patroness",
+  "C4": 1,
+  "why": "Followers when shop members are sent down; fine."
+ },
+ {
+  "name": "Caterer",
+  "C4": 1,
+  "why": "Silver when silver is gifted; fine."
+ },
+ {
+  "name": "Critic",
+  "C4": 1,
+  "why": "Followers when rivals take blue; fine."
+ },
+ {
+  "name": "Impressionist",
+  "C4": 1,
+  "why": "Resources off copies; fine."
+ },
+ {
+  "name": "Extra Hand",
+  "C4": 2,
+  "why": "An extra minion for the round feels powerful."
+ },
+ {
+  "name": "Patriarch",
+  "C4": 1,
+  "why": "Game-end points for a big cult; fine."
+ },
+ {
+  "name": "Envy",
+  "C4": 1,
+  "why": "A catch-up silver bump; fine."
+ },
+ {
+  "name": "Misers",
+  "C4": 1,
+  "why": "Game-end points for held white; fine."
+ },
+ {
+  "name": "Brokers",
+  "C4": 1,
+  "why": "A follower on top of White followers; fine."
+ },
+ {
+  "name": "Exchange",
+  "C4": 1,
+  "why": "Resources into followers; fine."
+ },
+ {
+  "name": "Out of Style",
+  "C4": 1,
+  "why": "Clearing a color from the shop; can deny a rival, but they see it."
+ },
+ {
+  "name": "New Blood",
+  "C4": 1,
+  "why": "Bonus for a new color recruit; fine."
+ },
+ {
+  "name": "Drifters",
+  "C4": 1,
+  "why": "A flexible color count; fine."
+ },
+ {
+  "name": "Dyer",
+  "C4": 1,
+  "why": "Yellow per color held each round; fine."
+ },
+ {
+  "name": "Cashier",
+  "C4": 2,
+  "why": "An instant Cash In on recruit is a satisfying burst."
+ },
+ {
+  "name": "Clerk",
+  "C4": 0,
+  "why": "One red per round for 5 resources is dull to own; nothing to enjoy."
+ },
+ {
+  "name": "Doppelganger",
+  "C4": 2,
+  "why": "Becoming a copy of your best member is a clever moment."
+ },
+ {
+  "name": "Stunt Double",
+  "C4": 1,
+  "why": "Repeating the action you just took; fine."
+ },
+ {
+  "name": "Dabblers",
+  "C4": 1,
+  "why": "Two wild members for the count; fine."
+ },
+ {
+  "name": "Reprise",
+  "C4": 1,
+  "why": "Copying a space you're on; fine."
+ },
+ {
+  "name": "Old Money",
+  "C4": 1,
+  "why": "Game-end points per white member; fine."
+ },
+ {
+  "name": "Shake Down",
+  "C4": 0,
+  "why": "The victim picks their own punishment, pay or lose a member; feels bad."
+ },
+ {
+  "name": "Bell Ringer",
+  "C4": 0,
+  "why": "The trigger is so tangled it almost never fires knowingly; no fun to own."
+ },
+ {
+  "name": "Greatest Hits",
+  "C4": 2,
+  "why": "Firing every On Recruit again is a big combo turn."
+ },
+ {
+  "name": "Jack-of-All-Trades",
+  "C4": 1,
+  "why": "Yellow fills sets; fine."
+ },
+ {
+  "name": "Courier",
+  "C4": 1,
+  "why": "Resources on back-to-back turns; fine."
+ },
+ {
+  "name": "Estate Sale",
+  "C4": 1,
+  "why": "Cast out a member for white; fine."
+ },
+ {
+  "name": "Landlord",
+  "C4": 1,
+  "why": "Steady white; fine."
+ },
+ {
+  "name": "Proselytizers",
+  "C4": 1,
+  "why": "A follower per recruit; fine."
+ },
+ {
+  "name": "Hold Up",
+  "C4": 1,
+  "why": "Skipping the next turn is a fun jab, and the victim gets the turn later."
+ },
+ {
+  "name": "Party Gifts",
+  "C4": 2,
+  "why": "Gifts to rivals pay you followers; everyone's happy."
+ },
+ {
+  "name": "Harmonist",
+  "C4": 1,
+  "why": "Game-end points per full set; fine."
+ },
+ {
+  "name": "Busker",
+  "C4": 1,
+  "why": "Steady green; fine."
+ },
+ {
+  "name": "Melting Pot",
+  "C4": 1,
+  "why": "Resources per member color; fine."
+ },
+ {
+  "name": "Hawker",
+  "C4": 2,
+  "why": "Rivals pay you extra or you get it free; a fun win-either-way moment."
+ }
+]

@@ -1,0 +1,48 @@
+<title>Economy Settings Table</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap">
+<style>
+/* one wide table, settings as rows, the feel line first in each row */
+:root{--bg:#f6f5f2;--fg:#1d1b22;--mute:#615d6b;--line:#dcd8e2;--head:#ebe8f0;--accent:#6b3fa0;--good:#2f7d4f;--bad:#b0443a;
+--display:"Space Grotesk",system-ui,sans-serif;--body:Inter,system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17151c;--fg:#ece9f2;--mute:#a49fae;--line:#35303d;--head:#231f2a;--accent:#b98ce8;--good:#6cc392;--bad:#e5857b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17151c;--fg:#ece9f2;--mute:#a49fae;--line:#35303d;--head:#231f2a;--accent:#b98ce8;--good:#6cc392;--bad:#e5857b;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--display);font-size:1.6rem;margin:0 0 6px;text-wrap:balance}
+p{max-width:65ch;margin:0 0 10px;color:var(--mute)}
+.wrap{overflow-x:auto;margin:16px 0 8px;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;min-width:900px;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{background:var(--head);font-family:var(--display);font-weight:500;font-size:.8rem;letter-spacing:.02em;color:var(--mute)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--bg);min-width:170px;max-width:200px}
+th:first-child{background:var(--head)}
+td.feel{text-align:left;min-width:230px;max-width:280px}
+.name{font-family:var(--display);font-weight:700}
+.cost{display:block;color:var(--accent);font-size:.85rem;margin-top:2px}
+.sub td{color:var(--mute)}
+tr.group td{background:var(--head);text-align:left;font-family:var(--display);font-size:.8rem;color:var(--mute)}
+.up{color:var(--good)} .dn{color:var(--bad)}
+h2{font-family:var(--display);font-size:1.1rem;margin:22px 0 6px}
+ul{max-width:65ch;padding-left:18px;margin:0;color:var(--mute)}
+</style>
+<h1>Economy settings, side by side</h1>
+<p>60 games per setting with Hard bots, 4 players, 10-card decks, and each space's +1 only for the first player ever to take it. Every setting played the same 60 deals. Spaces give what they print in every row. Numbers are per player per game.</p>
+<p>Example member for the cost line: <b>Purists</b> ("Round End: if your members have 2 or fewer colors, +3 followers."), printed 2 red + 1 any.</p>
+<div class="wrap"><table>
+<thead><tr><th>Setting</th><th>How it plays</th><th>Members bought<br>round I · II · III</th><th>Members at end</th><th>Shop looks with no member affordable</th><th>Unspent resources at round end</th><th>Followers from follower cards</th><th>Final followers</th><th>Winner's lead</th><th>Winner had 5 or fewer members</th></tr></thead>
+<tbody>
+<tr class="group"><td colspan="10">Member prices</td></tr>
+<tr><td><span class="name">Today</span><span class="cost">Purists: 3 red + 3 any</span></td><td class="feel">About 1 in 3 times you look at the shop, you can't afford any member. A third of your score comes from the follower cards, mostly in round III.</td><td>1.8 · 2.4 · 3.0</td><td>5.0</td><td>36%</td><td>5.1</td><td>34%</td><td>70</td><td>12</td><td>37%</td></tr>
+<tr><td><span class="name">Richer prices</span><span class="cost">Purists: 4 red + 4 any</span></td><td class="feel">Members are rare: 1 in round I, about 2 a round after. Over half the time nothing in the shop is affordable, so turns go to the follower cards. Small cults win 4 games in 5.</td><td class="dn">1.0 · 1.8 · 2.2</td><td class="dn">3.2</td><td class="dn">55%</td><td>4.9</td><td class="up">44%</td><td>69</td><td>8</td><td class="up">81%</td></tr>
+<tr><td><span class="name">In between</span><span class="cost">Purists: 4 red + 3 any</span></td><td class="feel">About 1 member fewer than today. 4 in 10 shop looks find nothing affordable. Two thirds of winners hold 5 or fewer members.</td><td class="dn">1.4 · 2.0 · 2.4</td><td class="dn">3.9</td><td class="dn">44%</td><td>5.3</td><td class="up">40%</td><td>70</td><td>10</td><td class="up">65%</td></tr>
+<tr><td><span class="name">One less color</span><span class="cost">Purists: 2 red + 3 any</span></td><td class="feel">About 1 member more than today, half a member more each round. Only 1 in 4 shop looks finds nothing affordable. Which colors you hold matters less when you pay.</td><td class="up">2.3 · 2.9 · 3.5</td><td class="up">6.0</td><td class="up">24%</td><td>5.4</td><td>30%</td><td>72</td><td>11</td><td>35%</td></tr>
+<tr class="group"><td colspan="10">The first player's +1, each at today's prices</td></tr>
+<tr><td><span class="name">Unclaimed +1 grows</span><span class="cost">An untaken space's +1 is +2 in round II, +3 in round III</span></td><td class="feel">Plays almost like today: nearly every round I space is taken in round I, so few +1s are left to grow.</td><td>1.8 · 2.3 · 3.1</td><td>5.0</td><td>34%</td><td>5.3</td><td>35%</td><td>72</td><td>9</td><td>45%</td></tr>
+<tr><td><span class="name">First player gets +2</span><span class="cost">The first player on a space gets +2 instead of +1</span></td><td class="feel">A little more money in rounds I and II, a few more early members; round III plays like today.</td><td>2.0 · 2.6 · 3.0</td><td>5.1</td><td>33%</td><td>5.3</td><td>34%</td><td>73</td><td>9</td><td>48%</td></tr>
+</tbody></table></div>
+<p>Green and red mark the direction against today where the 60 games agree. The last column can move about 10 points by chance alone.</p>
+<h2>What these numbers can't tell you</h2>
+<ul>
+<li>These are bot counts, not feel. They say how often you can buy something and where the score comes from, not whether a turn was fun or a choice felt hard.</li>
+<li>The Nov 7 economy test read feel by having judges compare whole games of two settings on the same deal; the same can be done here.</li>
+</ul>

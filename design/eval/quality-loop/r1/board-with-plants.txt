@@ -1,0 +1,232 @@
+
+## Gold (gold) · resource: gold
+contest: {"label":"Most gold","counts":"the gold you hold when the round ends"}
+  I  Kickback: +3 gold, and +1 gold to a rival you choose.
+  I  Golden Years: +2 gold in round I, +4 in round II, +6 in round III.
+  I  Intro Offer: Your next member costs 4 less, off any part of its cost.
+  II  Collect Debts: Steal up to 3 gold from rivals, split as you choose.
+  II  Tithe: +1 gold per member you have.
+  III  Double Down: Double your gold.
+    · Banker [5 gold + 4 any, worth 1] On Recruit: +3 gold. Round Start: +3 gold.
+    · Prospector [3 gold + 2 any, worth 1] When an action gains you gold, +1 gold.
+    · Tax Collector [5 gold + 4 any, worth 1] Whenever a rival buys followers, +1 gold.
+    · Merchant [5 gold + 2 any, worth 1] Whenever anyone recruits a gold member, +1 gold.
+    · Penny Pincher [5 gold + 0 any, worth 1] Gold you spend on members counts double.
+    · Underdog [6 gold + 3 any, worth 1] While a rival has more gold than you, double your gold gains.
+    · Alchemists [5 gold + 2 any, worth 1] Whenever an action gains you another color, +1 gold.
+    · Speculator [5 gold + 4 any, worth 1] On Use, once per game: double your gold.
+    · Tycoon [5 gold + 2 any, worth 1] Game End: +1 follower per 2 gold.
+    · Treasurer [5 gold + 0 any, worth 1] On Recruit: +1 gold per member you have, this one included.
+    · Envy [4 gold + 2 any, worth 1] Round Start: gain gold equal to the most gold a rival holds, minus your gold.
+
+## Red (red) · resource: red
+contest: {"label":"Most red","counts":"the red you hold when the round ends"}
+  I  Tryout: Use the On Recruit effect of a shop member; it stays in the shop. +2 red.
+  I  Gather: +2 red in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.
+  I  Walk-In: Recruit the top member of the pile. Each rival +1 red. +1 red.
+  II  Promote: Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 more. +3 red.
+  II  Demote: Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 less. +3 red.
+  III  Initiation: Recruit a member in the shop costing 8 or less, for free. +1 red.
+    · Triplets [2 red + 1 any, worth 3, counts as 3] Worth 3 followers.
+    · Body Snatchers [4 red + 2 any, worth 2, counts as 2] Round Start: swap one of your members with a rival's member of the same cost.
+    · Volunteer [1 red + 0 any, worth 1] Worth 1 follower.
+    · Mentor & Protégés [6 red + 3 any, worth 3, counts as 3] On Recruit: recruit the cheapest member in the shop.
+    · Proselytizers [4 red + 4 any, worth 2, counts as 2] Whenever you recruit, +1 follower.
+    · Mob [8 red + 4 any, worth 4, counts as 4] Round End: +2 followers per rival with fewer red members than you.
+    · Recruiter [5 red + 1 any, worth 1] Whenever you recruit a member, +1 red.
+    · Host [3 red + 2 any, worth 1] On Recruit: +1 red per 2 members you have. Round Start: +1 red per 2 members you have.
+    · Patriarch [4 red + 2 any, worth 1] Game End: +1 follower per 2 members you have.
+    · Greeters [2 red + 1 any, worth 2, counts as 2] Your On Recruits also give +1 of that member’s color.
+    · Deprogrammers [2 red + 1 any, worth 4, counts as 4] Whenever you take a rival’s member out of their cult, they lose 1 follower.
+    · Panel [5 red + 2 any, worth 3, counts as 3] On Recruit: promote or demote another of your members.
+    · Loyalists [3 red + 2 any, worth 3, counts as 3] Your other members can’t be swapped.
+    · Headhunter [4 red + 2 any, worth 1] On Use, once per game: swap a rival’s member with a shop member that costs as much or more.
+    · Clerk [3 red + 2 any, worth 1] Round Start: +1 red.
+
+## Purple (purple) · resource: purple
+contest: {"label":"Most purple","counts":"the purple you hold when the round ends"}
+  I  Sleep In: +4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your next minion is placed after everyone else’s.
+  I  Hold Up: +2 purple in round I, +3 in round II, +4 in round III. Whoever’s turn is next skips it, even yours.
+  I  Right Away: +1 purple in round I, +2 in round II, +3 in round III. Your next turn comes right after this one.
+  II  Last Call: +1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token: your other minions are placed after everyone else’s.
+  II  Crunch Time: +2 purple. Your next two turns come right after this one.
+  III  Overtime: +3 purple. +1 minion this round.
+    · Go-Getter [5 purple + 2 any, worth 1] On Use, once per game: +1 minion, placed right after this turn.
+    · Late Risers [5 purple + 2 any, worth 2, counts as 2] Round Start: if you have the fewest followers (ties count), +1 minion, placed before anyone else.
+    · Courier [4 purple + 2 any, worth 1] Whenever you take two turns in a row, +1 of each other color.
+    · Clockmakers [3 purple + 2 any, worth 2, counts as 2] Round Start: take your first two turns in a row.
+    · Night Watch [3 purple + 2 any, worth 2, counts as 2] Whenever a rival takes the Goes Last token, +1 follower per minion on it.
+    · Night Owls [7 purple + 1 any, worth 2, counts as 2] From round II: after your last minion, +1 minion, placed right away.
+    · Early Birds [3 purple + 0 any, worth 2, counts as 2] Your turns can’t be skipped.
+    · Bouncers [2 purple + 2 any, worth 2, counts as 2] On Recruit: the next two rivals’ turns are skipped.
+    · Pocket Watch [1 purple + 0 any, worth 1] Whenever a player’s turn is skipped, +2 purple.
+    · Gossip [4 purple + 2 any, worth 1] Whenever a player’s turn is skipped, +1 follower.
+    · Extra Shift [6 purple + 3 any, worth 1] On Recruit: +1 minion this round.
+    · Timekeeper [2 purple + 2 any, worth 1] Game End: +1 follower per purple member you have.
+    · Closer [3 purple + 2 any, worth 1] When you place the last minion of the round: +4 purple.
+    · Hot Streak [3 purple + 2 any, worth 1] On Use, once per game: +3 followers per turn in a row you’ve taken just before this one.
+    · Shift Crew [3 purple + 1 any, worth 4, counts as 4] Worth 4 followers.
+    · Night Shift [4 purple + 2 any, worth 1] When a turn after a skipped turn is the second in a row for the player holding the Goes Last token, that player's next minion counts as yours unless it was placed before the skip.
+
+## Silver (silver) · resource: silver
+contest: {"label":"Most silver","counts":"the silver you hold when the round ends"}
+  I  Toast: +3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.
+  I  Polish: Turn 2 of your silver into 4 of any colors.
+  I  Party Gifts: Give rivals up to 3 silver from the bank, split as you choose. +2 followers per silver you give.
+  II  Potluck: +2 silver. Each rival gives you 1 resource of their choice, then gains 2 silver.
+  II  Sweet Talk: +3 silver. Then turn as many of your silver as you want into other colors.
+  III  Largesse: Give rivals up to 10 silver from the bank, split as you choose. +1 follower per silver you give.
+    · Hangers-On [5 silver + 4 any, worth 2, counts as 2] Whenever a rival gives you something, +1 more of it.
+    · Godparent [4 silver + 1 any, worth 1] On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.
+    · Gift Wrapper [4 silver + 2 any, worth 1] Whenever you give rivals silver, +1 follower.
+    · Hostesses [4 silver + 2 any, worth 2, counts as 2] On Recruit and Round Start: give each rival 1 silver. +1 follower for each.
+    · Caterer [3 silver + 2 any, worth 1] Whenever silver is gifted, +1 silver.
+    · Toastmaster [2 silver + 1 any, worth 1] Whenever you take a Silver space, +1 follower.
+    · Debutantes [5 silver + 4 any, worth 2, counts as 2] On Use, once per game: double your silver. Each rival +2 silver.
+    · Smooth Talkers [6 silver + 5 any, worth 2, counts as 2] Your silver pays for any color.
+    · Philanthropist [4 silver + 2 any, worth 1] On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.
+    · Polisher [2 silver + 1 any, worth 1] On Use, once per game: turn up to 3 silver into 2 of any colors each.
+    · Collector [4 silver + 2 any, worth 1] Whenever a rival recruits paying silver, +1 silver.
+    · Creditor [4 silver + 2 any, worth 1] On Use, once per round: a rival you choose gives you 2 followers, then gains 3 silver.
+    · Debt Collectors [5 silver + 3 any, worth 2, counts as 2] On Use, once per game: each rival gives you 2 silver, if they have it.
+    · High Society [5 silver + 3 any, worth 2, counts as 2] Whenever a rival takes a Silver space, +1 follower.
+
+## Yellow (yellow) · resource: yellow
+contest: {"label":"Most yellow","counts":"the yellow you hold when the round ends"}
+  I  Harvest: +3 in round I, +4 in round II, +5 in round III, in colors you choose.
+  I  Leaders' Tax: Choose a color: +1 of it per rival with a minion on its spaces. +1 yellow.
+  I  New Blood: +2 yellow. This turn, if you recruit a member of a color none of your members have, +2 followers in round I, +3 in round II, +4 in round III.
+  II  Big New Blood: +4 yellow. This turn, if you recruit a member of a color none of your members have, +5 followers.
+  II  Melting Pot: +2 yellow. Count the different colors of your members, and gain that many in colors you choose.
+  III  Makeover: +4 yellow, then rearrange your resources into any mix of colors.
+    · Gardener [3 yellow + 0 any, worth 2, counts as 2] On Recruit: +1 of each color you have none of. Round Start: +1 of each color you have none of.
+    · Customs Officer [3 yellow + 3 any, worth 1] Whenever a rival steals or changes any of your resources, +1 yellow.
+    · Go-Between [3 yellow + 1 any, worth 1] Whenever a space gives you resources, you may change 1 of them to any color.
+    · Tourist [4 yellow + 3 any, worth 1] On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.
+    · Tinker [4 yellow + 2 any, worth 1] On Recruit: swap up to 3 of your resources one for one. Round Start: swap up to 3 of your resources one for one.
+    · Harmonist [5 yellow + 2 any, worth 1] Game End: +1 follower per full set you hold.
+    · Matchmaker [4 yellow + 2 any, worth 1] Whenever you recruit a member of a color none of your members have, +2 in colors you choose and +1 follower.
+    · Dyer [5 yellow + 2 any, worth 1] On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.
+    · Meddler [4 yellow + 2 any, worth 1] On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.
+    · Drifters [3 yellow + 0 any, worth 2, counts as 2] On Recruit: choose a color; these count as a member of that color.
+    · Leveler [5 yellow + 3 any, worth 1] On Use, once per round: choose a color; 1 of each rival's biggest color becomes it.
+    · Big Tent [4 yellow + 3 any, worth 1] Game End: +2 followers per color you have exactly one member of.
+    · Book Cookers [6 yellow + 4 any, worth 3, counts as 3] On Use, once per game: rearrange your resources into any mix of colors.
+    · Caravan [5 yellow + 4 any, worth 3, counts as 3] On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.
+    · Tastemaker [4 yellow + 2 any, worth 1] Whenever you change rivals' resources, +1 follower.
+    · Spice Route [4 yellow + 2 any, worth 1] Game End: +1 follower per color you hold 3 or more of.
+    · Guest Book [1 yellow + 0 any, worth 1] Whenever you recruit a member of a color none of your members have, +2 yellow.
+
+## Blue (market) · resource: blue
+contest: {"label":"Most blue","counts":"the blue you hold when the round ends"}
+  I  Savings: +2 blue in round I, +3 in round II, +4 in round III. Before you recruit, you may send one shop member to the bottom of the pile, then refill.
+  I  Out of Style: Send every shop member of one color to the bottom of the pile, then refill. +1 blue per member sent. +1 blue.
+  I  Peek: Look at the top 4 of the pile and put them back in any order. This turn your recruit may be one of them. +2 blue in round I, +4 in round II, +6 in round III.
+  II  Recruit Twice: Recruit twice this turn. +3 blue.
+  II  Bury: Send a shop member to the bottom of the pile, then refill. Gain blue equal to half its cost, rounded down. +1 blue.
+  III  Spree: Recruit 3 times this turn. +5 blue.
+    · Connoisseurs [2 blue + 2 any, worth 2, counts as 2] Whenever you recruit a blue member, +1 blue.
+    · Hawker [5 blue + 3 any, worth 1] On Use, once per round: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free.
+    · Bargain Bin [1 blue + 0 any, worth 1] Whenever members go to the bottom of the pile, +1 blue.
+    · Patroness [6 blue + 2 any, worth 1] Whenever shop members go to the bottom of the pile, +1 follower.
+    · Snobs [4 blue + 2 any, worth 2, counts as 2] Game End: +1 follower per blue member you have.
+    · Window Shopper [3 blue + 2 any, worth 1] On Recruit and Round Start: send 2 shop members to the bottom of the pile. +1 of each one’s color.
+    · Restockers [3 blue + 1 any, worth 2, counts as 2] On Use, once per game: send the whole shop to the bottom of the pile, then refill.
+    · Shopaholics [4 blue + 5 any, worth 3, counts as 3] You can recruit twice each turn.
+    · Window Dressers [3 blue + 1 any, worth 3, counts as 3] On Recruit: send 3 shop members to the bottom of the pile, then refill.
+    · Plus-Ones [3 blue + 1 any, worth 2, counts as 2] On Recruit: recruit again this turn.
+    · Doormen [3 blue + 5 any, worth 2, counts as 2] On Use, once per round: send a rival’s member to the bottom of the pile. Give them a shop member; it can cost up to 2 less, or any amount more.
+    · Regular [2 blue + 1 any, worth 1] Whenever you buy followers, +1 blue.
+    · Trendsetters [3 blue + 1 any, worth 3, counts as 3] Whenever you recruit a member, send 1 shop member to the bottom of the pile, then refill.
+    · Critic [2 blue + 1 any, worth 1] Whenever a rival recruits a blue member, +1 follower.
+    · Scavenger [4 blue + 2 any, worth 1] Whenever a rival sends shop members to the bottom of the pile, you may recruit one of them, paying its cost.
+
+## Magenta (thieves) · resource: magenta
+contest: {"label":"Most magenta","counts":"the magenta you hold when the round ends"}
+  I  Help Yourself: Steal 3 resources in round I, 4 in round II, 5 in round III, split among rivals as you choose.
+  I  Stash: +2 magenta in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.
+  I  Lie Low: Steal 1 resource. Rivals can’t steal from you this round. +1 magenta.
+  II  Heist: Steal 3 followers from a rival. +1 magenta.
+  II  Shake Down: Choose a rival. They choose one of their members costing 5 or less, then pay you its cost or you steal it. +1 magenta.
+  III  Poach: Recruit a rival’s member you choose, for free. +1 magenta.
+    · Cutpurse [2 magenta + 1 any, worth 1] On Recruit: steal 1 resource from the rival with the most resources. Round Start: steal 1 resource from the rival with the most resources.
+    · Accomplice [2 magenta + 1 any, worth 1] On Recruit: steal 3 resources.
+    · Grifter [3 magenta + 5 any, worth 1] On Recruit: steal 1 resource per 2 members you have.
+    · Sticky Fingers [3 magenta + 1 any, worth 1] Your steals take 1 more resource.
+    · Second-Story Man [4 magenta + 3 any, worth 1] Round End: before contests are scored, steal 2 resources from one rival.
+    · Desperado [3 magenta + 2 any, worth 1] While you have the fewest followers (ties count), your steals take 2 more resources.
+    · Robin Hood [3 magenta + 1 any, worth 1] Whenever you steal from the player with the most followers, +1 follower.
+    · Extortionist [6 magenta + 2 any, worth 1] On Recruit: steal 2 resources from the rival with the most resources. Round Start: steal 2 resources from the rival with the most resources.
+    · Bodyguards [6 magenta + 2 any, worth 2, counts as 2] Rivals can’t steal from you.
+    · Crew [2 magenta + 1 any, worth 2, counts as 2] Worth 2 followers.
+    · Double Agent [4 magenta + 4 any, worth 1] On Recruit: give this member to a rival and recruit one of theirs.
+    · Fixer [4 magenta + 2 any, worth 1] On Use, once per game: spend magenta equal to a rival’s member’s cost to steal it.
+    · Kingpin [2 magenta + 2 any, worth 1] Game End: +1 follower per magenta member you have.
+    · Kidnapper [6 magenta + 2 any, worth 1] On Recruit and Round Start: steal the cheapest member of the rival with the most members.
+    · Snitch [3 magenta + 1 any, worth 1] Whenever a rival steals from you, they lose 1 follower.
+    · Shoplifter [4 magenta + 3 any, worth 1] Whenever you recruit, steal 1 resource.
+    · Fence [3 magenta + 2 any, worth 1] Whenever a rival steals from you, +2 magenta.
+
+## White (trading) · resource: white
+contest: {"label":"Most white","counts":"the white you hold when the round ends"}
+  I  Allowance: +2 white in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.
+  I  Splurge: This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +1 white.
+  I  Exchange: +1 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.
+  II  Farewell: Cast out one of your members to the bottom of the pile, gain followers equal to its cost. +1 white.
+  II  Estate Sale: Cast out one of your members to the bottom of the pile, gain white equal to its cost. +1 white.
+  III  Cash In: Turn all your white into followers. +1 white.
+    · Recluse [3 white + 1 any, worth 1] Game End: +2 followers per rival with more members than you.
+    · Landlord [3 white + 1 any, worth 1] On Recruit: +2 white. Round Start: +2 white.
+    · Heiresses [5 white + 4 any, worth 2, counts as 2] On Use, once per game: +1 white per member you have.
+    · Brokers [3 white + 2 any, worth 3, counts as 3] Whenever a White action gives you followers, +1 follower.
+    · Exporters [3 white + 4 any, worth 2, counts as 2] Whenever you recruit a non-white member, +1 white.
+    · Misers [4 white + 3 any, worth 2, counts as 2] Game End: +1 follower per 2 white you hold.
+    · Raiders [3 white + 2 any, worth 2, counts as 2] On Use, once per game: steal 4 followers from a rival. Pay them 2 white.
+    · Cashier [3 white + 0 any, worth 1] On Recruit: turn all your white into followers.
+    · Undertaker [3 white + 2 any, worth 1] Whenever you cast out one of your members, +2 followers.
+    · Money Changers [3 white + 1 any, worth 2, counts as 2] Whenever any player buys followers, +1 white.
+    · Martyrs [3 white + 1 any, worth 3, counts as 3] Whenever this member leaves your cult, gain followers equal to its cost.
+    · Old Money [2 white + 4 any, worth 1] Game End: +1 follower per white member you have.
+    · Hoarder [5 white + 3 any, worth 1] On Use, once per game: turn all your resources into white.
+
+## Green (echo) · resource: green
+contest: {"label":"Most green","counts":"the green you hold when the round ends"}
+  I  Build Up: +3 green in round I, +4 in round II, +5 in round III.
+  I  Echo: Copy the previous action. +1 green.
+  I  Reprise: Copy an action with your minion. +1 green.
+  II  Sample: Copy the On Recruit of a rival’s member. +1 green.
+  II  Cover: Copy an action with no minion on it. +1 green.
+  III  Greatest Hits: Copy the On Recruit of each of your members, in any order. +1 green.
+    · Busker [2 green + 2 any, worth 1] On Recruit: +2 green. Round Start: +2 green.
+    · Muse [2 green + 2 any, worth 1] Whenever a rival copies an action, +1 green.
+    · Impersonator [4 green + 2 any, worth 1] On Recruit and Round Start: choose a rival's member. Until you choose again, Impersonator has that member's ability.
+    · Understudy [3 green + 1 any, worth 1] On Recruit: copy the action taken the previous turn.
+    · Ensemble [3 green + 2 any, worth 3, counts as 3] Whenever you copy your own action, +1 follower.
+    · Impressionist [2 green + 2 any, worth 1] Whenever any player copies an action, +1 of its color.
+    · Wallflower [7 green + 3 any, worth 1] Whenever you copy an action, double the resources it gives you.
+    · Fan Club [3 green + 3 any, worth 3, counts as 3] On Recruit: copy an action the player with the most followers has a minion on.
+    · Roadie [2 green + 1 any, worth 1] On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.
+    · Stunt Double [3 green + 2 any, worth 1] On Recruit: copy the action you just took.
+    · Tribute Band [11 green + 3 any, worth 3, counts as 3] On Use, once per game: choose a rival. Do every action they have a minion on this round.
+    · Doppelganger [3 green + 2 any, worth 1] On Recruit: this member becomes a copy of another of your members.
+    · Impostors [3 green + 3 any, worth 2, counts as 2] On Recruit: this member becomes a copy of a rival’s member.
+    · Agents [2 green + 1 any, worth 2, counts as 2] Rivals can’t copy your actions.
+    · Bait [2 green + 1 any, worth 1] Whenever anyone copies one of your actions, they −1 follower and you +1 follower.
+    · Chronicler [2 green + 3 any, worth 1] Game End: +1 follower per green member you have.
+
+## Guests (no color, cost only "any")
+    · Party Crasher [5 any, worth 1] On Use, once per game: your next minion can be placed on a space a rival already took.
+    · Big Spender [3 any, worth 1] On Use, once per game: recruit twice this turn.
+    · Alchemists [5 any, worth 3] All your resources count as any when you recruit a member.
+    · Extra Hand [9 any, worth 1] On Use, once per game: +1 minion this round.
+    · Line Cutters [2 any, worth 3] You go first every round.
+    · Launderers [4 any, worth 3] On Recruit: rearrange your resources into any mix of colors.
+    · Old Maid [5 any, worth 1] Whenever this member joins your cult, −5 followers.
+    · Dabblers [3 any, worth 2] Counts as 2 wild members.
+    · Cheerleader [4 any, worth 1] Whenever you win a contest, +1 follower.
+    · Anarchist [6 any, worth 1] On Use, once per round: swap any 2 members, in any cult or the shop, that cost within 2 of each other.
+    · Spoilsport [6 any, worth 1] Round End: choose a contest you don't lead; nobody wins it this round.
+    · Con Men [7 any, worth 2] On Recruit: steal 5 resources.
+    · Coach [7 any, worth 1] On Recruit: activate one of your members’ On Use ability as a free extra use.
+    · Sore Loser [5 any, worth 1] Round End: if you win no contest, steal 3 followers from the rival who wins the most.
+    · Tiebreaker [4 any, worth 1] You win every contest tie you’re in.

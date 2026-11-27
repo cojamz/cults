@@ -1,0 +1,200 @@
+# Names that passed the village check
+
+Every dealt member and action name must be listed here or under Awaiting rename; src/test/engine/v4/names-theme.test.js fails on any other (Cory, Nov 26, on Doorbusters: "thats not on theme", "how did Doorbusters slip through the cracks?"). A new or renamed member or action gets its name from .claude/rules/member-names.md through the naming skill (.claude/skills/naming/SKILL.md) before it is added here.
+
+## Members
+- Abbess
+- Admirers
+- Alchemists
+- Almsgiver
+- Bannermen
+- Bargainer
+- Barterer
+- Beggar
+- Benefactor
+- Blue Bloods
+- Briber
+- Bride and Groom
+- Camp Followers
+- Changeling
+- Chapman
+- Chorus
+- Clan Chief
+- Comforter
+- Conjurer
+- Connoisseurs
+- Copyist
+- Courier
+- Crooked Judge
+- Culler
+- Curfew Ringers
+- Cutpurse
+- Cutthroats
+- Dawn Traders
+- Doppelganger
+- Dowry-Givers
+- Drifters
+- Druids
+- Dusk Buyer
+- Dyer
+- Early Riser
+- Errand Boy
+- Evictors
+- Exchanger
+- Executioner
+- Extortionist
+- Extra Hand
+- Fairy Godmother
+- Fence
+- Ferryman
+- Firstcomers
+- Forger
+- Gardeners
+- Gate-Shutter
+- Gilder
+- Gleaner
+- Go-Between
+- Good Samaritans
+- Governess
+- Gravedigger
+- Guild Master
+- Haggler
+- Harlequin
+- Herald
+- Hermit
+- Highwayman
+- Hoarder
+- Homecomers
+- Hostess
+- Hurriers
+- Impostors
+- Indulgence Seller
+- Informer
+- Innkeeper
+- Jack-of-All-Trades
+- Jester
+- Journeyman
+- Juggler
+- Lackey
+- Laggard
+- Latecomers
+- Lord of the Manor
+- Market Sweeper
+- Market-Day Shopper
+- Martyrs
+- Matchmaker
+- Meddler
+- Mendicant
+- Mimics
+- Minstrel
+- Misers
+- Moneychangers
+- Mourners
+- Night Porter
+- Night Thieves
+- Old-Clothes Dealers
+- Patron Saints
+- Paupers
+- Pawnbrokers
+- Peddlers
+- Penitents
+- Penny-Pincher
+- Pied Piper
+- Pilgrims
+- Plague Bearer
+- Preachers
+- Press Gang
+- Purifiers
+- Purse-Switchers
+- Rabble-Rousers
+- Rag-and-Bone Man
+- Robbers
+- Robin Hood
+- Rummager
+- Scavengers
+- Secret-Keepers
+- Shadow
+- Shirker
+- Silver Tongues
+- Sleepyhead
+- Snatcher
+- Spice Merchant
+- Spoilsport
+- Squanderer
+- Starveling
+- Storekeeper
+- Swindler
+- Tagalongs
+- Tall-Tale Teller
+- Taskmaster
+- Tavern Keeper
+- Tax Men
+- Thief-Takers
+- Timekeeper
+- Tithe Collector
+- Trapper
+- Trumpeter
+- Trumpeters
+- Turnpike Keeper
+- Twins
+- Understudy
+- Usher
+- Warden
+- Washerwoman
+- Wastrels
+- Weeders
+- Wet Nurse
+- Witch
+
+## Actions
+- Beg
+- Bid Farewell
+- Bide Your Time
+- Borrow
+- Bring Back
+- Buy Anywhere
+- Burn the Candle
+- Buy Secondhand
+- Call to Arms
+- Clear Out
+- Count Heads
+- Demand Tribute
+- Demote
+- Do It Again
+- Draw a Crowd
+- Flaunt
+- Flock Together
+- Flurry
+- Follow Suit
+- Gather the Kin
+- Give Away
+- Hand Out Gifts
+- Harvest
+- Hire Away
+- Pay in Coin
+- Hold a Fair
+- Imitate
+- Induct
+- Keep Going
+- Lie Abed
+- Live Simply
+- Make Haste
+- Melt Down
+- Paint Over
+- Pilfer
+- Plunder
+- Poach
+- Promote
+- Put By
+- Raise a Glass
+- Redeem
+- Replay All
+- Salvage
+- Sleight of Hand
+- Spend Freely
+- Spread the Word
+- Stash
+- Throw Coins
+- Try Out
+- Welcome Strangers
+

@@ -1,0 +1,8 @@
+You are a feel judge for a board game economy test. Work only from files; do not run anything, and open no folder other than the ones named here.
+
+1. Read /home/user/patrons/.econ-judge/personas.md and play the judge named **PERSONA** only.
+2. Read /home/user/patrons/design/eval/economy-test/judge-brief.md and /home/user/patrons/design/rulebook.md.
+3. Read /home/user/patrons/.econ-judge/pairs/PAIR/first.md and second.md fully. They are the SAME deal and the same seat played under two different economies (prices, what spaces give, follower buys may differ). Whatever differs between them comes from the economy and from the bots' different choices.
+4. Write /home/user/patrons/.econ-judge/out-pairs/PAIR.md: for each of A to G and Overall, say which game felt better (first, second, or same) and how much (slightly or clearly), with one or two sentences that point at specific turns in each. Then one line: "What the economy changed at the table:" in plain words. Be honest: "same" is allowed when you can't tell.
+   Last line exactly: VERDICT {"A":"first|second|same","B":...,"C":...,"D":...,"E":...,"F":...,"G":...,"overall":"first|second|same","overallStrength":"slightly|clearly|none"}
+5. Reply with only the VERDICT line.

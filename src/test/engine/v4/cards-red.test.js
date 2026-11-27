@@ -1,0 +1,186 @@
+// @vitest-environment node
+// Card-by-card: every Red action and member, through real moves, against the printed text, with a log line naming
+// the card whenever it changes a number. Plus one cross-sphere case per member.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
+import { describe, it, expect } from 'vitest';
+import { followers, memberCount, resume, countMembersOfColor } from '../../../engine/v4/core.js';
+import { defById } from '../../../engine/v4/content/index.js';
+import { take, move, uidOf, pinCosts } from './helpers.js';
+import { sceneQ, buy, linesNaming, settle } from './cards-helpers.js';
+import { SHOP_SIZE } from '../../../engine/v4/core.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.hire', 'red.turnout']);
+
+const named = (s, name) => linesNaming(s.log, name);
+const R = (s, i = 0) => s.players[i].res;
+const rich = { gold: 30, red: 30, blue: 30, green: 30 };
+const cost = id => defById(id).s + defById(id).w;
+
+describe('Red action gains', () => {
+  it.each([1, 2, 3])('Gather the Kin is round %i plus its inherent red, independent of recruit count', round => {
+    const s = sceneQ({ round }); s.recruits = 99;
+    expect(R(take(s, 'red.turnout')).red).toBe(round + 1);
+  });
+  it('Walk-In and Induct give a free member plus their red (Walk-In: +1, each rival +1)', () => {
+    for (const [action, round, red, rival] of [['red.hire', 1, 1, 1], ['red.take', 3, 1, 0]]) {
+      const s0 = sceneQ({ round, shop: ['red.volunteer'] });
+      // Walk-In takes the pile's top card: put Volunteer (no recruit effect) there, so the pile order after Cory's Nov 25 cuts can't add red
+      if (action === 'red.hire') s0.pile.unshift(s0.shop.splice(s0.shop.findIndex(u => s0.cards[u].def === 'red.volunteer'), 1)[0]);
+      const s = settle(take(s0, action));
+      expect(s.players[0].members).toHaveLength(1);
+      expect(R(s).red).toBe(red);
+      expect(R(s, 1).red).toBe(rival);
+    }
+  });
+});
+
+describe('Red members', () => {
+  it('Governess: when recruited, also the cheapest face-up member free; the log names Governess', () => {
+    let s = sceneQ({ res: [rich], shop: ['red.mentor'] });
+    s = take(s, 'gold.rush'); s = buy(s, 'red.mentor');
+    while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
+    expect(s.players[0].members).toHaveLength(2);
+    expect(named(s, 'Governess')).toHaveLength(1);
+  });
+  it('Governess × Ferryman × Pied Piper: the free protégé is a second recruit this turn', () => {
+    let s = sceneQ({ res: [rich], members: [['red.recruiter', 'red.drive']], shop: ['red.mentor'] });
+    s = take(s, 'gold.rush');
+    s = buy(s, 'red.mentor');
+    while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
+    // Drive +2 on the second; Ferryman +1 for each: both came from the shop (Cory, Nov 1 3:59pm)
+    expect(named(s, 'Ferryman')).toHaveLength(2);
+    expect(named(s, 'Pied Piper')).toHaveLength(1);
+  });
+
+  it('Proselytizers: +1 follower whenever you recruit (not itself), named; a free Walk-In counts', () => {
+    let s = sceneQ({ members: [['red.proselytizer']] });
+    const f0 = followers(s, s.players[0]);
+    s = settle(take(s, 'red.hire'));
+    expect(followers(s, s.players[0])).toBe(f0 + 1 + defById(s.cards[s.players[0].members[1]].def).f);
+    expect(named(s, 'Proselytizers')[0]).toMatch(/P1's Proselytizers: \+1 follower/);
+  });
+
+  it('Mob: round end +2 followers per rival with fewer red members (Nov 4); a Doppelganger is a second Mob', () => {
+    // P1: Mob + Intern = 2 red; P2: Fairy Godmother + Ferryman = 2 (a tie: not fewer); P3: none. Mob and Fairy Godmother were rebased to 1 (Cory, Nov 12).
+    const M = [['red.mob', 'red.intern', 'echo.doppel'], ['red.panel', 'red.recruiter'], []];
+    let s = sceneQ({ n: 3, members: M, queue: [{ t: 'endRound' }] });
+    expect(s.players.map(p => countMembersOfColor(s, p, 'red'))).toEqual([2, 2, 0]);
+    expect(named(s, 'Mob')).toEqual(["P1's Mob: 1 rival has fewer red members: +2 followers."]);
+    s = sceneQ({ n: 3, members: M, queue: [] });
+    s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'red.mob'; // the copy pays too; it isn't red, so P1 still holds 2
+    s.queue = [{ t: 'endRound' }]; s = resume(s);
+    expect(named(s, 'Mob').filter(l => l.startsWith("P1's"))).toHaveLength(2);
+    expect(defById('red.mob').onGameEnd).toBeUndefined();
+  });
+
+  it('Clan Chief: round end +1 follower per member card in your biggest group of one color, grey counts (Cory, Nov 11)', () => {
+    // P1: Clan Chief + Intern + Volunteer = 3 red cards beside 1 blue; P2 has no Clan Chief, so it pays nothing
+    const M = [['red.clan', 'red.intern', 'red.volunteer', 'market.regular'], ['market.critic']];
+    const s = sceneQ({ n: 2, quadrants: ['gold', 'red', 'market', 'echo'], members: M, queue: [{ t: 'endRound' }] });
+    expect(named(s, 'Clan Chief')).toEqual([
+      "P1's Clan Chief: 3 members in their biggest group of one color: +3 followers.",
+    ]);
+  });
+
+  it('Ferryman: a rival’s Poach of another rival’s member pays its holder nothing (shop recruits only, Nov 1)', () => {
+    // 3 players, round III: P1 Poaches P3's Triplets; P2 holds Ferryman
+    let s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'echo'], n: 3, round: 3, members: [[], ['red.recruiter'], ['red.twins']] });
+    s = move(take(s, 'thieves.heist'), `card:${uidOf(s, 'red.twins', 2)}`);
+    expect(s.players[0].members).toHaveLength(1);
+    expect(R(s, 1).red).toBe(0);
+    expect(named(s, 'Ferryman')).toHaveLength(0);
+  });
+
+  it('Ferryman: its holder’s own member leaving pays nothing; a shop swap is a recruit, +1 red (Cory, Nov 1 5:06pm)', () => {
+    let s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'echo'], round: 3, members: [[], ['red.recruiter', 'red.twins']] });
+    s = move(take(s, 'thieves.heist'), `card:${uidOf(s, 'red.twins', 1)}`);
+    expect(s.players[0].members).toHaveLength(1);
+    expect(R(s, 1).red).toBe(0);
+    expect(named(s, 'Ferryman')).toHaveLength(0);
+    // Promote (round II) swaps your member with a shop member: a member you recruit
+    let t = sceneQ({ round: 2, members: [['red.recruiter', 'red.intern']], shop: ['red.volunteer', 'benders.frontrunner'] });
+    t = take(t, 'red.hireup');
+    // a grey shop member (Lord of the Manor): no color of its own to pay, since the Nov 11 Red deck put Tavern Keeper first in this shop
+    const swap = t.pending.options.find(o => o.id.startsWith(`trade:${uidOf(t, 'red.intern', 0)}:`) && o.id.endsWith(`:${uidOf(t, 'benders.frontrunner', 'shop')}`));
+    t = settle(move(t, swap.id));
+    expect(R(t).red).toBe(4); // Promote's +3 and Ferryman's +1
+    expect(named(t, 'Ferryman')).toHaveLength(1);
+  });
+
+  it('Ferryman: a rival’s member swapped into the shop pays nothing (shop recruits only, Nov 1 3:59pm)', () => {
+    let s = sceneQ({ round: 2, members: [['red.recruiter'], ['red.intern']], shop: ['red.volunteer'] });
+    s = take(s, 'red.hireup');
+    const swap = s.pending.options.find(o => o.id.startsWith(`trade:${uidOf(s, 'red.intern', 1)}:`));
+    s = settle(move(s, swap.id));
+    expect(R(s).red).toBe(3); // Promote's +3
+    expect(named(s, 'Ferryman')).toHaveLength(0);
+  });
+
+  it('Pied Piper: the second recruit in one turn pays +2 red at once, named; Squanderer makes it two buys', () => {
+    const restore = pinCosts({ 'red.intern': [0, 0], 'red.volunteer': [0, 0] });
+    let s = sceneQ({ res: [rich], members: [['red.drive', 'benders.bigspender1']], shop: ['red.intern', 'red.volunteer'] });
+    s = take(s, 'gold.rush');
+    const r0 = R(s).red;
+    s = buy(s, 'red.volunteer'); // free
+    s = buy(s, 'red.intern');
+    expect(named(s, 'Pied Piper')).toHaveLength(1);
+    expect(named(s, 'Squanderer')).toHaveLength(1);
+    expect(R(s).red).toBe(r0 + 2);
+    restore();
+  });
+
+  it('Tavern Keeper: at round start, +1 red per 2 members, named; a Doppelganger copy pays again', () => {
+    let s = sceneQ({ members: [['red.host', 'red.intern', 'red.twins', 'red.volunteer']], queue: [{ t: 'round', r: 2 }] });
+    expect(R(s).red).toBe(3);
+    expect(named(s, 'Tavern Keeper')[0]).toMatch(/P1's Tavern Keeper: \+3 red/);
+    s = sceneQ({ members: [['red.host', 'red.intern', 'echo.doppel']], queue: [] });
+    s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'red.host';
+    s.queue = [{ t: 'round', r: 2 }]; s = resume(s);
+    expect(R(s).red).toBe(2);
+  });
+
+  it('Sponsor: your members cost 2 less, said in the recruit line; stacks with Bargain Down', () => {
+    const restore = pinCosts({ 'gold.tycoon': [3, 4] });
+    try {
+      let s = sceneQ({ res: [{ gold: 1 }], members: [['red.sponsor']], shop: ['gold.tycoon'] });
+      s = take(s, 'gold.discount'); // 4 + Sponsor 2 = 6 off 7
+      s = buy(s, 'gold.tycoon');
+      expect(s.players[0].res.gold).toBe(0);
+      expect(named(s, 'Sponsor')[0]).toMatch(/Sponsor saves 2/);
+    } finally { restore(); }
+  });
+
+  it('Crowd-Pleaser: +1 red whenever you buy followers, named; a rival’s Pardoner fires on the same buy', () => {
+    let s = sceneQ({ res: [rich], members: [['red.crowd'], ['gold.taxman']] });
+    s = take(s, 'gold.rush'); s = move(s, 'tier:small');
+    expect(named(s, 'Crowd-Pleaser')).toHaveLength(1);
+    expect(named(s, 'Pardoner')).toHaveLength(1);
+  });
+
+  it('Doppelganger: copies one of your members; the copy is named in the log', () => {
+    let s = sceneQ({ res: [rich], members: [['gold.banker']], shop: ['echo.doppel'] });
+    s = take(s, 'gold.rush'); s = buy(s, 'echo.doppel');
+    s = move(s, s.pending.options[0].id);
+    expect(named(s, 'Doppelganger')[0]).toMatch(/becomes a copy of Banker/);
+    expect(named(s, 'Banker')).toHaveLength(1); // the copied Banker's On Recruit (Cory, 2026-10-28)
+    s.queue = [{ t: 'round', r: 2 }]; s.pending = null; s = resume(s);
+    expect(named(s, 'Banker')).toHaveLength(3);
+  });
+  it('Doppelganger triggers copied Treasurer’s On Recruit (Cory, 2026-10-28)', () => {
+    const restore = pinCosts({ 'echo.doppel': [0, 0] });
+    let s = sceneQ({ res: [rich], members: [['gold.seed']], shop: ['echo.doppel'] });
+    s = take(s, 'gold.rush');
+    const g = s.players[0].res.gold;
+    s = buy(s, 'echo.doppel');
+    s = move(s, s.pending.options[0].id);
+    expect(s.players[0].res.gold).toBe(g + 2);
+    expect(named(s, 'Treasurer')).toHaveLength(1);
+    restore();
+  });
+
+  it('Patriarch: game end +1 follower per 2 members (Triplets counts as three)', () => {
+    const s = sceneQ({ members: [['red.patriarch', 'red.twins', 'red.intern']], queue: [{ t: 'finish' }] });
+    expect(memberCount(s, s.players[0])).toBe(5);
+    expect(s.players[0].final.parts).toEqual(['Patriarch +2']);
+  });
+});

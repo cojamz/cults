@@ -1,0 +1,4062 @@
+[
+ {
+  "color": "gold",
+  "kind": "space",
+  "name": "Kickback",
+  "scores": [
+   2,
+   2,
+   1,
+   2,
+   1,
+   1,
+   1,
+   0,
+   1,
+   2
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Big flat gold with a small gift whose target is a real kingmaking choice; fine, not memorable."
+ },
+ {
+  "color": "gold",
+  "kind": "space",
+  "name": "Golden Years",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   0,
+   0,
+   1,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Plain scaling gain; nobody at the table notices it."
+ },
+ {
+  "color": "gold",
+  "kind": "space",
+  "name": "Intro Offer",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "A discount is clear but reads as a shop coupon, not gold; quiet."
+ },
+ {
+  "color": "gold",
+  "kind": "space",
+  "name": "Collect Debts",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   1,
+   1,
+   0,
+   2,
+   2,
+   2
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "Steal 3 gold split as you like: a sting with aim, and it checks the gold leader."
+ },
+ {
+  "color": "gold",
+  "kind": "space",
+  "name": "Tithe",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Scales with your cult, so it rewards the engine but mostly the leader; solo."
+ },
+ {
+  "color": "gold",
+  "kind": "space",
+  "name": "Double Down",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "A real round III burst, but huge for the gold leader and dead for everyone else."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Banker",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "Steady +3 income is comfortable but no one else at the table feels it."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Prospector",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   0,
+   1
+  ],
+  "total": 7,
+  "hardFail": null,
+  "why": "+1 per gold action is a forgettable trickle."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Tax Collector",
+  "scores": [
+   2,
+   2,
+   0,
+   1,
+   2,
+   1,
+   1,
+   1,
+   1,
+   0
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Ties to everyone's follower buys, but +1 gold for 9 resources is too little to want."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Merchant",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   0,
+   1,
+   0,
+   0,
+   0
+  ],
+  "total": 6,
+  "hardFail": null,
+  "why": "Waits on gold members happening to be recruited; +1 gold, nobody notices."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Penny Pincher",
+  "scores": [
+   1,
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   1,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Strong cost bend, but 'counts double' needs explaining at the table the first time."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Underdog",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   1,
+   1,
+   1,
+   2,
+   1
+  ],
+  "total": 14,
+  "hardFail": "Relies on a rival having more gold than you.",
+  "why": "Doubling feels big and helps the trailer, but the trigger is a rival out-holding you."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Alchemists",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   2,
+   0,
+   1,
+   0,
+   1,
+   1
+  ],
+  "total": 9,
+  "hardFail": "Plural name on a single-member card (worth 1); also shares a name with the guest Alchemists.",
+  "why": "+1 gold per other-color gain is a trickle; the name clash confuses the table."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Speculator",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   0,
+   2,
+   2,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Once-per-game double is a fun timing call, but it is Double Down on a card."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Tycoon",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Clear game-end scorer that gives gold a reason to hoard; solo."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Treasurer",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "One-shot payout that just rewards a big cult; nobody reacts."
+ },
+ {
+  "color": "gold",
+  "kind": "member",
+  "name": "Envy",
+  "scores": [
+   1,
+   2,
+   2,
+   1,
+   1,
+   1,
+   0,
+   0,
+   2,
+   1
+  ],
+  "total": 11,
+  "hardFail": "Relies on a rival holding more gold than you.",
+  "why": "Catch-up on paper, but it only works when a rival is richer and the math is fiddly."
+ },
+ {
+  "color": "red",
+  "kind": "space",
+  "name": "Tryout",
+  "scores": [
+   1,
+   2,
+   1,
+   1,
+   2,
+   1,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Borrowing a shop card's On Recruit is clever and reads the shop; a bit wordy."
+ },
+ {
+  "color": "red",
+  "kind": "space",
+  "name": "Gather",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   1,
+   2
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Solid anchor with a recruit bonus; plain."
+ },
+ {
+  "color": "red",
+  "kind": "space",
+  "name": "Walk-In",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Blind free recruit with a small gift to rivals; a little gamble the table watches."
+ },
+ {
+  "color": "red",
+  "kind": "space",
+  "name": "Promote",
+  "scores": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Trading up with a rival's member is the color's signature sting; table always reacts."
+ },
+ {
+  "color": "red",
+  "kind": "space",
+  "name": "Demote",
+  "scores": [
+   1,
+   2,
+   1,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Same trade as Promote pointed down; good, but feels like its twin."
+ },
+ {
+  "color": "red",
+  "kind": "space",
+  "name": "Initiation",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   1,
+   1,
+   2
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "A free 8-cost member in round III is a clear, satisfying burst."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Triplets",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 9,
+  "hardFail": null,
+  "why": "Three bodies for cheap feeds member counts; vanilla, no decision."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Body Snatchers",
+  "scores": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Every round you swap with a rival: a recurring sting that makes Loyalists matter."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Volunteer",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   0,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 7,
+  "hardFail": null,
+  "why": "A 1-for-1 body; only matters for count cards."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Mentor & Prot\u00e9g\u00e9s",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Two members at once feels great; mostly rewards whoever can afford 9."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Proselytizers",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Follower per recruit is a clean engine for red's free recruits; quiet at the table."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Mob",
+  "scores": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Big round-end payoff that makes red member counts a race; leader-heavy."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Recruiter",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "+1 red per recruit is forgettable."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Host",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Income that grows with the cult; fine, solo."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Patriarch",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Plain game-end count scorer."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Greeters",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   1,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Cute combo with On Recruit members across colors; small amounts."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Deprogrammers",
+  "scores": [
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   2,
+   1,
+   1,
+   1
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "Worth 4 for 3, and turns red's swaps into a follower sting; strong and fun."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Panel",
+  "scores": [
+   1,
+   2,
+   1,
+   1,
+   2,
+   2,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Built-in promote/demote is on-color, but the rule wording needs a lookup."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Loyalists",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "A clear shield against red's swaps; defensive and quiet until it matters."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Headhunter",
+  "scores": [
+   1,
+   2,
+   1,
+   2,
+   1,
+   2,
+   0,
+   2,
+   2,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Ruin a rival's best member once: a real sting with aim, though it gains you nothing."
+ },
+ {
+  "color": "red",
+  "kind": "member",
+  "name": "Clerk",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "total": 4,
+  "hardFail": null,
+  "why": "+1 red a round for 5 resources: nobody would buy or notice it."
+ },
+ {
+  "color": "purple",
+  "kind": "space",
+  "name": "Sleep In",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   0,
+   2,
+   1,
+   2
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Big purple for going last; a clear trade the table plans around."
+ },
+ {
+  "color": "purple",
+  "kind": "space",
+  "name": "Hold Up",
+  "scores": [
+   1,
+   2,
+   1,
+   2,
+   1,
+   2,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Skipping the next player is a sting, but 'even yours' trips people up."
+ },
+ {
+  "color": "purple",
+  "kind": "space",
+  "name": "Right Away",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Clean tempo move; small and mostly solo."
+ },
+ {
+  "color": "purple",
+  "kind": "space",
+  "name": "Last Call",
+  "scores": [
+   1,
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Followers for holding minions back plus the token: a real gamble, slightly wordy."
+ },
+ {
+  "color": "purple",
+  "kind": "space",
+  "name": "Crunch Time",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Two turns in a row feels powerful; leader can grab the best spaces."
+ },
+ {
+  "color": "purple",
+  "kind": "space",
+  "name": "Overtime",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Round III +1 minion is fine but not the burst the color builds toward."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Go-Getter",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   2,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Once-per-game extra minion with good timing; quiet."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Late Risers",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   0,
+   1,
+   2,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Extra minion for the player in last: a clear comeback card."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Courier",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   1,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Pays across colors for purple's double turns; small payouts."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Clockmakers",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Double first turn every round; autopilot once bought."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Night Watch",
+  "scores": [
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Punishes rivals using the Goes Last token; the table feels it."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Night Owls",
+  "scores": [
+   2,
+   2,
+   2,
+   0,
+   0,
+   2,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "An extra minion every round is strong but solo and must-buy at that price."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Early Birds",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   2,
+   1,
+   0,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Pure defense against skips; nobody feels it."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Bouncers",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   0,
+   1,
+   1,
+   2
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Skip two rivals on recruit: cheap, loud, everyone groans."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Pocket Watch",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   1,
+   2,
+   0,
+   0,
+   2
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Cheap payoff for every skip; builds with Hold Up and Bouncers."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Gossip",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   1,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Followers for every skip; same shape as Pocket Watch."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Extra Shift",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   0,
+   1,
+   0,
+   0
+  ],
+  "total": 7,
+  "hardFail": null,
+  "why": "9 resources for one extra minion and worth 1: dead."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Timekeeper",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Plain per-color game-end scorer."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Closer",
+  "scores": [
+   1,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "Unclear whether 'last minion of the round' means yours or the whole table's."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Hot Streak",
+  "scores": [
+   1,
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   2,
+   0,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Rewards setting up turns in a row for a big burst; a real plan, a bit to count."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Shift Crew",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   1
+  ],
+  "total": 6,
+  "hardFail": null,
+  "why": "Vanilla bodies; nothing purple about it."
+ },
+ {
+  "color": "purple",
+  "kind": "member",
+  "name": "Night Shift",
+  "scores": [
+   0,
+   0,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "total": 2,
+  "hardFail": "Needs tracking a table can't do (turn history), and unreadable.",
+  "why": "Nobody at a table could say what this does before or after it fires."
+ },
+ {
+  "color": "silver",
+  "kind": "space",
+  "name": "Toast",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   1,
+   0,
+   2
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Big silver with a scaling gift; feels generous and strong."
+ },
+ {
+  "color": "silver",
+  "kind": "space",
+  "name": "Polish",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Simple converter that feeds other colors."
+ },
+ {
+  "color": "silver",
+  "kind": "space",
+  "name": "Party Gifts",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1,
+   2
+  ],
+  "total": 18,
+  "hardFail": null,
+  "why": "Gifts that pay you 2 followers each: the color's idea in one line, and rivals' contests shift."
+ },
+ {
+  "color": "silver",
+  "kind": "space",
+  "name": "Potluck",
+  "scores": [
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Rivals choose what to give you: a small table moment."
+ },
+ {
+  "color": "silver",
+  "kind": "space",
+  "name": "Sweet Talk",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Silver plus conversion; useful, flat."
+ },
+ {
+  "color": "silver",
+  "kind": "space",
+  "name": "Largesse",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "A big round III gift for followers that hands rivals the silver contest; real tension."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Hangers-On",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1,
+   0
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Pays off rivals' gifts, but too dear for how rarely it fires."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Godparent",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "Give a member away for its cost in followers: a gift with a timing call, and pairs with Old Maid."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Gift Wrapper",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Clean engine on silver's giving spaces."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Hostesses",
+  "scores": [
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   2,
+   1,
+   1,
+   1
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "Gifts every round that pay followers; the table notices the free silver."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Caterer",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   2,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 9,
+  "hardFail": null,
+  "why": "+1 silver per gift is a trickle."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Toastmaster",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   2
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "Cheap follower per Silver space; plain."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Debutantes",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   1,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Double silver once with a gift; good, but another doubling card."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Smooth Talkers",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   2,
+   1,
+   1,
+   0
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Silver as any color is handy but 11 resources is too much."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Philanthropist",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Party Gifts on a card; strong and on-theme, a little samey."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Polisher",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   1,
+   2
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Cheap converter; fine filler."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Collector",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Waits on rivals paying silver; nobody notices."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Creditor",
+  "scores": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Every round a rival hands you followers for silver: a sting dressed as a gift."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "Debt Collectors",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   0,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "Taking from everyone is off-theme for the giving color."
+ },
+ {
+  "color": "silver",
+  "kind": "member",
+  "name": "High Society",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Pays when rivals take Silver spaces; passive."
+ },
+ {
+  "color": "yellow",
+  "kind": "space",
+  "name": "Harvest",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   1,
+   2
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Flexible colors you pick; solid anchor."
+ },
+ {
+  "color": "yellow",
+  "kind": "space",
+  "name": "Leaders' Tax",
+  "scores": [
+   1,
+   2,
+   1,
+   1,
+   2,
+   1,
+   0,
+   2,
+   1,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Reads the board for a color, but the count takes a moment."
+ },
+ {
+  "color": "yellow",
+  "kind": "space",
+  "name": "New Blood",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "A new color for followers makes the shop matter; good plan to chase."
+ },
+ {
+  "color": "yellow",
+  "kind": "space",
+  "name": "Big New Blood",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   2,
+   1,
+   2,
+   2,
+   1,
+   2
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Bigger New Blood; strong, slightly a twin."
+ },
+ {
+  "color": "yellow",
+  "kind": "space",
+  "name": "Melting Pot",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Pays for a wide cult; solo."
+ },
+ {
+  "color": "yellow",
+  "kind": "space",
+  "name": "Makeover",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   0,
+   0
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "Round III rearrange is weak as the color's burst."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Gardener",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   1,
+   2
+  ],
+  "total": 13,
+  "hardFail": "Singular name on a card that counts as 2.",
+  "why": "Fills color gaps each round; decent, quiet."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Customs Officer",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "total": 6,
+  "hardFail": null,
+  "why": "Defensive +1 yellow nobody notices."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Go-Between",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   2,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 9,
+  "hardFail": null,
+  "why": "Small conversion convenience."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Tourist",
+  "scores": [
+   2,
+   2,
+   2,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Followers for holding many colors every round; builds nicely."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Tinker",
+  "scores": [
+   1,
+   2,
+   0,
+   0,
+   1,
+   1,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Swapping resources one for one is fiddly for a tiny gain."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Harmonist",
+  "scores": [
+   1,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "'Full set' needs a definition at the table."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Matchmaker",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Rewards collecting new colors; good engine card."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Dyer",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 9,
+  "hardFail": null,
+  "why": "Income that grows with colors held; flat."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Meddler",
+  "scores": [
+   1,
+   2,
+   1,
+   2,
+   2,
+   2,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Changing rivals' colors stings contests; the table notices."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Drifters",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Wild color body that helps New Blood and sets; quiet."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Leveler",
+  "scores": [
+   1,
+   2,
+   1,
+   2,
+   2,
+   2,
+   0,
+   2,
+   2,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Shave every rival's biggest color each round: aimed at contest leaders."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Big Tent",
+  "scores": [
+   2,
+   2,
+   2,
+   0,
+   2,
+   2,
+   2,
+   2,
+   1,
+   1
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "Two followers per color with exactly one member: a clear, different way to build."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Book Cookers",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   0,
+   0
+  ],
+  "total": 9,
+  "hardFail": null,
+  "why": "Makeover on a card at 10 resources; not worth it."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Caravan",
+  "scores": [
+   2,
+   2,
+   2,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Income per color held each round; strong and plain."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Tastemaker",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Pays for meddling with rivals; a real combo with Meddler and Leveler."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Spice Route",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Game-end scorer for broad holdings; plain."
+ },
+ {
+  "color": "yellow",
+  "kind": "member",
+  "name": "Guest Book",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   2,
+   1,
+   0,
+   0,
+   2
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Cheap payoff for new colors; filler."
+ },
+ {
+  "color": "market",
+  "kind": "space",
+  "name": "Savings",
+  "scores": [
+   1,
+   2,
+   1,
+   0,
+   1,
+   2,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "Blue plus a shop dump; the side power is fiddly for little."
+ },
+ {
+  "color": "market",
+  "kind": "space",
+  "name": "Out of Style",
+  "scores": [
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "Clearing a whole color from the shop is a big, visible move that denies rivals."
+ },
+ {
+  "color": "market",
+  "kind": "space",
+  "name": "Peek",
+  "scores": [
+   1,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   2,
+   1,
+   2
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Looking ahead and grabbing from the pile is a real plan; quiet to others."
+ },
+ {
+  "color": "market",
+  "kind": "space",
+  "name": "Recruit Twice",
+  "scores": [
+   2,
+   2,
+   2,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   2
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Two buys is powerful and clear."
+ },
+ {
+  "color": "market",
+  "kind": "space",
+  "name": "Bury",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   0,
+   2,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Hate-bury the card a rival wanted; a small sting."
+ },
+ {
+  "color": "market",
+  "kind": "space",
+  "name": "Spree",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   1,
+   0,
+   2
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Three buys is the round III burst it should be."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Connoisseurs",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "+1 blue per blue recruit is a trickle."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Hawker",
+  "scores": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Auction a shop card each round: rivals pay you or you get it free; lots of table talk."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Bargain Bin",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   2,
+   2,
+   0,
+   0,
+   2
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Cheap payoff for blue's burying; builds with the color."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Patroness",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   2,
+   2,
+   0,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Followers on every bury; the row refresh between rounds may surprise owners with how much it pays."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Snobs",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Plain per-blue game-end scorer."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Window Shopper",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Pick from the shop's colors by burying; on-theme and useful."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Restockers",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   0,
+   2,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Once-per-game row reset with timing; fine."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Shopaholics",
+  "scores": [
+   2,
+   2,
+   2,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Two buys every turn is a big rule bend; must-plan, solo."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Window Dressers",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   0,
+   1,
+   1,
+   2
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Cheap 3 bodies with a shop shake-up; good value."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Plus-Ones",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   0,
+   2
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Free second recruit; simple tempo."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Doormen",
+  "scores": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Swap a rival's member for a shop card every round; a loud sting."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Regular",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 6,
+  "hardFail": null,
+  "why": "+1 blue per follower buy; nobody notices."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Trendsetters",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Shop churn on each recruit; mild."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Critic",
+  "scores": [
+   2,
+   2,
+   0,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Follower when rivals buy blue; passive."
+ },
+ {
+  "color": "market",
+  "kind": "member",
+  "name": "Scavenger",
+  "scores": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Snatch what rivals bury: a counter to blue's own tricks that the table feels."
+ },
+ {
+  "color": "thieves",
+  "kind": "space",
+  "name": "Help Yourself",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2
+  ],
+  "total": 20,
+  "hardFail": null,
+  "why": "Simple scaling steal with aim; the table always feels it."
+ },
+ {
+  "color": "thieves",
+  "kind": "space",
+  "name": "Stash",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "Same shape as Gather and Allowance; nothing magenta about it."
+ },
+ {
+  "color": "thieves",
+  "kind": "space",
+  "name": "Lie Low",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "A small steal plus a shield; a real defensive call."
+ },
+ {
+  "color": "thieves",
+  "kind": "space",
+  "name": "Heist",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   0,
+   2,
+   2,
+   2
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Steal 3 followers: blunt and loud, aimed at the leader."
+ },
+ {
+  "color": "thieves",
+  "kind": "space",
+  "name": "Shake Down",
+  "scores": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "The rival's choice between paying and losing a member is a real moment."
+ },
+ {
+  "color": "thieves",
+  "kind": "space",
+  "name": "Poach",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   2
+  ],
+  "total": 19,
+  "hardFail": null,
+  "why": "Take any rival's member free: the round III burst done right."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Cutpurse",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   1,
+   0,
+   1,
+   2
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Cheap recurring steal from the richest; auto-aimed."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Accomplice",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   0,
+   1,
+   1,
+   2
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Cheap one-shot steal; good filler."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Grifter",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   0,
+   0
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "8 resources for a few stolen resources; poor value."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Sticky Fingers",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Boosts every steal; clean engine piece."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Second-Story Man",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Steal right before contests are scored: swings a rim, everyone watches for it."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Desperado",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "Bigger steals while in last: a clear comeback card."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Robin Hood",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   1,
+   2,
+   2,
+   1
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "Rewards stealing from the leader; points theft at the runaway."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Extortionist",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1,
+   0,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Steal 2 from the richest every round; strong, auto-aimed."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Bodyguards",
+  "scores": [
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Full theft immunity is a clear block; dull to own."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Crew",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   1
+  ],
+  "total": 5,
+  "hardFail": null,
+  "why": "Vanilla bodies; nothing to do."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Double Agent",
+  "scores": [
+   1,
+   2,
+   1,
+   2,
+   2,
+   1,
+   0,
+   2,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Forced trade on recruit; fine, wording a bit loose."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Fixer",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Pay magenta to take a member once: on theme with a timing call."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Kingpin",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Plain per-color game-end scorer."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Kidnapper",
+  "scores": [
+   1,
+   2,
+   2,
+   2,
+   1,
+   2,
+   1,
+   0,
+   2,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "A member stolen every round is a harsh sting; 'cheapest' ties need a ruling."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Snitch",
+  "scores": [
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Punishes thieves; the table learns to avoid you."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Shoplifter",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   1,
+   2,
+   2,
+   0,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Steal on every recruit; small but steady."
+ },
+ {
+  "color": "thieves",
+  "kind": "member",
+  "name": "Fence",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   0,
+   0,
+   1,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Profit when robbed; passive."
+ },
+ {
+  "color": "trading",
+  "kind": "space",
+  "name": "Allowance",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "Same shape as Gather and Stash."
+ },
+ {
+  "color": "trading",
+  "kind": "space",
+  "name": "Splurge",
+  "scores": [
+   1,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Followers for paying big; the rate change by round needs a read."
+ },
+ {
+  "color": "trading",
+  "kind": "space",
+  "name": "Exchange",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   1,
+   2
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Simple conversion at a good rate."
+ },
+ {
+  "color": "trading",
+  "kind": "space",
+  "name": "Farewell",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   2,
+   1,
+   2
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "Cash out a member for its cost in followers: a real call on what to let go."
+ },
+ {
+  "color": "trading",
+  "kind": "space",
+  "name": "Estate Sale",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Farewell for white instead of followers; the weaker twin."
+ },
+ {
+  "color": "trading",
+  "kind": "space",
+  "name": "Cash In",
+  "scores": [
+   2,
+   2,
+   2,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "All white to followers in round III; clear burst, solo."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Recluse",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   1,
+   1,
+   2,
+   2,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Pays for staying small: a different plan that helps the trailer."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Landlord",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Plain income."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Heiresses",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "9 resources for a one-time white bump; not worth it."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Brokers",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Clean engine on White's follower spaces."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Exporters",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   2,
+   1,
+   1,
+   0,
+   0,
+   0
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "+1 white per non-white recruit at 7; weak."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Misers",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Game-end white scorer; plain."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Raiders",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   1,
+   1,
+   0,
+   2,
+   2,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Steal 4 followers once: a loud sting with a timing call."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Cashier",
+  "scores": [
+   2,
+   2,
+   2,
+   0,
+   1,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Cheap one-shot cash-out; timing matters."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Undertaker",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   2,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Pays for casting out; builds with Farewell and Estate Sale."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Money Changers",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   2,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 9,
+  "hardFail": null,
+  "why": "Trickle from everyone's buys."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Martyrs",
+  "scores": [
+   1,
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   1,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Pays when taken or traded: turns rivals' swaps into a gift; a fun counter."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Old Money",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   0
+  ],
+  "total": 7,
+  "hardFail": null,
+  "why": "Plain per-color scorer, priced high."
+ },
+ {
+  "color": "trading",
+  "kind": "member",
+  "name": "Hoarder",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   0,
+   0
+  ],
+  "total": 9,
+  "hardFail": null,
+  "why": "Once-per-game convert at 8; weak."
+ },
+ {
+  "color": "echo",
+  "kind": "space",
+  "name": "Build Up",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   0,
+   0,
+   1,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Plain scaling gain."
+ },
+ {
+  "color": "echo",
+  "kind": "space",
+  "name": "Echo",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   2,
+   1,
+   2
+  ],
+  "total": 18,
+  "hardFail": null,
+  "why": "Copy the previous action: simple, scales, makes you watch the table."
+ },
+ {
+  "color": "echo",
+  "kind": "space",
+  "name": "Reprise",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Copy your own action; solid but solo."
+ },
+ {
+  "color": "echo",
+  "kind": "space",
+  "name": "Sample",
+  "scores": [
+   1,
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Use a rival's member's On Recruit; clever and interactive."
+ },
+ {
+  "color": "echo",
+  "kind": "space",
+  "name": "Cover",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Copy an empty space; flexible, quiet."
+ },
+ {
+  "color": "echo",
+  "kind": "space",
+  "name": "Greatest Hits",
+  "scores": [
+   2,
+   2,
+   2,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Replay all your On Recruits; big for an engine, solo."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Busker",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Plain income."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Muse",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "+1 green when rivals copy; trickle."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Impersonator",
+  "scores": [
+   1,
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Borrow a rival's best ability each round; interesting, needs tracking which."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Understudy",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Copy the last action on recruit; makes timing your recruit matter."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Ensemble",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Follower per self-copy; clean engine."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Impressionist",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Trickle."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Wallflower",
+  "scores": [
+   2,
+   2,
+   2,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Double every copy's resources: a big engine piece."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Fan Club",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Copy what the leader is doing: on-theme catch-up."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Roadie",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   2,
+   0,
+   0,
+   1
+  ],
+  "total": 9,
+  "hardFail": null,
+  "why": "Income per green member; plain."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Stunt Double",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Close twin of Understudy."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Tribute Band",
+  "scores": [
+   1,
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   2,
+   1,
+   0
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Doing every action a rival took is huge, but 14 resources rarely lands."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Doppelganger",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Copy your best member; solid engine."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Impostors",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   2,
+   1,
+   1
+  ],
+  "total": 16,
+  "hardFail": null,
+  "why": "Become a rival's best member: a fun steal-without-stealing."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Agents",
+  "scores": [
+   2,
+   2,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Blocks copying; nobody enjoys owning it."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Bait",
+  "scores": [
+   2,
+   2,
+   1,
+   2,
+   2,
+   2,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Punishes copiers; a small sting that changes what rivals copy."
+ },
+ {
+  "color": "echo",
+  "kind": "member",
+  "name": "Chronicler",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "Plain per-color scorer."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Party Crasher",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   1,
+   2,
+   0,
+   2,
+   1,
+   1
+  ],
+  "total": 15,
+  "hardFail": null,
+  "why": "Join a taken space once: a rule bend the table feels."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Big Spender",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   0,
+   1
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "One extra buy once; fine."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Alchemists",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   2
+  ],
+  "total": 10,
+  "hardFail": null,
+  "why": "Cheap 3 bodies with a payment convenience; same name as the gold Alchemists."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Extra Hand",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   0,
+   1,
+   0,
+   1,
+   0,
+   0
+  ],
+  "total": 7,
+  "hardFail": null,
+  "why": "9 for one extra minion once: poor value."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Line Cutters",
+  "scores": [
+   2,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   0,
+   0,
+   2
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Go first every round, worth 3 for 2: must-buy."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Launderers",
+  "scores": [
+   2,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   0,
+   2
+  ],
+  "total": 11,
+  "hardFail": null,
+  "why": "Cheap bodies with a rearrange; filler."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Old Maid",
+  "scores": [
+   2,
+   2,
+   1,
+   2,
+   2,
+   1,
+   0,
+   2,
+   1,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "A hot potato you hand to rivals with swaps; the table laughs."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Dabblers",
+  "scores": [
+   1,
+   2,
+   1,
+   0,
+   2,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 9,
+  "hardFail": null,
+  "why": "'Wild members' needs a rules lookup."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Cheerleader",
+  "scores": [
+   2,
+   2,
+   0,
+   0,
+   1,
+   1,
+   1,
+   0,
+   0,
+   1
+  ],
+  "total": 8,
+  "hardFail": null,
+  "why": "+1 per contest win; rewards the leader."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Anarchist",
+  "scores": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1
+  ],
+  "total": 18,
+  "hardFail": null,
+  "why": "Swap any two members anywhere each round: chaos the table remembers."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Spoilsport",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   0,
+   2,
+   2,
+   1
+  ],
+  "total": 17,
+  "hardFail": null,
+  "why": "Cancel a contest you don't lead: a clear block aimed at the leader."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Con Men",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   1,
+   1,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 13,
+  "hardFail": null,
+  "why": "Big one-shot steal; loud."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Coach",
+  "scores": [
+   1,
+   2,
+   1,
+   0,
+   2,
+   1,
+   1,
+   1,
+   0,
+   0
+  ],
+  "total": 9,
+  "hardFail": null,
+  "why": "Extra On Use for 7; narrow and wordy."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Sore Loser",
+  "scores": [
+   2,
+   2,
+   2,
+   2,
+   1,
+   1,
+   0,
+   1,
+   2,
+   1
+  ],
+  "total": 14,
+  "hardFail": null,
+  "why": "Steal followers when you win nothing: a catch-up sting."
+ },
+ {
+  "color": "guest",
+  "kind": "member",
+  "name": "Tiebreaker",
+  "scores": [
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   0,
+   1,
+   1,
+   1
+  ],
+  "total": 12,
+  "hardFail": null,
+  "why": "Win ties; occasionally decisive."
+ }
+]

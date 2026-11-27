@@ -1,0 +1,11 @@
+{
+  "why": "Cory, Nov 13: after the review of the first three games and the process fixes, \"run maybe 5 or 6 more games and then extract all the recommendations\". Every color 2 or 3 times; 4, 3 and 2 players; experienced players mostly, first-timers at three tables, one table with an experienced player given no strategy notes.",
+  "games": [
+    { "id": "r3g1", "colors": ["red", "purple", "market", "echo"], "kinds": ["exp", "new", "exp", "new"] },
+    { "id": "r3g2", "colors": ["silver", "yellow", "thieves", "trading"], "kinds": ["exp", "exp", "exp", "exp"] },
+    { "id": "r3g3", "colors": ["red", "silver", "market", "thieves"], "kinds": ["exp", "exp", "exp", "plain"] },
+    { "id": "r3g4", "colors": ["purple", "yellow", "echo"], "kinds": ["exp", "new", "exp"] },
+    { "id": "r3g5", "colors": ["trading", "red", "yellow"], "kinds": ["exp", "exp", "new"] },
+    { "id": "r3g6", "colors": ["market", "echo"], "kinds": ["exp", "exp"] }
+  ]
+}

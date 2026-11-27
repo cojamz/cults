@@ -1,0 +1,357 @@
+[
+ {
+  "name": "Sore Loser",
+  "C4": 1,
+  "why": "Steals 3 followers from the leader only when you won nothing; the leader can see it coming, a fair catch-up."
+ },
+ {
+  "name": "Walk-In",
+  "C4": 2,
+  "why": "A blind draw from the pile is a fun gamble, and every rival gets a red as a gift."
+ },
+ {
+  "name": "Loyalists",
+  "C4": 1,
+  "why": "Quiet protection for your other members; fine, no moment."
+ },
+ {
+  "name": "Trendsetters",
+  "C4": 1,
+  "why": "Shop churn on each recruit; useful, rarely a felt moment."
+ },
+ {
+  "name": "Spoilsport",
+  "C4": 0,
+  "why": "At round end the leader of a contest just loses it with no way to answer; the victim feels robbed of a win they earned."
+ },
+ {
+  "name": "Body Snatchers",
+  "C4": 1,
+  "why": "Even-cost swap each round; the rival loses a chosen member but gets one of equal cost back."
+ },
+ {
+  "name": "Lie Low",
+  "C4": 1,
+  "why": "Small steal plus a round of safety; fine."
+ },
+ {
+  "name": "Heist",
+  "C4": 1,
+  "why": "A clean 3-follower steal; stings but it is an open space rivals can see and take first."
+ },
+ {
+  "name": "Echo",
+  "C4": 2,
+  "why": "Reading the table to copy the last action is a satisfying little timing puzzle."
+ },
+ {
+  "name": "Shoplifter",
+  "C4": 1,
+  "why": "A 1-resource nibble per recruit; victims shrug it off."
+ },
+ {
+  "name": "Panel",
+  "C4": 2,
+  "why": "Recruiting it also upgrades another member; a pleasant two-for-one moment."
+ },
+ {
+  "name": "Demote",
+  "C4": 1,
+  "why": "Trades down with a rival who still gets your member back; mild sting, decent tempo."
+ },
+ {
+  "name": "Doormen",
+  "C4": 0,
+  "why": "Every round it sends a rival's chosen member away and can hand them a worse one; the same victim is singled out repeatedly with no answer, before round III."
+ },
+ {
+  "name": "Agents",
+  "C4": 1,
+  "why": "Passive copy block; fine, no moment."
+ },
+ {
+  "name": "Potluck",
+  "C4": 2,
+  "why": "Rivals pick what to give and get 2 silver back; a sting nobody minds."
+ },
+ {
+  "name": "Mob",
+  "C4": 2,
+  "why": "A big round-end payoff for dominating red feels great to land."
+ },
+ {
+  "name": "Philanthropist",
+  "C4": 2,
+  "why": "Gifts silver to rivals for followers; a gift that pays the owner."
+ },
+ {
+  "name": "Sample",
+  "C4": 2,
+  "why": "Borrowing a rival's best On Recruit is a clever, fun moment."
+ },
+ {
+  "name": "Old Maid",
+  "C4": 1,
+  "why": "A hot potato: no fun to receive, but everyone knows it is out there and can dodge it."
+ },
+ {
+  "name": "Raiders",
+  "C4": 1,
+  "why": "Once-per-game 4-follower steal with 2 white paid back; a fair sting."
+ },
+ {
+  "name": "Crunch Time",
+  "C4": 2,
+  "why": "Two turns in a row is a powerful, satisfying burst."
+ },
+ {
+  "name": "Debt Collectors",
+  "C4": 1,
+  "why": "Once-per-game 2 silver from each rival; small and shrugged off."
+ },
+ {
+  "name": "Grifter",
+  "C4": 1,
+  "why": "Scaling steal on recruit; fine."
+ },
+ {
+  "name": "Farewell",
+  "C4": 1,
+  "why": "Cashing out a member for followers is a solid, quiet play."
+ },
+ {
+  "name": "Bury",
+  "C4": 1,
+  "why": "Denies a shop member and pays some blue; fine."
+ },
+ {
+  "name": "High Society",
+  "C4": 1,
+  "why": "Followers trickle in as rivals use silver; fine."
+ },
+ {
+  "name": "Spree",
+  "C4": 2,
+  "why": "Three recruits in one turn is a big round III moment."
+ },
+ {
+  "name": "Fan Club",
+  "C4": 2,
+  "why": "Copying the leader's action on recruit is a fun catch-up surprise."
+ },
+ {
+  "name": "Overtime",
+  "C4": 2,
+  "why": "An extra minion in the last round feels powerful."
+ },
+ {
+  "name": "Tribute Band",
+  "C4": 2,
+  "why": "Doing every action a rival took is a huge, memorable turn."
+ },
+ {
+  "name": "Window Shopper",
+  "C4": 1,
+  "why": "Shop cycling with small resource gains; fine."
+ },
+ {
+  "name": "Early Birds",
+  "C4": 1,
+  "why": "Passive skip immunity; fine."
+ },
+ {
+  "name": "Impersonator",
+  "C4": 2,
+  "why": "Choosing a rival's ability to wear each round is fun to play."
+ },
+ {
+  "name": "Window Dressers",
+  "C4": 1,
+  "why": "A one-time shop wipe on a cheap 3-count body; fine."
+ },
+ {
+  "name": "Largesse",
+  "C4": 2,
+  "why": "A big gift to rivals that turns into followers for you."
+ },
+ {
+  "name": "Party Crasher",
+  "C4": 2,
+  "why": "Jumping onto a taken space is a fun surprise moment."
+ },
+ {
+  "name": "Leaders' Tax",
+  "C4": 1,
+  "why": "Reading where rivals sit for a resource haul; fine."
+ },
+ {
+  "name": "Poach",
+  "C4": 1,
+  "why": "Taking a chosen member hurts, but only in round III and from an open space."
+ },
+ {
+  "name": "Martyrs",
+  "C4": 2,
+  "why": "Losing it pays you, so being stolen from becomes a win; fun twist."
+ },
+ {
+  "name": "Mentor & Protégés",
+  "C4": 2,
+  "why": "A free extra recruit on arrival feels generous and strong."
+ },
+ {
+  "name": "Help Yourself",
+  "C4": 1,
+  "why": "A split steal; rivals take small, spread-out hits."
+ },
+ {
+  "name": "Meddler",
+  "C4": 1,
+  "why": "Swapping one of each rival's resources is a mild nuisance; fine."
+ },
+ {
+  "name": "Line Cutters",
+  "C4": 1,
+  "why": "Always going first is useful but quiet."
+ },
+ {
+  "name": "Creditor",
+  "C4": 1,
+  "why": "Takes 2 followers from a chosen rival each round but pays them 3 silver; fair."
+ },
+ {
+  "name": "Bouncers",
+  "C4": 1,
+  "why": "Skipping two rivals once is a nice tempo hit that victims recover from."
+ },
+ {
+  "name": "Customs Officer",
+  "C4": 1,
+  "why": "Passive payback against steals; fine."
+ },
+ {
+  "name": "Savings",
+  "C4": 1,
+  "why": "Blue plus a shop nudge; fine."
+ },
+ {
+  "name": "Cutpurse",
+  "C4": 1,
+  "why": "A 1-resource nibble at the richest rival each round; shrugged off."
+ },
+ {
+  "name": "Double Agent",
+  "C4": 0,
+  "why": "You take whichever rival member you want and hand them a 1-follower card, before round III; the victim feels robbed."
+ },
+ {
+  "name": "Guest of Honor",
+  "C4": 2,
+  "why": "Giving a rival a cheap member for 4 followers is a gift both sides like."
+ },
+ {
+  "name": "Debutantes",
+  "C4": 2,
+  "why": "Doubling your silver is a big moment and rivals get silver too."
+ },
+ {
+  "name": "Night Watch",
+  "C4": 1,
+  "why": "Followers when rivals go last; fine."
+ },
+ {
+  "name": "Accomplice",
+  "C4": 1,
+  "why": "A cheap 3-resource steal; small sting."
+ },
+ {
+  "name": "Scavenger",
+  "C4": 1,
+  "why": "Grabbing what rivals send away is a nice snipe, rarely big."
+ },
+ {
+  "name": "Last Call",
+  "C4": 2,
+  "why": "Cashing saved minions for followers is a satisfying payoff."
+ },
+ {
+  "name": "Toast",
+  "C4": 2,
+  "why": "A big silver haul that gifts rivals too."
+ },
+ {
+  "name": "Initiation",
+  "C4": 2,
+  "why": "A free member up to 8 in round III feels great."
+ },
+ {
+  "name": "Godparent",
+  "C4": 2,
+  "why": "Handing a rival a member for followers is a gift with a payoff."
+ },
+ {
+  "name": "Deprogrammers",
+  "C4": 1,
+  "why": "A cheap rider on member steals; fine."
+ },
+ {
+  "name": "Right Away",
+  "C4": 1,
+  "why": "A quick extra turn; fine."
+ },
+ {
+  "name": "Hostesses",
+  "C4": 2,
+  "why": "Gifting silver every round for followers; a gift rivals welcome."
+ },
+ {
+  "name": "Fence",
+  "C4": 1,
+  "why": "Passive payback when robbed; fine."
+ },
+ {
+  "name": "Con Men",
+  "C4": 1,
+  "why": "A big 5-resource steal; it stings but it is resources, not members."
+ },
+ {
+  "name": "Extortionist",
+  "C4": 1,
+  "why": "Repeated 2-resource hits on the richest rival, who can see it coming and spend down."
+ },
+ {
+  "name": "Closer",
+  "C4": 1,
+  "why": "A purple bonus for going last; fine."
+ },
+ {
+  "name": "Hot Streak",
+  "C4": 2,
+  "why": "Chaining turns into a burst of followers is a fun combo moment."
+ },
+ {
+  "name": "Second-Story Man",
+  "C4": 1,
+  "why": "A pre-contest steal that can swing magenta; fine."
+ },
+ {
+  "name": "Bodyguards",
+  "C4": 1,
+  "why": "Steal immunity; quiet but fair."
+ },
+ {
+  "name": "Tryout",
+  "C4": 2,
+  "why": "Using a shop member's effect without buying it is a clever, fun play."
+ },
+ {
+  "name": "Night Owls",
+  "C4": 2,
+  "why": "A bonus minion after your last feels powerful."
+ },
+ {
+  "name": "Housewarming",
+  "C4": 2,
+  "why": "A free member up to 5 is a satisfying round II grab."
+ }
+]

@@ -1,0 +1,5 @@
+# Append-only logs that every thread writes at once: keep both sides of a conflict instead of stopping a rebase
+# (decisions.md conflicts stopped ships on Oct 29 and Nov 1). Built-in union driver; order within a clash is either side first.
+design/decisions.md merge=union
+design/pitch-ledger.md merge=union
+design/lessons/*.md merge=union

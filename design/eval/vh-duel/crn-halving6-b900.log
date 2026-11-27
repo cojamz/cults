@@ -1,0 +1,28 @@
+table 101 side 1: B40 A52* B44 A51 (137s)
+table 101 side 0: A56* B45 A41 B47 (179s)
+table 102 side 0: A75 B73 A74 B76* (283s)
+table 102 side 1: B86* A86* B76 A63 (357s)
+table 103 side 0: A67 B70* A66 B70* (224s)
+table 103 side 1: B57 A64 B72* A63 (255s)
+table 104 side 0: A58 B58 A60 B62* (242s)
+table 104 side 1: B64 A66* B58 A49 (262s)
+table 105 side 1: B46 A67 B72* A58 (222s)
+table 106 side 0: A46 B41 A65* B39 (136s)
+table 105 side 0: A50 B44 A56 B81* (370s)
+table 106 side 1: B58* A40 B43 A58* (147s)
+table 108 side 0: A36 B51 A55 B65* (229s)
+table 108 side 1: B58 A51 B66* A50 (263s)
+table 107 side 1: B99* A83 B97 A81 (413s)
+table 109 side 0: A42 B42 A40 B66* (141s)
+table 107 side 0: A91* B84 A91* B78 (454s)
+table 109 side 1: B69* A52 B52 A43 (132s)
+table 110 side 0: A51 B57* A47 B55 (141s)
+table 110 side 1: B49 A45 B56* A49 (129s)
+table 112 side 1: B74* A44 B50 A53 (200s)
+table 112 side 0: A39 B43 A44 B61* (219s)
+table 111 side 0: A79 B97 A101 B105* (348s)
+table 111 side 1: B108 A89 B120* A100 (365s)
+
+A {"level":"veryhard"}
+B {"level":"veryhard","crn":true,"halving":true,"candidates":6,"window":6,"budget":900}
+seats won A 8, B 20 of 96; followers per seat A−B -4.94 ± 2.06 (s.e.); A better on 2 of 12 tables

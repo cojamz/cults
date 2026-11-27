@@ -1,0 +1,73 @@
+// @vitest-environment node
+// Bide Your Time (Purple, round II; Cory, 2026-10-22): "+2 followers per minion you have left" (+1 since the Nov 1 balance pass, and +1 purple per minion left since Nov 1) for taking "the remainder
+// of your turns when others are out of minions". Round II, 4 players, A B C D D C B A A B C D D C B A: B takes it on
+// their first turn with 3 minions left: +3 followers; A C D place all theirs, then B places 3 in a row.
+import './fixtures/gold-on.js'; // Gold's cards, a test-only fixture since Gold left the game (Cory, Nov 24)
+import { describe, it, expect } from 'vitest';
+import { createGame, applyMove, actionAt, followers } from '../../../engine/v4/core.js';
+import { chooseBotMove } from '../../../engine/v4/bots.js';
+import { seededRandom } from '../../../engine/v4/rng.js';
+import { quadrant } from '../../../engine/v4/index.js';
+import { sceneQ } from './cards-helpers.js';
+import { take } from './helpers.js';
+
+const Q = ['gold', 'red', 'purple', 'echo'];
+const MOVES = ['skip', 'holdup', 'again', 'rally', 'lastcall'];
+function plain(s, rand) {
+  const m = chooseBotMove(s, rand);
+  const o = s.pending?.options?.find(x => x.id === m.option);
+  const moves = x => x.kind === 'slot' && x.q !== undefined && MOVES.includes(actionAt(s, x.q, x.i).key);
+  const alt = o && moves(o) && s.pending.options.find(x => x.kind === 'slot' && x.q !== undefined && !moves(x));
+  return alt ? { player: m.player, option: alt.id } : m;
+}
+
+describe('Bide Your Time', () => {
+  it('round II, 4 players: B on their first turn gets +3 followers and places their other 3 after everyone', () => {
+    // seed 2 since Rabble-Rousers, Go-Between and Rummager (Nov 26); seed 12 since Lackey, Doorbusters, Mendicant and Evictors (Nov 24 10:11pm); seed 17 since Shirker, Cutthroats and Drifters (Nov 25); seed 21 since Innkeeper, Wet Nurse, Chapman, Hoarder and Night Porter joined (Nov 25); seed 12 since Gold left the game (Nov 24: its bot habits went with it); seed 11 since every member was rebased to worth 1 (Cory, Nov 12); seed 3 since the Nov 11 member sort; seed 11 since Call to Arms took Trending's place (Nov 11); seed 4 since Night Owls left and Abbess back in round I (Nov 6); seed 6 since every member cost 4 more (Nov 5 evening); seed 32 since Victors left (Nov 6); seed 28 since Sleepyheads and Hurriers joined (Nov 6); seed 23 since Night Watch left (Nov 6); seed 15 since every member cost 1 more (Nov 5); seed 1 since the Nov 5 member changes; seed 6 since Trumpeters and Victors joined the grey deck (Nov 4); seed 5 since the Nov 4 card batch (Welcome Strangers, Creditor, Mob…); seed 3 since Night Watch, Second-Story Man, Hawker and Sore Loser went live (Nov 4); seed 8 since bots play out every choice (Nov 2); seed 17 since Bide Your Time's purple per minion, Ferryman and Tryout +2 (Nov 1); seed 13 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 7 since Bide Your Time's +1 per minion (Nov 1); seed 44 since the deck-of-10 price moves (Oct 31); seed 12 since Gather the Kin's recruit followers (Oct 31); seed 88 since the Oct 30 prices and bodies; seed 61 since Promote +3 red and Ferryman's color (Oct 30); seed 17 since the Oct 29 balance-run followers (Broker, Clockmaker…); seed 10 since Clockmaker, Courier and Pilfer changed (Oct 29); seed 7 since bots rate Imitate's empty actions (Oct 29; seed 3 before); seed 2 since +1 wild and the round I rework (Oct 28; seed 5 since Oct 27; seed 7 since Gather the Kin's +3, Oct 25; seed 11 since the Oct 24 member structure) (seed 6 since Even Swap's +2 red): on other seeds a second bot took Bide Your Time too
+    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 2, quadrants: Q });
+    const rand = seededRandom(2);
+    while (!(s.round === 2 && s.pending?.kind === 'place')) s = applyMove(s, plain(s, rand));
+    const base = s.order.slice(0, 4), [A, B] = base;
+    const placed = [];
+    while (!(s.pending?.kind === 'place' && s.pending.player === B)) { if (s.pending?.kind === 'place') placed.push(s.pending.player); s = applyMove(s, plain(s, rand)); }
+    placed.push(B);
+    const i = quadrant('purple').actions.findIndex(a => a.key === 'lastcall');
+    const f0 = followers(s, s.players[B]), p0 = s.players[B].res.purple || 0;
+    s = applyMove(s, { player: B, option: `slot:${s.quadrants.indexOf('purple')}-${i}` });
+    expect(followers(s, s.players[B])).toBe(f0 + 3);
+    expect(s.players[B].res.purple).toBe(p0 + 1 + 3); // +1 purple, and +1 purple per minion left (Cory, Nov 1)
+    while (s.round === 2) {
+      const next = plain(s, rand);
+      if (s.pending?.kind === 'place') placed.push(s.pending.player);
+      s = applyMove(s, next);
+    }
+    const L = p => 'ABCD'[base.indexOf(p)];
+    // everyone else places all 4, then B places the rest in a row (more than 3 if a bought member adds one)
+    expect(placed.map(L).join(' ').startsWith('A B C D D C A A C D D C A B B B')).toBe(true);
+    expect(placed.slice(13).every(p => p === B)).toBe(true);
+  });
+
+  it('with your last minion: +1 purple and nothing else', () => {
+    const s = take(sceneQ({ quadrants: Q, round: 2, left: 1, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] }), 'purple.lastcall');
+    expect(s.players[0].res.purple).toBe(1);
+    expect(s.players[0].bonus).toBe(0);
+  });
+});
+
+// Cory's playtest, 2026-10-26: P2 took Bide Your Time in round III and kept placing. A rival whose turn moved to the end
+// after it (their own Lie Abed, Hold Up, Day Laborer's minion) landed behind the caller, so the caller went first.
+describe('Bide Your Time holds for the rest of the round', () => {
+  it('a rival who takes the Goes Last token with Lie Abed sends the caller’s minion back to their hand (Cory, Nov 1 2:35pm)', () => {
+    let s = sceneQ({ quadrants: Q, round: 2, left: 2, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'allPlaced' }] });
+    s = take(s, 'purple.lastcall');
+    while (s.pending?.kind !== 'place') s = applyMove(s, { player: s.pending.player, option: 'pass' });
+    expect(s.pending.player).toBe(1);
+    s = take(s, 'purple.skip'); // P2's Lie Abed takes the token: P1's minion goes back to their hand, P2's waits on it
+    const placed = [];
+    while (s.round === 2 && s.pending && placed.length < 2) {
+      if (s.pending.kind === 'place') { placed.push(s.pending.player); s = applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.kind === 'slot').id }); }
+      else s = applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.id === 'pass')?.id ?? s.pending.options[0].id });
+    }
+    expect(placed).toEqual([0, 1]);
+  });
+});

@@ -1,0 +1,573 @@
+[
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "After a space that gives resources, the recruit is usually a 1- or 5-follower buy with one sensible answer, so the recruit step feels like a chore.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Eve",
+   "Finn",
+   "Gus",
+   "Hal"
+  ],
+  "evidence": "39 of the 52 turn recruits were follower buys, and about 26 feel notes from all four players called them autopilot or chores.",
+  "strength": 5
+ },
+ {
+  "subject": "Silver Cloak",
+  "kind": "cloak",
+  "claim": "The Silver Cloak refills your silver whenever you gift, which works against Silver's Fewest silver contest.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Eve",
+   "Hal",
+   "Finn"
+  ],
+  "evidence": "Kingmakers could not fire in rounds I or II because of the refund and paid 3 in the whole game, but Finn still tied Fewest silver every round like everyone else (10 total) and got 10 silver from the cloak.",
+  "strength": 2
+ },
+ {
+  "subject": "Went last",
+  "kind": "contest",
+  "claim": "Went last feels locked by one player's Goes Last token, by seat order or by Last Callers.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Eve",
+   "Hal",
+   "Gus"
+  ],
+  "evidence": "The token changed hands 2, 4 and 4 times in rounds I to III, three different players won the contest, and On a Roll decided it every round.",
+  "strength": 2
+ },
+ {
+  "subject": "Goes Last token",
+  "kind": "rule",
+  "claim": "Taking the Goes Last token early is undone by the next player who takes a token space.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Hal"
+  ],
+  "evidence": "The first player to take the token never won Went last; Hal's round I Sleep In token was taken by On a Roll one placement later.",
+  "strength": 3
+ },
+ {
+  "subject": "Last Callers",
+  "kind": "member",
+  "claim": "Last Callers' once-per-round token grab is easy to mistime and never holds the token.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Finn"
+  ],
+  "evidence": "Finn paid 7 resources for 1 printed follower; his round II grab was undone by Hal's Last Call, and he saved it in round III for his last minion, where it does nothing.",
+  "strength": 2
+ },
+ {
+  "subject": "Spoilsport",
+  "kind": "member",
+  "claim": "Spoilsport lets one player cancel a contest after all placements, with no answer possible.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Hal",
+   "Eve"
+  ],
+  "evidence": "For 8 resources and one recruit it removed 16 followers from rivals over two round ends (Eve 3, Hal 3, then Hal 10) and added about 4 to Gus.",
+  "strength": 5
+ },
+ {
+  "subject": "Spoilsport",
+  "kind": "member",
+  "claim": "Choosing which contest to cancel at round end is a tense, countable decision and the only lever against a contest leader.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Gus"
+  ],
+  "evidence": "Gus's round III choice moved 10 followers off Hal and widened a 2-point projected lead to the final 12.",
+  "strength": 5
+ },
+ {
+  "subject": "Anchorites",
+  "kind": "member",
+  "claim": "Anchorites pays +5 every round for almost no cost, since most players stay at 5 or fewer members anyway.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Hal",
+   "Eve",
+   "Finn"
+  ],
+  "evidence": "One 6-resource card produced 15 followers (Eve +5 through Test Drive, Gus +10 over rounds II and III) plus 1 printed; three of the four players never went above 5 members.",
+  "strength": 4
+ },
+ {
+  "subject": "Fewest members",
+  "kind": "contest",
+  "claim": "A zero-member player farms the White contest and nobody can stop it.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Gus",
+   "Finn",
+   "Eve"
+  ],
+  "evidence": "Fewest members paid 4 of its 20 printed followers (Hal, round I); Guest of Honor, Write-Off and Spoilsport disrupted it in all three rounds, and Eve never won it.",
+  "strength": 3
+ },
+ {
+  "subject": "Modest Means",
+  "kind": "space",
+  "claim": "Modest Means pays the leanest cult most, stacking with the Fewest members contest.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Eve"
+  ],
+  "evidence": "Eve took it three times for 13 white, about 3 more than Nest Egg would have given.",
+  "strength": 1
+ },
+ {
+  "subject": "Largesse",
+  "kind": "space",
+  "claim": "Silver gifts mostly feed whoever converts the silver fastest rather than hurting the receivers.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Hal",
+   "Finn"
+  ],
+  "evidence": "Players gave rivals 41 silver over the game and every receiver spent it before scoring; Gus turned Largesse's 12 silver into 14 white and a 10-follower buy with one Polish.",
+  "strength": 3
+ },
+ {
+  "subject": "Largesse",
+  "kind": "space",
+  "claim": "Being the player who receives the 12 Largesse silver decides which of your cards work.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Gus"
+  ],
+  "evidence": "Largesse was played once, not twice, and Polish answered it in one placement, netting Gus about 12 followers.",
+  "strength": 1
+ },
+ {
+  "subject": "Downsizers",
+  "kind": "member",
+  "claim": "Downsizers cannot discard itself, though its text ('discard one of your members') reads as if it can, next to Old Guard's 'another of your members'.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Gus",
+   "Hal"
+  ],
+  "evidence": "Gus planned twice around discarding Downsizers itself and lost Last-Minute Shopper when the engine refused; Hal also noticed it was not offered.",
+  "strength": 2
+ },
+ {
+  "subject": "Recruit Twice",
+  "kind": "space",
+  "claim": "Recruit Twice and Spree read as giving a free member.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Gus"
+  ],
+  "evidence": "The text says recruit, which means paying the cost; Gus planned to take Extra Hand (10 resources) with 5 blue in hand.",
+  "strength": 1
+ },
+ {
+  "subject": "Kingmakers",
+  "kind": "member",
+  "claim": "Kingmakers lets a trailing player decide the winner with round-end silver.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Finn"
+  ],
+  "evidence": "Spoilsport resolved after Kingmakers and Gus wins under every split Finn could choose; the deciding move was Finn's Sleep In.",
+  "strength": 2
+ },
+ {
+  "subject": "Kingmakers",
+  "kind": "member",
+  "claim": "A round-end silver gift can switch off a rival's zero-silver card with no possible answer.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Gus"
+  ],
+  "evidence": "Finn's round III Kingmakers silver turned off Gus's Paupers, costing him 3 followers.",
+  "strength": 1
+ },
+ {
+  "subject": "Crunch Time",
+  "kind": "space",
+  "claim": "Crunch Time's first recruit usually has nothing to spend, because players start the round with empty piles.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Finn"
+  ],
+  "evidence": "Finn passed the first recruit in round II and bought 1 follower in round III.",
+  "strength": 1
+ },
+ {
+  "subject": "Right Away",
+  "kind": "space",
+  "claim": "Right Away on your last minion gives only resources.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Hal"
+  ],
+  "evidence": "The option itself said the extra turn does nothing; Hal took it twice on his last minion for 3 and 4 purple.",
+  "strength": 1
+ },
+ {
+  "subject": "Anchorites",
+  "kind": "member",
+  "claim": "Stay-small members show up for a player building a large cult.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Gus"
+  ],
+  "evidence": "Gus's own Most members plan clashed with Downsizers and Anchorites; he still made Anchorites pay 10 by discarding down.",
+  "strength": 1
+ },
+ {
+  "subject": "White Cloak",
+  "kind": "cloak",
+  "claim": "The last White Cloak refund on the final buy is wasted.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Eve"
+  ],
+  "evidence": "Eve ended with 2 white she could never spend.",
+  "strength": 1
+ },
+ {
+  "subject": "Markdown",
+  "kind": "space",
+  "claim": "Markdown's discount is worth nothing when every discard-pile member is off-color for you.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Gus"
+  ],
+  "evidence": "In round I the discard pile held only purple members; in round II the same space gave Gus Paupers for 4.",
+  "strength": 1
+ },
+ {
+  "subject": "Turn order",
+  "kind": "rule",
+  "claim": "Falling behind in round I is not caught up by fewest-followers-goes-first.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Finn"
+  ],
+  "evidence": "Finn went first in rounds II and III through Line Cutters anyway; his 16-follower deficit came from round I members that paid little.",
+  "strength": 1
+ },
+ {
+  "subject": "Guest of Honor",
+  "kind": "member",
+  "claim": "Guest of Honor and Write-Off turn members into a hot potato around Fewest members, with tense timing over who ends the round holding one.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Hal",
+   "Eve",
+   "Finn",
+   "Gus"
+  ],
+  "evidence": "Five members changed hands, every one to change a contest count, and Guest of Honor paid +4 three times to three players.",
+  "strength": 4
+ },
+ {
+  "subject": "Write-Off",
+  "kind": "space",
+  "claim": "Giving a member to a rival with Write-Off works as an attack on their Fewest members lead.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Gus",
+   "Hal"
+  ],
+  "evidence": "Write-Off was used twice, both times to break a rival's zero-member position, paying 7 white each time.",
+  "strength": 3
+ },
+ {
+  "subject": "Test Drive",
+  "kind": "space",
+  "claim": "Test Drive lets a player use a shop member's effect without owning it.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Eve",
+   "Finn",
+   "Hal"
+  ],
+  "evidence": "Three uses were worth +5 (Anchorites), +6 (Bookies) and a 5-white steal (Con Men), each for one placement and no member.",
+  "strength": 4
+ },
+ {
+  "subject": "Test Drive",
+  "kind": "space",
+  "claim": "Test Drive denies the card to rivals.",
+  "verdict": 3,
+  "tone": "praise",
+  "players": [
+   "Eve"
+  ],
+  "evidence": "The discarded card goes to the face-up discard pile; Gus recruited Eve's Test-Driven Anchorites from there for 11 followers.",
+  "strength": 3
+ },
+ {
+  "subject": "Out of Style",
+  "kind": "space",
+  "claim": "Out of Style with the Blue Cloak pays every discard twice, making a big first-turn burst and the obvious opener for that cloak.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Gus"
+  ],
+  "evidence": "Gus's three Out of Style placements gave 7, 6 and 6 resources; the first bought Dabblers and the round I Most members lead.",
+  "strength": 4
+ },
+ {
+  "subject": "Discard pile",
+  "kind": "rule",
+  "claim": "The face-up discard pile works as a second shop that is worth reading.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Gus",
+   "Finn",
+   "Hal"
+  ],
+  "evidence": "4 of the 13 members recruited came from the discard pile (Paupers, Anchorites, Dabblers, Night Managers), and two of them decided contests.",
+  "strength": 4
+ },
+ {
+  "subject": "Polish",
+  "kind": "space",
+  "claim": "Polish answers a silver dump in one placement and lets you pick the color.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Gus",
+   "Eve"
+  ],
+  "evidence": "Gus turned 14 silver into 14 white and a 10-follower buy on the same turn.",
+  "strength": 2
+ },
+ {
+  "subject": "Party Gifts",
+  "kind": "space",
+  "claim": "Party Gifts scores points while letting you choose whose Fewest silver count to break.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Eve",
+   "Finn"
+  ],
+  "evidence": "It paid 16 followers over the game (Eve 10, Finn 6).",
+  "strength": 2
+ },
+ {
+  "subject": "Party Gifts",
+  "kind": "space",
+  "claim": "Party Gifts' targeted silver sabotages a rival's Fewest silver contest.",
+  "verdict": 3,
+  "tone": "praise",
+  "players": [
+   "Eve",
+   "Finn"
+  ],
+  "evidence": "Every gifted silver was spent before scoring and the contest ended in a four-way tie every round.",
+  "strength": 2
+ },
+ {
+  "subject": "Line Cutters",
+  "kind": "member",
+  "claim": "Line Cutters bought in round I sets up a Crunch Time opener in later rounds.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Finn"
+  ],
+  "evidence": "Finn got two three-placement runs, including Largesse +10, for 4 resources.",
+  "strength": 3
+ },
+ {
+  "subject": "On a Roll",
+  "kind": "space",
+  "claim": "Taking the last open token space with On a Roll steals Went last outright.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Hal",
+   "Gus",
+   "Finn"
+  ],
+  "evidence": "On a Roll won Went last in all three rounds (Finn +4, Hal +6, Gus +10).",
+  "strength": 4
+ },
+ {
+  "subject": "White Cloak",
+  "kind": "cloak",
+  "claim": "A +2 white refund on every follower buy makes each recruit productive and pack size a real choice.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Eve"
+  ],
+  "evidence": "It refunded 24 white over Eve's 12 buys, about 22 followers.",
+  "strength": 4
+ },
+ {
+  "subject": "Spree",
+  "kind": "space",
+  "claim": "Spree pulling a 'counts as 2' member from the discard pile can swing Most members late.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Finn"
+  ],
+  "evidence": "Finn's Spree for Dabblers won round III Most members (+10) plus 4 from Cheerleaders.",
+  "strength": 3
+ },
+ {
+  "subject": "Paying for things",
+  "kind": "rule",
+  "claim": "Choosing which colors to pay with matters because of the Fewest silver contest.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Hal",
+   "Eve",
+   "Gus"
+  ],
+  "evidence": "Several payments were split to land on exactly 0 silver before scoring.",
+  "strength": 1
+ },
+ {
+  "subject": "Fewest silver",
+  "kind": "contest",
+  "claim": "Fewest silver ends in a tie at zero almost every time, because silver pays for follower buys as any color, so it never separates players.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Four-way tie every round (2, 3 and 5 to each player, 40 in all); 41 silver gifted over the game was all spent before scoring; 133 of 234 decisions reasoned about it.",
+  "strength": 5
+ },
+ {
+  "subject": "Tie rule",
+  "kind": "rule",
+  "claim": "Because tied leaders each get half, a four-way tie pays twice the printed prize in total, so tying is the richest result for the table.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Fewest silver paid 20 followers in round III against a printed 10.",
+  "strength": 3
+ },
+ {
+  "subject": "Went last",
+  "kind": "contest",
+  "claim": "Went last goes to whoever takes the last open token space, never to whoever takes the token first.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "On a Roll won it in all three rounds; the first token takers (Hal's Sleep In, Finn's Last Callers, Hal's Overtime) all lost it.",
+  "strength": 4
+ },
+ {
+  "subject": "Round end",
+  "kind": "rule",
+  "claim": "The rules do not say in what order round-end abilities happen, and the order decided the round III ending.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Kingmakers fired before Paupers' check and Spoilsport, turning off Gus's Paupers (-3) before Gus chose what to cancel.",
+  "strength": 3
+ },
+ {
+  "subject": "Sleep In",
+  "kind": "space",
+  "claim": "Taking the second-to-last token space on your last minion hands the last one to the next player with minions left.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Finn's Sleep In on his last minion let Gus take On a Roll unanswered for +10; without it Hal could have retaken the token and finished about 98 to Gus's 90.",
+  "strength": 4
+ },
+ {
+  "subject": "Cloaks",
+  "kind": "cloak",
+  "claim": "The four cloaks paid very different amounts.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "White about 24 resources, Blue 11, Silver 10, Purple 8; Blue was the last cloak picked and went to the winner.",
+  "strength": 3
+ },
+ {
+  "subject": "Flaunt",
+  "kind": "space",
+  "claim": "Spaces that give their taker silver go untaken while everyone holds the Fewest silver tie.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Flaunt, Buyout and Word of Mouth were never taken; players named the silver as the reason to skip Flaunt and Buyout.",
+  "strength": 2
+ },
+ {
+  "subject": "Members",
+  "kind": "whole game",
+  "claim": "Members bought only for their ability were a poor buy unless they also won a contest.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "13 members recruited against 39 follower buys; Kingmakers returned 4 for 6 resources, Last Callers 1 for 7, Downsizers about 4 for 6; the 6-member player finished last with 10 bought followers.",
+  "strength": 4
+ },
+ {
+  "subject": "Test Drive",
+  "kind": "space",
+  "claim": "Test Drive was the best single placement for three players, and it feeds the discard pile that Blue's recruiting spaces read.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Worth 5, 6 and a 10-point swing; Eve's Test Drive on Anchorites gave Gus his best card.",
+  "strength": 4
+ },
+ {
+  "subject": "Line Cutters",
+  "kind": "member",
+  "claim": "With Line Cutters in play, fewest-followers-goes-first never gives catch-up to anyone else.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Finn went first in rounds II and III through Line Cutters while in last place.",
+  "strength": 2
+ },
+ {
+  "subject": "Fewest members",
+  "kind": "contest",
+  "claim": "A line built on both fewest contests can be denied outright by one Spoilsport and two member gifts.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Eve won no contest outright all game; her only contest followers were the shared silver ties (10).",
+  "strength": 3
+ }
+]

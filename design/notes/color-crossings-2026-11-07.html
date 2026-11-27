@@ -1,0 +1,279 @@
+<title>Color Crossings</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: one narrow column for a phone. Contests up top, then a tap grid, then the chosen pair read out, then patterns and space text. */
+:root{
+  --bg:#f3f0ea; --panel:#fffdf8; --ink:#221d26; --muted:#6a6170; --line:#d9d2cb; --accent:#6b2d5c; --tag:#efe7ee;
+  --c-red:#c8372d; --c-blue:#2f62c9; --c-white:#efe8d6; --c-silver:#9aa1ab; --c-yellow:#e0b21c; --c-magenta:#c2307f; --c-purple:#6f3fb0; --c-green:#2e9a52;
+  --display:"IM Fell English SC",Georgia,serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16131a;--panel:#211c25;--ink:#eee8f0;--muted:#a69cab;--line:#3a3240;--accent:#e08cc8;--tag:#2e2533;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#16131a;--panel:#211c25;--ink:#eee8f0;--muted:#a69cab;--line:#3a3240;--accent:#e08cc8;--tag:#2e2533;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+h1{font-family:var(--display);font-weight:400;font-size:34px;margin:0;line-height:1.05;text-wrap:balance}
+h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0 0 8px;text-wrap:balance}
+.lead{margin:6px 0 0;color:var(--muted)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.35);vertical-align:-2px;flex:none}
+.contests{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ct{display:flex;gap:8px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-width:0}
+.ct b{display:block;font-size:14px}
+.ct span{font-size:13px;color:var(--muted)}
+.fam{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);grid-column:1/-1;margin-top:4px}
+.gridbox{overflow-x:auto}
+table.grid{border-collapse:separate;border-spacing:3px;margin:0 auto}
+.grid th{width:34px;height:30px;padding:0}
+.grid td{padding:0}
+.grid button{width:34px;height:34px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--accent);font:700 9px/1 var(--body);cursor:pointer;letter-spacing:0;padding:0}
+.grid button.s3{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+.grid button.s2{background:var(--tag);border-color:var(--accent)}
+.grid button.s1{color:var(--muted)}
+.grid button.on{outline:3px solid var(--ink);outline-offset:1px}
+.grid button:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
+.grid .self{width:34px;height:34px;border-radius:6px;opacity:.35}
+.key{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;font-size:13px;color:var(--muted);margin-top:8px}
+.key i{font-style:normal;display:inline-block;min-width:26px;text-align:center;border-radius:4px;padding:1px 4px;margin-right:4px;border:1px solid var(--accent);color:var(--accent);font-weight:700}
+.key i.k3{background:var(--accent);color:var(--panel)} .key i.k2{background:var(--tag)} .key i.k1{border-color:var(--line);color:var(--muted)}
+#pair{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;scroll-margin-top:12px}
+.ph{display:flex;align-items:center;gap:8px;font-family:var(--display);font-size:24px}
+.crux{font-weight:700;margin:8px 0 10px;font-size:17px}
+.lbl{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:10px 0 4px}
+ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.theory li::marker{content:"◇  ";color:var(--accent)}
+.sp{font-weight:700;color:var(--accent)}
+.named{margin-top:12px;border-top:1px solid var(--line);padding-top:8px;font-size:13.5px;color:var(--muted);display:grid;gap:4px}
+.named b{color:var(--ink)}
+.pat{display:grid;gap:10px}
+.pat div{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px}
+details+details{margin-top:6px}
+summary{cursor:pointer;font-weight:700;display:flex;gap:8px;align-items:center}
+details p{margin:6px 0;font-size:14px}
+details p b{color:var(--accent)}
+@media (prefers-reduced-motion:no-preference){#pair{transition:box-shadow .2s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Color Crossings</h1>
+    <p class="lead">How each pair of colors can meet, read from each color's contest and its six spaces. Members left out. Tap a square.</p>
+  </header>
+
+  <section>
+    <h2>What each contest counts</h2>
+    <div class="contests" id="contests"></div>
+  </section>
+
+  <section>
+    <h2>Pick a pair</h2>
+    <div class="gridbox"><table class="grid" id="grid" aria-label="Color pairs"></table></div>
+    <div class="key"><span><i class="k3">●●●</i>clash or feed on the contest</span><span><i class="k2">●●</i>real touch</span><span><i class="k1">●</i>thin, a gap</span></div>
+  </section>
+
+  <section id="pair" aria-live="polite"></section>
+
+  <section>
+    <h2>Patterns across the table</h2>
+    <div class="pat">
+      <div><b>Cult shape.</b> Four contests are the shape of your cult: Blue more, White fewer, Red deeper (one color), Yellow wider (many colors). Blue × White and Red × Yellow are the two head-on fights.</div>
+      <div><b>What you hold.</b> Magenta wants the biggest pile, Silver the least silver. Every Silver gift fattens a rival for Magenta; every Magenta steal of silver helps Silver.</div>
+      <div><b>The board.</b> Purple wins by placing the round's last minion, Green by having minions on Green spaces. Every color that changes standings in one move (Red swaps, Magenta steals, Silver gifts, White cast-outs) wants the last turn, so Purple touches all of them.</div>
+      <div><b>Taking can be giving.</b> Magenta taking a member helps White's Fewest members. Magenta taking silver helps Silver's Fewest silver.</div>
+      <div><b>Gaps.</b> Red × Silver, Blue × Silver and Yellow × Purple barely touch. The discard pile is filled by Blue (from the shop) and White (from cults), and nothing ever takes from it.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Every space, full text</h2>
+    <div id="spaces"></div>
+  </section>
+</div>
+
+<script>
+const C={
+ red:{n:'Red',k:'Most members of one color',d:'grey counts as a color',fam:'shape'},
+ blue:{n:'Blue',k:'Most members',d:'your member count',fam:'shape'},
+ white:{n:'White',k:'Fewest members',d:'0 counts',fam:'shape'},
+ yellow:{n:'Yellow',k:'Most member colors',d:'colors among your members',fam:'shape'},
+ magenta:{n:'Magenta',k:'Most resources',d:'every color together',fam:'hold'},
+ silver:{n:'Silver',k:'Fewest silver',d:'0 counts',fam:'hold'},
+ purple:{n:'Purple',k:'Went last',d:"placed the round's last minion",fam:'board'},
+ green:{n:'Green',k:'Most minions on green',d:'on Green spaces at round end',fam:'board'},
+};
+const ORDER=['red','blue','white','yellow','magenta','silver','purple','green'];
+const S={
+ red:{'Tryout':'Use the On Recruit effect of a shop member; it stays in the shop. +2 red.','Gather':'+2 red in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.','Walk-In':'Recruit the top member of the pile. Each rival +1 red. +1 red.','Promote':'Swap any member with one in another cult or the shop costing up to 3 more. +3 red.','Demote':'Swap any member with one in another cult or the shop costing up to 3 less. +3 red.','Initiation':'Recruit a member in the shop costing 10 or less, for free. +1 red.'},
+ blue:{'Savings':'+2 blue in round I, +3 in round II, +4 in round III. Before you recruit, you may send one shop member to the discard pile, then refill.','Out of Style':'Send every shop member of one color to the discard pile, then refill. +1 blue per member sent. +1 blue.','Peek':'Look at the top 4 of the pile and put them back in any order. This turn your recruit may be one of them. +3 blue in round I, +4 in round II, +5 in round III.','Recruit Twice':'Recruit an extra time this turn. +3 blue.','Bury':'Send a shop member to the discard pile, then refill. Gain blue equal to half its cost, rounded down. +1 blue.','Spree':'Recruit two extra times this turn. +6 blue.'},
+ white:{'Allowance':'+3 white in round I, +4 in round II, +5 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.','Splurge':'This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +2 white.','Exchange':'+2 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.','Farewell':'Cast out one of your members to the discard pile, gain followers equal to its cost. +1 white.','Estate Sale':'Cast out one of your members to the discard pile, gain white equal to its cost. +1 white.','Cash In':'Turn all your white into followers. +1 white.'},
+ yellow:{'Harvest':'+3 in round I, +4 in round II, +5 in round III, in colors you choose.','Survey':"+1 yellow per minion on the busiest color's spaces. +1 yellow.",'New Blood':'+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 yellow in round I, +3 in round II, +4 in round III.','Housewarming':'+2 yellow. Recruit a shop member of a color none of your members have, costing up to 5, for free.','Melting Pot':'+2 yellow, and +1 of each color among your members.','Makeover':'+4 yellow, then rearrange your resources into any mix of colors.'},
+ magenta:{'Help Yourself':'Steal 3 resources in round I, 4 in round II, 5 in round III.','Stash':'+2 magenta in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.','Lie Low':'Steal 1 resource. Rivals can’t steal from you this round. +1 magenta.','Heist':'Steal 3 followers, split among rivals as you choose. +1 magenta.','Shake Down':'Choose a rival. They choose one of their members costing 7 or less, then pay you its cost or you steal it. +1 magenta.','Poach':'Recruit a rival’s member you choose, for free. +1 magenta.'},
+ silver:{'Toast':'+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.','Polish':'Turn 2 of your silver into 4 of any colors.','Party Gifts':'Give rivals up to 3 silver from the bank, split as you choose. +2 followers per silver you give.','Sweet Nothings':'+3 silver. Give rivals up to 3 of your silver, split as you choose: +2 of any colors each.','Sweet Talk':'+3 silver. Then turn as many of your silver as you want into other colors.','Largesse':'Give rivals 12 silver from the bank, split as you choose. +10 followers.'},
+ purple:{'Sleep In':'+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your next minion is placed after everyone else’s.','Hold Up':'+2 purple in round I, +3 in round II, +4 in round III. Whoever’s turn is next skips it, even yours.','Right Away':'+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one.','Last Call':'+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token: your other minions are placed after everyone else’s.','Crunch Time':'+2 purple. Your next two turns come right after this one.','Overtime':'+4 purple. +1 minion this round. Take the Goes Last token: that minion is placed after everyone else’s.'},
+ green:{'Build Up':'+3 green in round I, +4 in round II, +5 in round III.','Echo':'Copy the previous action. +1 green.','Reprise':'Copy an action with your minion. +1 green.','Sample':'Copy the On Recruit of a rival’s member. +1 green.','Cover':'Copy an action with no minion on it. +1 green.','Greatest Hits':'Copy the On Recruit of each of your members, in any order. +1 green.'},
+};
+const TEXT={};for(const c in S)for(const n in S[c])TEXT[n]={c,t:S[c][n]};
+
+// Each pair: strength, the crux, what the live spaces already do, and how they could meet in theory. [[Name]] marks a space.
+const P={
+'red|blue':[2,'Both grow cults. Blue decides what is in the shop; Red decides which color to stack.',
+ ['[[Out of Style]] can wipe out the color a Red player is stacking, or clear away a color that would let a rival catch up.',
+  '[[Peek]] sets the order of the pile that [[Walk-In]] draws from.',
+  'Red swaps are one for one, so [[Promote]] and [[Demote]] change a cult\'s colors but never its size. Red can reshape a Blue cult without moving Blue\'s contest.'],
+ ['A Red swap with the top of the pile would turn Blue\'s [[Peek]] into a planned trade.']],
+'red|white':[2,'Red wants a deep cult, White a tiny one. Swaps keep sizes the same, so neither can move the other\'s contest directly.',
+ ['Swapping with a White player sets what their [[Farewell]] pays (followers equal to the member\'s cost). [[Demote]] leaves them the pricier member, [[Promote]] the cheaper one.',
+  '[[Walk-In]] gives every rival +1 red, which White\'s [[Exchange]] turns into 2 followers each.'],
+ ['White\'s cast-outs pile up in the discard pile, and Red never looks there. A Red swap with the discard pile would let Red trade into what White threw away.']],
+'red|yellow':[3,'Mirror images. Red wants many of one color, Yellow one of many.',
+ ['One [[Promote]] or [[Demote]] with a Yellow player can take their only member of a color and hand back a duplicate. Yellow loses a point and Red gains depth in one move.',
+  '[[Housewarming]] recruits a color you don\'t have; Red stacks the color it has. They share a shop but want opposite cards from it.'],
+ ['Grey counts as a color for Red. If grey also counted as a color for Yellow, grey members would be the one card both chase.']],
+'red|magenta':[3,'Both move members between cults. Red trades even; Magenta takes.',
+ ['[[Poach]] on a Red player\'s stack drops their contest by one. [[Promote]] or [[Demote]] can swap it back out of Magenta\'s cult.',
+  '[[Shake Down]] lets the victim pick the member at stake, so a Red player offers an off-color one and keeps the stack.',
+  'Red\'s spaces pay red (+3 on [[Promote]] and [[Demote]]) and [[Walk-In]] hands every rival red, all of it more for Magenta to steal and count.'],
+ ['A Red card that swaps for free with whoever just took one of your members would make taking from Red risky.']],
+'red|silver':[1,'Barely touch. Red counts members; Silver counts silver.',
+ ['Silver turns its own silver into any colors ([[Polish]], [[Sweet Talk]]), so a Silver player can afford any color\'s members, Red\'s stack color included.'],
+ ['Silver gives; Red moves members. A Silver gift of a member would feed one rival\'s stack and add to their size, which stings White too.']],
+'red|purple':[2,'A Red swap changes standings at once, so the round\'s last swap settles Red\'s contest, and Purple owns the last turn.',
+ ['A [[Promote]] or [[Demote]] placed after everyone else can\'t be answered before contests are scored. [[Sleep In]], [[Last Call]] and [[Overtime]] give that Goes Last token.',
+  '[[Hold Up]] placed right before a Red player skips their turn, so they can\'t swap back.'],
+ ['A Red card that swaps only at round end would want Purple\'s Goes Last token as much as Purple does.']],
+'red|green':[2,'Green copies, and with members on the table Red\'s spaces are the most worth copying.',
+ ['[[Echo]] right after a [[Promote]] repeats it, and the copier can swap the moved member back, undoing Red\'s turn.',
+  '[[Tryout]] already copies (a shop member\'s On Recruit), and [[Sample]] does the same from a rival\'s cult.',
+  'Green\'s contest counts minions, not members, so a Green player doesn\'t mind being Red\'s swap partner.'],
+ []],
+'blue|white':[3,'Head-on: most members against fewest members.',
+ ['Every extra recruit ([[Recruit Twice]], [[Spree]]) pushes a Blue player up and out of White\'s race. A White player can take round I by not recruiting at all.',
+  '[[Bury]] can throw away the priciest shop member, the one a White player would recruit and [[Farewell]] for the most followers, or buy with [[Splurge]].',
+  'Both fill the discard pile: Blue from the shop, White from their own cult.'],
+ ['A White card that lets a rival recruit one of your members (you shrink, they grow) would make Blue the natural buyer of White\'s cast-offs.']],
+'blue|yellow':[2,'Every recruit of a new color scores for both contests, and Blue controls which colors are in the shop.',
+ ['[[Out of Style]] can empty the exact color a Yellow player lacks, which kills their [[Housewarming]] and the [[New Blood]] bonus.',
+  'A [[Spree]] that buys three different colors moves a Blue player up in Yellow\'s contest too.',
+  '[[Peek]] shows the next 4, so whoever peeks sees which colors are coming.'],
+ []],
+'blue|magenta':[2,'Blue builds the biggest cult and the biggest pile of blue, and Magenta takes both.',
+ ['[[Poach]] on a Blue player moves Blue\'s contest by two: they lose a member and you gain one.',
+  '[[Savings]] and [[Peek]] pay up to +4 and +5 blue: the best pile for [[Help Yourself]] to take and count toward Most resources.',
+  '[[Shake Down]] hits big cults hardest, and a big cult has a cheap member to offer up.'],
+ []],
+'blue|silver':[1,'Barely touch. Blue counts members; Silver counts silver.',
+ ['[[Out of Style]] on silver clears the silver members out of the shop, the members a Silver player would spend silver on to get theirs down.',
+  'Silver\'s gifts ([[Toast]], [[Party Gifts]]) fill rivals\' piles, and a Blue player spends piles on extra recruits.'],
+ ['Gap. Neither color\'s spaces reach the other\'s contest.']],
+'blue|purple':[2,'Blue changes the shop for whoever comes next, and Purple decides who comes next.',
+ ['After [[Bury]] or [[Out of Style]] refills the shop, [[Right Away]] or [[Crunch Time]] lets a Purple player shop the new cards first.',
+  '[[Hold Up]] right before a Blue player costs them a whole turn, often the [[Spree]] turn.',
+  '[[Peek]] fixes the top of the pile; a turn jump decides who draws it.'],
+ []],
+'blue|green':[2,'Green can copy Blue\'s recruits without playing Blue.',
+ ['[[Cover]] copies a space with no minion on it, [[Reprise]] one with your minion. Copying [[Spree]] is two extra recruits, and the minion sits on a Green space for Green\'s contest.',
+  '[[Echo]] right after [[Out of Style]] empties a second color from the shop.'],
+ []],
+'white|yellow':[2,'Yellow counts colors, White counts members. One member of each color is small and wide at the same time.',
+ ['[[Farewell]] or [[Estate Sale]] on a duplicate drops a member and keeps every color. White gains and Yellow loses nothing.',
+  '[[Melting Pot]] pays +1 of each color among your members, the reward for a small, wide cult.'],
+ []],
+'white|magenta':[3,'When Magenta takes a member, White is the one helped.',
+ ['[[Poach]] or [[Shake Down]] on a White player lowers their member count. Magenta gains a member and White gains standing; with Shake Down they even pick which member goes.',
+  '[[Heist]] steals followers, the one thing White makes.',
+  'White turns resources into followers ([[Exchange]], [[Cash In]]) before [[Help Yourself]] can take them, so it never contends Most resources.'],
+ ['A White card that pays when a rival takes or swaps away one of your members would make a White cult bait for Magenta and Red alike.']],
+'white|silver':[3,'Both win by having less. Silver hands silver out; White turns anything into followers.',
+ ['Silver\'s gifts ([[Toast]], [[Party Gifts]], [[Largesse]]) land silver on a White player, who turns it into 2 followers each with [[Exchange]], getting rid of the thing Silver\'s contest counts.',
+  'Neither contest needs recruits. One player can chase both by staying small and spending down.'],
+ ['[[Cash In]] only takes white. A White card that cashes in any one color would make White the place Silver\'s gifts go.']],
+'white|purple':[2,'Both reward holding back: White recruits less, Purple places later.',
+ ['A [[Farewell]] placed last drops a White player\'s count right before scoring, with no reply possible. [[Hold Up]] in front of them can leave them one member too many.',
+  '[[Last Call]] pays a follower per minion you have left; [[Farewell]] pays followers for a member you let go. Both pay you for having less.'],
+ []],
+'white|green':[2,'Neither contest needs recruits. A player can win both by sitting on Green spaces and shedding members.',
+ ['[[Greatest Hits]] copies every one of your members\' On Recruit: big for a wide cult, near nothing for White.',
+  '[[Reprise]] or [[Echo]] on [[Farewell]] casts out twice.'],
+ ['If Green could copy the On Recruit of a member in the discard pile, Green would keep using what White threw away.']],
+'yellow|magenta':[3,'Yellow\'s colors and Magenta\'s takes land on the same cards.',
+ ['[[Poach]] on a Yellow player\'s only member of a color drops their contest by one. [[Shake Down]] lets them offer a duplicate instead.',
+  '[[Harvest]] and [[Makeover]] build big mixed piles, the best target for [[Help Yourself]], which can take the exact colors Yellow needs next.',
+  'A big pile also counts toward Magenta\'s Most resources, so a Yellow player is often in that race without trying.'],
+ []],
+'yellow|silver':[2,'Both turn one color into others, and Yellow can drop its silver whenever it wants.',
+ ['[[Makeover]] rearranges every resource, so a Yellow player can hold 0 silver at scoring and tie for Fewest silver.',
+  'Silver\'s [[Polish]], [[Sweet Talk]] and [[Sweet Nothings]] turn silver into any colors, the same job as [[Harvest]]. Two colors chase the same "any color" pile.',
+  'Silver members are one more color toward Most member colors.'],
+ []],
+'yellow|purple':[1,'Barely touch. The one link is reading the board late.',
+ ['[[Survey]] (+1 yellow per minion on the busiest color\'s spaces) pays more late in the round, after late minions like [[Overtime]]\'s have landed.'],
+ ['Gap. A Yellow card that pays for each color you placed on this round would want Purple\'s extra minion.']],
+'yellow|green':[2,'Green\'s contest piles minions onto Green spaces, which makes Green the busiest color.',
+ ['[[Survey]] pays +1 yellow per minion on the busiest color\'s spaces, so Green\'s pile-up feeds it.',
+  '[[Greatest Hits]] copies each member\'s On Recruit: a wide, many-color cult gives it the most to copy.',
+  '[[Reprise]] or [[Cover]] on [[Housewarming]] is a second free member of a new color.'],
+ []],
+'magenta|silver':[3,'Taking from Silver helps Silver.',
+ ['[[Help Yourself]] taking silver from a Silver player lowers their silver, which helps their contest. To hurt them, Magenta has to take other colors.',
+  'Every gift ([[Toast]], [[Party Gifts]], [[Largesse]]\'s 12 silver) raises rivals\' piles for Most resources, so Silver chooses who leads Magenta\'s contest.',
+  '[[Lie Low]] (rivals can\'t steal from you) is wasted on a Silver player, who wants to be robbed.'],
+ []],
+'magenta|purple':[2,'The last steal of the round settles Most resources.',
+ ['[[Help Yourself]] placed after everyone else can\'t be stolen back before scoring.',
+  '[[Hold Up]] right after a steal skips the victim\'s reply.',
+  '[[Sleep In]] pays +4 to +6 purple, the biggest single pile on the board to rob.'],
+ []],
+'magenta|green':[2,'Green answers a steal by copying it.',
+ ['[[Echo]] right after [[Help Yourself]] or [[Heist]] steals right back from the thief.',
+  'Green\'s contest counts minions on Green spaces, the one thing Magenta can\'t steal.'],
+ []],
+'silver|purple':[2,'A gift on the round\'s last turn can\'t be spent before scoring.',
+ ['[[Party Gifts]] or [[Toast]] placed after everyone (via [[Sleep In]], [[Last Call]] or [[Overtime]]) leaves silver on rivals for Fewest silver.',
+  '[[Hold Up]] skipping a Silver player\'s turn leaves them holding silver they meant to give away.'],
+ []],
+'silver|green':[2,'Copying a gift gives one too.',
+ ['[[Echo]] right after [[Party Gifts]] makes the copier hand out silver from the bank, and they can hand it back to the Silver player, which hurts their Fewest silver.',
+  '[[Cover]] on [[Largesse]] is +10 followers that piles 12 silver on rivals.'],
+ []],
+'purple|green':[3,'Echo copies the previous action, and Purple decides what the previous action is.',
+ ['[[Right Away]] and [[Crunch Time]] let a Purple player go just before a rival\'s [[Echo]], choosing what it copies, or Echo themselves.',
+  '[[Echo]] on [[Crunch Time]] is two more turns in a row.',
+  '[[Overtime]]\'s extra minion placed last on a Green space counts for both contests at once.'],
+ []],
+};
+function key(a,b){return P[a+'|'+b]?a+'|'+b:b+'|'+a}
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function fmt(s,named){return esc(s).replace(/\[\[(.+?)\]\]/g,(m,n)=>{named.add(n);return `<span class="sp">${n}</span>`})}
+const sw=c=>`<span class="sw" style="background:var(--c-${c})"></span>`;
+
+// contests
+const fams={shape:'Cult shape',hold:'What you hold',board:'The board'};let last='';
+document.getElementById('contests').innerHTML=ORDER.map(c=>{let h='';if(C[c].fam!==last){last=C[c].fam;h=`<div class="fam">${fams[last]}</div>`}
+ return h+`<div class="ct">${sw(c)}<div><b>${C[c].n}: ${C[c].k}</b><span>${C[c].d}</span></div></div>`}).join('');
+
+// grid
+const g=document.getElementById('grid');
+g.innerHTML='<tr><th></th>'+ORDER.map(c=>`<th title="${C[c].n}">${sw(c)}</th>`).join('')+'</tr>'+
+ ORDER.map(r=>'<tr><th title="'+C[r].n+'">'+sw(r)+'</th>'+ORDER.map(c=>{
+  if(r===c)return `<td><div class="self" style="background:var(--c-${c})"></div></td>`;
+  const k=key(r,c),s=P[k][0];
+  return `<td><button class="s${s}" data-k="${k}" aria-label="${C[r].n} and ${C[c].n}">${'●'.repeat(s)}</button></td>`}).join('')+'</tr>').join('');
+
+function show(k,scroll){
+ const [a,b]=k.split('|'),[s,crux,live,theory]=P[k],named=new Set();
+ let h=`<div class="ph">${sw(a)}${C[a].n} × ${sw(b)}${C[b].n}</div>`;
+ h+=`<div class="crux">${fmt(crux,named)}</div>`;
+ h+=`<div class="lbl">With the spaces as they are</div><ul>${live.map(x=>`<li>${fmt(x,named)}</li>`).join('')}</ul>`;
+ if(theory.length)h+=`<div class="lbl">In theory, a card could</div><ul class="theory">${theory.map(x=>`<li>${fmt(x,named)}</li>`).join('')}</ul>`;
+ if(named.size)h+=`<div class="named">${[...named].map(n=>`<div>${sw(TEXT[n].c)} <b>${n}</b>: ${esc(TEXT[n].t)}</div>`).join('')}</div>`;
+ const el=document.getElementById('pair');el.innerHTML=h;
+ g.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.k===k));
+ if(scroll)el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+}
+g.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.k,true)});
+show('red|yellow',false);
+
+// space reference
+document.getElementById('spaces').innerHTML=ORDER.map(c=>`<details><summary>${sw(c)}${C[c].n}</summary>${Object.entries(S[c]).map(([n,t])=>`<p><b>${n}</b>: ${esc(t)}</p>`).join('')}</details>`).join('');
+</script>
