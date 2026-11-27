@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.816 — 2026-11-26
+
+- Blue's round II Bring Back becomes Buy Anywhere: recruit a member now from the shop, the discard pile or a rival's cult, paying its cost (to that rival, if it's theirs). +3 blue.
+
 ## v0.99.815 — 2026-11-26
 
 - Purifiers is now a Blue member (3 blue + 3 any), same card text.
